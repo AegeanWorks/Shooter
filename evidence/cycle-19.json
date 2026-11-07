@@ -1,0 +1,84 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py spawn <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python scripts/soak.py 3000 bot_campaign.json <temp-report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 19,
+  "fix": "centre cover moved from (0,0) to (2.5,0) to open the spawn-to-pickup lane; 3000-frame reference re-recorded; strafe baseline updated",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "104 passed"
+  },
+  "play_runs": {
+    "fairness": {
+      "reason": "witnessed_win:reference:2369",
+      "verdict": "fair"
+    },
+    "kite_3000": {
+      "dropped_sfx": 0,
+      "frames": 3000,
+      "hash": "945e3fdd634c3f1fa35ab326567de182",
+      "hp": 82,
+      "kills": 32,
+      "mean_step_ms": 0.9647,
+      "outcome": "win",
+      "peak_voices": 8,
+      "score": 10135,
+      "wave": 4
+    },
+    "reference": {
+      "file": "bot_campaign.json",
+      "frames": 3000,
+      "size": 858562
+    },
+    "strafe_300": {
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "kills": 0,
+      "mean_step_ms": 0.3619,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-19/after",
+    "before_dir": "shots/shooter-campaign/cycle-19/before",
+    "route": "scripts/capture.py spawn; 960x540 seed 1, frame 1; before/after same staging"
+  },
+  "tests": {
+    "spawn_lane_tests": 2,
+    "strafe_baseline": "30 shots / 0 hits / hp 92",
+    "suite": "104 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "spawn lane",
+    "pickup visibility",
+    "cover layout"
+  ],
+  "visual_diff": {
+    "bbox": [
+      402,
+      283,
+      658,
+      350
+    ],
+    "changed_px": 15214,
+    "draws": 4,
+    "fraction": 0.0293,
+    "mean_luma_after": 34.74,
+    "mean_luma_before": 34.69,
+    "triangles": 218
+  }
+}

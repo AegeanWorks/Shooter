@@ -71,7 +71,7 @@ projects/shooter/
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
-│       ├── levels.json     <- arena + low jump platform + 5 waves (wave 3 warden) + win_wave 4
+│       ├── levels.json     <- arena + low jump platform + open spawn lane + 5 waves (wave 3 warden) + win_wave 4
 │       ├── juice.json      <- tracer/flash offset/scale, particle caps, hitstop, flinch, dry-fire cd
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
@@ -95,6 +95,7 @@ projects/shooter/
 │   ├── test_wins.py        <- schema-2 migration, persisted wins, win banner
 │   ├── test_dry_fire.py    <- rate-limited dry fire, NO AMMO voice/caption
 │   ├── test_enemy_los.py   <- brute melee LOS; open-field attack parity
+│   ├── test_spawn_lane.py  <- clear spawn->pickup cover lane
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -120,7 +121,8 @@ projects/shooter/
 │   ├── cycle-15.json  <- improvement-cycle 15 proof: denied-overdrive cue pair, WAV
 │   ├── cycle-16.json  <- improvement-cycle 16 proof: persisted-wins banner pair, runs
 │   ├── cycle-17.json  <- improvement-cycle 17 proof: dry-fire cue pair, same-hash run
-│   └── cycle-18.json  <- improvement-cycle 18 proof: cover LOS pair, same-hash runs
+│   ├── cycle-18.json  <- improvement-cycle 18 proof: cover LOS pair, same-hash runs
+│   └── cycle-19.json  <- improvement-cycle 19 proof: open spawn lane pair, campaign run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

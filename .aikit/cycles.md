@@ -395,3 +395,21 @@ rotation completes.
   test now passes `max_wall_seconds=30.0` to both `validate_fairness` and
   `run_bot`; two consecutive full runs passed 102/102 afterwards.
 - **Evidence file**: `evidence/cycle-18.json`.
+
+## Cycle 19 — Levels: open the spawn-to-pickup lane
+- **Area**: levels (19th cycle).
+- **Defect / evidence**: the centre cover at (0,0) sat on the pickup
+  line from spawn; the pickup ray hit it at 7.02 m, so the first view was a
+  box and the reward hidden. Baseline pickup-lane test failed.
+- **Fix**: move the centre cover to (2.5,0), leaving the spawn/pickup lane
+  clear while keeping a right-of-centre obstacle. Re-record the 3000-frame
+  reference (win at wave 4 / frame 2369) and update the strafe baseline.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-19/`;
+  960x540 seed 1, frame 1. 15,214 changed px (2.93%, bbox 402,283-658,350;
+  cover leaves the crosshair lane), mean luma 34.69 -> 34.74.
+- **Played runs**: `kite 3000` wave 4/win, 32 kills, 10135, hp 82, hash
+  `945e3fdd…`; fairness `witnessed_win:reference:2369`; `strafe 300`
+  30/0/hp 92, hash `14a48660…`.
+- **Gates**: `python -m pytest -q` 104 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-19.json`.

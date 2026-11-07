@@ -151,8 +151,8 @@ def test_strafe_baseline_locked():
     final = result["final"]
     assert final["player"]["alive"] is True, final
     assert final["shots"] == 30, final
-    assert final["hits"] == 2, final
-    assert final["player"]["hp"] == 84, final
+    assert final["hits"] == 0, final
+    assert final["player"]["hp"] == 92, final
 
 
 def test_player_can_die():
