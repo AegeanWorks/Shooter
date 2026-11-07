@@ -72,6 +72,8 @@ class ShooterGame:
             self.profile_disabled = True
         self.run_new_best = False
         self.last_run = None
+        self.campaign_cleared = False
+        self.campaign_clear_t = 0.0
         self._run_recorded = False
         self._run_start_best = int(self.profile.get("best_score", 0))
         self._enemy_nodes: list[Node] = []
@@ -109,6 +111,8 @@ class ShooterGame:
         self.sound_cue_t = 0.0
         self.run_new_best = False
         self.last_run = None
+        self.campaign_cleared = False
+        self.campaign_clear_t = 0.0
         self._run_recorded = False
         self._run_start_best = int(self.profile.get("best_score", 0))
         self.particles = self.sim.particles
@@ -289,6 +293,14 @@ class ShooterGame:
             self._finish_run()
         elif "wave" in events:
             self._record_progress()
+        if (
+            not self.campaign_cleared
+            and self.sim.alive
+            and int(self.sim.wave) >= int(self.sim.levels.get("win_wave", 4))
+        ):
+            self.campaign_cleared = True
+            self.campaign_clear_t = 4.0
+        self.campaign_clear_t = max(0.0, self.campaign_clear_t - float(dt))
         self.sound_cue_t = max(0.0, self.sound_cue_t - float(dt))
         # cap voices: deterministic mixdown cost bounded via the public API
         # only (post-update invariant stays voice_count <= 8)
@@ -546,12 +558,23 @@ class ShooterGame:
         best = int(self.profile.get("best_score", 0))
         if best > 0:
             canvas.text(int(state.width) // 2 - 60, 16, f"BEST {best}", (0.55, 0.60, 0.68, 1.0), 2)
+        if self.sim.alive and self.campaign_clear_t > 0.0:
+            width = int(state.width)
+            cx = width // 2
+            canvas.rect(cx - 180, 138, 360, 56, (0.03, 0.04, 0.06, 0.86))
+            canvas.text(cx - 82, 146, "CAMPAIGN CLEAR", (1.0, 0.62, 0.20, 1.0), 2)
+            canvas.text(
+                cx - 96, 168,
+                f"WAVE {int(self.sim.wave)}  SCORE {int(self.sim.score)}",
+                (0.95, 0.95, 0.97, 1.0), 2,
+            )
         if not self.sim.alive and self.last_run is not None:
             run = self.last_run
             width = int(state.width)
             cx = width // 2
             top = int(state.height) // 2 - 8
-            canvas.rect(cx - 190, top, 380, 100, (0.03, 0.04, 0.06, 0.86))
+            panel_height = 122 if self.campaign_cleared else 100
+            canvas.rect(cx - 190, top, 380, panel_height, (0.03, 0.04, 0.06, 0.86))
             canvas.text(cx - 170, top + 6, "RUN OVER", (1.0, 0.30, 0.30, 1.0), 2)
             canvas.text(
                 cx - 170, top + 28,
@@ -563,5 +586,8 @@ class ShooterGame:
                 f"BEST STREAK {run['best_streak']}  TIME {run['time_s']}s",
                 (0.55, 0.60, 0.68, 1.0), 2,
             )
+            if self.campaign_cleared:
+                canvas.text(cx - 170, top + 72, "CAMPAIGN CLEARED", (1.0, 0.62, 0.20, 1.0), 2)
             if self.run_new_best:
-                canvas.text(cx - 170, top + 72, "NEW BEST", (1.0, 0.62, 0.20, 1.0), 2)
+                canvas.text(cx - 170, top + (94 if self.campaign_cleared else 72),
+                            "NEW BEST", (1.0, 0.62, 0.20, 1.0), 2)

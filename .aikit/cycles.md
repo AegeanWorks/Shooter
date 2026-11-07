@@ -178,3 +178,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 77 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-07.json`.
+
+## Cycle 08 — Progression: boss-clear campaign milestone + banner
+- **Area**: progression (rotation restart, 8th cycle).
+- **Defect / evidence**: `win_wave: 2` declared `win` at wave-2 start
+  (~3 s) while the wave-3 Warden sat outside the campaign; no HUD surface
+  announced a win at all.
+- **Fix**: `win_wave: 4` (waves 1-3 with the Warden finale), 4 s
+  `CAMPAIGN CLEAR` banner when the live wave reaches it, `CAMPAIGN CLEARED`
+  in the death debrief; `bot_campaign.json` 2400-frame reference and
+  fairness/outcome tests switched to 2400 frames.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-08/`;
+  960x540, seed 1, staged wave-3 boss kill, wave 4 entry. Before (no
+  banner) vs after: 20,160 changed px (3.89%, bbox 300,138-659,193;
+  exactly the 360x56 banner), mean luma 37.43 -> 38.18.
+- **Played runs**: 2400-frame campaign reaches wave 4, 29 kills, 9220
+  score, hp 94, `outcome=win`, hash `88c3e673…`; fairness verdict
+  `fair/witnessed_win:reference:2340`; kite 600 now `ongoing` at wave 2.
+- **Gates**: `python -m pytest -q` 78 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-08.json`.

@@ -155,6 +155,30 @@ def test_best_line_and_death_debrief_draw(tmp_path):
     assert any("NEW BEST" in label for label in labels), labels
 
 
+def test_boss_wave_clear_shows_campaign_clear(tmp_path):
+    g = ShooterGame(profile_path=tmp_path / "profile.json")
+    g.build_scene()
+    g.sim.spawn_queue = []
+    g.sim.spawn_t = 999.0
+    g.sim.pickup_taken = True
+    g.sim.wave = 3
+    g.sim.enemies = [
+        _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 2.0), hp=12, max_hp=600,
+               summon_cd=999.0)
+    ]
+    canvas = _Canvas()
+    g.draw_ui(canvas, _Hud())
+    assert not any("CAMPAIGN CLEAR" in str(t[2]) for t in canvas.texts)
+    g.update(1.0 / 60.0, ActionState(held=frozenset({"fire"})))
+    assert g.campaign_cleared is True
+    assert g.campaign_clear_t > 0.0
+    assert g.snapshot()["outcome"] == "win"
+    canvas = _Canvas()
+    g.draw_ui(canvas, _Hud())
+    assert any("CAMPAIGN CLEAR" in str(t[2]) for t in canvas.texts), canvas.texts
+    assert g.profile["best_wave"] >= 4
+
+
 def test_unsupported_profile_disables_saves_without_overwrite(tmp_path):
     path = tmp_path / "profile.json"
     path.write_text('{"schema": 99, "best_score": 1}', encoding="utf-8")

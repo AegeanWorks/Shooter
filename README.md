@@ -53,6 +53,8 @@ python -m keystone --game shooter.game:ShooterGame --describe
 python -m keystone --game shooter.game:ShooterGame --simulate --frames 600 --trace
 python -m keystone --game shooter.game:ShooterGame --verify-determinism --frames 1800
 python -m keystone --game shooter.game:ShooterGame --headless --frames 1 --size 960x540 --ui --out shot.png --report shot.json
+# campaign reference: clears the wave-3 warden and wins at wave 4
+python play.py --replay bot_campaign.json
 ```
 
 ## What's Inside
@@ -69,7 +71,7 @@ projects/shooter/
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
-│       ├── levels.json     <- arena + 5 waves (wave 3 warden) + pickup + win_wave
+│       ├── levels.json     <- arena + 5 waves (wave 3 warden) + pickup + win_wave 4
 │       ├── juice.json      <- tracer/flash/particle caps, hitstop
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
@@ -98,7 +100,8 @@ projects/shooter/
 │   ├── cycle-04.json  <- improvement-cycle 4 proof: HUD pair, crosshair, runs, gates
 │   ├── cycle-05.json  <- improvement-cycle 5 proof: arena pair, luma, budget, runs
 │   ├── cycle-06.json  <- improvement-cycle 6 proof: audio events, captions, WAV, gates
-│   └── cycle-07.json  <- improvement-cycle 7 proof: profile save, debrief pair, runs
+│   ├── cycle-07.json  <- improvement-cycle 7 proof: profile save, debrief pair, runs
+│   └── cycle-08.json  <- improvement-cycle 8 proof: campaign-clear pair, fairness run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
@@ -111,7 +114,8 @@ projects/shooter/
 ├── ASSETS.md                <- asset provenance for packs/ports
 ├── REUSE.toml               <- copyright + license inventory
 ├── assets/                 <- logo.svg + social-preview.svg (brand)
-├── bot_kite600.json        <- scripted kite reference (fair `witnessed_win`)
+├── bot_kite600.json        <- minute-one kite reference (first two waves)
+├── bot_campaign.json       <- 2400-frame campaign reference (boss clear, wave 4)
 ├── bot_log.json            <- command-log sample
 ├── bot_soak.json           <- sustain soak script
 ├── bot_soak2.json          <- second sustain soak script
@@ -158,6 +162,10 @@ overdrive have no live key binding yet (engine-side gap, filed — see
 ADR-016); drive them via headless `ActionState` scripts (`shooter.bot`
 kite/overdrive policies), `--replay` logs, or the `bot_kite600.json`
 reference. Shift sprint, P pause, H hide UI, F1 cursor, Esc quit.
+
+The campaign now clears after the wave-3 Warden boss (wave 4 entry): the HUD shows a
+`CAMPAIGN CLEAR` banner for four seconds, and the death debrief remembers it as
+`CAMPAIGN CLEARED`.
 
 ## Progress and saves
 

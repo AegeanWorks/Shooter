@@ -1,0 +1,89 @@
+{
+  "area": "progression",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py win <prefix>",
+    "python scripts/play_run.py kite 2400 <report> <png> <png-report>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python play.py --replay bot_campaign.json",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 8,
+  "fairness": {
+    "reason": "witnessed_win:reference:2340",
+    "verdict": "fair"
+  },
+  "fix": "win_wave 4 (waves 1-3, Warden finale), 4 s CAMPAIGN CLEAR banner, CAMPAIGN CLEARED debrief, 2400-frame campaign reference",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "78 passed"
+  },
+  "play_runs": {
+    "campaign_2400": {
+      "alive": true,
+      "frames": 2400,
+      "hash": "88c3e67342fc03fad0f4776ef9dac918",
+      "hp": 94,
+      "kills": 29,
+      "outcome": "win",
+      "profile": {
+        "best_score": 9070,
+        "disabled": false,
+        "last_run": null,
+        "runs": 0,
+        "save_errors": 0
+      },
+      "score": 9220,
+      "wave": 4
+    },
+    "minute_one_600": {
+      "alive": true,
+      "frames": 600,
+      "hash": "491110534d8cec3f1243f2661b42464d",
+      "hp": 100,
+      "kills": 9,
+      "outcome": "ongoing",
+      "profile": {
+        "best_score": 610,
+        "disabled": false,
+        "last_run": null,
+        "runs": 0,
+        "save_errors": 0
+      },
+      "score": 1500,
+      "wave": 2
+    },
+    "reference": "bot_campaign.json 2400 frames, replay hash 88c3e673?, size 675974 bytes"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-08/after",
+    "before_dir": "shots/shooter-campaign/cycle-08/before",
+    "route": "scripts/capture.py win; staged wave-3 warden at 2 m, hp 12, score 5000; capture wave-4 entry; 960x540 seed 1"
+  },
+  "tests": {
+    "campaign_clear_test": "test_boss_wave_clear_shows_campaign_clear",
+    "outcome_reference_frames": 2400,
+    "suite": "78 passed"
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "campaign milestone",
+    "boss finale",
+    "win feedback"
+  ],
+  "visual_diff": {
+    "banner_region_px": 20160,
+    "bbox": [
+      300,
+      138,
+      659,
+      193
+    ],
+    "changed_px": 20160,
+    "fraction": 0.0389,
+    "mean_luma_after": 38.18,
+    "mean_luma_before": 37.43
+  }
+}

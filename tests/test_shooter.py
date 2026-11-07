@@ -205,11 +205,12 @@ def test_outcome_signal():
     g2.build_scene()
     from shooter.bot import kite_step
 
-    for _ in range(600):
+    for _ in range(2400):
         g2.update(1.0 / 60.0, kite_step(g2.sim))
     final = g2.snapshot()
-    assert final["wave"] >= 2, final
+    assert final["wave"] >= 4, final
     assert final["outcome"] == "win", final
+    assert g2.campaign_cleared is True
 
 
 def _kite_reference_actions():
@@ -217,7 +218,7 @@ def _kite_reference_actions():
 
     from keystone.input import ActionState as _AS
 
-    path = Path(__file__).parent.parent / "bot_kite600.json"
+    path = Path(__file__).parent.parent / "bot_campaign.json"
     payload = json.loads(path.read_text(encoding="utf-8"))
     frames = payload.get("frames", payload) if isinstance(payload, dict) else payload
     return [_AS.from_dict(item) for item in frames]
@@ -238,12 +239,12 @@ def test_playtest_fair_with_kite_reference():
     from keystone.playtest import ScriptedPolicy, run_bot, validate_fairness
 
     reference = _kite_reference_actions()
-    verdict = validate_fairness(ShooterGame, reference_actions=reference, frames=600, seeds=(1,))
+    verdict = validate_fairness(ShooterGame, reference_actions=reference, frames=2400, seeds=(1,))
     assert verdict["verdict"] == "fair", verdict
     assert any(str(r).startswith("witnessed_win") for r in verdict["reasons"]), verdict
-    transcript = run_bot(ShooterGame, ScriptedPolicy(reference), frames=600, seed=1)
+    transcript = run_bot(ShooterGame, ScriptedPolicy(reference), frames=2400, seed=1)
     assert transcript["outcome"] == "win", transcript["outcome"]
-    again = run_bot(ShooterGame, ScriptedPolicy(reference), frames=600, seed=1)
+    again = run_bot(ShooterGame, ScriptedPolicy(reference), frames=2400, seed=1)
     assert again["hash"] == transcript["hash"]
 
 
