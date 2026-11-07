@@ -235,3 +235,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 83 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-10.json`.
+
+## Cycle 11 — Enemies/bosses: enemies no longer walk through cover
+- **Area**: enemies/bosses (11th cycle).
+- **Defect / evidence**: the baseline 40-frame crossing had the mite at
+  `(-0.33, 0.81)`, embedded in the centre cover and protruding through its
+  front face; a spawn sweep placed a mite at `(5.00, -4.59)` inside the
+  right cover. Only the player and hitscan rays collided with cover.
+- **Fix**: `cover_boxes` in reset; `_enemy_blocked_at` and `_move_enemy`
+  with a heading sweep (direct, ±30/60/90/120/180°) for slide-around;
+  applied to mite/brute/wisp/warden movement; spawn points reject covers.
+  Campaign reference re-recorded at 3000 frames; fairness/outcome tests
+  updated to 3000.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-11/`;
+  960x540 seed 1, frame 40, same staged crossing. Before: mite embedded in
+  the cover; after: beside it. 3,116 changed px (0.60%, bbox
+  387,295-485,353), mean luma 34.75 -> 34.88.
+- **Played runs**: `kite 3000` reaches wave 4 with `outcome=win`, 32 kills,
+  11955, hp 2, hash `9b70e372…`; fairness `witnessed_win:reference:2627`;
+  `strafe 300` hash `973276f5…` unchanged.
+- **Gates**: `python -m pytest -q` 86 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-11.json`.

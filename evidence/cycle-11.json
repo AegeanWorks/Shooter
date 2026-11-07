@@ -1,0 +1,88 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py cover <prefix>",
+    "python scripts/play_run.py kite 3000 <report> <png> <png-report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python scripts/soak.py 3000 bot_campaign.json <temp-report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 11,
+  "fix": "enemy cover collision with heading-sweep slide-around, spawn guard, and a re-recorded 3000-frame campaign reference",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "86 passed"
+  },
+  "play_runs": {
+    "fairness": {
+      "reason": "witnessed_win:reference:2627",
+      "verdict": "fair"
+    },
+    "kite_3000": {
+      "alive": true,
+      "chunk_max_step_ms": 19.9915,
+      "dropped_sfx": 0,
+      "frames": 3000,
+      "hash": "9b70e372088775c590660282fac556f8",
+      "hp": 2,
+      "kills": 32,
+      "mean_step_ms": 0.5407,
+      "outcome": "win",
+      "peak_voices": 8,
+      "score": 11955,
+      "wave": 4
+    },
+    "reference": {
+      "file": "bot_campaign.json",
+      "frames": 3000,
+      "size": 851152
+    },
+    "strafe_300": {
+      "alive": true,
+      "chunk_max_step_ms": 0.7079,
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "mean_step_ms": 0.2734,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-11/after",
+    "before_dir": "shots/shooter-campaign/cycle-11/before",
+    "route": "scripts/capture.py cover; mite at (0,0.5,-2) behind centre cover, player at spawn, 40 idle frames; 960x540 seed 1"
+  },
+  "tests": {
+    "enemy_cover_tests": 3,
+    "reference_frames": 3000,
+    "suite": "86 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "cover collision",
+    "enemy pathing",
+    "fairness reference"
+  ],
+  "visual_diff": {
+    "bbox": [
+      387,
+      295,
+      485,
+      353
+    ],
+    "changed_px": 3116,
+    "draws": 5,
+    "fraction": 0.006,
+    "mean_luma_after": 34.88,
+    "mean_luma_before": 34.75,
+    "triangles": 538
+  }
+}

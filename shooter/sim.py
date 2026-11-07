@@ -209,6 +209,13 @@ class Sim:
         self.pickup_taken = False
         self._build_wave()
         self.colliders = self._colliders()
+        self.cover_boxes = [
+            AABB(
+                Vec3(float(c["x"]), float(c["h"]) / 2.0, float(c["z"])),
+                Vec3(float(c["w"]) / 2.0, float(c["h"]) / 2.0, float(c["d"]) / 2.0),
+            )
+            for c in self.levels["arena"]["covers"]
+        ]
         self.grid.clear()
         for i, b in enumerate(self.colliders):
             self.grid.insert(f"wall:{i}", b)
@@ -234,11 +241,16 @@ class Sim:
         edef = self.enemy_defs[etype]
         px, _, pz = self.player_pos.x, self.player_pos.y, self.player_pos.z
         x, z = 0.0, -18.0
-        for _ in range(5):
+        radius = float(edef["radius"])
+        for _ in range(8):
             x = self.rng.uniform(-18.0, 18.0)
             z = self.rng.uniform(-18.0, 18.0)
-            if math.hypot(x - px, z - pz) >= 10.0:
+            if (math.hypot(x - px, z - pz) >= 10.0
+                    and not self._enemy_blocked_at(x, z, radius)):
                 break
+        else:
+            if self._enemy_blocked_at(x, z, radius):
+                x, z = 0.0, -18.0
         y = float(edef["height"]) / 2.0
         self.enemies.append(
             _Enemy(
@@ -274,6 +286,34 @@ class Sim:
             events.append("boss_summon")
 
     # ---- helpers -------------------------------------------------------
+    def _enemy_blocked_at(self, x: float, z: float, radius: float) -> bool:
+        for box in self.cover_boxes:
+            if (abs(x - box.center.x) < box.half_extents.x + radius
+                    and abs(z - box.center.z) < box.half_extents.z + radius):
+                return True
+        return False
+
+    def _move_enemy(self, enemy: _Enemy, dx: float, dz: float) -> None:
+        """Move with cover collision; slide along a blocked face or tangent."""
+        if abs(dx) + abs(dz) <= 1e-12:
+            return
+        radius = float(self.enemy_defs[enemy.etype]["radius"])
+        x, z = enemy.pos.x, enemy.pos.z
+        length = math.hypot(dx, dz)
+        if length <= 1e-9:
+            return
+        base = math.atan2(dz, dx)
+        # Sweep nearby headings, preferring the direct one. This follows a
+        # cover edge instead of parking against its face (the old x/z-only
+        # slide could oscillate at the centre of a wide box).
+        for degrees in (0, 30, -30, 60, -60, 90, -90, 120, -120, 180):
+            angle = base + math.radians(degrees)
+            nx = max(-19.0, min(19.0, x + math.cos(angle) * length))
+            nz = max(-19.0, min(19.0, z + math.sin(angle) * length))
+            if not self._enemy_blocked_at(nx, nz, radius):
+                enemy.pos = Vec3(nx, enemy.pos.y, nz)
+                return
+
     def eye(self) -> Vec3:
         return Vec3(self.player_pos.x, self.player_pos.y + 0.72, self.player_pos.z)
 
@@ -698,7 +738,7 @@ class Sim:
                 side = Vec3(-direction.z, 0.0, direction.x)
                 vel = direction * speed + side * strafe
                 if dist > 1.2:
-                    e.pos = Vec3(e.pos.x + vel.x * dt, e.pos.y, e.pos.z + vel.z * dt)
+                    self._move_enemy(e, vel.x * dt, vel.z * dt)
                 if dist <= float(edef["range"]) and e.attack_cd <= 0.0 and self.alive:
                     self.hp -= int(edef["dmg"])
                     e.attack_cd = 1.0
@@ -712,10 +752,7 @@ class Sim:
                 if e.pause_t > 0.0:
                     e.pause_t = max(0.0, e.pause_t - dt)
                 elif dist > 3.0:
-                    e.pos = Vec3(
-                        e.pos.x + direction.x * speed * dt, e.pos.y,
-                        e.pos.z + direction.z * speed * dt,
-                    )
+                    self._move_enemy(e, direction.x * speed * dt, direction.z * speed * dt)
                     if dist < 6.0:
                         e.pause_t = 0.4
                 if dist <= float(edef["range"]) and e.attack_cd <= 0.0 and self.alive:
@@ -739,7 +776,7 @@ class Sim:
                 # dart every 2.1s
                 if int((self.time + e.state_t) / 2.1) != int((self.time + e.state_t - dt) / 2.1):
                     vel = direction * (speed * 1.6)
-                e.pos = Vec3(e.pos.x + vel.x * dt, e.pos.y, e.pos.z + vel.z * dt)
+                self._move_enemy(e, vel.x * dt, vel.z * dt)
                 if dist <= float(edef["range"]) and e.attack_cd <= 0.0 and self.alive:
                     # LOS check enemy->player against walls
                     src = Vec3(e.pos.x, e.pos.y + 0.3, e.pos.z)
@@ -779,11 +816,7 @@ class Sim:
                                 events.append("died")
                 else:
                     if dist > float(edef["range"]) * 0.75:
-                        e.pos = Vec3(
-                            e.pos.x + direction.x * speed * dt,
-                            e.pos.y,
-                            e.pos.z + direction.z * speed * dt,
-                        )
+                        self._move_enemy(e, direction.x * speed * dt, direction.z * speed * dt)
                     elif e.attack_cd <= 0.0:
                         e.windup_t = float(edef.get("windup_s", 0.7))
                         e.attack_cd = float(edef.get("attack_cd_s", 3.0))

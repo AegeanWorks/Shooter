@@ -64,7 +64,7 @@ projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core/beacon, floor grid/trim, mixer + cue captions
-│   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/particles/engagement
+│   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: crosshair/ammo alert/reload/wave/score/streak/overdrive/damage/boss/pickup
 │   ├── profile.py       <- versioned, atomic run profile (bests, runs, debrief)
@@ -87,6 +87,7 @@ projects/shooter/
 │   ├── test_audio.py       <- boss/engagement voices, captions, clip hook
 │   ├── test_profile.py     <- schema/backup/quarantine, run record, debrief
 │   ├── test_combat_feel.py <- non-lethal hit flinch, expiry, scene squash
+│   ├── test_enemy_cover.py <- cover collision, slide-around, spawn guard
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -104,7 +105,8 @@ projects/shooter/
 │   ├── cycle-07.json  <- improvement-cycle 7 proof: profile save, debrief pair, runs
 │   ├── cycle-08.json  <- improvement-cycle 8 proof: campaign-clear pair, fairness run
 │   ├── cycle-09.json  <- improvement-cycle 9 proof: low-ammo/reload HUD pair, runs
-│   └── cycle-10.json  <- improvement-cycle 10 proof: hit-flinch pair, same-hash runs
+│   ├── cycle-10.json  <- improvement-cycle 10 proof: hit-flinch pair, same-hash runs
+│   └── cycle-11.json  <- improvement-cycle 11 proof: cover-slide pair, fairness run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
@@ -118,7 +120,7 @@ projects/shooter/
 ├── REUSE.toml               <- copyright + license inventory
 ├── assets/                 <- logo.svg + social-preview.svg (brand)
 ├── bot_kite600.json        <- minute-one kite reference (first two waves)
-├── bot_campaign.json       <- 2400-frame campaign reference (boss clear, wave 4)
+├── bot_campaign.json       <- 3000-frame campaign reference (boss clear, wave 4)
 ├── bot_log.json            <- command-log sample
 ├── bot_soak.json           <- sustain soak script
 ├── bot_soak2.json          <- second sustain soak script

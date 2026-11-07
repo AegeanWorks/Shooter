@@ -355,6 +355,33 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_cover(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """A mite walks from behind the centre cover toward the spawn eye."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, -2.0), hp=30, max_hp=30)]
+        for _ in range(40):
+            g.update(FIXED_STEP, ActionState())
+        e = g.sim.enemies[0]
+        inside = any(
+            abs(e.pos.x - float(c["x"])) < float(c["w"]) / 2.0 + 0.5
+            and abs(e.pos.z - float(c["z"])) < float(c["d"]) / 2.0 + 0.5
+            for c in g.sim.levels["arena"]["covers"]
+        )
+        print(f"cover frame={g.sim.tick} mite=({e.pos.x:.2f},{e.pos.z:.2f}) inside={inside}")
+        engine.capture(f"{prefix}_cover.png", f"{prefix}_cover.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_flinch(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Exact first-hit frame on a live mite: the combat hit-reaction pair."""
     from keystone.app import Engine
@@ -539,6 +566,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_hud_ammo(prefix, shadows, srgb, post, bloom)
     if which == "flinch":
         route_flinch(prefix, shadows, srgb, post, bloom)
+    if which == "cover":
+        route_cover(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

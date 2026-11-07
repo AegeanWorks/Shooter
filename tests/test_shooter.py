@@ -205,7 +205,7 @@ def test_outcome_signal():
     g2.build_scene()
     from shooter.bot import kite_step
 
-    for _ in range(2400):
+    for _ in range(3000):
         g2.update(1.0 / 60.0, kite_step(g2.sim))
     final = g2.snapshot()
     assert final["wave"] >= 4, final
@@ -239,12 +239,12 @@ def test_playtest_fair_with_kite_reference():
     from keystone.playtest import ScriptedPolicy, run_bot, validate_fairness
 
     reference = _kite_reference_actions()
-    verdict = validate_fairness(ShooterGame, reference_actions=reference, frames=2400, seeds=(1,))
+    verdict = validate_fairness(ShooterGame, reference_actions=reference, frames=3000, seeds=(1,))
     assert verdict["verdict"] == "fair", verdict
     assert any(str(r).startswith("witnessed_win") for r in verdict["reasons"]), verdict
-    transcript = run_bot(ShooterGame, ScriptedPolicy(reference), frames=2400, seed=1)
+    transcript = run_bot(ShooterGame, ScriptedPolicy(reference), frames=3000, seed=1)
     assert transcript["outcome"] == "win", transcript["outcome"]
-    again = run_bot(ShooterGame, ScriptedPolicy(reference), frames=2400, seed=1)
+    again = run_bot(ShooterGame, ScriptedPolicy(reference), frames=3000, seed=1)
     assert again["hash"] == transcript["hash"]
 
 
