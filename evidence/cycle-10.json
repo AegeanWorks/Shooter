@@ -1,0 +1,71 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py flinch <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 10,
+  "fix": "non-lethal hit flinch: 0.25 s timer, squash/push away, shared hot hit material for the first 40%",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "83 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "frames": 600,
+      "hash": "491110534d8cec3f1243f2661b42464d",
+      "hits": 31,
+      "hp": 100,
+      "kills": 9,
+      "score": 1500,
+      "shots": 36,
+      "wave": 2
+    },
+    "parity": "kite 49111053? and strafe 973276f5? identical to cycle 9; sim/snapshot untouched",
+    "strafe_300": {
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hits": 2,
+      "hp": 84,
+      "kills": 0,
+      "score": 0,
+      "shots": 30,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-10/after",
+    "before_dir": "shots/shooter-campaign/cycle-10/before",
+    "route": "scripts/capture.py flinch; mite hp 30 at 6 m, one pulse hit (hp 18), capture 7 frames after the hit so the muzzle flash is gone; 960x540 seed 1"
+  },
+  "tests": {
+    "combat_feel_tests": 3,
+    "suite": "83 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "hit feedback",
+    "enemy reaction",
+    "combat legibility"
+  ],
+  "visual_diff": {
+    "bbox": [
+      432,
+      314,
+      515,
+      381
+    ],
+    "changed_px": 3839,
+    "draws_after": 7,
+    "draws_before": 7,
+    "fraction": 0.0074,
+    "mean_luma_after": 36.03,
+    "mean_luma_before": 35.5,
+    "triangles": 574
+  }
+}

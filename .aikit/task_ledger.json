@@ -1,45 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-09-ammo-hud",
+    "task_id": "shooter-cycle-10-hit-flinch",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794084893.0707724,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794085855.9262044,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794084970.0936754
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-04-ui-readability",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-04-ui-readability' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794080741.4601812,
-      "timestamp_str": "2026-11-07 22:45:41",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-05-arena-graphics",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Graphics cycle: floor grid, lifted lighting, shared lit trim, visual pairs and identical play hashes",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794081208.865511,
-      "timestamp_str": "2026-11-07 22:53:28",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The arena floor and cover tops dissolved into a near-black background; the level lacked landmarks.",
-        "benefits": "Readable floor, depth from the grid, and lit cover/wall edges at one instanced batch.",
-        "risks": "contract: none (render only); dependency: none; concurrency: none; state: ten trim nodes and one texture must stay out of sim.",
-        "mitigation": "Pin texture determinism, shared material/mesh identity, collider parity and the draw/triangle budget; re-run all play hashes."
-      },
-      "plan_digest": "41b13e769d1e48f6173e32715699bbf2d01096ee0ac53dab33f844d8fa4d1838"
-    },
     {
       "task_id": "shooter-cycle-05-arena-graphics",
       "phase": "in_progress",
@@ -257,6 +228,35 @@
       "status": "completed",
       "timestamp": 1794084970.0936773,
       "timestamp_str": "2026-11-07 23:56:10",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-10-hit-flinch",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Combat-feel cycle: non-lethal hit flinch (squash/push/hot material), visual pair and same-hash runs",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794085855.5163429,
+      "timestamp_str": "2026-11-08 00:10:55",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Body shots left enemies visually unchanged; only the crosshair and particles reacted.",
+        "benefits": "Immediate target reaction makes hits readable without touching damage or hitboxes.",
+        "risks": "contract: none (snapshot unchanged); dependency: none; concurrency: none; state: hit_t is a transient sim timer and juice DATA.",
+        "mitigation": "Pin timer/expiry/scene tests, keep hit_t out of snapshot, compare play hashes to cycle 9."
+      },
+      "plan_digest": "1fec6413dc0fb070c43f95c266a1900f8b46f8cf0d40af3d3931b87e619fc9e5"
+    },
+    {
+      "task_id": "shooter-cycle-10-hit-flinch",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Hit flinch proven: 83 tests, determinism 1800 ok, 3839px enemy pair, identical kite/strafe hashes; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794085855.9262044,
+      "timestamp_str": "2026-11-08 00:10:55",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

@@ -49,6 +49,7 @@ class _Enemy:
     pause_t: float = 0.0
     windup_t: float = 0.0
     summon_cd: float = 0.0
+    hit_t: float = 0.0
 
 
 class Sim:
@@ -590,6 +591,8 @@ class Sim:
                 e.hp -= int(round(dmg))
                 self.hits += 1
                 self.hitmark_t = float(self.juice.get("crosshair_hit_s", 0.12))
+                if e.hp > 0 and e.alive:
+                    e.hit_t = float(self.juice.get("hit_flinch_s", 0.25))
                 hit_pos = Vec3(
                     origin.x + direction.x * d,
                     origin.y + direction.y * d,
@@ -684,6 +687,7 @@ class Sim:
                 continue
             edef = self.enemy_defs[e.etype]
             e.attack_cd = max(0.0, e.attack_cd - dt)
+            e.hit_t = max(0.0, e.hit_t - dt)
             e.state_t += dt
             to_p = Vec3(self.player_pos.x - e.pos.x, 0.0, self.player_pos.z - e.pos.z)
             dist = math.sqrt(to_p.x * to_p.x + to_p.z * to_p.z)

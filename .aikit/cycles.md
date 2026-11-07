@@ -216,3 +216,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 80 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-09.json`.
+
+## Cycle 10 — Combat feel: non-lethal hit flinch + flash
+- **Area**: combat feel (rotation restart, 10th cycle).
+- **Defect / evidence**: baseline first-hit frames (hp 18, flash expired)
+  left the mite as an unchanged orange sphere; only the crosshair hitmark
+  and particles reacted.
+- **Fix**: `hit_t` 0.25 s on non-lethal hits, decremented in `_step_enemies`;
+  `_sync_scene` squashes (0.28), pushes away (0.12) and swaps to the shared
+  hot `material.enemy_hit` for the first 40% of the timer. Damage,
+  hitboxes, AI and snapshot untouched; all tuning in `juice.json`.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-10/`;
+  960x540 seed 1, same first-hit setup (frame 8, hp 18). 3,839 changed px
+  (0.74%, bbox 432,314-515,381; white-hot squashed mite), mean luma
+  35.50 -> 36.03; draws stay 7.
+- **Played runs**: kite 600 `49111053…` (36 shots/31 hits/9 kills) and
+  strafe 300 `973276f5…` (30/2) identical to cycle 9.
+- **Gates**: `python -m pytest -q` 83 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-10.json`.

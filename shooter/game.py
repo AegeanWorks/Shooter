@@ -138,6 +138,7 @@ class ShooterGame:
         self.assets.register("material.brute", Material(color=Vec3(0.60, 0.40, 0.90), specular=0.4, shininess=48.0, metallic=0.2, roughness=0.5))
         self.assets.register("material.wisp", Material(color=Vec3(0.30, 0.85, 1.00), specular=0.6, shininess=64.0, emissive=Vec3(0.10, 0.45, 0.55)))
         self.assets.register("material.warden", Material(color=Vec3(0.62, 0.09, 0.10), specular=0.35, shininess=32.0, emissive=Vec3(0.38, 0.02, 0.02), metallic=0.15, roughness=0.65))
+        self.assets.register("material.enemy_hit", Material(color=Vec3(1.0, 0.96, 0.86), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.62, 0.28)))
         self.assets.register("material.tracer", Material(color=Vec3(1.0, 0.85, 0.30), emissive=Vec3(0.9, 0.65, 0.15)))
         self.assets.register("material.flash", Material(color=Vec3(1.0, 1.0, 1.0), emissive=Vec3(1.0, 0.9, 0.6)))
         self.assets.register("material.pickup", Material(color=Vec3(0.25, 1.0, 0.45), emissive=Vec3(0.10, 0.55, 0.20)))
@@ -435,13 +436,15 @@ class ShooterGame:
             "wisp": (self.assets.require("mesh.wisp").payload, self.assets.require("material.wisp").payload, Vec3(1, 1, 1)),
             "warden": (self.assets.require("mesh.warden").payload, self.assets.require("material.warden").payload, Vec3(1, 1, 1)),
         }
+        hit_mat = self.assets.require("material.enemy_hit").payload
+        hit_span = max(1e-6, float(self.sim.juice.get("hit_flinch_s", 0.25)))
         ordered = sorted(sim.enemies, key=lambda e: (0 if e.alive else 1, e.etype))
         for i, node in enumerate(self._enemy_nodes):
             if i < len(ordered) and ordered[i].alive:
                 e = ordered[i]
                 mesh, mat, _ = mesh_by_type[e.etype]
                 node.mesh = mesh
-                node.material = mat
+                node.material = hit_mat if e.hit_t > hit_span * 0.4 else mat
                 node.visible = True
                 # death squash: scale down when hp low (presentation from sim hp)
                 frac = max(0.4, min(1.0, e.hp / max(1, self.sim.enemy_defs[e.etype]["hp"])))
@@ -450,7 +453,22 @@ class ShooterGame:
                     # Boss telegraph: brief swelling during the slam windup so
                     # the 30-damage hit is readable before it lands.
                     s = 1.0 + (0.10 * math.sin(self.sim.time * 26.0) if e.windup_t > 0.0 else 0.0)
-                node.transform = Transform(position=Vec3(e.pos.x, e.pos.y, e.pos.z), scale=Vec3(s, s, s))
+                # Hit reaction: a short squash + push away from the player.
+                # Presentation only; the sim hitbox and damage never move.
+                flinch = 0.0
+                push = 0.0
+                if e.hit_t > 0.0:
+                    k = min(1.0, e.hit_t / hit_span)
+                    flinch = float(self.sim.juice.get("hit_flinch_scale", 0.28)) * k
+                    push = float(self.sim.juice.get("hit_flinch_push", 0.12)) * k
+                dx = e.pos.x - sim.player_pos.x
+                dz = e.pos.z - sim.player_pos.z
+                length = math.hypot(dx, dz)
+                ux, uz = (dx / length, dz / length) if length > 1e-6 else (0.0, 0.0)
+                node.transform = Transform(
+                    position=Vec3(e.pos.x + ux * push, e.pos.y, e.pos.z + uz * push),
+                    scale=Vec3(s * (1.0 + flinch), s * (1.0 - flinch), s * (1.0 + flinch)),
+                )
             else:
                 node.visible = False
         for i, node in enumerate(self._tracer_nodes):
