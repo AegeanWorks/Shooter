@@ -257,3 +257,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 86 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-11.json`.
+
+## Cycle 12 — Levels: jumpable rear-left platform
+- **Area**: levels (12th cycle).
+- **Defect / evidence**: every cover was >=1.2 m while the jump apex is
+  ~1.08 m, so `E` never had a surface to land on; the baseline
+  `test_levels_platform.py` failed both the jumpable-surface and landing
+  checks (player stayed at y 0.9001 / z 19.15).
+- **Fix**: 6x6x0.7 m platform at `(-16, 15)` in `levels.json`, cool
+  `material.platform`, no cover-trim cap; uses the existing cover collision
+  and spawn guard. Tests: jumpable data + scripted landing; `play_run.py
+  platform`; capture route `platform`.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-12/`;
+  960x540 seed 1, approach view. Before floor vs after platform:
+  132,320 changed px (25.52%, bbox 58,92-901,497), mean luma 40.80 ->
+  49.66; draws 3 -> 4, triangles 50 -> 62.
+- **Played runs**: `platform` before no landing (y 0.9, frame 120), after
+  lands y 1.6 / z 12.379 at frame 28. `kite 3000` hash `9b70e372…` and
+  `strafe 300` hash `973276f5…` unchanged; fairness still
+  `witnessed_win:reference:2627`.
+- **Gates**: `python -m pytest -q` 88 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-12.json`.

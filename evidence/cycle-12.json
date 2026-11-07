@@ -1,0 +1,141 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py platform <prefix>",
+    "python scripts/play_run.py platform 120 <report> <png> <png-report>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 12,
+  "fix": "6x6x0.7 m jumpable platform at (-16,15), platform material/no trim cap, cover collision and spawn guard; scripted landing route",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "88 passed"
+  },
+  "play_runs": {
+    "fairness": {
+      "reason": "witnessed_win:reference:2627",
+      "verdict": "fair"
+    },
+    "kite_3000": {
+      "alive": true,
+      "chunk_max_step_ms": 15.0422,
+      "dropped_sfx": 0,
+      "frames": 3000,
+      "hash": "9b70e372088775c590660282fac556f8",
+      "hp": 2,
+      "kills": 32,
+      "mean_step_ms": 0.512,
+      "outcome": "win",
+      "peak_voices": 8,
+      "platform": {
+        "landed": false,
+        "x": -1.35,
+        "y": 0.9,
+        "z": -0.909
+      },
+      "score": 11955,
+      "wave": 4
+    },
+    "platform_after": {
+      "alive": true,
+      "chunk_max_step_ms": 0.0,
+      "dropped_sfx": 0,
+      "frames": 28,
+      "hash": "c1603d797193787331a17b9ebb62c55d",
+      "hp": 100,
+      "kills": 0,
+      "mean_step_ms": 0.3688,
+      "outcome": "ongoing",
+      "peak_voices": 1,
+      "platform": {
+        "landed": true,
+        "x": -16.0,
+        "y": 1.6,
+        "z": 12.379
+      },
+      "score": 250,
+      "wave": 2
+    },
+    "platform_before": {
+      "alive": true,
+      "chunk_max_step_ms": 8.8312,
+      "dropped_sfx": 0,
+      "frames": 120,
+      "hash": "8ceb2537890ef98e822a3d7573981b7c",
+      "hp": 100,
+      "kills": 0,
+      "mean_step_ms": 0.2471,
+      "outcome": "ongoing",
+      "peak_voices": 1,
+      "platform": {
+        "landed": false,
+        "x": -16.0,
+        "y": 0.9,
+        "z": 19.15
+      },
+      "score": 250,
+      "wave": 2
+    },
+    "reference": {
+      "file": "bot_campaign.json",
+      "frames": 3000
+    },
+    "strafe_300": {
+      "alive": true,
+      "chunk_max_step_ms": 1.1087,
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "mean_step_ms": 0.3206,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "platform": {
+        "landed": false,
+        "x": 1.538,
+        "y": 0.9,
+        "z": -11.425
+      },
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-12/after",
+    "before_dir": "shots/shooter-campaign/cycle-12/before",
+    "route": "scripts/capture.py platform; player at (-16,0.9002,9.5) facing +Z toward the rear-left platform; 960x540 seed 1"
+  },
+  "tests": {
+    "failing_first": "baseline a0b40cb: both platform tests failed; player stayed y 0.9001 / z 19.15",
+    "platform_tests": 2,
+    "suite": "88 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "verticality",
+    "jump affordance",
+    "arena landmark"
+  ],
+  "visual_diff": {
+    "bbox": [
+      58,
+      92,
+      901,
+      497
+    ],
+    "changed_px": 132320,
+    "draws_after": 4,
+    "draws_before": 3,
+    "fraction": 0.2552,
+    "mean_luma_after": 49.66,
+    "mean_luma_before": 40.8,
+    "triangles_after": 62,
+    "triangles_before": 50
+  }
+}

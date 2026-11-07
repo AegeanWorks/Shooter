@@ -355,6 +355,34 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_platform(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Spawn view turned toward the rear low platform (before/after pair)."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.player_pos = Vec3(-16.0, 0.9002, 9.5)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-16.0, 0.9002, 9.5), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = 0.0
+        g.sim.kick = 0.0
+        g.update(FIXED_STEP, ActionState())
+        print(f"platform view z={g.sim.player_pos.z:.2f} covers={len(g.sim.cover_boxes)}")
+        engine.capture(f"{prefix}_platform.png", f"{prefix}_platform.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_cover(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """A mite walks from behind the centre cover toward the spawn eye."""
     from keystone.app import Engine
@@ -568,6 +596,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_flinch(prefix, shadows, srgb, post, bloom)
     if which == "cover":
         route_cover(prefix, shadows, srgb, post, bloom)
+    if which == "platform":
+        route_platform(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

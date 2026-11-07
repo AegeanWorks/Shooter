@@ -13,6 +13,7 @@ Modes:
   slam     close-range warden windup/slam (audio + caption drill)
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
+  platform run at the rear low platform, jump onto it, stop on the top
 
 Writes a machine-readable report with per-frame health, event frames,
 hurt-source telemetry and the final deterministic snapshot hash.
@@ -63,6 +64,12 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         return strafe[frame % len(strafe)]
     if mode == "pickup":
         return ActionState(forward=1.0)
+    if mode == "platform":
+        return (
+            ActionState(forward=1.0, up=1.0)
+            if frame < 45
+            else ActionState(forward=1.0)
+        )
     return ActionState()  # idle / slam
 
 
@@ -83,7 +90,7 @@ def main(
     try:
         if seed != 1:
             game.sim.reseed(seed)
-        if mode in ("ambush", "boss", "slam", "death"):
+        if mode in ("ambush", "boss", "slam", "death", "platform"):
             game.sim.spawn_queue = []
             game.sim.spawn_t = 1e9
         boss = None
@@ -109,6 +116,15 @@ def main(
             sim.kills = 9
             sim.best_streak = 4
             sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
+        if mode == "platform":
+            sim = game.sim
+            sim.player_pos = Vec3(-16.0, 0.9002, 9.5)
+            sim.body = sim.body.__class__(
+                position=Vec3(-16.0, 0.9002, 9.5), half_extents=sim.body.half_extents,
+                velocity=Vec3(), on_ground=True,
+            )
+            sim.yaw = math.pi
+            sim.pitch = 0.0
         if mode == "pickup":
             sim = game.sim
             sim.wave = 2
@@ -199,6 +215,8 @@ def main(
                 break
             if mode == "death" and not game.sim.alive:
                 break
+            if mode == "platform" and game.sim.player_pos.y > 1.3 and game.sim.body.on_ground:
+                break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break
             if (frame + 1) % CHUNK == 0:
@@ -243,6 +261,12 @@ def main(
                 "last_run": getattr(game, "last_run", None),
                 "disabled": bool(getattr(game, "profile_disabled", False)),
                 "save_errors": int(getattr(game, "profile_save_errors", 0)),
+            },
+            "platform": {
+                "landed": bool(game.sim.player_pos.y > 1.3 and game.sim.body.on_ground),
+                "x": round(float(game.sim.player_pos.x), 3),
+                "y": round(float(game.sim.player_pos.y), 3),
+                "z": round(float(game.sim.player_pos.z), 3),
             },
             "hash": stable_hash(final),
         }

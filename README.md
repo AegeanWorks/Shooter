@@ -71,7 +71,7 @@ projects/shooter/
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
-│       ├── levels.json     <- arena + 5 waves (wave 3 warden) + pickup + win_wave 4
+│       ├── levels.json     <- arena + low jump platform + 5 waves (wave 3 warden) + win_wave 4
 │       ├── juice.json      <- tracer/flash/particle caps, hitstop, flinch tuning
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
@@ -88,6 +88,7 @@ projects/shooter/
 │   ├── test_profile.py     <- schema/backup/quarantine, run record, debrief
 │   ├── test_combat_feel.py <- non-lethal hit flinch, expiry, scene squash
 │   ├── test_enemy_cover.py <- cover collision, slide-around, spawn guard
+│   ├── test_levels_platform.py <- jumpable low platform + landing proof
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -106,7 +107,8 @@ projects/shooter/
 │   ├── cycle-08.json  <- improvement-cycle 8 proof: campaign-clear pair, fairness run
 │   ├── cycle-09.json  <- improvement-cycle 9 proof: low-ammo/reload HUD pair, runs
 │   ├── cycle-10.json  <- improvement-cycle 10 proof: hit-flinch pair, same-hash runs
-│   └── cycle-11.json  <- improvement-cycle 11 proof: cover-slide pair, fairness run
+│   ├── cycle-11.json  <- improvement-cycle 11 proof: cover-slide pair, fairness run
+│   └── cycle-12.json  <- improvement-cycle 12 proof: jump-platform pair, landing run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
@@ -166,7 +168,9 @@ fire (one shot per click). `1/2/3` weapon slots, `R` reload, and voluntary
 overdrive have no live key binding yet (engine-side gap, filed — see
 ADR-016); drive them via headless `ActionState` scripts (`shooter.bot`
 kite/overdrive policies), `--replay` logs, or the `bot_kite600.json`
-reference. Shift sprint, P pause, H hide UI, F1 cursor, Esc quit.
+reference. Shift sprint, P pause, H hide UI, F1 cursor, Esc quit. The rear-left
+corner has a 0.7 m platform; `E` jump can land on it (the other covers are too
+tall to jump).
 
 The campaign now clears after the wave-3 Warden boss (wave 4 entry): the HUD shows a
 `CAMPAIGN CLEAR` banner for four seconds, and the death debrief remembers it as
