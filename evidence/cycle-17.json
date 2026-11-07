@@ -1,0 +1,106 @@
+{
+  "area": "combat feel",
+  "audio_probe": {
+    "dry_fire": {
+      "buses": {},
+      "duration": 0.04,
+      "frames": 882,
+      "name": "dry_fire",
+      "peak": 0.9999,
+      "rms": 0.5733,
+      "sample_rate": 22050,
+      "schema": 1,
+      "voices": 0
+    },
+    "reported_cues": 14,
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-17\\after\\cues_spectrogram.png",
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-17\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py dry <prefix>",
+    "python scripts/play_run.py dry 60 <report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 17,
+  "fix": "dry_fire event with 0.25 s rate limit, NO AMMO caption and 0.04 s click",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "100 passed"
+  },
+  "play_runs": {
+    "dry_after": {
+      "audio_count": 1,
+      "dropped_sfx": 0,
+      "dry": {
+        "ammo": 0,
+        "cue": "NO AMMO",
+        "reserve": 0,
+        "shots": 0,
+        "voices": 1
+      },
+      "frames": 11,
+      "hash": "d33f43e4018be5eb6990ed5c473a70c7",
+      "hp": 100,
+      "kills": 0,
+      "mean_step_ms": 0.0973,
+      "outcome": "ongoing",
+      "peak_voices": 1,
+      "score": 0,
+      "wave": 1
+    },
+    "dry_before": {
+      "audio_count": 0,
+      "dropped_sfx": 0,
+      "dry": {
+        "ammo": 0,
+        "cue": "",
+        "reserve": 0,
+        "shots": 0,
+        "voices": 0
+      },
+      "frames": 11,
+      "hash": "d33f43e4018be5eb6990ed5c473a70c7",
+      "hp": 100,
+      "kills": 0,
+      "mean_step_ms": 0.1444,
+      "outcome": "ongoing",
+      "peak_voices": 0,
+      "score": 0,
+      "wave": 1
+    },
+    "parity": "same hash d33f43e4?, shots=0, ammo=0; before audio=0/empty cue, after audio=1/NO AMMO"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-17/after",
+    "before_dir": "shots/shooter-campaign/cycle-17/before",
+    "route": "scripts/capture.py dry; clean arena, pulse mag 0/reserve 0, held fire, frame 1; 960x540 seed 1"
+  },
+  "tests": {
+    "dry_fire_tests": 3,
+    "suite": "100 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "empty-gun feedback",
+    "trigger confirmation",
+    "rate limit"
+  ],
+  "visual_diff": {
+    "bbox": [
+      426,
+      164,
+      947,
+      459
+    ],
+    "changed_px": 7828,
+    "draws": 4,
+    "fraction": 0.0151,
+    "mean_luma_after": 34.42,
+    "mean_luma_before": 34.37,
+    "triangles": 218
+  }
+}

@@ -16,5 +16,6 @@
   "hurt_cue_s": 0.8,
   "hit_flinch_s": 0.25,
   "hit_flinch_scale": 0.28,
-  "hit_flinch_push": 0.12
+  "hit_flinch_push": 0.12,
+  "dry_fire_cd_s": 0.25
 }

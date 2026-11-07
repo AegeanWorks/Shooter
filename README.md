@@ -72,7 +72,7 @@ projects/shooter/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
 │       ├── levels.json     <- arena + low jump platform + 5 waves (wave 3 warden) + win_wave 4
-│       ├── juice.json      <- tracer/flash offset/scale, particle caps, hitstop, flinch
+│       ├── juice.json      <- tracer/flash offset/scale, particle caps, hitstop, flinch, dry-fire cd
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
 ├── tests/
@@ -93,6 +93,7 @@ projects/shooter/
 │   ├── test_muzzle.py      <- off-axis flash offset and small node scale
 │   ├── test_denial.py      <- denied overdrive voice/caption + state parity
 │   ├── test_wins.py        <- schema-2 migration, persisted wins, win banner
+│   ├── test_dry_fire.py    <- rate-limited dry fire, NO AMMO voice/caption
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -116,7 +117,8 @@ projects/shooter/
 │   ├── cycle-13.json  <- improvement-cycle 13 proof: kill-feed pair, same-hash runs
 │   ├── cycle-14.json  <- improvement-cycle 14 proof: muzzle-flash pair, same-hash runs
 │   ├── cycle-15.json  <- improvement-cycle 15 proof: denied-overdrive cue pair, WAV
-│   └── cycle-16.json  <- improvement-cycle 16 proof: persisted-wins banner pair, runs
+│   ├── cycle-16.json  <- improvement-cycle 16 proof: persisted-wins banner pair, runs
+│   └── cycle-17.json  <- improvement-cycle 17 proof: dry-fire cue pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

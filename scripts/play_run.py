@@ -15,6 +15,7 @@ Modes:
   death    staged near-death run (profile/debrief proof; ends on death)
   platform run at the rear low platform, jump onto it, stop on the top
   denied   press overdrive with no pulse reserve (audio/caption drill)
+  dry      hold fire with 0 magazine and 0 reserve (dry-fire drill)
 
 Writes a machine-readable report with per-frame health, event frames,
 hurt-source telemetry and the final deterministic snapshot hash.
@@ -73,6 +74,8 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         )
     if mode == "denied":
         return ActionState(pressed=frozenset({"overdrive"})) if frame == 0 else ActionState()
+    if mode == "dry":
+        return ActionState(held=frozenset({"fire"}))
     return ActionState()  # idle / slam
 
 
@@ -93,7 +96,7 @@ def main(
     try:
         if seed != 1:
             game.sim.reseed(seed)
-        if mode in ("ambush", "boss", "slam", "death", "platform", "denied"):
+        if mode in ("ambush", "boss", "slam", "death", "platform", "denied", "dry"):
             game.sim.spawn_queue = []
             game.sim.spawn_t = 1e9
         boss = None
@@ -123,6 +126,12 @@ def main(
             game.sim.reserve["pulse"] = 0
             game.sim.enemies = []
             game.sim.spawn_queue = ["mite"]  # block wave-clear from stealing the cue
+            game.sim.spawn_t = 999.0
+        if mode == "dry":
+            game.sim.ammo["pulse"] = 0
+            game.sim.reserve["pulse"] = 0
+            game.sim.enemies = []
+            game.sim.spawn_queue = ["mite"]
             game.sim.spawn_t = 999.0
         if mode == "platform":
             sim = game.sim
@@ -227,6 +236,8 @@ def main(
                 break
             if mode == "denied" and frame >= 10:
                 break
+            if mode == "dry" and frame >= 10:
+                break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break
             if (frame + 1) % CHUNK == 0:
@@ -285,6 +296,13 @@ def main(
                 "voices": int(game.mixer.voice_count()),
                 "reserve": int(game.sim.reserve.get("pulse", 0)),
                 "overdrive_t": round(float(game.sim.overdrive_t), 3),
+            },
+            "dry": {
+                "cue": getattr(game, "sound_cue", ""),
+                "voices": int(game.mixer.voice_count()),
+                "shots": int(game.sim.shots),
+                "ammo": int(game.sim.ammo.get("pulse", 0)),
+                "reserve": int(game.sim.reserve.get("pulse", 0)),
             },
             "hash": stable_hash(final),
         }

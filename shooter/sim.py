@@ -193,6 +193,7 @@ class Sim:
         # a short window. Never feeds damage, RNG, or movement.
         self.hurt_t = 0.0
         self.hurt_from = Vec3()
+        self.dry_t = 0.0
         self.tracers: list[dict] = []
         self.enemies: list[_Enemy] = []
         self._next_enemy = 1
@@ -431,6 +432,7 @@ class Sim:
         self.hitmark_t = max(0.0, self.hitmark_t - dt)
         self.flash_t = max(0.0, self.flash_t - dt)
         self.hurt_t = max(0.0, float(getattr(self, "hurt_t", 0.0)) - dt)
+        self.dry_t = max(0.0, float(getattr(self, "dry_t", 0.0)) - dt)
         for t in self.tracers:
             t["life"] = max(0.0, float(t["life"]) - dt)
         self.tracers = [t for t in self.tracers if t["life"] > 0.0][:16]
@@ -446,6 +448,9 @@ class Sim:
                 elif int(self.reserve.get(self.weapon, 0)) > 0 and float(w.get("reload_s", 0.0)) > 0.0:
                     self.reload_t = float(w["reload_s"])
                     events.append("reload")
+                elif self.dry_t <= 0.0:
+                    events.append("dry_fire")
+                    self.dry_t = float(self.juice.get("dry_fire_cd_s", 0.25))
                 # NOTE: explicit `reload`-key path lives in the standalone
                 # block below (covers surge reload_s==0 modded tables too);
                 # no duplicate branch here.

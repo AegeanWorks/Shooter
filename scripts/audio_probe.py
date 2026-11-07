@@ -29,6 +29,7 @@ CUES = (
     "overdrive",
     "overdrive_end",
     "overdrive_denied",
+    "dry_fire",
     "cache",
     "near_miss",
     "reload",

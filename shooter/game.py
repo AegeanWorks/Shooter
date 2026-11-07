@@ -264,6 +264,7 @@ class ShooterGame:
             "overdrive": sine(520.0, 0.22, name="overdrive"),
             "overdrive_end": sine(260.0, 0.18, name="overdrive_end"),
             "overdrive_denied": square(90.0, 0.14, name="overdrive_denied"),
+            "dry_fire": noise(0.04, seed=23, name="dry_fire"),
             "cache": sine(1040.0, 0.08, name="cache"),
             "reload": noise(0.06, seed=21, name="reload"),
             "near_miss": sine(1320.0, 0.06, name="near_miss"),
@@ -410,6 +411,10 @@ class ShooterGame:
                     },
                 )
                 self.kill_feed = self.kill_feed[:4]
+            return
+        if event == "dry_fire":
+            self._play_clip(self._clips["dry_fire"], 0.35)
+            self._cue("NO AMMO", danger=True)
             return
         if event == "shoot":
             w = self.sim.weapon

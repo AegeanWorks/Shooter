@@ -357,3 +357,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 97 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-16.json`.
+
+## Cycle 17 — Combat feel: dry-fire feedback
+- **Area**: combat feel (17th cycle).
+- **Defect / evidence**: a click on 0/0 was silent: no event, voice or
+  caption (the low-ammo panel warned before, but not that the trigger was
+  dead). A held trigger also had no empty-case rate limit.
+- **Fix**: emit `dry_fire` with a 0.25 s `dry_t` rate limit; game plays a
+  0.04 s noise click and shows `NO AMMO` in danger red. `dry_t` is
+  presentation-only and not in the snapshot; shots/score stay zero.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-17/`;
+  960x540 seed 1, frame 1. 7,828 changed px (1.51%, bbox 426,164-947,459;
+  caption + AUDIO 1 VOX line), mean luma 34.37 -> 34.42.
+- **Played runs**: `dry 60` before/after same hash `d33f43e4…`; before
+  audio=0/cue empty, after audio=1/cue `NO AMMO`, peak 1, drops 0. Clip
+  0.04 s peak 0.9999.
+- **Gates**: `python -m pytest -q` 100 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-17.json`.

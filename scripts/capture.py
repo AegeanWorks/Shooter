@@ -355,6 +355,31 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_dry(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Fire with no magazine and no reserve: the dry-fire cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.ammo["pulse"] = 0
+        g.sim.reserve["pulse"] = 0
+        g.update(FIXED_STEP, ActionState(held=frozenset({"fire"})))
+        print(
+            f"dry frame={g.sim.tick} cue={getattr(g, 'sound_cue', '-')!r} "
+            f"voices={g.mixer.voice_count()} shots={g.sim.shots}"
+        )
+        engine.capture(f"{prefix}_dry.png", f"{prefix}_dry.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_denied(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Overdrive pressed with no pulse reserve: the denial cue pair."""
     from keystone.app import Engine
@@ -688,6 +713,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_muzzle(prefix, shadows, srgb, post, bloom)
     if which == "denied":
         route_denied(prefix, shadows, srgb, post, bloom)
+    if which == "dry":
+        route_dry(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 
