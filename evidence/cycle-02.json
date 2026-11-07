@@ -1,0 +1,206 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/play_run.py boss 1800 <report> <png> <png-report>",
+    "python scripts/play_run.py kite 3000 <report> <png> <png-report>",
+    "python scripts/capture.py boss <prefix> [--no-boss]",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 2,
+  "fix": "Warden boss in wave 3: telegraphed slam, bounded mite escorts, glowing core, named health bar; waves 1-2 untouched",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "50 passed"
+  },
+  "play_runs": {
+    "boss": {
+      "alive": true,
+      "chunk_max_step_ms": 8.0274,
+      "frames": 507,
+      "hash": "1b6027350ff4a24aad528c0e87e8e942",
+      "hits": 56,
+      "hp": 100,
+      "hurt_events": [],
+      "hurts": 0,
+      "kills": 3,
+      "mean_step_ms": 0.688,
+      "mode": "boss",
+      "score": 3080,
+      "shots": 56,
+      "wave": 4,
+      "wave_events": [
+        {
+          "frame": 506,
+          "hp": 100,
+          "kills": 3,
+          "score": 3080,
+          "wave": 4
+        }
+      ]
+    },
+    "campaign_3000": {
+      "alive": true,
+      "chunk_max_step_ms": 20.656,
+      "frames": 3000,
+      "hash": "aae6a2cfa47aa21f347f591450fa4cc2",
+      "hits": 164,
+      "hp": 76,
+      "hurt_events": [
+        {
+          "cue_t": 0.8,
+          "damage": 6,
+          "frame": 742,
+          "hp": 94,
+          "source": [
+            -11.911,
+            -8.735
+          ]
+        },
+        {
+          "cue_t": 0.8,
+          "damage": 6,
+          "frame": 2643,
+          "hp": 88,
+          "source": [
+            -8.83,
+            -4.084
+          ]
+        },
+        {
+          "cue_t": 0.8,
+          "damage": 6,
+          "frame": 2867,
+          "hp": 82,
+          "source": [
+            3.478,
+            13.66
+          ]
+        },
+        {
+          "cue_t": 0.8,
+          "damage": 6,
+          "frame": 2995,
+          "hp": 76,
+          "source": [
+            5.363,
+            4.477
+          ]
+        }
+      ],
+      "hurts": 4,
+      "kills": 35,
+      "mean_step_ms": 0.9225,
+      "mode": "kite",
+      "score": 10535,
+      "shots": 202,
+      "wave": 4,
+      "wave_events": [
+        {
+          "frame": 180,
+          "hp": 100,
+          "kills": 3,
+          "score": 610,
+          "wave": 2
+        },
+        {
+          "frame": 708,
+          "hp": 100,
+          "kills": 11,
+          "score": 2500,
+          "wave": 3
+        },
+        {
+          "frame": 2339,
+          "hp": 94,
+          "kills": 28,
+          "score": 9070,
+          "wave": 4
+        }
+      ]
+    },
+    "kite_600_win_path": {
+      "alive": true,
+      "chunk_max_step_ms": 17.1835,
+      "frames": 600,
+      "hash": "0a1077943fd4b668c970dde00a3a76ba",
+      "hits": 31,
+      "hp": 100,
+      "hurt_events": [],
+      "hurts": 0,
+      "kills": 9,
+      "mean_step_ms": 0.8137,
+      "mode": "kite",
+      "score": 1500,
+      "shots": 36,
+      "wave": 2,
+      "wave_events": [
+        {
+          "frame": 180,
+          "hp": 100,
+          "kills": 3,
+          "score": 610,
+          "wave": 2
+        }
+      ]
+    }
+  },
+  "regression_routes_changed_px": {
+    "burst": 0,
+    "combat": 0,
+    "death": 0,
+    "pickup": 0,
+    "spawn": 0
+  },
+  "slam_drill": {
+    "damage": 30,
+    "hp_after": 70,
+    "hp_before": 100,
+    "screenshots": [
+      "slam_windup.png",
+      "slam_hit.png"
+    ],
+    "slam_frame": 42,
+    "source": [
+      0.0,
+      5.0
+    ],
+    "windup_frame": 0
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-02/after",
+    "before_dir": "shots/shooter-campaign/cycle-02/before",
+    "route": "scripts/capture.py boss [--no-boss]; wave-3 roster staged at fixed positions, player at spawn (0,0.9,8), frame 1, viewport 960x540, seed 1, renderer S1C1P1B1"
+  },
+  "tests": {
+    "boss_tests": 7,
+    "data_table_pin": "4 enemies",
+    "suite": "50 passed"
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "boss",
+    "enemy roster",
+    "wave-3 escalation"
+  ],
+  "visual_diff": {
+    "bbox": [
+      300,
+      92,
+      923,
+      440
+    ],
+    "changed_px": 60282,
+    "draws_after": 8,
+    "draws_before": 6,
+    "fraction": 0.1163,
+    "mean_luma_after": 33.792,
+    "mean_luma_before": 32.26,
+    "pre_boss_commit_vs_current_no_boss_changed_px": 0,
+    "total_px": 518400,
+    "triangles_after": 1666,
+    "triangles_before": 1462
+  }
+}

@@ -33,6 +33,22 @@
       "radius": 0.4,
       "height": 0.8,
       "behavior": "flank_dart_bolt"
+    },
+    {
+      "id": "warden",
+      "hp": 600,
+      "speed": 1.7,
+      "dmg": 30,
+      "range": 4.5,
+      "score": 2000,
+      "radius": 1.0,
+      "height": 2.2,
+      "behavior": "advance_slam_summon",
+      "windup_s": 0.7,
+      "attack_cd_s": 3.0,
+      "summon_first_s": 2.5,
+      "summon_cd_s": 7.0,
+      "summon_count": 2
     }
   ]
 }

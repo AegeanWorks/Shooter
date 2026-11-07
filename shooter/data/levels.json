@@ -17,7 +17,7 @@
   "waves": [
     {"mite": 4, "brute": 0, "wisp": 0},
     {"mite": 6, "brute": 1, "wisp": 0},
-    {"mite": 6, "brute": 2, "wisp": 2},
+    {"mite": 6, "brute": 2, "wisp": 2, "warden": 1},
     {"mite": 8, "brute": 3, "wisp": 3},
     {"mite": 10, "brute": 4, "wisp": 1}
   ],

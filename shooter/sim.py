@@ -47,6 +47,8 @@ class _Enemy:
     attack_cd: float = 0.0
     state_t: float = 0.0
     pause_t: float = 0.0
+    windup_t: float = 0.0
+    summon_cd: float = 0.0
 
 
 class Sim:
@@ -216,7 +218,7 @@ class Sim:
         waves = self.levels["waves"]
         spec = waves[(self.wave - 1) % len(waves)]
         queue: list[str] = []
-        for etype in ("mite", "brute", "wisp"):
+        for etype in ("mite", "brute", "wisp", "warden"):
             queue.extend([etype] * int(spec.get(etype, 0)))
         # deterministic shuffle
         self.rng.shuffle(queue)
@@ -241,9 +243,34 @@ class Sim:
             _Enemy(
                 etype=etype, pos=Vec3(x, y, z),
                 hp=int(edef["hp"]), max_hp=int(edef["hp"]),
+                summon_cd=float(edef.get("summon_first_s", 0.0)),
             )
         )
         self._next_enemy += 1
+
+    def _summon_mites(self, boss: _Enemy, count: int, events: list[str]) -> None:
+        """Spawn a bounded escort around the warden; never exceeds max_alive."""
+        room = int(self.levels.get("max_alive", 24)) - sum(1 for e in self.enemies if e.alive)
+        if room <= 0:
+            return
+        made = 0
+        for _ in range(min(int(count), room)):
+            angle = self.rng.uniform(0.0, math.tau)
+            radius = self.rng.uniform(1.2, 2.4)
+            sx = boss.pos.x + math.cos(angle) * radius
+            sz = boss.pos.z + math.sin(angle) * radius
+            self.enemies.append(
+                _Enemy(
+                    etype="mite",
+                    pos=Vec3(max(-19.0, min(19.0, sx)), 0.5, max(-19.0, min(19.0, sz))),
+                    hp=int(self.enemy_defs["mite"]["hp"]),
+                    max_hp=int(self.enemy_defs["mite"]["hp"]),
+                    attack_cd=0.6,
+                )
+            )
+            made += 1
+        if made:
+            events.append("boss_summon")
 
     # ---- helpers -------------------------------------------------------
     def eye(self) -> Vec3:
@@ -694,7 +721,7 @@ class Sim:
                         self.hp = 0
                         self.alive = False
                         events.append("died")
-            else:  # wisp
+            elif e.etype == "wisp":
                 side = Vec3(-direction.z, 0.0, direction.x)
                 flank = 1.0 if math.sin(self.time * 1.3 + e.state_t * 0.7) >= 0.0 else -1.0
                 if dist > 8.0:
@@ -729,6 +756,35 @@ class Sim:
                             self.hp = 0
                             self.alive = False
                             events.append("died")
+            else:  # warden boss: slow advance, telegraphed slam, escort summons
+                if e.summon_cd > 0.0:
+                    e.summon_cd = max(0.0, e.summon_cd - dt)
+                if e.windup_t > 0.0:
+                    e.windup_t = max(0.0, e.windup_t - dt)
+                    if e.windup_t <= 0.0:
+                        events.append("boss_slam")
+                        if dist <= float(edef["range"]) and self.alive:
+                            self.hp -= int(edef["dmg"])
+                            events.append("hurt")
+                            self._on_hurt(events, e)
+                            if self.hp <= 0:
+                                self.hp = 0
+                                self.alive = False
+                                events.append("died")
+                else:
+                    if dist > float(edef["range"]) * 0.75:
+                        e.pos = Vec3(
+                            e.pos.x + direction.x * speed * dt,
+                            e.pos.y,
+                            e.pos.z + direction.z * speed * dt,
+                        )
+                    elif e.attack_cd <= 0.0:
+                        e.windup_t = float(edef.get("windup_s", 0.7))
+                        e.attack_cd = float(edef.get("attack_cd_s", 3.0))
+                        events.append("boss_windup")
+                    if e.summon_cd <= 0.0:
+                        e.summon_cd = float(edef.get("summon_cd_s", 7.0))
+                        self._summon_mites(e, int(edef.get("summon_count", 2)), events)
             # clamp arena
             e.pos = Vec3(max(-19.0, min(19.0, e.pos.x)), e.pos.y, max(-19.0, min(19.0, e.pos.z)))
 

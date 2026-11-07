@@ -60,7 +60,7 @@ def test_data_tables():
     levels = json.loads((DATA / "levels.json").read_text(encoding="utf-8"))
     juice = json.loads((DATA / "juice.json").read_text(encoding="utf-8"))
     assert len(weapons) >= 4
-    assert len(enemies) == 3
+    assert len(enemies) == 4
     assert len(levels["waves"]) >= 5
     assert int(juice["max_particles"]) <= 256
 

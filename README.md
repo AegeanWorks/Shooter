@@ -61,14 +61,14 @@ python -m keystone --game shooter.game:ShooterGame --headless --frames 1 --size 
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, mixer
-│   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/particles/engagement
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core, mixer
+│   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/particles/engagement
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- crosshair/HP/ammo/score/streak/overdrive + damage cue
+│   ├── ui.py            <- crosshair/HP/ammo/score/streak/overdrive + damage/boss HUD
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
-│       ├── enemies.json    <- mite/brute/wisp
-│       ├── levels.json     <- arena + 5 waves + pickup + win_wave
+│       ├── enemies.json    <- mite/brute/wisp/warden boss
+│       ├── levels.json     <- arena + 5 waves (wave 3 warden) + pickup + win_wave
 │       ├── juice.json      <- tracer/flash/particle caps, hitstop
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
@@ -77,14 +77,16 @@ projects/shooter/
 │   ├── test_shooter.py     <- move/shoot/hit/kill/die/score/determinism/budget
 │   ├── test_engagement.py  <- odds/stream/overdrive/lock/determinism
 │   ├── test_feedback.py    <- hurt-source telemetry + directional HUD cue
+│   ├── test_boss.py        <- warden data/wave/slam/summon/kill/bar/core
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
-│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush reports
-│   └── capture.py     <- seeded screenshot routes (spawn/combat/burst/pickup/hurt/death)
+│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss reports
+│   └── capture.py     <- seeded screenshot routes (spawn/combat/burst/pickup/hurt/boss/death)
 ├── evidence/
-│   └── cycle-01.json  <- improvement-cycle proof: diffs, runs, gate results
+│   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
+│   └── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
 ├── start-shooter.sh        <- macOS/Linux entry point (python3 play.py)

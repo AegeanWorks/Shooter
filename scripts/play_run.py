@@ -9,6 +9,7 @@ Modes:
   kite     survivor policy from shooter.bot (economy/regression run)
   strafe   strafe_fire drill (minute-one regression run)
   ambush   staged alternating side attackers (damage-direction drill)
+  boss     warden-only wave-3 fight with the kite policy (ends on boss death)
 
 Writes a machine-readable report with per-frame health, event frames,
 hurt-source telemetry and the final deterministic snapshot hash.
@@ -51,7 +52,7 @@ def _stage_ambush(game: ShooterGame, frame: int) -> None:
 
 
 def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState]) -> ActionState:
-    if mode == "kite":
+    if mode in ("kite", "boss"):
         return kite_step(game.sim)
     if mode == "strafe":
         return strafe[frame % len(strafe)]
@@ -71,9 +72,17 @@ def main(
     try:
         if seed != 1:
             game.sim.reseed(seed)
-        if mode == "ambush":
+        if mode in ("ambush", "boss"):
             game.sim.spawn_queue = []
             game.sim.spawn_t = 1e9
+        boss = None
+        if mode == "boss":
+            game.sim.wave = 3
+            boss = _Enemy(
+                etype="warden", pos=Vec3(0.0, 1.1, 0.0), hp=600, max_hp=600,
+                summon_cd=2.5,
+            )
+            game.sim.enemies = [boss]
         strafe = strafe_fire(frames)
         recorded: list[dict] = []
         hurts: list[dict] = []
@@ -108,7 +117,9 @@ def main(
         chunk_max = 0.0
         chunks: list[dict] = []
         slow_frames = 0
+        ran = 0
         for frame in range(frames):
+            ran = frame + 1
             if mode == "ambush":
                 _stage_ambush(game, frame)
             tick = time.perf_counter()
@@ -126,6 +137,8 @@ def main(
                      "kills": int(game.sim.kills), "score": int(game.sim.score)}
                 )
                 last_wave = int(game.sim.wave)
+            if boss is not None and not boss.alive:
+                break
             if (frame + 1) % CHUNK == 0:
                 chunks.append(
                     {
@@ -142,11 +155,11 @@ def main(
             engine.capture(png, report or None)
         payload = {
             "mode": mode,
-            "frames": int(frames),
+            "frames": int(ran),
             "seed": int(seed),
             "viewport": [960, 540],
             "wall_s": round(wall_s, 3),
-            "mean_step_ms": round(wall_s / frames * 1000.0, 4),
+            "mean_step_ms": round(wall_s / max(1, ran) * 1000.0, 4),
             "chunk_max_step_ms": max((c["max_step_ms"] for c in chunks), default=0.0),
             "slow_frames": int(slow_frames),
             "chunks": chunks,
@@ -163,7 +176,7 @@ def main(
             "play mode=%s frames=%d wave=%d kills=%d score=%d hp=%d alive=%s "
             "hurts=%d shots=%d hits=%d mean_step_ms=%.4f hash=%s"
             % (
-                mode, frames, final["wave"], final["kills"], final["score"],
+                mode, ran, final["wave"], final["kills"], final["score"],
                 final["player"]["hp"], final["player"]["alive"], len(hurts),
                 final["shots"], final["hits"], payload["mean_step_ms"], payload["hash"],
             )

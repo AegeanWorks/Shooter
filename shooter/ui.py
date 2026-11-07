@@ -55,6 +55,19 @@ def draw_shooter(canvas, hud, sim) -> None:
                 canvas.rect(mx - 10, my - 3, 20, 6, cue)
                 canvas.rect(mx - 5, my - 5, 10, 10, cue)
 
+    # Boss health bar: the warden is the only enemy with a named bar. Kept
+    # below the wave/score/streak lines and above the bottom panels.
+    boss = next(
+        (e for e in getattr(sim, "enemies", ()) if getattr(e, "alive", False) and e.etype == "warden"),
+        None,
+    )
+    if boss is not None:
+        frac = max(0.0, min(1.0, float(boss.hp) / max(1.0, float(boss.max_hp))))
+        bx, by, bw, bh = cx - 140, 116, 280, 10
+        canvas.text(bx, by - 18, "WARDEN", danger, 2)
+        canvas.rect(bx - 2, by - 2, bw + 4, bh + 4, panel_c)
+        canvas.rect(bx, by, max(1, int(bw * frac)), bh, (0.92, 0.20, 0.14, 0.95))
+
     # engine help lives bottom-left (overlay.py); keep the game panel above it.
     # overlay scale/help math mirrored here so panels never overlap.
     scale = 2 if (w >= 620 and h >= 360) else 1

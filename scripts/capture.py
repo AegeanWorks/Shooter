@@ -170,6 +170,59 @@ def route_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_boss(prefix: str, with_boss: bool = True, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Fixed wave-3 roster at one frame; same staging on every build.
+
+    The roster is identical before and after the warden lands; the after build
+    adds exactly one warden at the centre. This is the boss-content pair.
+    """
+    from keystone.app import Engine
+
+    game = ShooterGame()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.spawn_t = 999.0
+        g.sim.wave = 3
+        g.sim.pickup_taken = True
+        roster = [
+            ("mite", -3.0, 0.5, 2.0), ("mite", 3.0, 0.5, 2.0),
+            ("mite", -6.0, 0.5, -3.0), ("mite", 6.0, 0.5, -3.0),
+            ("brute", -5.0, 0.7, 4.0), ("brute", 5.0, 0.7, 4.0),
+            ("wisp", -8.0, 0.4, 0.0), ("wisp", 8.0, 0.4, 0.0),
+        ]
+        if with_boss and "warden" in g.sim.enemy_defs:
+            # Front-and-centre showcase clear of every cover from the spawn eye.
+            roster.append(("warden", 0.0, 1.1, 3.5))
+        enemies = []
+        for etype, x, y, z in roster:
+            enemies.append(
+                _Enemy(
+                    etype=etype, pos=Vec3(x, y, z),
+                    hp=int(g.sim.enemy_defs[etype]["hp"]),
+                    max_hp=int(g.sim.enemy_defs[etype]["hp"]),
+                    attack_cd=10.0,  # one clean staging frame: no immediate hit
+                )
+            )
+        g.sim.enemies = enemies
+        if g.sim.enemies and "warden" in g.sim.enemy_defs:
+            for enemy in g.sim.enemies:
+                if enemy.etype == "warden":
+                    enemy.summon_cd = 999.0  # keep the proof frame free of escorts
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"boss wave={g.sim.wave} roster={[e.etype for e in g.sim.enemies]} "
+            f"alive={sum(1 for e in g.sim.enemies if e.alive)} hp={g.sim.hp}"
+        )
+        engine.capture(f"{prefix}_boss.png", f"{prefix}_boss.json")
+        _profiler(engine)
+        print(f"wrote {prefix}_boss.png + {prefix}_boss.json")
+    finally:
+        engine.close()
+
+
 def route_hurt(prefix: str, side: str = "right", shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First-hit frame with the attacker just outside the centre view.
 
@@ -245,6 +298,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
     if which == "hurt":
         for side in ("left", "right", "behind"):
             route_hurt(prefix, side, shadows, srgb, post, bloom)
+    if which == "boss":
+        route_boss(prefix, "--no-boss" not in _flags, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

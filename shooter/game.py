@@ -38,6 +38,7 @@ class ShooterGame:
         self._tracer_nodes: list[Node] = []
         self._flash: Node | None = None
         self._pickup: Node | None = None
+        self._boss_core: Node | None = None
         self._built = False
 
     # ---- five-operation contract --------------------------------------
@@ -69,9 +70,11 @@ class ShooterGame:
         self.assets.register("mesh.mite", sphere(0.5, segments=16, rings=10))
         self.assets.register("mesh.brute", cube(1.4))
         self.assets.register("mesh.wisp", cone(0.4, 0.9, segments=12))
+        self.assets.register("mesh.warden", cube(2.2))
         self.assets.register("mesh.tracer", cube(1.0))
         self.assets.register("mesh.flash", cube(1.0))
         self.assets.register("mesh.pickup", cube(0.6))
+        self.assets.register("mesh.boss_core", sphere(0.35, segments=12, rings=8))
         checker = TextureData.checker(64, (0.10, 0.12, 0.16), (0.18, 0.20, 0.25), name="floor-checker")
         self.assets.register("texture.floor", checker)
         self.assets.register("material.floor", Material(color=Vec3(1, 1, 1), specular=0.08, shininess=8.0, texture=checker, checker_scale=0.5))
@@ -80,9 +83,11 @@ class ShooterGame:
         self.assets.register("material.mite", Material(color=Vec3(0.95, 0.45, 0.15), specular=0.4, shininess=48.0, emissive=Vec3(0.55, 0.18, 0.02)))
         self.assets.register("material.brute", Material(color=Vec3(0.60, 0.40, 0.90), specular=0.4, shininess=48.0, metallic=0.2, roughness=0.5))
         self.assets.register("material.wisp", Material(color=Vec3(0.30, 0.85, 1.00), specular=0.6, shininess=64.0, emissive=Vec3(0.10, 0.45, 0.55)))
+        self.assets.register("material.warden", Material(color=Vec3(0.62, 0.09, 0.10), specular=0.35, shininess=32.0, emissive=Vec3(0.38, 0.02, 0.02), metallic=0.15, roughness=0.65))
         self.assets.register("material.tracer", Material(color=Vec3(1.0, 0.85, 0.30), emissive=Vec3(0.9, 0.65, 0.15)))
         self.assets.register("material.flash", Material(color=Vec3(1.0, 1.0, 1.0), emissive=Vec3(1.0, 0.9, 0.6)))
         self.assets.register("material.pickup", Material(color=Vec3(0.25, 1.0, 0.45), emissive=Vec3(0.10, 0.55, 0.20)))
+        self.assets.register("material.boss_core", Material(color=Vec3(1.0, 0.78, 0.24), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.48, 0.08)))
 
         self.scene.background = Vec3(0.035, 0.045, 0.07)
         self.scene.sky = Vec3(0.01, 0.015, 0.04)
@@ -143,6 +148,12 @@ class ShooterGame:
                                 float(self._pickup_spot["x"]), float(self._pickup_spot["y"]), float(self._pickup_spot["z"]))),
                             mesh=pickup_mesh, material=pickup_mat)
         self.scene.add(self._pickup)
+        self._boss_core = Node(
+            "warden-core", id="warden-core", visible=False,
+            mesh=self.assets.require("mesh.boss_core").payload,
+            material=self.assets.require("material.boss_core").payload,
+        )
+        self.scene.add(self._boss_core)
 
         # pre-synthesized deterministic SFX (no per-frame synth)
         self._clips = {
@@ -209,6 +220,7 @@ class ShooterGame:
             "mite": (self.assets.require("mesh.mite").payload, self.assets.require("material.mite").payload, Vec3(1, 1, 1)),
             "brute": (self.assets.require("mesh.brute").payload, self.assets.require("material.brute").payload, Vec3(1, 1, 1)),
             "wisp": (self.assets.require("mesh.wisp").payload, self.assets.require("material.wisp").payload, Vec3(1, 1, 1)),
+            "warden": (self.assets.require("mesh.warden").payload, self.assets.require("material.warden").payload, Vec3(1, 1, 1)),
         }
         ordered = sorted(sim.enemies, key=lambda e: (0 if e.alive else 1, e.etype))
         for i, node in enumerate(self._enemy_nodes):
@@ -221,6 +233,10 @@ class ShooterGame:
                 # death squash: scale down when hp low (presentation from sim hp)
                 frac = max(0.4, min(1.0, e.hp / max(1, self.sim.enemy_defs[e.etype]["hp"])))
                 s = 0.6 + 0.4 * frac
+                if e.etype == "warden":
+                    # Boss telegraph: brief swelling during the slam windup so
+                    # the 30-damage hit is readable before it lands.
+                    s = 1.0 + (0.10 * math.sin(self.sim.time * 26.0) if e.windup_t > 0.0 else 0.0)
                 node.transform = Transform(position=Vec3(e.pos.x, e.pos.y, e.pos.z), scale=Vec3(s, s, s))
             else:
                 node.visible = False
@@ -251,6 +267,24 @@ class ShooterGame:
                 self._flash.transform = Transform(position=sim.flash_pos, scale=Vec3(0.10, 0.10, 0.10))
             else:
                 self._flash.visible = False
+        if self._boss_core is not None:
+            boss = next(
+                (e for e in sim.enemies if e.alive and e.etype == "warden"),
+                None,
+            )
+            self._boss_core.visible = boss is not None
+            if boss is not None:
+                # Glowing core on the face turned toward the player. Purely
+                # visual: it follows the boss and swells during the windup.
+                dx = sim.player_pos.x - boss.pos.x
+                dz = sim.player_pos.z - boss.pos.z
+                length = math.hypot(dx, dz)
+                ux, uz = (dx / length, dz / length) if length > 1e-6 else (0.0, -1.0)
+                pulse = 1.0 + (0.18 if boss.windup_t > 0.0 else 0.0)
+                self._boss_core.transform = Transform(
+                    position=Vec3(boss.pos.x + ux * 1.25, boss.pos.y + 0.35, boss.pos.z + uz * 1.25),
+                    scale=Vec3(pulse, pulse, pulse),
+                )
         if self._pickup is not None:
             self._pickup.visible = bool(sim.pickup_active)
             if sim.pickup_active:
