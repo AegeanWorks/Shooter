@@ -3,25 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-10-hit-flinch",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794085855.9262044,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794085912.5391479
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-05-arena-graphics",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Arena graphics proven: 63 tests, determinism 1800 ok, luma +4.3 spawn, 9 draws/1774 tris boss, identical play hashes; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794081209.4017785,
-      "timestamp_str": "2026-11-07 22:53:29",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-06-audio-cues",
       "phase": "in_progress",
@@ -257,6 +247,16 @@
       "status": "in_progress",
       "timestamp": 1794085855.9262044,
       "timestamp_str": "2026-11-08 00:10:55",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-10-hit-flinch",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-10-hit-flinch' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794085912.53915,
+      "timestamp_str": "2026-11-08 00:11:52",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
