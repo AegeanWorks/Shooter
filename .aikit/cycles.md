@@ -198,3 +198,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 78 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-08.json`.
+
+## Cycle 09 — UI readability: low-ammo warning + reload bar
+- **Area**: UI readability (rotation restart, 9th cycle).
+- **Defect / evidence**: baseline low-mag (3/30) and mid-reload (0/30,
+  reload_t 0.55) frames showed only the distant top-left status numbers;
+  there was no near-crosshair warning or reload progress.
+- **Fix**: `LOW AMMO` panel below the crosshair at <= quarter magazine;
+  a 120-px reload progress bar + `RELOADING` label while reload_t > 0
+  (replaces the warning). Presentation only.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-09/`;
+  960x540 seed 1, same staged clean-arena frames. Low ammo: 2,420 changed
+  px (bbox 425,300-534,321, mean luma 34.65 -> 34.40); reload: 1,816 px
+  (bbox 418,302-541,327, mean luma 34.66 -> 34.65).
+- **Played runs**: kite 600 `49111053…` and strafe 300 `973276f5…` are
+  identical to the cycle-8 reports; the HUD never touches sim state.
+- **Gates**: `python -m pytest -q` 80 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-09.json`.

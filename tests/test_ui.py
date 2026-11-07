@@ -77,6 +77,37 @@ def test_low_hp_edge_warning_is_still_drawn():
     assert red_edges, canvas.rects
 
 
+def test_low_ammo_warning_at_quarter_magazine():
+    s = Sim(seed=1)
+    s.weapon = "pulse"
+    s.ammo["pulse"] = 8  # 30 / 4 = 7, so 8 is still safe
+    canvas = _Canvas()
+    draw_shooter(canvas, _Hud(), s)
+    assert not any("LOW AMMO" in str(t[2]) for t in canvas.texts)
+    s.ammo["pulse"] = 3
+    canvas = _Canvas()
+    draw_shooter(canvas, _Hud(), s)
+    assert any("LOW AMMO" in str(t[2]) for t in canvas.texts), canvas.texts
+
+
+def test_reload_bar_replaces_low_ammo_warning():
+    s = Sim(seed=1)
+    s.weapon = "pulse"
+    s.ammo["pulse"] = 0
+    s.reload_t = 0.55
+    canvas = _Canvas()
+    draw_shooter(canvas, _Hud(), s)
+    labels = [str(t[2]) for t in canvas.texts]
+    assert any("RELOADING" in label for label in labels), labels
+    assert not any("LOW AMMO" in label for label in labels), labels
+    bars = [r for r in canvas.rects if 50 <= r[2] <= 70 and r[3] == 6]
+    assert bars, canvas.rects
+    s.reload_t = 0.0
+    canvas = _Canvas()
+    draw_shooter(canvas, _Hud(), s)
+    assert not any("RELOADING" in str(t[2]) for t in canvas.texts)
+
+
 def test_surge_timer_label_fits_inside_the_top_right_panel():
     s = Sim(seed=1)
     s.weapon = "surge"

@@ -1,0 +1,78 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py hud_ammo <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 9,
+  "fix": "quarter-magazine LOW AMMO panel below the crosshair and a 120-px RELOADING progress bar while reloading",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "80 passed"
+  },
+  "play_runs": {
+    "kite_600_after": {
+      "frames": 600,
+      "hash": "491110534d8cec3f1243f2661b42464d",
+      "hp": 100,
+      "kills": 9,
+      "outcome": "ongoing",
+      "score": 1500,
+      "wave": 2
+    },
+    "parity": "kite 49111053? and strafe 973276f5? identical to the cycle-8/7 reports; presentation only",
+    "strafe_300_after": {
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "outcome": "ongoing",
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-09/after",
+    "before_dir": "shots/shooter-campaign/cycle-09/before",
+    "route": "scripts/capture.py hud_ammo; clean arena, weapon pulse, mag 3/30 then 0/30 reload_t 0.55; 960x540 seed 1"
+  },
+  "tests": {
+    "suite": "80 passed",
+    "ui_tests": 7
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "ammo readability",
+    "reload progress",
+    "crosshair HUD"
+  ],
+  "visual_diff": {
+    "low_ammo": {
+      "bbox": [
+        425,
+        300,
+        534,
+        321
+      ],
+      "changed_px": 2420,
+      "mean_luma_after": 34.4,
+      "mean_luma_before": 34.65
+    },
+    "reload": {
+      "bbox": [
+        418,
+        302,
+        541,
+        327
+      ],
+      "changed_px": 1816,
+      "mean_luma_after": 34.65,
+      "mean_luma_before": 34.66
+    }
+  }
+}

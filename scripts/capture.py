@@ -355,6 +355,32 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_hud_ammo(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Low-magazine and mid-reload HUD frames on a clean arena."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.weapon = "pulse"
+        g.sim.ammo["pulse"] = 3
+        g.update(FIXED_STEP, ActionState())
+        engine.capture(f"{prefix}_low_ammo.png", f"{prefix}_low_ammo.json")
+        g.sim.ammo["pulse"] = 0
+        g.sim.reload_t = 0.55
+        g.update(FIXED_STEP, ActionState())
+        engine.capture(f"{prefix}_reload.png", f"{prefix}_reload.json")
+        print(f"hud-ammo mag={g.sim.ammo['pulse']} reload_t={g.sim.reload_t:.2f}")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_win(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Kill the wave-3 warden and capture the wave-4 clear frame."""
     from keystone.app import Engine
@@ -476,6 +502,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_death_profile(prefix, shadows, srgb, post, bloom)
     if which == "win":
         route_win(prefix, shadows, srgb, post, bloom)
+    if which == "hud_ammo":
+        route_hud_ammo(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

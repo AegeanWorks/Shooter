@@ -66,7 +66,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core/beacon, floor grid/trim, mixer + cue captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/particles/engagement
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: crosshair/wave/score/streak/overdrive/damage/boss/pickup
+│   ├── ui.py            <- single-source HUD: crosshair/ammo alert/reload/wave/score/streak/overdrive/damage/boss/pickup
 │   ├── profile.py       <- versioned, atomic run profile (bests, runs, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -101,7 +101,8 @@ projects/shooter/
 │   ├── cycle-05.json  <- improvement-cycle 5 proof: arena pair, luma, budget, runs
 │   ├── cycle-06.json  <- improvement-cycle 6 proof: audio events, captions, WAV, gates
 │   ├── cycle-07.json  <- improvement-cycle 7 proof: profile save, debrief pair, runs
-│   └── cycle-08.json  <- improvement-cycle 8 proof: campaign-clear pair, fairness run
+│   ├── cycle-08.json  <- improvement-cycle 8 proof: campaign-clear pair, fairness run
+│   └── cycle-09.json  <- improvement-cycle 9 proof: low-ammo/reload HUD pair, runs
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

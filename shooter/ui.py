@@ -29,6 +29,26 @@ def draw_shooter(canvas, hud, sim) -> None:
         canvas.rect(x - 2, y - 2, rw + 4, rh + 4, ink)
         canvas.rect(x, y, rw, rh, col)
 
+    # Ammo feedback: reload progress near the crosshair, then a low-magazine
+    # warning. Exact counts stay in the engine status panel; this is the
+    # glanceable layer.
+    weapon = str(getattr(sim, "weapon", "pulse"))
+    wdef = getattr(sim, "weapons", {}).get(weapon, {})
+    mag = int(getattr(sim, "ammo", {}).get(weapon, 0))
+    mag_size = max(1, int(wdef.get("mag", 1)))
+    reload_t = float(getattr(sim, "reload_t", 0.0))
+    if bool(getattr(sim, "alive", True)):
+        if reload_t > 0.0:
+            duration = max(1e-6, float(wdef.get("reload_s", 1.0)))
+            progress = max(0.0, min(1.0, 1.0 - reload_t / duration))
+            bx, by, bw, bh = cx - 60, cy + 34, 120, 6
+            canvas.rect(bx - 2, by - 2, bw + 4, bh + 4, panel_c)
+            canvas.rect(bx, by, max(1, int(bw * progress)), bh, accent)
+            canvas.text(cx - 50, by + 10, "RELOADING", dim, 2)
+        elif mag <= mag_size // 4:
+            canvas.rect(cx - 55, cy + 30, 110, 22, panel_c)
+            canvas.text(cx - 45, cy + 35, "LOW AMMO", danger, 2)
+
     # Directional damage cue: point at the last attacker for a short window.
     # World-space source + camera yaw -> bearing around the crosshair; the
     # sim's damage/RNG state is never touched by this presentation code.
