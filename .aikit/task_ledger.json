@@ -1,34 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-05-arena-graphics",
-    "last_phase": "in_progress",
+    "task_id": "shooter-cycle-06-audio-cues",
+    "last_phase": "resumed",
     "active_phase": 4,
     "status": "in_progress",
-    "updated_at": 1794081209.4017785,
+    "updated_at": 1794082336.2274685,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-01-combat-feedback",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/4] Combat-feedback cycle: baseline evidence harness, damage-source tracking, HUD direction cue, play/gate proof",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794075438.3155236,
-      "timestamp_str": "2026-11-07 21:17:18",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Baseline screenshots and play notes show no directional feedback when enemies hit from off-screen; HP only drops.",
-        "benefits": "Players can locate the threat that hurt them; adds combat legibility without changing balance or damage.",
-        "risks": "contract: snapshot gains a hurt field, so pinned hashes move; dependency: no new deps; concurrency: none; state: new transient timers must reset with sim.",
-        "mitigation": "Keep gameplay fields unchanged, verify event/hp parity against baseline, add determinism and reset tests; presentation-only HUD reads sim."
-      },
-      "plan_digest": "cd6f4bf1d7bc26e849f4bc928a5d6240468c3639362ce083d8012f557fb98db2"
-    },
     {
       "task_id": "shooter-cycle-01-combat-feedback",
       "phase": "in_progress",
@@ -194,6 +176,87 @@
       "status": "in_progress",
       "timestamp": 1794081209.4017785,
       "timestamp_str": "2026-11-07 22:53:29",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-06-audio-cues",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Audio cycle: boss/engagement voices, captions, clip hook, WAV/spectrogram evidence and same-hash played runs",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794082321.3394542,
+      "timestamp_str": "2026-11-07 23:12:01",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Boss windup/slam and engagement events were silent; only the visual telegraph warned the player.",
+        "benefits": "Audible boss/engagement cues plus visible captions improve reaction time and accessibility.",
+        "risks": "contract: snapshot unchanged (boss_down is an event only); dependency: probe uses numpy/Pillow already pinned; concurrency: none; state: caption timer is presentation-only.",
+        "mitigation": "Pin event-to-voice/caption tests, same-hash played-run parity, voice cap/drop counts and a 0 px spawn regression."
+      },
+      "plan_digest": "2dbcbba87d53949117ea1bc5442b4f183889771f6d06e2d157a1a25b31c31e10"
+    },
+    {
+      "task_id": "shooter-cycle-05-arena-graphics",
+      "phase": "superseded",
+      "phase_num": 4,
+      "description": "Superseded by 'shooter-cycle-06-audio-cues' without --complete or --reset",
+      "status": "superseded",
+      "timestamp": 1794082321.3394542,
+      "timestamp_str": "2026-11-07 23:12:01",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-06-audio-cues",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Audio cues proven: 69 tests, determinism 1800 ok, slam audio hurt->windup+slam same hash, captions 9696px, WAV/spectrogram; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794082322.0367222,
+      "timestamp_str": "2026-11-07 23:12:02",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-06-audio-cues",
+      "phase": "superseded",
+      "phase_num": 4,
+      "description": "Superseded by 'shooter-cycle-05-arena-graphics' without --complete or --reset",
+      "status": "superseded",
+      "timestamp": 1794082334.9916544,
+      "timestamp_str": "2026-11-07 23:12:14",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-05-arena-graphics",
+      "phase": "resumed",
+      "phase_num": 4,
+      "description": "Resumed 'shooter-cycle-05-arena-graphics' after a pause",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794082334.9916544,
+      "timestamp_str": "2026-11-07 23:12:14",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-05-arena-graphics",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-05-arena-graphics' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794082335.5968673,
+      "timestamp_str": "2026-11-07 23:12:15",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-06-audio-cues",
+      "phase": "resumed",
+      "phase_num": 4,
+      "description": "Resumed 'shooter-cycle-06-audio-cues' after a pause",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794082336.2274685,
+      "timestamp_str": "2026-11-07 23:12:16",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

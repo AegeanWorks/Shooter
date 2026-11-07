@@ -126,3 +126,30 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 63 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-05.json`.
+
+## Cycle 06 — Audio cues: boss/engagement voices + captions
+- **Area**: audio cues (6/7 rotation).
+- **Defect / evidence**: baseline slam run had `boss_windup` at frame 1 and
+  `boss_slam` at frame 43 but only one voice (`hurt` at 43); boss, overdrive,
+  cache, reload, near-miss, streak-break and death were silent.
+- **Fix**: deterministic clips for boss windup/slam/summon/down, overdrive
+  start/end, cache, near-miss, reload, streak-break and death; event→voice
+  map; short bottom-centre captions (red danger / amber positive);
+  `boss_down` sim event; public `set_clip_hook` for evidence; surge label
+  shortened to fit the top-right panel.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-06/`;
+  960x540, seed 1, same slam staging/frames. Before vs after:
+  `audio_slam_windup` → `audio2_slam_windup` = 9,696 px (caption +
+  AUDIO 1 VOX line, bbox 390,164-947,459); `audio_slam_hit` →
+  `audio2_slam_hit` = 4,116 px. Spawn remains 0 px. Pickup caption
+  "SURGE ACQUIRED" captured at the collection frame.
+- **Played runs**: slam before/after same hash `a5e66d40…`, 43 frames,
+  hp 70; audio events change from `hurt` only to `boss_windup` (frame 1),
+  `boss_slam`+`hurt` (43), peak 3, drops 0. Boss run 120 voices / peak 8 /
+  0 drops; pickup run 1 voice. Audio probe: 12 cues rendered to WAV,
+  boss_windup 0.35 s peak 1.0, boss_slam 0.30 s peak 0.9999, boss_down
+  0.45 s peak 1.0, overdrive 0.22 s peak 1.0, pickup 0.12 s peak 1.0;
+  waveform+spectrogram sheet in the after folder.
+- **Gates**: `python -m pytest -q` 69 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-06.json`.

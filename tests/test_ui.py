@@ -77,6 +77,17 @@ def test_low_hp_edge_warning_is_still_drawn():
     assert red_edges, canvas.rects
 
 
+def test_surge_timer_label_fits_inside_the_top_right_panel():
+    s = Sim(seed=1)
+    s.weapon = "surge"
+    s.surge_t = 10.0
+    canvas = _Canvas()
+    draw_shooter(canvas, _Hud(), s)
+    labels = [str(t[2]) for t in canvas.texts if str(t[2]).startswith("SURGE ")]
+    assert labels, canvas.texts
+    assert len(labels[0]) <= 30, labels[0]
+
+
 def test_hud_reads_only_presentation_state():
     s = Sim(seed=1)
     s.hurt_t = 0.5

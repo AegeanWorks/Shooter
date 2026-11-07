@@ -101,7 +101,8 @@ def draw_shooter(canvas, hud, sim) -> None:
     if od_t > 0.0:
         canvas.text(cx - 90, 68, f"OVERDRIVE {od_t:.1f}s x2", accent, 2)
     elif str(getattr(sim, "weapon", "")) == "surge" and float(getattr(sim, "surge_t", 0.0)) > 0.0:
-        canvas.text(cx - 90, 68, f"SURGE {float(getattr(sim, 'surge_t', 0.0)):.1f}s - switching drops it", dim, 2)
+        # Keep this inside the top-right stats panel (<=30 chars at scale 2).
+        canvas.text(cx - 90, 68, f"SURGE {float(getattr(sim, 'surge_t', 0.0)):.1f}s - SWITCH DROPS IT", dim, 2)
     if int(getattr(sim, "near_miss", 0)) > 0:
         canvas.text(cx - 90, 84, f"NEAR-MISS {int(getattr(sim, 'near_miss', 0))}", dim, 2)
     if not bool(getattr(sim, "alive", True)):

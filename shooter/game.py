@@ -54,6 +54,10 @@ class ShooterGame:
         self.assets = AssetRegistry()
         self.mixer = Mixer()
         self.dropped_sfx = 0
+        self.sound_cue = ""
+        self.sound_cue_t = 0.0
+        self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
+        self._clip_hook = None
         self._clips: dict = {}
         self._enemy_nodes: list[Node] = []
         self._tracer_nodes: list[Node] = []
@@ -86,6 +90,8 @@ class ShooterGame:
         self.assets = AssetRegistry()
         self.mixer = Mixer()
         self.dropped_sfx = 0
+        self.sound_cue = ""
+        self.sound_cue_t = 0.0
         self.particles = self.sim.particles
 
         self.assets.register("mesh.floor", plane(40.0))
@@ -218,10 +224,27 @@ class ShooterGame:
             "pickup": sine(880.0, 0.12, name="pickup"),
             "hurt": square(110.0, 0.15, name="hurt"),
             "wave": sine(660.0, 0.20, name="wave"),
+            # Boss / engagement cues: each event gets a distinct voice; the
+            # matching caption makes the cue visible as well as audible.
+            "boss_windup": square(70.0, 0.35, name="boss_windup"),
+            "boss_slam": noise(0.30, seed=17, name="boss_slam"),
+            "boss_summon": square(310.0, 0.12, name="boss_summon"),
+            "boss_down": sine(330.0, 0.45, name="boss_down"),
+            "overdrive": sine(520.0, 0.22, name="overdrive"),
+            "overdrive_end": sine(260.0, 0.18, name="overdrive_end"),
+            "cache": sine(1040.0, 0.08, name="cache"),
+            "reload": noise(0.06, seed=21, name="reload"),
+            "near_miss": sine(1320.0, 0.06, name="near_miss"),
+            "streak_break": square(140.0, 0.12, name="streak_break"),
+            "death": square(60.0, 0.50, name="death"),
         }
         self._built = True
         self._sync_scene()
         return self.scene
+
+    def set_clip_hook(self, hook) -> None:
+        """Attach an optional (clip, gain) observer for evidence tooling."""
+        self._clip_hook = hook
 
     def _play_clip(self, clip, gain: float) -> None:
         """Play one SFX clip, counting (never hiding) a mixer refusal.
@@ -230,6 +253,8 @@ class ShooterGame:
         `except ValueError: pass`. Counting drops keeps the failure visible
         to soak reports without changing the deterministic sim.
         """
+        if self._clip_hook is not None:
+            self._clip_hook(clip, gain)
         try:
             self.mixer.play(clip, bus="sfx", gain=gain)
         except ValueError:
@@ -240,23 +265,72 @@ class ShooterGame:
             self.build_scene()
         events = self.sim.step(float(dt), actions)
         for e in events:
-            if e == "shoot":
-                w = self.sim.weapon
-                clip = self._clips.get({"pulse": "shoot", "scatter": "scatter", "lance": "lance", "surge": "shoot"}.get(w, "shoot"), self._clips["shoot"])
-                self._play_clip(clip, 0.7)
-            elif e == "hit":
-                self._play_clip(self._clips["hit"], 0.5)
-            elif e == "kill":
-                self._play_clip(self._clips["kill"], 0.8)
-            elif e in ("pickup", "wave"):
-                self._play_clip(self._clips["pickup" if e == "pickup" else "wave"], 0.7)
-            elif e == "hurt":
-                self._play_clip(self._clips["hurt"], 0.8)
+            self._play_event(e)
+        self.sound_cue_t = max(0.0, self.sound_cue_t - float(dt))
         # cap voices: deterministic mixdown cost bounded via the public API
         # only (post-update invariant stays voice_count <= 8)
         if self.mixer.voice_count() > 8:
             self.mixer.clear()
         self._sync_scene()
+
+    def _cue(self, text: str, danger: bool = False) -> None:
+        self.sound_cue = text
+        self.sound_cue_t = 0.9
+        self.sound_cue_color = (1.0, 0.30, 0.30, 1.0) if danger else (1.0, 0.62, 0.20, 1.0)
+
+    def _play_event(self, event: str) -> None:
+        """Map one sim event to its audio voice and on-screen caption."""
+        if event == "shoot":
+            w = self.sim.weapon
+            clip = self._clips.get(
+                {"pulse": "shoot", "scatter": "scatter", "lance": "lance", "surge": "shoot"}.get(w, "shoot"),
+                self._clips["shoot"],
+            )
+            self._play_clip(clip, 0.7)
+        elif event == "hit":
+            self._play_clip(self._clips["hit"], 0.5)
+        elif event == "kill":
+            self._play_clip(self._clips["kill"], 0.8)
+        elif event == "boss_down":
+            self._play_clip(self._clips["boss_down"], 1.0)
+            self._cue("WARDEN DOWN")
+        elif event == "boss_windup":
+            self._play_clip(self._clips["boss_windup"], 0.8)
+            self._cue("WARDEN WINDUP", danger=True)
+        elif event == "boss_slam":
+            self._play_clip(self._clips["boss_slam"], 0.9)
+            self._cue("WARDEN SLAM", danger=True)
+        elif event == "boss_summon":
+            self._play_clip(self._clips["boss_summon"], 0.7)
+            self._cue("WARDEN SUMMON", danger=True)
+        elif event in ("pickup", "wave"):
+            self._play_clip(self._clips["pickup" if event == "pickup" else "wave"], 0.7)
+            self._cue("SURGE ACQUIRED" if event == "pickup" else "WAVE CLEAR")
+        elif event == "hurt":
+            self._play_clip(self._clips["hurt"], 0.8)
+        elif event == "reload":
+            self._play_clip(self._clips["reload"], 0.45)
+            self._cue("RELOADING")
+        elif event == "cache":
+            self._play_clip(self._clips["cache"], 0.6)
+            self._cue("CACHE AMMO")
+        elif event == "near_miss_bonus":
+            self._play_clip(self._clips["near_miss"], 0.5)
+            self._cue("NEAR MISS +6")
+        elif event == "overdrive":
+            self._play_clip(self._clips["overdrive"], 0.8)
+            self._cue("OVERDRIVE")
+        elif event == "overdrive_end":
+            self._play_clip(self._clips["overdrive_end"], 0.6)
+            self._cue("OVERDRIVE END")
+        elif event == "overdrive_break":
+            self._play_clip(self._clips["overdrive_end"], 0.7)
+            self._cue("OVERDRIVE BROKEN", danger=True)
+        elif event == "streak_break":
+            self._play_clip(self._clips["streak_break"], 0.4)
+            self._cue("STREAK LOST", danger=True)
+        elif event == "died":
+            self._play_clip(self._clips["death"], 0.9)
 
     def _sync_scene(self) -> None:
         sim = self.sim
@@ -386,3 +460,12 @@ class ShooterGame:
 
     def draw_ui(self, canvas, state) -> None:
         draw_shooter(canvas, state, self.sim)
+        if self.sound_cue_t > 0.0 and self.sound_cue and self.sim.alive:
+            text = self.sound_cue
+            width = int(state.width)
+            height = int(state.height)
+            box_width = len(text) * 12 + 24
+            left = max(8, (width - box_width) // 2)
+            top = height - 106
+            canvas.rect(left, top, box_width, 26, (0.03, 0.04, 0.06, 0.78))
+            canvas.text(left + 12, top + 7, text, self.sound_cue_color, 2)

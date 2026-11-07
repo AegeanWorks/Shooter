@@ -1,0 +1,1490 @@
+{
+  "area": "audio cues",
+  "audio_probe": {
+    "cues": {
+      "boss_down": {
+        "buses": {},
+        "duration": 0.45,
+        "frames": 9922,
+        "name": "boss_down",
+        "peak": 1.0,
+        "rms": 0.7071,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "boss_slam": {
+        "buses": {},
+        "duration": 0.3,
+        "frames": 6615,
+        "name": "boss_slam",
+        "peak": 0.9999,
+        "rms": 0.5706,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "boss_summon": {
+        "buses": {},
+        "duration": 0.12,
+        "frames": 2646,
+        "name": "boss_summon",
+        "peak": 1.0,
+        "rms": 1.0,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "boss_windup": {
+        "buses": {},
+        "duration": 0.35,
+        "frames": 7717,
+        "name": "boss_windup",
+        "peak": 1.0,
+        "rms": 1.0,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "cache": {
+        "buses": {},
+        "duration": 0.08,
+        "frames": 1764,
+        "name": "cache",
+        "peak": 1.0,
+        "rms": 0.7067,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "death": {
+        "buses": {},
+        "duration": 0.5,
+        "frames": 11025,
+        "name": "death",
+        "peak": 1.0,
+        "rms": 1.0,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "near_miss": {
+        "buses": {},
+        "duration": 0.06,
+        "frames": 1323,
+        "name": "near_miss",
+        "peak": 1.0,
+        "rms": 0.7067,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "overdrive": {
+        "buses": {},
+        "duration": 0.22,
+        "frames": 4851,
+        "name": "overdrive",
+        "peak": 1.0,
+        "rms": 0.7073,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "overdrive_end": {
+        "buses": {},
+        "duration": 0.18,
+        "frames": 3969,
+        "name": "overdrive_end",
+        "peak": 1.0,
+        "rms": 0.7074,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "pickup": {
+        "buses": {},
+        "duration": 0.12,
+        "frames": 2646,
+        "name": "pickup",
+        "peak": 1.0,
+        "rms": 0.7068,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "reload": {
+        "buses": {},
+        "duration": 0.06,
+        "frames": 1323,
+        "name": "reload",
+        "peak": 0.9997,
+        "rms": 0.5662,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      },
+      "streak_break": {
+        "buses": {},
+        "duration": 0.12,
+        "frames": 2646,
+        "name": "streak_break",
+        "peak": 1.0,
+        "rms": 1.0,
+        "sample_rate": 22050,
+        "schema": 1,
+        "voices": 0
+      }
+    },
+    "sequence": {
+      "duration_s": 3.77,
+      "marks": [
+        {
+          "name": "boss_windup",
+          "start_s": 0.0
+        },
+        {
+          "name": "boss_slam",
+          "start_s": 0.6
+        },
+        {
+          "name": "boss_down",
+          "start_s": 1.15
+        },
+        {
+          "name": "overdrive",
+          "start_s": 1.85
+        },
+        {
+          "name": "cache",
+          "start_s": 2.32
+        },
+        {
+          "name": "pickup",
+          "start_s": 2.65
+        },
+        {
+          "name": "death",
+          "start_s": 3.02
+        }
+      ]
+    },
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-06\\after\\cues_spectrogram.png",
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-06\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py slam <prefix>",
+    "python scripts/play_run.py slam 180 <report> <png> <png-report>",
+    "python scripts/play_run.py boss 1800 <report> <png> <png-report>",
+    "python scripts/play_run.py pickup 240 <report> <png> <png-report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 6,
+  "fix": "12 new deterministic cue voices (boss windup/slam/summon/down, overdrive, cache, near-miss, reload, streak-break, death) with visible captions and a public clip hook",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "69 passed"
+  },
+  "play_runs": {
+    "boss": {
+      "audio_count": 120,
+      "audio_events": [
+        {
+          "clip": "shoot",
+          "frame": 1,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 1,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 9,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 9,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 17,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 17,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 25,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 25,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 33,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 33,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "shoot",
+          "frame": 41,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 41,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 49,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 49,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 57,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 57,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 65,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 65,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 73,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 73,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "shoot",
+          "frame": 81,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 81,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 89,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 89,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 97,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 97,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 105,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 105,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 113,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 113,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "shoot",
+          "frame": 121,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 121,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 129,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 129,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 137,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 137,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 145,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 145,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "boss_summon",
+          "frame": 151,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "shoot",
+          "frame": 153,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 153,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 161,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 161,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 169,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 169,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "kill",
+          "frame": 169,
+          "gain": 0.8,
+          "voices_before": 6
+        },
+        {
+          "clip": "shoot",
+          "frame": 177,
+          "gain": 0.7,
+          "voices_before": 7
+        },
+        {
+          "clip": "hit",
+          "frame": 177,
+          "gain": 0.5,
+          "voices_before": 8
+        },
+        {
+          "clip": "shoot",
+          "frame": 185,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 185,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 193,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 193,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 201,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 201,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 209,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 209,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "kill",
+          "frame": 209,
+          "gain": 0.8,
+          "voices_before": 8
+        },
+        {
+          "clip": "shoot",
+          "frame": 217,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 217,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 225,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 225,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 233,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 233,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "reload",
+          "frame": 241,
+          "gain": 0.45,
+          "voices_before": 6
+        },
+        {
+          "clip": "shoot",
+          "frame": 307,
+          "gain": 0.7,
+          "voices_before": 7
+        },
+        {
+          "clip": "hit",
+          "frame": 307,
+          "gain": 0.5,
+          "voices_before": 8
+        },
+        {
+          "clip": "shoot",
+          "frame": 315,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 315,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 323,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 323,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 331,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 331,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 339,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 339,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 347,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 347,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "shoot",
+          "frame": 355,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 355,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 363,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 363,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 371,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 371,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 379,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 379,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 387,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 387,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "shoot",
+          "frame": 395,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 395,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 403,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 403,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 411,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 411,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 419,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 419,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 427,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 427,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "shoot",
+          "frame": 435,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 435,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 443,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 443,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 451,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 451,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 459,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 459,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 467,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 467,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "near_miss",
+          "frame": 467,
+          "gain": 0.5,
+          "voices_before": 10
+        },
+        {
+          "clip": "shoot",
+          "frame": 475,
+          "gain": 0.7,
+          "voices_before": 0
+        },
+        {
+          "clip": "hit",
+          "frame": 475,
+          "gain": 0.5,
+          "voices_before": 1
+        },
+        {
+          "clip": "shoot",
+          "frame": 483,
+          "gain": 0.7,
+          "voices_before": 2
+        },
+        {
+          "clip": "hit",
+          "frame": 483,
+          "gain": 0.5,
+          "voices_before": 3
+        },
+        {
+          "clip": "shoot",
+          "frame": 491,
+          "gain": 0.7,
+          "voices_before": 4
+        },
+        {
+          "clip": "hit",
+          "frame": 491,
+          "gain": 0.5,
+          "voices_before": 5
+        },
+        {
+          "clip": "shoot",
+          "frame": 499,
+          "gain": 0.7,
+          "voices_before": 6
+        },
+        {
+          "clip": "hit",
+          "frame": 499,
+          "gain": 0.5,
+          "voices_before": 7
+        },
+        {
+          "clip": "shoot",
+          "frame": 507,
+          "gain": 0.7,
+          "voices_before": 8
+        },
+        {
+          "clip": "hit",
+          "frame": 507,
+          "gain": 0.5,
+          "voices_before": 9
+        },
+        {
+          "clip": "kill",
+          "frame": 507,
+          "gain": 0.8,
+          "voices_before": 10
+        },
+        {
+          "clip": "boss_down",
+          "frame": 507,
+          "gain": 1.0,
+          "voices_before": 11
+        },
+        {
+          "clip": "wave",
+          "frame": 507,
+          "gain": 0.7,
+          "voices_before": 12
+        }
+      ],
+      "dropped_sfx": 0,
+      "events": [
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 1
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 9
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 17
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 25
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 33
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 41
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 49
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 57
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 65
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 73
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 81
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 89
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 97
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 105
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 113
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 121
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 129
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 137
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 145
+        },
+        {
+          "events": [
+            "boss_summon"
+          ],
+          "frame": 151
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 153
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 161
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "kill"
+          ],
+          "frame": 169
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 177
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 185
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 193
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 201
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "kill"
+          ],
+          "frame": 209
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 217
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 225
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 233
+        },
+        {
+          "events": [
+            "reload"
+          ],
+          "frame": 241
+        },
+        {
+          "events": [
+            "reloaded",
+            "shoot",
+            "hit"
+          ],
+          "frame": 307
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 315
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 323
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 331
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 339
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 347
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 355
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 363
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 371
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 379
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 387
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 395
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 403
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 411
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 419
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 427
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 435
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 443
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 451
+        },
+        {
+          "events": [
+            "shoot",
+            "hit"
+          ],
+          "frame": 459
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "near_miss",
+            "near_miss_bonus"
+          ],
+          "frame": 467
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "near_miss"
+          ],
+          "frame": 475
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "near_miss"
+          ],
+          "frame": 483
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "near_miss"
+          ],
+          "frame": 491
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "near_miss"
+          ],
+          "frame": 499
+        },
+        {
+          "events": [
+            "shoot",
+            "hit",
+            "kill",
+            "boss_down",
+            "wave"
+          ],
+          "frame": 507
+        }
+      ],
+      "frames": 507,
+      "hash": "1b6027350ff4a24aad528c0e87e8e942",
+      "hp": 100,
+      "kills": 3,
+      "peak_voices": 8,
+      "score": 3080,
+      "wave": 4
+    },
+    "parity": "slam hash a5e66d40? identical before/after; audio events go from hurt-only to windup+slam+hurt",
+    "pickup": {
+      "audio_count": 1,
+      "audio_events": [
+        {
+          "clip": "pickup",
+          "frame": 121,
+          "gain": 0.7,
+          "voices_before": 0
+        }
+      ],
+      "dropped_sfx": 0,
+      "events": [
+        {
+          "events": [
+            "pickup"
+          ],
+          "frame": 121
+        }
+      ],
+      "frames": 121,
+      "hash": "0cfe81931634e2b0905383807611b9fe",
+      "hp": 100,
+      "kills": 0,
+      "peak_voices": 1,
+      "score": 0,
+      "wave": 2
+    },
+    "slam_after": {
+      "audio_count": 3,
+      "audio_events": [
+        {
+          "clip": "boss_windup",
+          "frame": 1,
+          "gain": 0.8,
+          "voices_before": 0
+        },
+        {
+          "clip": "boss_slam",
+          "frame": 43,
+          "gain": 0.9,
+          "voices_before": 1
+        },
+        {
+          "clip": "hurt",
+          "frame": 43,
+          "gain": 0.8,
+          "voices_before": 2
+        }
+      ],
+      "dropped_sfx": 0,
+      "events": [
+        {
+          "events": [
+            "boss_windup"
+          ],
+          "frame": 1
+        },
+        {
+          "events": [
+            "boss_slam",
+            "hurt"
+          ],
+          "frame": 43
+        }
+      ],
+      "frames": 43,
+      "hash": "a5e66d4049010107eb3c0b57e95388f4",
+      "hp": 70,
+      "kills": 0,
+      "peak_voices": 3,
+      "score": 0,
+      "wave": 3
+    },
+    "slam_before": {
+      "audio_count": 1,
+      "audio_events": [
+        {
+          "clip": "hurt",
+          "frame": 43,
+          "gain": 0.8,
+          "voices_before": 0
+        }
+      ],
+      "dropped_sfx": 0,
+      "events": [
+        {
+          "events": [
+            "boss_windup"
+          ],
+          "frame": 1
+        },
+        {
+          "events": [
+            "boss_slam",
+            "hurt"
+          ],
+          "frame": 43
+        }
+      ],
+      "frames": 43,
+      "hash": "a5e66d4049010107eb3c0b57e95388f4",
+      "hp": 70,
+      "kills": 0,
+      "peak_voices": 1,
+      "score": 0,
+      "wave": 3
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-06/after",
+    "before_dir": "shots/shooter-campaign/cycle-06/before",
+    "route": "scripts/capture.py slam; scripts/play_run.py slam; 960x540, seed 1, wave-3 warden at 3 m, same frames"
+  },
+  "tests": {
+    "audio_tests": 5,
+    "suite": "69 passed",
+    "ui_surge_label_fit": "1 pin"
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "boss telegraph audio",
+    "engagement audio",
+    "captions",
+    "accessibility"
+  ],
+  "visual_diff": {
+    "slam_hit": {
+      "bbox": [
+        402,
+        164,
+        827,
+        459
+      ],
+      "changed_px": 4116
+    },
+    "slam_windup": {
+      "bbox": [
+        390,
+        164,
+        947,
+        459
+      ],
+      "changed_px": 9696
+    },
+    "spawn_regression_changed_px": 0
+  }
+}

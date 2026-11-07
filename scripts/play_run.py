@@ -10,6 +10,7 @@ Modes:
   strafe   strafe_fire drill (minute-one regression run)
   ambush   staged alternating side attackers (damage-direction drill)
   boss     warden-only wave-3 fight with the kite policy (ends on boss death)
+  slam     close-range warden windup/slam (audio + caption drill)
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
 
 Writes a machine-readable report with per-frame health, event frames,
@@ -60,7 +61,7 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         return strafe[frame % len(strafe)]
     if mode == "pickup":
         return ActionState(forward=1.0)
-    return ActionState()
+    return ActionState()  # idle / slam
 
 
 def main(
@@ -76,7 +77,7 @@ def main(
     try:
         if seed != 1:
             game.sim.reseed(seed)
-        if mode in ("ambush", "boss"):
+        if mode in ("ambush", "boss", "slam"):
             game.sim.spawn_queue = []
             game.sim.spawn_t = 1e9
         boss = None
@@ -85,6 +86,13 @@ def main(
             boss = _Enemy(
                 etype="warden", pos=Vec3(0.0, 1.1, 0.0), hp=600, max_hp=600,
                 summon_cd=2.5,
+            )
+            game.sim.enemies = [boss]
+        if mode == "slam":
+            game.sim.wave = 3
+            boss = _Enemy(
+                etype="warden", pos=Vec3(0.0, 1.1, 5.0), hp=600, max_hp=600,
+                summon_cd=999.0,
             )
             game.sim.enemies = [boss]
         if mode == "pickup":
@@ -106,6 +114,7 @@ def main(
         strafe = strafe_fire(frames)
         recorded: list[dict] = []
         hurts: list[dict] = []
+        audio_log: list[dict] = []
         wave_events: list[dict] = []
         last_wave = int(game.sim.wave)
         last_hp = int(game.sim.hp)
@@ -132,6 +141,18 @@ def main(
             return events
 
         game.sim.step = step  # type: ignore[method-assign]
+        def play(clip, gain):
+            audio_log.append(
+                {
+                    "frame": int(game.sim.tick),
+                    "clip": clip.name,
+                    "gain": round(float(gain), 3),
+                    "voices_before": int(game.mixer.voice_count()),
+                }
+            )
+
+        game.set_clip_hook(play)
+        peak_voices = 0
         started = time.perf_counter()
         chunk_wall = 0.0
         chunk_max = 0.0
@@ -147,6 +168,7 @@ def main(
             elapsed = time.perf_counter() - tick
             chunk_wall += elapsed
             chunk_max = max(chunk_max, elapsed)
+            peak_voices = max(peak_voices, int(game.mixer.voice_count()))
             if elapsed > FIXED_STEP:
                 slow_frames += 1
             hp = int(game.sim.hp)
@@ -158,6 +180,8 @@ def main(
                 )
                 last_wave = int(game.sim.wave)
             if boss is not None and not boss.alive:
+                break
+            if mode == "slam" and game.sim.hp < 100:
                 break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break
@@ -187,6 +211,9 @@ def main(
             "chunks": chunks,
             "events": recorded,
             "hurt_events": hurts,
+            "audio_events": audio_log,
+            "peak_voices": int(peak_voices),
+            "dropped_sfx": int(game.dropped_sfx),
             "wave_events": wave_events,
             "final": final,
             "pickup": {
@@ -201,10 +228,11 @@ def main(
             Path(out).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
         print(
             "play mode=%s frames=%d wave=%d kills=%d score=%d hp=%d alive=%s "
-            "hurts=%d shots=%d hits=%d mean_step_ms=%.4f hash=%s"
+            "hurts=%d audio=%d peak_vox=%d drops=%d shots=%d hits=%d mean_step_ms=%.4f hash=%s"
             % (
                 mode, ran, final["wave"], final["kills"], final["score"],
                 final["player"]["hp"], final["player"]["alive"], len(hurts),
+                len(audio_log), peak_voices, int(game.dropped_sfx),
                 final["shots"], final["hits"], payload["mean_step_ms"], payload["hash"],
             )
         )

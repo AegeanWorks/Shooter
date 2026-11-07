@@ -308,6 +308,39 @@ def route_pickup_spawn(prefix: str, shadows: bool = True, srgb: bool = True, pos
         engine.close()
 
 
+def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Close-range warden windup + slam frames; the audio-caption proof pair."""
+    from keystone.app import Engine
+
+    game = ShooterGame()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.spawn_t = 999.0
+        g.sim.wave = 3
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 5.0), hp=600, max_hp=600,
+                   summon_cd=999.0)
+        ]
+        captured = False
+        for _ in range(120):
+            g.update(FIXED_STEP, ActionState())
+            boss = g.sim.enemies[0]
+            if not captured and 0.0 < boss.windup_t < 0.45:
+                engine.capture(f"{prefix}_slam_windup.png", f"{prefix}_slam_windup.json")
+                print(f"slam-windup frame={g.sim.tick} hp={g.sim.hp} windup={boss.windup_t:.2f}")
+                captured = True
+            if g.sim.hp < 100:
+                engine.capture(f"{prefix}_slam_hit.png", f"{prefix}_slam_hit.json")
+                print(f"slam-hit frame={g.sim.tick} hp={g.sim.hp} cue_t={getattr(g, 'sound_cue_t', 0.0)}")
+                break
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_death(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
@@ -345,6 +378,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_boss(prefix, "--no-boss" not in _flags, shadows, srgb, post, bloom)
     if which == "pickup_spawn":
         route_pickup_spawn(prefix, shadows, srgb, post, bloom)
+    if which == "slam":
+        route_slam(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 
