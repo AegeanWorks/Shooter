@@ -1,0 +1,339 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py hurt <before|after-prefix>",
+    "python scripts/play_run.py <mode> <frames> <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 1,
+  "fix": "directional damage cue: last-attacker source tracked for 0.8s and drawn as a red ring trail + cross around the crosshair",
+  "gates": {
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "43 passed in 6.79s"
+  },
+  "parity": {
+    "note": "events, hp, kills, score, shots and hits match baseline for all four modes; only the new hurt telemetry differs in snapshot hashes",
+    "snapshot_without_hurt_equal": true
+  },
+  "play_runs": {
+    "ambush": {
+      "after": {
+        "alive": true,
+        "chunk_max_step_ms": 0.8589,
+        "frames": 300,
+        "hash": "0936cea3afc02c8c6ef2d9670cfa090e",
+        "hits": 0,
+        "hp": 76,
+        "hurt_events": [
+          {
+            "cue_t": 0.8,
+            "damage": 8,
+            "frame": 52,
+            "hp": 92,
+            "source": [
+              1.339,
+              7.757
+            ]
+          },
+          {
+            "cue_t": 0.8,
+            "damage": 8,
+            "frame": 142,
+            "hp": 84,
+            "source": [
+              -1.341,
+              7.766
+            ]
+          },
+          {
+            "cue_t": 0.8,
+            "damage": 8,
+            "frame": 232,
+            "hp": 76,
+            "source": [
+              1.343,
+              7.78
+            ]
+          }
+        ],
+        "hurts": 3,
+        "kills": 0,
+        "mean_step_ms": 0.1264,
+        "mode": "ambush",
+        "score": 0,
+        "shots": 0,
+        "wave": 1
+      },
+      "before": {
+        "alive": true,
+        "chunk_max_step_ms": 0.3346,
+        "frames": 300,
+        "hash": "c018a9f1c6c6f69f67964020628229da",
+        "hits": 0,
+        "hp": 76,
+        "hurt_events": [
+          {
+            "cue_t": null,
+            "damage": 8,
+            "frame": 52,
+            "hp": 92,
+            "source": null
+          },
+          {
+            "cue_t": null,
+            "damage": 8,
+            "frame": 142,
+            "hp": 84,
+            "source": null
+          },
+          {
+            "cue_t": null,
+            "damage": 8,
+            "frame": 232,
+            "hp": 76,
+            "source": null
+          }
+        ],
+        "hurts": 3,
+        "kills": 0,
+        "mean_step_ms": 0.1063,
+        "mode": "ambush",
+        "score": 0,
+        "shots": 0,
+        "wave": 1
+      }
+    },
+    "idle": {
+      "after": {
+        "alive": true,
+        "chunk_max_step_ms": 3.7311,
+        "frames": 300,
+        "hash": "9f37db1f440afc637718fa11e8f492c2",
+        "hits": 0,
+        "hp": 84,
+        "hurt_events": [
+          {
+            "cue_t": 0.8,
+            "damage": 8,
+            "frame": 182,
+            "hp": 92,
+            "source": [
+              -1.129,
+              7.209
+            ]
+          },
+          {
+            "cue_t": 0.8,
+            "damage": 8,
+            "frame": 242,
+            "hp": 84,
+            "source": [
+              -0.96,
+              7.334
+            ]
+          }
+        ],
+        "hurts": 2,
+        "kills": 0,
+        "mean_step_ms": 0.2437,
+        "mode": "idle",
+        "score": 0,
+        "shots": 0,
+        "wave": 1
+      },
+      "before": {
+        "alive": true,
+        "chunk_max_step_ms": 0.4384,
+        "frames": 300,
+        "hash": "669e7211d97067b1d6d7cd8472ecc16e",
+        "hits": 0,
+        "hp": 84,
+        "hurt_events": [
+          {
+            "cue_t": null,
+            "damage": 8,
+            "frame": 182,
+            "hp": 92,
+            "source": null
+          },
+          {
+            "cue_t": null,
+            "damage": 8,
+            "frame": 242,
+            "hp": 84,
+            "source": null
+          }
+        ],
+        "hurts": 2,
+        "kills": 0,
+        "mean_step_ms": 0.1076,
+        "mode": "idle",
+        "score": 0,
+        "shots": 0,
+        "wave": 1
+      }
+    },
+    "kite": {
+      "after": {
+        "alive": true,
+        "chunk_max_step_ms": 5.5324,
+        "frames": 600,
+        "hash": "0a1077943fd4b668c970dde00a3a76ba",
+        "hits": 31,
+        "hp": 100,
+        "hurt_events": [],
+        "hurts": 0,
+        "kills": 9,
+        "mean_step_ms": 0.5745,
+        "mode": "kite",
+        "score": 1500,
+        "shots": 36,
+        "wave": 2
+      },
+      "before": {
+        "alive": true,
+        "chunk_max_step_ms": 16.8892,
+        "frames": 600,
+        "hash": "cc2261068b21decf4ae98110a816d173",
+        "hits": 31,
+        "hp": 100,
+        "hurt_events": [],
+        "hurts": 0,
+        "kills": 9,
+        "mean_step_ms": 0.6506,
+        "mode": "kite",
+        "score": 1500,
+        "shots": 36,
+        "wave": 2
+      }
+    },
+    "strafe": {
+      "after": {
+        "alive": true,
+        "chunk_max_step_ms": 2.5396,
+        "frames": 300,
+        "hash": "973276f59774b1044ecc9dd474dc78da",
+        "hits": 2,
+        "hp": 84,
+        "hurt_events": [
+          {
+            "cue_t": 0.8,
+            "damage": 8,
+            "frame": 266,
+            "hp": 92,
+            "source": [
+              5.194,
+              -8.439
+            ]
+          },
+          {
+            "cue_t": 0.8,
+            "damage": 8,
+            "frame": 270,
+            "hp": 84,
+            "source": [
+              3.386,
+              -10.291
+            ]
+          }
+        ],
+        "hurts": 2,
+        "kills": 0,
+        "mean_step_ms": 0.3438,
+        "mode": "strafe",
+        "score": 0,
+        "shots": 30,
+        "wave": 1
+      },
+      "before": {
+        "alive": true,
+        "chunk_max_step_ms": 0.9638,
+        "frames": 300,
+        "hash": "779da67d657dd3c0480d8ec0dca4989c",
+        "hits": 2,
+        "hp": 84,
+        "hurt_events": [
+          {
+            "cue_t": null,
+            "damage": 8,
+            "frame": 266,
+            "hp": 92,
+            "source": null
+          },
+          {
+            "cue_t": null,
+            "damage": 8,
+            "frame": 270,
+            "hp": 84,
+            "source": null
+          }
+        ],
+        "hurts": 2,
+        "kills": 0,
+        "mean_step_ms": 0.3058,
+        "mode": "strafe",
+        "score": 0,
+        "shots": 30,
+        "wave": 1
+      }
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-01/after",
+    "before_dir": "shots/shooter-campaign/cycle-01/before",
+    "renderer": "S1C1P1B1",
+    "route": "scripts/capture.py hurt left|right|behind; player at spawn (0,0.9,8), yaw 0, mite at 2.2m left/right/behind, first hit frame 12, hp 92",
+    "seed": 1,
+    "viewport": [
+      960,
+      540
+    ]
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "damage feedback",
+    "readability",
+    "combat feel"
+  ],
+  "unchanged_routes_px": {
+    "burst": 0,
+    "combat": 0,
+    "death": 0,
+    "pickup": 0,
+    "spawn": 0
+  },
+  "visual_diff": {
+    "behind": {
+      "bbox": [
+        473,
+        308,
+        492,
+        377
+      ],
+      "changed_px": 292,
+      "total_px": 518400
+    },
+    "left": {
+      "bbox": [
+        372,
+        263,
+        441,
+        282
+      ],
+      "changed_px": 292,
+      "total_px": 518400
+    },
+    "right": {
+      "bbox": [
+        518,
+        257,
+        587,
+        276
+      ],
+      "changed_px": 292,
+      "total_px": 518400
+    }
+  }
+}

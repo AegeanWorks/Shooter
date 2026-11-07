@@ -170,6 +170,48 @@ def route_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_hurt(prefix: str, side: str = "right", shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """First-hit frame with the attacker just outside the centre view.
+
+    Same seeded state for every side, so before/after screenshots differ only
+    by the game's own damage feedback. The attacker is placed at 2.2 m and the
+    player stands still; the first mite hit lands in ~10 frames.
+    """
+    from keystone.app import Engine
+
+    game = ShooterGame()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        x, z = g.sim.player_pos.x, g.sim.player_pos.z
+        if side == "right":
+            x += 2.2
+        elif side == "left":
+            x -= 2.2
+        else:  # behind
+            z += 2.2
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(x, 0.5, z), hp=30, max_hp=30)]
+        for _ in range(90):
+            before = int(g.sim.hp)
+            g.update(FIXED_STEP, ActionState())
+            if int(g.sim.hp) < before:
+                break
+        hurt_t = getattr(g.sim, "hurt_t", None)
+        print(
+            f"hurt side={side} frame={g.sim.tick} hp={g.sim.hp} "
+            f"cue_t={hurt_t} source=({g.sim.enemies[0].pos.x:.2f},{g.sim.enemies[0].pos.z:.2f})"
+        )
+        engine.capture(f"{prefix}_hurt_{side}.png", f"{prefix}_hurt_{side}.json")
+        _profiler(engine)
+        print(f"wrote {prefix}_hurt_{side}.png + {prefix}_hurt_{side}.json")
+    finally:
+        engine.close()
+
+
 def route_death(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
@@ -200,6 +242,9 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_fireburst(prefix, shadows, srgb, post, bloom)
     if which in ("all", "pickup"):
         route_pickup(prefix, shadows, srgb, post, bloom)
+    if which == "hurt":
+        for side in ("left", "right", "behind"):
+            route_hurt(prefix, side, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

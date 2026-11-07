@@ -64,7 +64,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, mixer
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/particles/engagement
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- crosshair/HP/ammo/score/streak/overdrive overlay
+│   ├── ui.py            <- crosshair/HP/ammo/score/streak/overdrive + damage cue
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp
@@ -76,11 +76,15 @@ projects/shooter/
 │   ├── conftest.py         <- adds keystone + shooter to sys.path
 │   ├── test_shooter.py     <- move/shoot/hit/kill/die/score/determinism/budget
 │   ├── test_engagement.py  <- odds/stream/overdrive/lock/determinism
+│   ├── test_feedback.py    <- hurt-source telemetry + directional HUD cue
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
-│   └── capture.py     <- seeded screenshot routes (spawn/combat/burst/pickup/death)
+│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush reports
+│   └── capture.py     <- seeded screenshot routes (spawn/combat/burst/pickup/hurt/death)
+├── evidence/
+│   └── cycle-01.json  <- improvement-cycle proof: diffs, runs, gate results
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
 ├── start-shooter.sh        <- macOS/Linux entry point (python3 play.py)
@@ -122,6 +126,7 @@ projects/shooter/
 ├── shot_stage4_min30proxy.png  <- stage-4 proxy capture image
 └── .aikit/
     ├── decisions.md     <- append-only ADRs
+    ├── cycles.md        <- append-only improvement-cycle record
     ├── guidelines.md    <- agent working agreement
     ├── project.json     <- project metadata
     ├── media.json       <- brand/media manifest

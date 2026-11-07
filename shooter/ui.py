@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 
 def draw_shooter(canvas, hud, sim) -> None:
     w, h = int(hud.width), int(hud.height)
@@ -20,6 +22,38 @@ def draw_shooter(canvas, hud, sim) -> None:
     canvas.rect(cx - 1, cy - gap - 8, 2, 8, col)
     canvas.rect(cx - 1, cy + gap, 2, 8, col)
     canvas.rect(cx - 1, cy - 1, 2, 2, col)
+
+    # Directional damage cue: point at the last attacker for a short window.
+    # World-space source + camera yaw -> bearing around the crosshair; the
+    # sim's damage/RNG state is never touched by this presentation code.
+    hurt_t = float(getattr(sim, "hurt_t", 0.0))
+    if hurt_t > 0.0 and bool(getattr(sim, "alive", True)):
+        src = getattr(sim, "hurt_from", None)
+        if src is not None:
+            dx = float(src.x) - float(sim.player_pos.x)
+            dz = float(src.z) - float(sim.player_pos.z)
+            if abs(dx) + abs(dz) > 1e-6:
+                yaw = float(getattr(sim, "yaw", 0.0))
+                dot = dx * math.sin(yaw) + dz * -math.cos(yaw)
+                side = dx * math.cos(yaw) + dz * math.sin(yaw)
+                bearing = math.atan2(side, dot)
+                ux, uy = math.sin(bearing), -math.cos(bearing)
+                pulse = min(1.0, hurt_t / 0.8)
+                # Ring cue around the crosshair: never occluded by the engine
+                # panels (top-left/top-right/bottom help), readable at any yaw.
+                for step in range(5):
+                    radius = 40.0 + step * 12.0
+                    alpha = 0.30 + 0.12 * step + 0.30 * pulse
+                    canvas.rect(
+                        cx + ux * radius - 2.0,
+                        cy + uy * radius - 2.0,
+                        4.0, 4.0, (1.0, 0.25, 0.20, alpha),
+                    )
+                mx, my = cx + ux * 98.0, cy + uy * 98.0
+                cue = (1.0, 0.28, 0.22, 0.55 + 0.40 * pulse)
+                canvas.rect(mx - 3, my - 10, 6, 20, cue)
+                canvas.rect(mx - 10, my - 3, 20, 6, cue)
+                canvas.rect(mx - 5, my - 5, 10, 10, cue)
 
     # engine help lives bottom-left (overlay.py); keep the game panel above it.
     # overlay scale/help math mirrored here so panels never overlap.

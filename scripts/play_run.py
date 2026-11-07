@@ -1,0 +1,188 @@
+"""Played-run evidence harness: drive the shipped game through the Engine loop.
+
+The run uses the real five-operation contract (build_scene -> update ->
+snapshot), the real renderer/UI at capture time, and the shipped DATA tables.
+No balance changes and no synthetic kills: policies only feed ActionState.
+
+Modes:
+  idle     stand still and let the arena come to you (natural hurt events)
+  kite     survivor policy from shooter.bot (economy/regression run)
+  strafe   strafe_fire drill (minute-one regression run)
+  ambush   staged alternating side attackers (damage-direction drill)
+
+Writes a machine-readable report with per-frame health, event frames,
+hurt-source telemetry and the final deterministic snapshot hash.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT.parent / "keystone"))
+
+from keystone.app import Engine  # noqa: E402
+from keystone.input import ActionState  # noqa: E402
+from keystone.math3d import Vec3  # noqa: E402
+from keystone.replay import FIXED_STEP, stable_hash  # noqa: E402
+
+from shooter.bot import kite_step, strafe_fire  # noqa: E402
+from shooter.game import ShooterGame  # noqa: E402
+from shooter.sim import _Enemy  # noqa: E402
+
+CHUNK = 60
+
+
+def _stage_ambush(game: ShooterGame, frame: int) -> None:
+    """Alternate a fresh side attacker every 90 frames (player stands still)."""
+    if frame % 90 != 0:
+        return
+    sim = game.sim
+    side = 1.0 if (frame // 90) % 2 == 0 else -1.0
+    x = sim.player_pos.x + 5.0 * side
+    z = sim.player_pos.z
+    sim.enemies = [
+        _Enemy(etype="mite", pos=Vec3(x, 0.5, z), hp=30, max_hp=30, attack_cd=0.0)
+    ]
+
+
+def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState]) -> ActionState:
+    if mode == "kite":
+        return kite_step(game.sim)
+    if mode == "strafe":
+        return strafe[frame % len(strafe)]
+    return ActionState()
+
+
+def main(
+    mode: str = "kite",
+    frames: int = 600,
+    seed: int = 1,
+    out: str = "",
+    png: str = "",
+    report: str = "",
+) -> dict:
+    game = ShooterGame()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    try:
+        if seed != 1:
+            game.sim.reseed(seed)
+        if mode == "ambush":
+            game.sim.spawn_queue = []
+            game.sim.spawn_t = 1e9
+        strafe = strafe_fire(frames)
+        recorded: list[dict] = []
+        hurts: list[dict] = []
+        wave_events: list[dict] = []
+        last_wave = int(game.sim.wave)
+        last_hp = int(game.sim.hp)
+        original_step = game.sim.step
+
+        def step(dt, actions):
+            events = original_step(dt, actions)
+            current = int(game.sim.tick)
+            nonempty = [e for e in events if e]
+            if nonempty:
+                recorded.append({"frame": int(current), "events": nonempty})
+            if "hurt" in events:
+                hurt = getattr(game.sim, "hurt_t", None)
+                source = getattr(game.sim, "hurt_from", None)
+                hurts.append(
+                    {
+                        "frame": int(current),
+                        "hp": int(game.sim.hp),
+                        "damage": int(last_hp - game.sim.hp),
+                        "source": None if source is None else [round(source.x, 3), round(source.z, 3)],
+                        "cue_t": None if hurt is None else round(float(hurt), 3),
+                    }
+                )
+            return events
+
+        game.sim.step = step  # type: ignore[method-assign]
+        started = time.perf_counter()
+        chunk_wall = 0.0
+        chunk_max = 0.0
+        chunks: list[dict] = []
+        slow_frames = 0
+        for frame in range(frames):
+            if mode == "ambush":
+                _stage_ambush(game, frame)
+            tick = time.perf_counter()
+            game.update(FIXED_STEP, _action(mode, game, frame, strafe))
+            elapsed = time.perf_counter() - tick
+            chunk_wall += elapsed
+            chunk_max = max(chunk_max, elapsed)
+            if elapsed > FIXED_STEP:
+                slow_frames += 1
+            hp = int(game.sim.hp)
+            last_hp = hp
+            if int(game.sim.wave) != last_wave:
+                wave_events.append(
+                    {"frame": frame, "wave": int(game.sim.wave), "hp": hp,
+                     "kills": int(game.sim.kills), "score": int(game.sim.score)}
+                )
+                last_wave = int(game.sim.wave)
+            if (frame + 1) % CHUNK == 0:
+                chunks.append(
+                    {
+                        "frames": [frame + 1 - CHUNK, frame + 1],
+                        "mean_step_ms": round(chunk_wall / CHUNK * 1000.0, 4),
+                        "max_step_ms": round(chunk_max * 1000.0, 4),
+                    }
+                )
+                chunk_wall = 0.0
+                chunk_max = 0.0
+        wall_s = time.perf_counter() - started
+        final = game.snapshot()
+        if png:
+            engine.capture(png, report or None)
+        payload = {
+            "mode": mode,
+            "frames": int(frames),
+            "seed": int(seed),
+            "viewport": [960, 540],
+            "wall_s": round(wall_s, 3),
+            "mean_step_ms": round(wall_s / frames * 1000.0, 4),
+            "chunk_max_step_ms": max((c["max_step_ms"] for c in chunks), default=0.0),
+            "slow_frames": int(slow_frames),
+            "chunks": chunks,
+            "events": recorded,
+            "hurt_events": hurts,
+            "wave_events": wave_events,
+            "final": final,
+            "hash": stable_hash(final),
+        }
+        if out:
+            Path(out).parent.mkdir(parents=True, exist_ok=True)
+            Path(out).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+        print(
+            "play mode=%s frames=%d wave=%d kills=%d score=%d hp=%d alive=%s "
+            "hurts=%d shots=%d hits=%d mean_step_ms=%.4f hash=%s"
+            % (
+                mode, frames, final["wave"], final["kills"], final["score"],
+                final["player"]["hp"], final["player"]["alive"], len(hurts),
+                final["shots"], final["hits"], payload["mean_step_ms"], payload["hash"],
+            )
+        )
+        return payload
+    finally:
+        engine.close()
+
+
+if __name__ == "__main__":
+    flags = [a for a in sys.argv[1:] if a.startswith("--")]
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    _mode = args[0] if len(args) > 0 else "kite"
+    _frames = int(args[1]) if len(args) > 1 else 600
+    _out = args[2] if len(args) > 2 else ""
+    _png = args[3] if len(args) > 3 else ""
+    _report = args[4] if len(args) > 4 else ""
+    _seed = 1
+    for flag in flags:
+        if flag.startswith("--seed="):
+            _seed = int(flag.split("=", 1)[1])
+    main(_mode, _frames, _seed, _out, _png, _report)

@@ -186,6 +186,10 @@ class Sim:
         self.hitmark_t = 0.0
         self.flash_t = 0.0
         self.flash_pos = Vec3()
+        # Last damage source, presentation-only: HUD points at the threat for
+        # a short window. Never feeds damage, RNG, or movement.
+        self.hurt_t = 0.0
+        self.hurt_from = Vec3()
         self.tracers: list[dict] = []
         self.enemies: list[_Enemy] = []
         self._next_enemy = 1
@@ -358,6 +362,7 @@ class Sim:
             self.kick = 0.0
         self.hitmark_t = max(0.0, self.hitmark_t - dt)
         self.flash_t = max(0.0, self.flash_t - dt)
+        self.hurt_t = max(0.0, float(getattr(self, "hurt_t", 0.0)) - dt)
         for t in self.tracers:
             t["life"] = max(0.0, float(t["life"]) - dt)
         self.tracers = [t for t in self.tracers if t["life"] > 0.0][:16]
@@ -462,9 +467,12 @@ class Sim:
         self.tick += 1
         return events
 
-    def _on_hurt(self, events: list[str]) -> None:
+    def _on_hurt(self, events: list[str], source: _Enemy | None = None) -> None:
         # Any detected damage breaks streak + overdrive (cf. break_combo):
         # the multiplier is a stake, never a ratchet.
+        if source is not None:
+            self.hurt_from = Vec3(float(source.pos.x), float(source.pos.y), float(source.pos.z))
+            self.hurt_t = float(self.juice.get("hurt_cue_s", 0.8))
         if int(getattr(self, "streak", 0)) > 0:
             events.append("streak_break")
         self.streak = 0
@@ -662,7 +670,7 @@ class Sim:
                     self.hp -= int(edef["dmg"])
                     e.attack_cd = 1.0
                     events.append("hurt")
-                    self._on_hurt(events)
+                    self._on_hurt(events, e)
                     if self.hp <= 0:
                         self.hp = 0
                         self.alive = False
@@ -681,7 +689,7 @@ class Sim:
                     self.hp -= int(edef["dmg"])
                     e.attack_cd = 2.0
                     events.append("hurt")
-                    self._on_hurt(events)
+                    self._on_hurt(events, e)
                     if self.hp <= 0:
                         self.hp = 0
                         self.alive = False
@@ -716,7 +724,7 @@ class Sim:
                         self.hp -= int(edef["dmg"])
                         e.attack_cd = 1.5
                         events.append("hurt")
-                        self._on_hurt(events)
+                        self._on_hurt(events, e)
                         if self.hp <= 0:
                             self.hp = 0
                             self.alive = False
@@ -760,6 +768,11 @@ class Sim:
             "near_miss": int(getattr(self, "near_miss", 0)),
             "clutch": int(getattr(self, "clutch", 0)),
             "caches": int(len(getattr(self, "caches", []))),
+            "hurt": {
+                "t": round(float(getattr(self, "hurt_t", 0.0)), 4),
+                "x": r(getattr(self, "hurt_from", Vec3()).x),
+                "z": r(getattr(self, "hurt_from", Vec3()).z),
+            },
             "player": {
                 "x": r(self.player_pos.x),
                 "y": r(self.player_pos.y),

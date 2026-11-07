@@ -1,5 +1,44 @@
 {
   "version": 1,
-  "active_task": null,
-  "checkpoints": []
+  "active_task": {
+    "task_id": "shooter-cycle-01-combat-feedback",
+    "last_phase": "in_progress",
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794076493.7222507,
+    "owner": "opencode:deepseek-v4.1-flash",
+    "started_by": "opencode:deepseek-v4.1-flash",
+    "continuations": []
+  },
+  "checkpoints": [
+    {
+      "task_id": "shooter-cycle-01-combat-feedback",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/4] Combat-feedback cycle: baseline evidence harness, damage-source tracking, HUD direction cue, play/gate proof",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794075438.3155236,
+      "timestamp_str": "2026-11-07 21:17:18",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Baseline screenshots and play notes show no directional feedback when enemies hit from off-screen; HP only drops.",
+        "benefits": "Players can locate the threat that hurt them; adds combat legibility without changing balance or damage.",
+        "risks": "contract: snapshot gains a hurt field, so pinned hashes move; dependency: no new deps; concurrency: none; state: new transient timers must reset with sim.",
+        "mitigation": "Keep gameplay fields unchanged, verify event/hp parity against baseline, add determinism and reset tests; presentation-only HUD reads sim."
+      },
+      "plan_digest": "cd6f4bf1d7bc26e849f4bc928a5d6240468c3639362ce083d8012f557fb98db2"
+    },
+    {
+      "task_id": "shooter-cycle-01-combat-feedback",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[4/4] Combat feedback implemented and proven: 43 tests, determinism 1800 ok, before/after 292px cue deltas, played-run parity; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794076493.7222507,
+      "timestamp_str": "2026-11-07 21:34:53",
+      "agent": "opencode:deepseek-v4.1-flash"
+    }
+  ]
 }
