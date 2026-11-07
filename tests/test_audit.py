@@ -99,7 +99,10 @@ def test_draw_shooter_smoke():
     draw_shooter(canvas, _Hud(), s)  # must not raise on a fresh sim
     kinds = {call[0] for call in canvas.calls}
     assert "rect" in kinds and "text" in kinds
-    assert any("HP" in str(call) for call in canvas.calls), canvas.calls
+    assert any("WAVE" in str(call) for call in canvas.calls), canvas.calls
+    # HP/ammo is engine status; the game HUD must not draw a second copy.
+    texts = [call for call in canvas.calls if call[0] == "text"]
+    assert not any("HP " in str(call) or "PULSE" in str(call) for call in texts), texts
     s.hp = 10  # low-hp edge warning path
     s.alive = False  # death tint path
     draw_shooter(canvas, _Hud(), s)

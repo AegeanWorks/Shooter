@@ -83,3 +83,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 54 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-03.json`.
+
+## Cycle 04 — UI readability: one HP/ammo source + readable crosshair
+- **Area**: UI readability (4/7 rotation).
+- **Defect / evidence**: baseline spawn and burst frames printed HP/ammo
+  twice (engine top-left and game bottom-left); the white crosshair arms
+  vanished against the white muzzle flash in `burst` (same 2 px arms fill
+  on a white cube).
+- **Fix**: remove the bottom-left game HP/ammo panel (engine status owns
+  HP/ammo; wave/score/streak stay in the game layer); draw a 2 px dark
+  backing behind each crosshair arm and centre pip before the bright core.
+  Low-HP edges, damage cue, boss bar and pickup label stay.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-04/`;
+  960x540, seed 1, same routes/frames. Every route changes 15,856 px
+  (panel + crosshair; crosshair crop 256 px). Burst crosshair crop:
+  dark pixels 538 -> 758, bright 375 -> 319 on the white-flash frame;
+  spawn bottom-left mean luma 29.21 -> 31.95 after the panel removal.
+- **Played runs**: `play_run.py kite 600` hash `0a107794…` and
+  `strafe 300` hash `973276f5…` identical to the pre-change reports;
+  the HUD change never touches sim state.
+- **Gates**: `python -m pytest -q` 58 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-04.json`.

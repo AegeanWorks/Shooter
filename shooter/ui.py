@@ -14,14 +14,20 @@ def draw_shooter(canvas, hud, sim) -> None:
     danger = (1.0, 0.30, 0.30, 1.0)
     panel_c = (0.03, 0.04, 0.06, 0.72)
 
-    # crosshair (expands on hit)
+    # crosshair (expands on hit) with a dark backing so the arms survive a
+    # white muzzle flash or a bright floor patch.
     gap = 8 if float(getattr(sim, "hitmark_t", 0.0)) <= 0.0 else 12
     col = accent if float(getattr(sim, "hitmark_t", 0.0)) > 0.0 else white
-    canvas.rect(cx - gap - 8, cy - 1, 8, 2, col)
-    canvas.rect(cx + gap, cy - 1, 8, 2, col)
-    canvas.rect(cx - 1, cy - gap - 8, 2, 8, col)
-    canvas.rect(cx - 1, cy + gap, 2, 8, col)
-    canvas.rect(cx - 1, cy - 1, 2, 2, col)
+    ink = (0.02, 0.02, 0.03, 0.90)
+    for x, y, rw, rh in (
+        (cx - gap - 8, cy - 1, 8, 2),
+        (cx + gap, cy - 1, 8, 2),
+        (cx - 1, cy - gap - 8, 2, 8),
+        (cx - 1, cy + gap, 2, 8),
+        (cx - 1, cy - 1, 2, 2),
+    ):
+        canvas.rect(x - 2, y - 2, rw + 4, rh + 4, ink)
+        canvas.rect(x, y, rw, rh, col)
 
     # Directional damage cue: point at the last attacker for a short window.
     # World-space source + camera yaw -> bearing around the crosshair; the
@@ -75,22 +81,9 @@ def draw_shooter(canvas, hud, sim) -> None:
         if math.hypot(dx, dz) <= 18.0:
             canvas.text(cx - 105, 100, "SURGE PICKUP READY", (0.40, 1.0, 0.52, 1.0), 2)
 
-    # engine help lives bottom-left (overlay.py); keep the game panel above it.
-    # overlay scale/help math mirrored here so panels never overlap.
-    scale = 2 if (w >= 620 and h >= 360) else 1
-    if w >= 620:
-        help_h = (9 * scale) * 2 + 6 * scale
-        panel_y = h - 64 - (help_h + (12 if scale == 2 else 6))
-    else:
-        panel_y = h - 64
-    # bottom-left status panel (HP/ammo only; wave/score stays top-center,
-    # engine status() carries the same short HP/ammo line — no duplication)
-    canvas.rect(12, panel_y, 300, 52, panel_c)
+    # HP/ammo is owned by the engine status panel (top-left); the old
+    # bottom-left copy was removed so the HUD shows each fact once.
     hp = int(getattr(sim, "hp", 100))
-    hp_col = danger if hp <= 30 else white
-    canvas.text(20, panel_y + 8, f"HP {hp}", hp_col, 2)
-    canvas.text(20, panel_y + 28, f"{str(getattr(sim, 'weapon', 'pulse')).upper()} "
-               f"{int(sim.ammo.get(sim.weapon, 0))}/{int(sim.reserve.get(sim.weapon, 0))}", dim, 2)
     # low-hp edge warning (translucent, presentation-only)
     if hp <= 30 and bool(getattr(sim, "alive", True)):
         edge = (1.0, 0.15, 0.15, 0.28)

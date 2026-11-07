@@ -1,0 +1,99 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py all <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 4,
+  "fix": "remove duplicate bottom-left HP/ammo panel; add 2px dark backing behind every crosshair arm and the centre pip",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "58 passed"
+  },
+  "play_runs": {
+    "kite_600_after": {
+      "frames": 600,
+      "hash": "0a1077943fd4b668c970dde00a3a76ba",
+      "hits": 31,
+      "hp": 100,
+      "kills": 9,
+      "score": 1500,
+      "shots": 36,
+      "wave": 2
+    },
+    "kite_600_before": {
+      "frames": 600,
+      "hash": "0a1077943fd4b668c970dde00a3a76ba",
+      "hits": 31,
+      "hp": 100,
+      "kills": 9,
+      "score": 1500,
+      "shots": 36,
+      "wave": 2
+    },
+    "parity": "hashes identical before/after: kite 0a107794?, strafe 973276f5?",
+    "strafe_300_after": {
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hits": 2,
+      "hp": 84,
+      "kills": 0,
+      "score": 0,
+      "shots": 30,
+      "wave": 1
+    },
+    "strafe_300_before": {
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hits": 2,
+      "hp": 84,
+      "kills": 0,
+      "score": 0,
+      "shots": 30,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-04/after",
+    "before_dir": "shots/shooter-campaign/cycle-04/before",
+    "route": "scripts/capture.py all; spawn/combat/burst/pickup/death at 960x540, seed 1, same frames before/after"
+  },
+  "tests": {
+    "suite": "58 passed",
+    "ui_tests": 4,
+    "updated_smoke": "test_draw_shooter_smoke"
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "HUD duplication",
+    "crosshair contrast",
+    "single source"
+  ],
+  "visual_diff": {
+    "burst_crosshair_bright_px_after": 319,
+    "burst_crosshair_bright_px_before": 375,
+    "burst_crosshair_dark_px_after": 758,
+    "burst_crosshair_dark_px_before": 538,
+    "changed_px_per_route": [
+      15856,
+      15856,
+      15856,
+      15856,
+      15856
+    ],
+    "crosshair_crop_changed_px": [
+      256,
+      256,
+      256,
+      256,
+      256
+    ],
+    "spawn_panel_mean_luma_after": 31.95,
+    "spawn_panel_mean_luma_before": 29.21
+  }
+}
