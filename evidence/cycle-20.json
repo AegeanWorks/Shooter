@@ -1,0 +1,74 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py boss_hp <prefix>",
+    "python scripts/play_run.py boss 1800 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 20,
+  "fix": "numeric WARDEN hp/max_hp readout right-aligned beside the boss label",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "106 passed"
+  },
+  "play_runs": {
+    "boss_after": {
+      "dropped_sfx": 0,
+      "frames": 507,
+      "hash": "81f05265247d06899e4dd5608901cb89",
+      "hp": 100,
+      "kills": 3,
+      "mean_step_ms": 1.0156,
+      "outcome": "win",
+      "peak_voices": 8,
+      "score": 3080,
+      "wave": 4
+    },
+    "boss_before": {
+      "dropped_sfx": 0,
+      "frames": 507,
+      "hash": "81f05265247d06899e4dd5608901cb89",
+      "hp": 100,
+      "kills": 3,
+      "mean_step_ms": 1.1448,
+      "outcome": "win",
+      "peak_voices": 8,
+      "score": 3080,
+      "wave": 4
+    },
+    "parity": "same hash 81f05265?, 507 frames, wave 4, 3 kills, 3080, hp 100"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-20/after",
+    "before_dir": "shots/shooter-campaign/cycle-20/before",
+    "route": "scripts/capture.py boss_hp; half-health warden 300/600 at 3.5 m; 960x540 seed 1, frame 1"
+  },
+  "tests": {
+    "boss_hp_tests": 2,
+    "failing_first": "no 300/600 text before the change",
+    "suite": "106 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "boss readability",
+    "exact HP",
+    "HUD"
+  ],
+  "visual_diff": {
+    "bbox": [
+      538,
+      98,
+      619,
+      111
+    ],
+    "changed_px": 456,
+    "draws": 6,
+    "fraction": 0.0009,
+    "mean_luma_after": 36.34,
+    "mean_luma_before": 36.13,
+    "triangles": 422
+  }
+}

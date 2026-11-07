@@ -355,6 +355,31 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_boss_hp(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Half-health warden bar: the numeric-HP HUD pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.spawn_t = 999.0
+        g.sim.wave = 3
+        g.sim.pickup_taken = True
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 3.5), hp=300, max_hp=600,
+                   attack_cd=10.0, summon_cd=999.0)
+        ]
+        g.update(FIXED_STEP, ActionState())
+        print(f"boss-hp frame={g.sim.tick} hp={g.sim.enemies[0].hp}/{g.sim.enemies[0].max_hp}")
+        engine.capture(f"{prefix}_boss_hp.png", f"{prefix}_boss_hp.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_los(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Brute adjacent to a thin cover with the player on the other side."""
     import math
@@ -752,6 +777,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_dry(prefix, shadows, srgb, post, bloom)
     if which == "los":
         route_los(prefix, shadows, srgb, post, bloom)
+    if which == "boss_hp":
+        route_boss_hp(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

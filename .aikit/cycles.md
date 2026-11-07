@@ -413,3 +413,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 104 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-19.json`.
+
+## Cycle 20 — UI readability: numeric warden HP
+- **Area**: UI readability (20th cycle).
+- **Defect / evidence**: the warden bar had only a red fill and label; at
+  300/600 the exact remaining health was unknown, making overdrive/critical
+  decisions guesswork. Failing-first `test_boss_hp.py` found no `300/600`
+  text.
+- **Fix**: draw `hp/max_hp` right-aligned beside `WARDEN` using
+  `keystone.ui.font.text_width`; bar geometry/colors unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-20/`;
+  960x540 seed 1, half-health warden. 456 changed px (0.09%, bbox
+  538,98-619,111), mean luma 36.13 -> 36.34; draws 6, triangles 422.
+- **Played runs**: `boss 1800` before/after same hash `81f05265…`, 507
+  frames, wave 4, 3 kills, 3080, hp 100.
+- **Gates**: `python -m pytest -q` 106 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-20.json`.

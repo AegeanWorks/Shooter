@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import math
 
+from keystone.ui.font import text_width
+
 
 def draw_shooter(canvas, hud, sim) -> None:
     w, h = int(hud.width), int(hud.height)
@@ -91,6 +93,8 @@ def draw_shooter(canvas, hud, sim) -> None:
         frac = max(0.0, min(1.0, float(boss.hp) / max(1.0, float(boss.max_hp))))
         bx, by, bw, bh = cx - 140, 116, 280, 10
         canvas.text(bx, by - 18, "WARDEN", danger, 2)
+        hp_label = f"{int(boss.hp)}/{int(boss.max_hp)}"
+        canvas.text(bx + bw - text_width(hp_label, 2), by - 18, hp_label, white, 2)
         canvas.rect(bx - 2, by - 2, bw + 4, bh + 4, panel_c)
         canvas.rect(bx, by, max(1, int(bw * frac)), bh, (0.92, 0.20, 0.14, 0.95))
     if boss is None and bool(getattr(sim, "pickup_active", False)):

@@ -96,6 +96,7 @@ projects/shooter/
 │   ├── test_dry_fire.py    <- rate-limited dry fire, NO AMMO voice/caption
 │   ├── test_enemy_los.py   <- brute melee LOS; open-field attack parity
 │   ├── test_spawn_lane.py  <- clear spawn->pickup cover lane
+│   ├── test_boss_hp.py     <- numeric WARDEN HP readout
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -122,7 +123,8 @@ projects/shooter/
 │   ├── cycle-16.json  <- improvement-cycle 16 proof: persisted-wins banner pair, runs
 │   ├── cycle-17.json  <- improvement-cycle 17 proof: dry-fire cue pair, same-hash run
 │   ├── cycle-18.json  <- improvement-cycle 18 proof: cover LOS pair, same-hash runs
-│   └── cycle-19.json  <- improvement-cycle 19 proof: open spawn lane pair, campaign run
+│   ├── cycle-19.json  <- improvement-cycle 19 proof: open spawn lane pair, campaign run
+│   └── cycle-20.json  <- improvement-cycle 20 proof: numeric boss-HP pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
