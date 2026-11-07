@@ -318,3 +318,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 92 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-14.json`.
+
+## Cycle 15 — Audio cues: denied overdrive feedback
+- **Area**: audio cues (15th cycle).
+- **Defect / evidence**: pressing overdrive with no pulse reserve emitted
+  `overdrive_denied:insufficient_ammo` but the game ignored it; the baseline
+  denied run had reserve 0, empty cue, and only the wave voice (`audio=1`).
+- **Fix**: `overdrive_denied` clip (90 Hz, 0.14 s) + reason-specific captions
+  (`NEED 30 AMMO`, `BLOCKED BY SURGE`, `ALREADY ON`, `UNAVAILABLE`); clip
+  plays for all reasons. Sim state untouched; audio probe now 13 cues.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-15/`;
+  960x540 seed 1, frame 1. 12,820 changed px (2.47%, bbox 330,164-947,459;
+  caption + AUDIO 1 VOX line), mean luma 34.64 -> 34.64.
+- **Played runs**: `denied 60` before/after same hash `8ea7057f…`;
+  before audio=0/cue empty, after audio=1/cue `OVERDRIVE: NEED 30 AMMO`,
+  peak 1, drops 0. Clip 0.14 s peak 1.0.
+- **Gates**: `python -m pytest -q` 94 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-15.json`.

@@ -263,6 +263,7 @@ class ShooterGame:
             "boss_down": sine(330.0, 0.45, name="boss_down"),
             "overdrive": sine(520.0, 0.22, name="overdrive"),
             "overdrive_end": sine(260.0, 0.18, name="overdrive_end"),
+            "overdrive_denied": square(90.0, 0.14, name="overdrive_denied"),
             "cache": sine(1040.0, 0.08, name="cache"),
             "reload": noise(0.06, seed=21, name="reload"),
             "near_miss": sine(1320.0, 0.06, name="near_miss"),
@@ -377,6 +378,19 @@ class ShooterGame:
 
     def _play_event(self, event: str) -> None:
         """Map one sim event to its audio voice and on-screen caption."""
+        if event.startswith("overdrive_denied:"):
+            reason = event.split(":", 1)[1]
+            if reason == "insufficient_ammo":
+                cost = int(self.sim.overdrive_preview().get("cost", 30))
+                self._cue(f"OVERDRIVE: NEED {cost} AMMO", danger=True)
+            elif reason == "surge_active":
+                self._cue("OVERDRIVE BLOCKED BY SURGE", danger=True)
+            elif reason == "already_on":
+                self._cue("OVERDRIVE ALREADY ON", danger=True)
+            else:
+                self._cue("OVERDRIVE UNAVAILABLE", danger=True)
+            self._play_clip(self._clips["overdrive_denied"], 0.55)
+            return
         if event.startswith("kill:"):
             parts = event.split(":")
             if len(parts) == 3:

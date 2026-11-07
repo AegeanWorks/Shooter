@@ -14,6 +14,7 @@ Modes:
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
   platform run at the rear low platform, jump onto it, stop on the top
+  denied   press overdrive with no pulse reserve (audio/caption drill)
 
 Writes a machine-readable report with per-frame health, event frames,
 hurt-source telemetry and the final deterministic snapshot hash.
@@ -70,6 +71,8 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
             if frame < 45
             else ActionState(forward=1.0)
         )
+    if mode == "denied":
+        return ActionState(pressed=frozenset({"overdrive"})) if frame == 0 else ActionState()
     return ActionState()  # idle / slam
 
 
@@ -90,7 +93,7 @@ def main(
     try:
         if seed != 1:
             game.sim.reseed(seed)
-        if mode in ("ambush", "boss", "slam", "death", "platform"):
+        if mode in ("ambush", "boss", "slam", "death", "platform", "denied"):
             game.sim.spawn_queue = []
             game.sim.spawn_t = 1e9
         boss = None
@@ -116,6 +119,11 @@ def main(
             sim.kills = 9
             sim.best_streak = 4
             sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
+        if mode == "denied":
+            game.sim.reserve["pulse"] = 0
+            game.sim.enemies = []
+            game.sim.spawn_queue = ["mite"]  # block wave-clear from stealing the cue
+            game.sim.spawn_t = 999.0
         if mode == "platform":
             sim = game.sim
             sim.player_pos = Vec3(-16.0, 0.9002, 9.5)
@@ -217,6 +225,8 @@ def main(
                 break
             if mode == "platform" and game.sim.player_pos.y > 1.3 and game.sim.body.on_ground:
                 break
+            if mode == "denied" and frame >= 10:
+                break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break
             if (frame + 1) % CHUNK == 0:
@@ -267,6 +277,13 @@ def main(
                 "x": round(float(game.sim.player_pos.x), 3),
                 "y": round(float(game.sim.player_pos.y), 3),
                 "z": round(float(game.sim.player_pos.z), 3),
+            },
+            "denied": {
+                "cue": getattr(game, "sound_cue", ""),
+                "cue_t": round(float(getattr(game, "sound_cue_t", 0.0)), 3),
+                "voices": int(game.mixer.voice_count()),
+                "reserve": int(game.sim.reserve.get("pulse", 0)),
+                "overdrive_t": round(float(game.sim.overdrive_t), 3),
             },
             "hash": stable_hash(final),
         }

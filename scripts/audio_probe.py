@@ -28,6 +28,7 @@ CUES = (
     "boss_down",
     "overdrive",
     "overdrive_end",
+    "overdrive_denied",
     "cache",
     "near_miss",
     "reload",

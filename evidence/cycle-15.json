@@ -1,0 +1,106 @@
+{
+  "area": "audio cues",
+  "audio_probe": {
+    "overdrive_denied": {
+      "buses": {},
+      "duration": 0.14,
+      "frames": 3087,
+      "name": "overdrive_denied",
+      "peak": 1.0,
+      "rms": 1.0,
+      "sample_rate": 22050,
+      "schema": 1,
+      "voices": 0
+    },
+    "reported_cues": 13,
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-15\\after\\cues_spectrogram.png",
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-15\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py denied <prefix>",
+    "python scripts/play_run.py denied 60 <report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 15,
+  "fix": "overdrive_denied voice (90 Hz, 0.14 s) + reason-specific captions; clip plays for all denial reasons",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "94 passed"
+  },
+  "play_runs": {
+    "denied_after": {
+      "audio_count": 1,
+      "denied": {
+        "cue": "OVERDRIVE: NEED 30 AMMO",
+        "cue_t": 0.717,
+        "overdrive_t": 0.0,
+        "reserve": 0,
+        "voices": 1
+      },
+      "dropped_sfx": 0,
+      "frames": 11,
+      "hash": "8ea7057fd7a4e0709dcb7e9b7712a097",
+      "hp": 100,
+      "kills": 0,
+      "mean_step_ms": 0.1099,
+      "outcome": "ongoing",
+      "peak_voices": 1,
+      "score": 0,
+      "wave": 1
+    },
+    "denied_before": {
+      "audio_count": 0,
+      "denied": {
+        "cue": "",
+        "cue_t": 0.0,
+        "overdrive_t": 0.0,
+        "reserve": 0,
+        "voices": 0
+      },
+      "dropped_sfx": 0,
+      "frames": 11,
+      "hash": "8ea7057fd7a4e0709dcb7e9b7712a097",
+      "hp": 100,
+      "kills": 0,
+      "mean_step_ms": 0.4251,
+      "outcome": "ongoing",
+      "peak_voices": 0,
+      "score": 0,
+      "wave": 1
+    },
+    "parity": "same hash 8ea7057f?, reserve 0; before audio=0/empty cue, after audio=1/OVERDRIVE: NEED 30 AMMO"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-15/after",
+    "before_dir": "shots/shooter-campaign/cycle-15/before",
+    "route": "scripts/capture.py denied; clean arena, reserve pulse 0, pressed overdrive on frame 1; 960x540 seed 1"
+  },
+  "tests": {
+    "denial_tests": 2,
+    "suite": "94 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "denied input feedback",
+    "overdrive readability",
+    "captions"
+  ],
+  "visual_diff": {
+    "bbox": [
+      330,
+      164,
+      947,
+      459
+    ],
+    "changed_px": 12820,
+    "draws": 4,
+    "fraction": 0.0247,
+    "mean_luma_after": 34.64,
+    "mean_luma_before": 34.64,
+    "triangles": 218
+  }
+}

@@ -355,6 +355,31 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_denied(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Overdrive pressed with no pulse reserve: the denial cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.reserve["pulse"] = 0
+        g.update(FIXED_STEP, ActionState(pressed=frozenset({"overdrive"})))
+        print(
+            f"denied frame={g.sim.tick} cue={getattr(g, 'sound_cue', '-')!r} "
+            f"cue_t={getattr(g, 'sound_cue_t', 0.0):.2f} voices={g.mixer.voice_count()} "
+            f"reserve={g.sim.reserve['pulse']}"
+        )
+        engine.capture(f"{prefix}_denied.png", f"{prefix}_denied.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_muzzle(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Exact first-shot frame: the muzzle-flash occlusion pair."""
     from keystone.app import Engine
@@ -661,6 +686,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_killfeed(prefix, shadows, srgb, post, bloom)
     if which == "muzzle":
         route_muzzle(prefix, shadows, srgb, post, bloom)
+    if which == "denied":
+        route_denied(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

@@ -91,6 +91,7 @@ projects/shooter/
 │   ├── test_levels_platform.py <- jumpable low platform + landing proof
 │   ├── test_kill_feed.py   <- typed kill event, feed draw/expiry
 │   ├── test_muzzle.py      <- off-axis flash offset and small node scale
+│   ├── test_denial.py      <- denied overdrive voice/caption + state parity
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -112,7 +113,8 @@ projects/shooter/
 │   ├── cycle-11.json  <- improvement-cycle 11 proof: cover-slide pair, fairness run
 │   ├── cycle-12.json  <- improvement-cycle 12 proof: jump-platform pair, landing run
 │   ├── cycle-13.json  <- improvement-cycle 13 proof: kill-feed pair, same-hash runs
-│   └── cycle-14.json  <- improvement-cycle 14 proof: muzzle-flash pair, same-hash runs
+│   ├── cycle-14.json  <- improvement-cycle 14 proof: muzzle-flash pair, same-hash runs
+│   └── cycle-15.json  <- improvement-cycle 15 proof: denied-overdrive cue pair, WAV
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
