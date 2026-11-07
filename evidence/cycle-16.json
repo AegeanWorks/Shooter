@@ -1,0 +1,90 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py win <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 16,
+  "fix": "profile schema 2 with persisted campaign wins; schema-1 migration; CAMPAIGNS WON line on the clear banner",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "97 passed"
+  },
+  "play_runs": {
+    "kite_3000_after": {
+      "dropped_sfx": 0,
+      "frames": 3000,
+      "hash": "9b70e372088775c590660282fac556f8",
+      "hp": 2,
+      "kills": 32,
+      "mean_step_ms": 0.6967,
+      "outcome": "win",
+      "peak_voices": 8,
+      "profile": {
+        "best_score": 11670,
+        "disabled": false,
+        "last_run": null,
+        "runs": 0,
+        "save_errors": 0,
+        "wins": 1
+      },
+      "score": 11955,
+      "wave": 4
+    },
+    "kite_3000_before": {
+      "dropped_sfx": 0,
+      "frames": 3000,
+      "hash": "9b70e372088775c590660282fac556f8",
+      "hp": 2,
+      "kills": 32,
+      "mean_step_ms": 0.5376,
+      "outcome": "win",
+      "peak_voices": 8,
+      "profile": {
+        "best_score": 11670,
+        "disabled": false,
+        "last_run": null,
+        "runs": 0,
+        "save_errors": 0,
+        "wins": 0
+      },
+      "score": 11955,
+      "wave": 4
+    },
+    "parity": "same hash 9b70e372?, 32 kills/11955/hp 2; before wins=0, after wins=1 persisted"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-16/after",
+    "before_dir": "shots/shooter-campaign/cycle-16/before",
+    "route": "scripts/capture.py win; staged wave-3 warden kill; 960x540 seed 1, wave-4 banner frame"
+  },
+  "tests": {
+    "migration": "schema 0 -> 1 -> 2; schema 1 adds wins=0",
+    "suite": "97 passed",
+    "wins_tests": 3
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "win persistence",
+    "schema migration",
+    "run history"
+  ],
+  "visual_diff": {
+    "bbox": [
+      300,
+      190,
+      659,
+      211
+    ],
+    "changed_px": 6732,
+    "draws": 7,
+    "fraction": 0.013,
+    "mean_luma_after": 38.29,
+    "mean_luma_before": 37.93,
+    "triangles": 306
+  }
+}

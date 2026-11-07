@@ -15,7 +15,7 @@ from pathlib import Path
 
 from keystone.serialization import read_json, write_json_atomic
 
-SCHEMA = 1
+SCHEMA = 2
 DEFAULT_PATH = Path(__file__).resolve().parent.parent / "saves" / "profile.json"
 _LOCK_STALE_S = 30.0
 _LAST_RUN_KEYS = ("score", "kills", "wave", "best_streak", "time_s", "outcome")
@@ -25,6 +25,7 @@ def default_profile() -> dict:
     return {
         "schema": SCHEMA,
         "runs": 0,
+        "wins": 0,
         "best_score": 0,
         "best_kills": 0,
         "best_wave": 0,
@@ -35,7 +36,7 @@ def default_profile() -> dict:
 
 def _normalize(raw: dict) -> dict:
     profile = default_profile()
-    for key in ("runs", "best_score", "best_kills", "best_wave", "best_streak"):
+    for key in ("runs", "wins", "best_score", "best_kills", "best_wave", "best_streak"):
         value = raw.get(key, 0)
         if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
             profile[key] = value
@@ -56,9 +57,17 @@ def _normalize(raw: dict) -> dict:
 
 def _migrate_v0(raw: dict) -> dict:
     migrated = default_profile()
+    migrated["schema"] = 1
     for key in ("runs", "best_score", "best_kills", "best_wave", "best_streak"):
         if key in raw:
             migrated[key] = raw[key]
+    return migrated
+
+
+def _migrate_v1(raw: dict) -> dict:
+    migrated = dict(raw)
+    migrated["schema"] = SCHEMA
+    migrated.setdefault("wins", 0)
     return migrated
 
 
@@ -83,7 +92,11 @@ class ProfileStore:
             return self._recover()
         schema = raw.get("schema", 0)
         if schema == 0:
-            return _normalize(_migrate_v0(raw))
+            raw = _migrate_v0(raw)
+            schema = 1
+        if schema == 1:
+            raw = _migrate_v1(raw)
+            schema = SCHEMA
         if schema != SCHEMA:
             raise ValueError(f"unsupported profile schema {schema!r}; expected {SCHEMA}")
         return _normalize(raw)

@@ -336,3 +336,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 94 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-15.json`.
+
+## Cycle 16 — Progression and saves: persisted campaign wins
+- **Area**: progression and saves (16th cycle).
+- **Defect / evidence**: the clear banner lasted four seconds but the win
+  was only an in-memory flag; `_record_progress` saved bests, not wins, and
+  schema 1 had no wins field. A player who quit after the Warden had no
+  record of the clear.
+- **Fix**: profile schema 2 with `wins`; schema 1 migrates by adding
+  `wins: 0` (schema 0 goes through 1 to 2); `_record_campaign_clear`
+  increments and saves on the first clear. Banner grows to 74 px and adds
+  `CAMPAIGNS WON <n>`.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-16/`;
+  960x540 seed 1, staged wave-3 boss kill. 6,732 changed px (1.30%, bbox
+  300,190-659,211; third banner line + taller panel), mean luma 37.93 ->
+  38.29.
+- **Played runs**: `kite 3000` before/after same hash `9b70e372…`, 32
+  kills / 11955 / hp 2; before `wins=0`, after `wins=1` loaded back from
+  `ProfileStore`.
+- **Gates**: `python -m pytest -q` 97 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-16.json`.

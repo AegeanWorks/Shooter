@@ -267,6 +267,7 @@ def main(
             },
             "profile": {
                 "best_score": int(getattr(game, "profile", {}).get("best_score", 0)),
+                "wins": int(getattr(game, "profile", {}).get("wins", 0)),
                 "runs": int(getattr(game, "profile", {}).get("runs", 0)),
                 "last_run": getattr(game, "last_run", None),
                 "disabled": bool(getattr(game, "profile_disabled", False)),

@@ -309,6 +309,7 @@ class ShooterGame:
         ):
             self.campaign_cleared = True
             self.campaign_clear_t = 4.0
+            self._record_campaign_clear()
         self.campaign_clear_t = max(0.0, self.campaign_clear_t - float(dt))
         for entry in self.kill_feed:
             entry["t"] = float(entry.get("t", 0.0)) - float(dt)
@@ -330,6 +331,12 @@ class ShooterGame:
             return
         if not self.profile_store.save(self.profile):
             self.profile_save_errors += 1
+
+    def _record_campaign_clear(self) -> None:
+        if self.profile_disabled:
+            return
+        self.profile["wins"] = int(self.profile.get("wins", 0)) + 1
+        self._save_profile()
 
     def _record_progress(self) -> None:
         """Persist a new best at wave clear, even if the player later quits."""
@@ -621,12 +628,17 @@ class ShooterGame:
         if self.sim.alive and self.campaign_clear_t > 0.0:
             width = int(state.width)
             cx = width // 2
-            canvas.rect(cx - 180, 138, 360, 56, (0.03, 0.04, 0.06, 0.86))
+            canvas.rect(cx - 180, 138, 360, 74, (0.03, 0.04, 0.06, 0.86))
             canvas.text(cx - 82, 146, "CAMPAIGN CLEAR", (1.0, 0.62, 0.20, 1.0), 2)
             canvas.text(
                 cx - 96, 168,
                 f"WAVE {int(self.sim.wave)}  SCORE {int(self.sim.score)}",
                 (0.95, 0.95, 0.97, 1.0), 2,
+            )
+            canvas.text(
+                cx - 82, 190,
+                f"CAMPAIGNS WON {int(self.profile.get('wins', 0))}",
+                (0.95, 0.90, 0.80, 1.0), 2,
             )
         if not self.sim.alive and self.last_run is not None:
             run = self.last_run

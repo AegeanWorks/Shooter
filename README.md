@@ -67,7 +67,7 @@ projects/shooter/
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: crosshair/ammo alert/reload/wave/score/streak/kill-feed/overdrive/damage/boss/pickup
-│   ├── profile.py       <- versioned, atomic run profile (bests, runs, debrief)
+│   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
@@ -92,6 +92,7 @@ projects/shooter/
 │   ├── test_kill_feed.py   <- typed kill event, feed draw/expiry
 │   ├── test_muzzle.py      <- off-axis flash offset and small node scale
 │   ├── test_denial.py      <- denied overdrive voice/caption + state parity
+│   ├── test_wins.py        <- schema-2 migration, persisted wins, win banner
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -114,7 +115,8 @@ projects/shooter/
 │   ├── cycle-12.json  <- improvement-cycle 12 proof: jump-platform pair, landing run
 │   ├── cycle-13.json  <- improvement-cycle 13 proof: kill-feed pair, same-hash runs
 │   ├── cycle-14.json  <- improvement-cycle 14 proof: muzzle-flash pair, same-hash runs
-│   └── cycle-15.json  <- improvement-cycle 15 proof: denied-overdrive cue pair, WAV
+│   ├── cycle-15.json  <- improvement-cycle 15 proof: denied-overdrive cue pair, WAV
+│   └── cycle-16.json  <- improvement-cycle 16 proof: persisted-wins banner pair, runs
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
@@ -184,10 +186,10 @@ The campaign now clears after the wave-3 Warden boss (wave 4 entry): the HUD sho
 
 ## Progress and saves
 
-Best score, kills, wave and streak, the run count and the last-run summary persist in
-`saves/profile.json` (git-ignored, created on first run). The store is versioned: schema 0
-migrates to 1; an unsupported schema is refused without touching the file (persistence is
-disabled for that session); a corrupt file is quarantined and the `.bak` is tried. Writes use
+Best score, kills, wave and streak, campaign wins, the run count and the last-run summary
+persist in `saves/profile.json` (git-ignored, created on first run). The store is versioned:
+schema 0 migrates through 1 to 2; an unsupported schema is refused without touching the file
+(persistence is disabled for that session); a corrupt file is quarantined and the `.bak` is tried. Writes use
 a temp file + fsync + atomic replace with a backup, under a short advisory lock. The HUD shows
 `BEST <score>` once one exists, and the death screen reports the run (`RUN OVER`, score, kills,
 wave, best streak, time) plus `NEW BEST` when the run beats the loaded best.
