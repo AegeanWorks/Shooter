@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import math
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -33,7 +34,7 @@ CHUNK = 600  # 10 s of sim per timing sample
 
 def _peak24_budget() -> dict:
     """Synthetic max-load budget: 24 pooled enemies + full tracer ring, one sync."""
-    game = ShooterGame()
+    game = ShooterGame(profile_path=Path(tempfile.mkdtemp(prefix="shooter-soak-")) / "profile.json")
     game.build_scene()
     sim = game.sim
     sim.spawn_queue = []
@@ -75,7 +76,7 @@ def main(
     out_log: str = "bot_soak.json",
     out_report: str = "soak_report.json",
 ) -> None:
-    game = ShooterGame()
+    game = ShooterGame(profile_path=Path(tempfile.mkdtemp(prefix="shooter-soak-")) / "profile.json")
     game.build_scene()
     log = CommandLog(seed=1)
     chunks: list[dict] = []

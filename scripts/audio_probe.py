@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -115,7 +116,7 @@ def _spectrogram(clip: AudioClip, path: Path, marks: list[dict]) -> dict:
 def main(out_dir: str) -> dict:
     target = Path(out_dir)
     target.mkdir(parents=True, exist_ok=True)
-    game = ShooterGame()
+    game = ShooterGame(profile_path=Path(tempfile.mkdtemp(prefix="shooter-audio-")) / "profile.json")
     game.build_scene()
     reports = {}
     for name in CUES:

@@ -12,6 +12,7 @@ Modes:
   boss     warden-only wave-3 fight with the kite policy (ends on boss death)
   slam     close-range warden windup/slam (audio + caption drill)
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
+  death    staged near-death run (profile/debrief proof; ends on death)
 
 Writes a machine-readable report with per-frame health, event frames,
 hurt-source telemetry and the final deterministic snapshot hash.
@@ -22,6 +23,7 @@ from __future__ import annotations
 import json
 import math
 import sys
+import tempfile
 import time
 from pathlib import Path
 
@@ -72,12 +74,16 @@ def main(
     png: str = "",
     report: str = "",
 ) -> dict:
-    game = ShooterGame()
+    profile_path = Path(tempfile.mkdtemp(prefix="shooter-play-")) / "profile.json"
+    try:
+        game = ShooterGame(profile_path=profile_path)
+    except TypeError:  # older checkout without profile support
+        game = ShooterGame()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     try:
         if seed != 1:
             game.sim.reseed(seed)
-        if mode in ("ambush", "boss", "slam"):
+        if mode in ("ambush", "boss", "slam", "death"):
             game.sim.spawn_queue = []
             game.sim.spawn_t = 1e9
         boss = None
@@ -95,6 +101,14 @@ def main(
                 summon_cd=999.0,
             )
             game.sim.enemies = [boss]
+        if mode == "death":
+            sim = game.sim
+            sim.wave = 2
+            sim.hp = 10
+            sim.score = 1500
+            sim.kills = 9
+            sim.best_streak = 4
+            sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
         if mode == "pickup":
             sim = game.sim
             sim.wave = 2
@@ -183,6 +197,8 @@ def main(
                 break
             if mode == "slam" and game.sim.hp < 100:
                 break
+            if mode == "death" and not game.sim.alive:
+                break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break
             if (frame + 1) % CHUNK == 0:
@@ -220,6 +236,13 @@ def main(
                 "active": bool(getattr(game.sim, "pickup_active", False)),
                 "taken": bool(getattr(game.sim, "pickup_taken", False)),
                 "surge_t": round(float(getattr(game.sim, "surge_t", 0.0)), 3),
+            },
+            "profile": {
+                "best_score": int(getattr(game, "profile", {}).get("best_score", 0)),
+                "runs": int(getattr(game, "profile", {}).get("runs", 0)),
+                "last_run": getattr(game, "last_run", None),
+                "disabled": bool(getattr(game, "profile_disabled", False)),
+                "save_errors": int(getattr(game, "profile_save_errors", 0)),
             },
             "hash": stable_hash(final),
         }

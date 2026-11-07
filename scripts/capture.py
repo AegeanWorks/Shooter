@@ -13,6 +13,7 @@ No balance changes; driver only.
 from __future__ import annotations
 
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -26,6 +27,19 @@ from keystone.replay import FIXED_STEP  # noqa: E402
 from shooter.bot import fire_hold, kite_step  # noqa: E402
 from shooter.game import ShooterGame  # noqa: E402
 from shooter.sim import _Enemy  # noqa: E402
+
+try:  # older checkouts used for before/after worktrees have no profile module
+    from shooter.profile import ProfileStore, default_profile  # noqa: E402
+except ImportError:  # pragma: no cover - only for cross-commit evidence worktrees
+    ProfileStore = None  # type: ignore[assignment]
+    default_profile = None  # type: ignore[assignment]
+
+
+def _new_game() -> ShooterGame:
+    """Evidence runs use a throwaway profile, never the player's save."""
+    import tempfile
+
+    return ShooterGame(profile_path=Path(tempfile.mkdtemp(prefix="shooter-capture-")) / "profile.json")
 
 
 def _capture_stepped(game: ShooterGame, out_png: str, out_json: str, w: int = 960, h: int = 540) -> None:
@@ -73,7 +87,7 @@ def _profiler(engine) -> dict:
 def route_spawn(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -90,7 +104,7 @@ def route_combat(prefix: str, frames: int = 277, shadows: bool = True, srgb: boo
     # frame 300 lands between waves with nothing alive.
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -110,7 +124,7 @@ def route_fireburst(prefix: str, shadows: bool = True, srgb: bool = True, post: 
     from keystone.app import Engine
     from keystone.input import ActionState as AS
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -137,7 +151,7 @@ def route_fireburst(prefix: str, shadows: bool = True, srgb: bool = True, post: 
 def route_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -179,7 +193,7 @@ def route_boss(prefix: str, with_boss: bool = True, shadows: bool = True, srgb: 
     """
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -233,7 +247,7 @@ def route_hurt(prefix: str, side: str = "right", shadows: bool = True, srgb: boo
     """
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -274,7 +288,7 @@ def route_pickup_spawn(prefix: str, shadows: bool = True, srgb: bool = True, pos
     """
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -312,7 +326,7 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
     """Close-range warden windup + slam frames; the audio-caption proof pair."""
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -341,10 +355,52 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Staged run-over frame with a seeded best, against the no-profile build."""
+    from keystone.app import Engine
+
+    profile_path = Path(tempfile.mkdtemp(prefix="shooter-death-")) / "profile.json"
+    if ProfileStore is not None and default_profile is not None:
+        seeded = default_profile()
+        seeded.update({"runs": 3, "best_score": 1000, "best_kills": 12,
+                       "best_wave": 4, "best_streak": 6})
+        ProfileStore(profile_path).save(seeded)
+    try:
+        game = ShooterGame(profile_path=profile_path)
+    except TypeError:  # pre-profile build
+        game = ShooterGame()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.spawn_t = 999.0
+        g.sim.wave = 2
+        g.sim.hp = 10
+        g.sim.score = 1500
+        g.sim.kills = 9
+        g.sim.best_streak = 4
+        g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
+        for _ in range(180):
+            g.update(FIXED_STEP, ActionState())
+            if not g.sim.alive:
+                break
+        profile = getattr(g, "profile", {})
+        print(
+            f"death-profile alive={g.sim.alive} score={g.sim.score} "
+            f"best={profile.get('best_score')} runs={profile.get('runs')} "
+            f"last={getattr(g, 'last_run', None)}"
+        )
+        engine.capture(f"{prefix}_death_profile.png", f"{prefix}_death_profile.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_death(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
-    game = ShooterGame()
+    game = _new_game()
     engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
     _tune(engine, shadows, srgb, post, bloom)
     try:
@@ -380,6 +436,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_pickup_spawn(prefix, shadows, srgb, post, bloom)
     if which == "slam":
         route_slam(prefix, shadows, srgb, post, bloom)
+    if which == "death_profile":
+        route_death_profile(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

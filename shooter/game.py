@@ -17,6 +17,7 @@ from keystone.primitives import cone, cube, plane, sphere
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
 from keystone.texture import TextureData
 
+from .profile import ProfileStore, default_profile
 from .sim import Sim
 from .ui import draw_shooter
 
@@ -48,7 +49,7 @@ def _floor_grid_texture(size: int = 128, cell: int = 16) -> TextureData:
 class ShooterGame:
     name = "shooter"
 
-    def __init__(self) -> None:
+    def __init__(self, profile_path: str | Path | None = None) -> None:
         self.sim = Sim(seed=1)
         self.scene = Scene()
         self.assets = AssetRegistry()
@@ -59,6 +60,20 @@ class ShooterGame:
         self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
         self._clip_hook = None
         self._clips: dict = {}
+        self.profile_store = (
+            ProfileStore(profile_path) if profile_path is not None else ProfileStore.default()
+        )
+        self.profile_disabled = False
+        self.profile_save_errors = 0
+        try:
+            self.profile = self.profile_store.load()
+        except ValueError:
+            self.profile = default_profile()
+            self.profile_disabled = True
+        self.run_new_best = False
+        self.last_run = None
+        self._run_recorded = False
+        self._run_start_best = int(self.profile.get("best_score", 0))
         self._enemy_nodes: list[Node] = []
         self._tracer_nodes: list[Node] = []
         self._flash: Node | None = None
@@ -92,6 +107,10 @@ class ShooterGame:
         self.dropped_sfx = 0
         self.sound_cue = ""
         self.sound_cue_t = 0.0
+        self.run_new_best = False
+        self.last_run = None
+        self._run_recorded = False
+        self._run_start_best = int(self.profile.get("best_score", 0))
         self.particles = self.sim.particles
 
         self.assets.register("mesh.floor", plane(40.0))
@@ -266,6 +285,10 @@ class ShooterGame:
         events = self.sim.step(float(dt), actions)
         for e in events:
             self._play_event(e)
+        if "died" in events:
+            self._finish_run()
+        elif "wave" in events:
+            self._record_progress()
         self.sound_cue_t = max(0.0, self.sound_cue_t - float(dt))
         # cap voices: deterministic mixdown cost bounded via the public API
         # only (post-update invariant stays voice_count <= 8)
@@ -277,6 +300,57 @@ class ShooterGame:
         self.sound_cue = text
         self.sound_cue_t = 0.9
         self.sound_cue_color = (1.0, 0.30, 0.30, 1.0) if danger else (1.0, 0.62, 0.20, 1.0)
+
+    def _save_profile(self) -> None:
+        if self.profile_disabled:
+            return
+        if not self.profile_store.save(self.profile):
+            self.profile_save_errors += 1
+
+    def _record_progress(self) -> None:
+        """Persist a new best at wave clear, even if the player later quits."""
+        if self.profile_disabled:
+            return
+        sim = self.sim
+        changed = False
+        for key, value in (
+            ("best_score", int(sim.score)),
+            ("best_kills", int(sim.kills)),
+            ("best_wave", int(sim.wave)),
+            ("best_streak", int(sim.best_streak)),
+        ):
+            if value > int(self.profile.get(key, 0)):
+                self.profile[key] = value
+                changed = True
+        if changed:
+            self._save_profile()
+
+    def _finish_run(self) -> None:
+        if self._run_recorded:
+            return
+        self._run_recorded = True
+        sim = self.sim
+        run = {
+            "score": int(sim.score),
+            "kills": int(sim.kills),
+            "wave": int(sim.wave),
+            "best_streak": int(sim.best_streak),
+            "time_s": int(round(float(sim.time))),
+            "outcome": "lose",
+        }
+        self.last_run = run
+        self.run_new_best = int(run["score"]) > self._run_start_best
+        if self.profile_disabled:
+            return
+        self.profile["runs"] = int(self.profile.get("runs", 0)) + 1
+        self.profile["last_run"] = run
+        for profile_key, run_key in (
+            ("best_score", "score"), ("best_kills", "kills"),
+            ("best_wave", "wave"), ("best_streak", "best_streak"),
+        ):
+            if int(run[run_key]) > int(self.profile.get(profile_key, 0)):
+                self.profile[profile_key] = int(run[run_key])
+        self._save_profile()
 
     def _play_event(self, event: str) -> None:
         """Map one sim event to its audio voice and on-screen caption."""
@@ -469,3 +543,25 @@ class ShooterGame:
             top = height - 106
             canvas.rect(left, top, box_width, 26, (0.03, 0.04, 0.06, 0.78))
             canvas.text(left + 12, top + 7, text, self.sound_cue_color, 2)
+        best = int(self.profile.get("best_score", 0))
+        if best > 0:
+            canvas.text(int(state.width) // 2 - 60, 16, f"BEST {best}", (0.55, 0.60, 0.68, 1.0), 2)
+        if not self.sim.alive and self.last_run is not None:
+            run = self.last_run
+            width = int(state.width)
+            cx = width // 2
+            top = int(state.height) // 2 - 8
+            canvas.rect(cx - 190, top, 380, 100, (0.03, 0.04, 0.06, 0.86))
+            canvas.text(cx - 170, top + 6, "RUN OVER", (1.0, 0.30, 0.30, 1.0), 2)
+            canvas.text(
+                cx - 170, top + 28,
+                f"SCORE {run['score']}  KILLS {run['kills']}  WAVE {run['wave']}",
+                (0.95, 0.95, 0.97, 1.0), 2,
+            )
+            canvas.text(
+                cx - 170, top + 50,
+                f"BEST STREAK {run['best_streak']}  TIME {run['time_s']}s",
+                (0.55, 0.60, 0.68, 1.0), 2,
+            )
+            if self.run_new_best:
+                canvas.text(cx - 170, top + 72, "NEW BEST", (1.0, 0.62, 0.20, 1.0), 2)

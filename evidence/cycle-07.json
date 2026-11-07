@@ -1,0 +1,91 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py death_profile <prefix>",
+    "python scripts/play_run.py death 240 <report> <png> <png-report>",
+    "python scripts/capture.py spawn <prefix>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 7,
+  "fix": "versioned atomic run profile (bests/runs/last run), BEST HUD line and death debrief with NEW BEST; schema migration/refusal/corrupt recovery",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "77 passed"
+  },
+  "play_runs": {
+    "death_after": {
+      "alive": false,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "profile": {
+        "best_score": 1500,
+        "disabled": false,
+        "last_run": {
+          "best_streak": 4,
+          "kills": 9,
+          "outcome": "lose",
+          "score": 1500,
+          "time_s": 0,
+          "wave": 2
+        },
+        "runs": 1,
+        "save_errors": 0
+      },
+      "score": 1500,
+      "wave": 2
+    },
+    "death_before": {
+      "alive": false,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "profile": {
+        "best_score": 0,
+        "disabled": false,
+        "last_run": null,
+        "runs": 0,
+        "save_errors": 0
+      },
+      "score": 1500,
+      "wave": 2
+    },
+    "parity": "same frame 1, hp 0, score 1500 and hash f8cd9e28?; after persists runs=1 / best_score=1500 / last_run kills 9, wave 2, best_streak 4"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-07/after",
+    "before_dir": "shots/shooter-campaign/cycle-07/before",
+    "route": "scripts/capture.py death_profile; score 1500, kills 9, wave 2, hp 10, brute at 1 m; 960x540, seed 1; after loads a seeded profile with best 1000"
+  },
+  "tests": {
+    "profile_tests": 8,
+    "suite": "77 passed"
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "persistence",
+    "best score",
+    "death debrief",
+    "state safety"
+  ],
+  "visual_diff": {
+    "bbox": [
+      290,
+      16,
+      669,
+      361
+    ],
+    "best_line_px": 516,
+    "changed_px": 38516,
+    "debrief_panel_px": 38000,
+    "empty_profile_spawn_changed_px": 0,
+    "fraction": 0.0743,
+    "mean_luma_after": 48.31,
+    "mean_luma_before": 52.18
+  }
+}

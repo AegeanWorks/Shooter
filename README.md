@@ -65,6 +65,7 @@ projects/shooter/
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/particles/engagement
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: crosshair/wave/score/streak/overdrive/damage/boss/pickup
+│   ├── profile.py       <- versioned, atomic run profile (bests, runs, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
@@ -82,6 +83,7 @@ projects/shooter/
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
 │   ├── test_audio.py       <- boss/engagement voices, captions, clip hook
+│   ├── test_profile.py     <- schema/backup/quarantine, run record, debrief
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -95,7 +97,9 @@ projects/shooter/
 │   ├── cycle-03.json  <- improvement-cycle 3 proof: beacon pair, pickup run, gates
 │   ├── cycle-04.json  <- improvement-cycle 4 proof: HUD pair, crosshair, runs, gates
 │   ├── cycle-05.json  <- improvement-cycle 5 proof: arena pair, luma, budget, runs
-│   └── cycle-06.json  <- improvement-cycle 6 proof: audio events, captions, WAV, gates
+│   ├── cycle-06.json  <- improvement-cycle 6 proof: audio events, captions, WAV, gates
+│   └── cycle-07.json  <- improvement-cycle 7 proof: profile save, debrief pair, runs
+├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
 ├── start-shooter.sh        <- macOS/Linux entry point (python3 play.py)
@@ -154,6 +158,16 @@ overdrive have no live key binding yet (engine-side gap, filed — see
 ADR-016); drive them via headless `ActionState` scripts (`shooter.bot`
 kite/overdrive policies), `--replay` logs, or the `bot_kite600.json`
 reference. Shift sprint, P pause, H hide UI, F1 cursor, Esc quit.
+
+## Progress and saves
+
+Best score, kills, wave and streak, the run count and the last-run summary persist in
+`saves/profile.json` (git-ignored, created on first run). The store is versioned: schema 0
+migrates to 1; an unsupported schema is refused without touching the file (persistence is
+disabled for that session); a corrupt file is quarantined and the `.bak` is tried. Writes use
+a temp file + fsync + atomic replace with a backup, under a short advisory lock. The HUD shows
+`BEST <score>` once one exists, and the death screen reports the run (`RUN OVER`, score, kills,
+wave, best streak, time) plus `NEW BEST` when the run beats the loaded best.
 
 <!-- aegean:brand-assets:start -->
 ## 🎨 Brand Assets

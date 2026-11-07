@@ -153,3 +153,28 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 69 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-06.json`.
+
+## Cycle 07 — Progression and saves: versioned profile + debrief
+- **Area**: progression and saves (7/7 rotation).
+- **Defect / opportunity**: no state outlived a launch; bests/runs/last run
+  vanished, and the death screen only showed `YOU DIED`. The project
+  guideline requires a versioned state contract; PRINCIPLE-013 requires
+  atomic writes with backup/lock/recovery.
+- **Fix**: `shooter/profile.py` schema 1 (`runs`, bests, `last_run`),
+  schema-0 migration, unsupported schema refused without touching the file,
+  corrupt quarantine + `.bak` recovery, atomic replace + backup + 30 s lock.
+  `ShooterGame` records wave-clear bests and a run on death; HUD `BEST`,
+  `RUN OVER` debrief, `NEW BEST`. Evidence scripts/tests use throwaway
+  profiles; `saves/` is git-ignored.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-07/`;
+  960x540, seed 1, same staged death (score 1500, kills 9, wave 2,
+  hp 10→0). Before (`profile_death_profile.png`, pre-profile build) vs after:
+  38,516 changed px (7.43%, bbox 290,16-669,361; 38,000 px debrief panel,
+  516 px BEST line), mean luma 52.18 -> 48.31. Empty-profile spawn/combat
+  remain pixel-identical.
+- **Played runs**: `play_run.py death 240` before/after same frame (1),
+  hp 0, score 1500, hash `f8cd9e28…`; after records runs=1,
+  best_score=1500, last_run kills 9/wave 2/best streak 4, save_errors=0.
+- **Gates**: `python -m pytest -q` 77 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-07.json`.
