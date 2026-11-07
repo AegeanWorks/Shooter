@@ -59,3 +59,27 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 50 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-02.json`.
+
+## Cycle 03 — Levels: surge pickup beacon
+- **Area**: levels (3/7 rotation).
+- **Defect / evidence**: wave-2 surge pickup sits at (0, 0.5, -6)
+  behind the 1.2 m centre cover; from the spawn eye the 0.6 m cube is fully
+  hidden (baseline `pickup_spawn` frame 182, active=True, hp 100, no cue).
+  The old `pickup` route had to re-stage the camera to photograph it.
+- **Fix**: presentation-only emissive column (0.22 x 3.0 x 0.22) + bobbing
+  orb (sphere 0.28) above the live pickup, hidden when inactive; HUD
+  `SURGE PICKUP READY` within 18 m when no boss bar is shown. Trigger,
+  spot, ammo and sim untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-03/`;
+  960x540, seed 1, frame 182, pickup active, hp 100.
+  `before/base_pickup_spawn.png` (no cue) vs
+  `after/final2_pickup_spawn.png` (beam + orb + label): 2,342 changed px
+  (0.45%, bbox 375,92-911,291, mean luma 31.04 -> 31.59). Spawn/burst/death
+  routes 0 px; combat/pickup routes show the intended beacon.
+- **Played runs**: `play_run.py pickup 240` walks the clear side lane and
+  collects at frame 121; baseline vs after are identical (same hash
+  `0cfe8193…`, same events/final, `surge_t` 10.0, pickup taken). Kite 600
+  hash still `0a107794…` (wave 2 win path untouched).
+- **Gates**: `python -m pytest -q` 54 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-03.json`.

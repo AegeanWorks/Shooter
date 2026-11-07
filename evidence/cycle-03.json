@@ -1,0 +1,106 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py pickup_spawn <prefix>",
+    "python scripts/play_run.py pickup 240 <report> <png> <png-report>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 3,
+  "fix": "surge pickup beacon (emissive column + bobbing orb) and a distance-gated SURGE PICKUP READY label; presentation only",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "54 passed"
+  },
+  "note": "spawn/burst/death stay 0 px; combat/pickup deltas are the intended beacon/label, not regressions",
+  "play_runs": {
+    "kite_600": {
+      "hash": "0a1077943fd4b668c970dde00a3a76ba",
+      "hp": 100,
+      "kills": 9,
+      "score": 1500,
+      "wave": 2
+    },
+    "parity": "events and final snapshot identical; pickup at frame 121; surge_t 10.0; taken true",
+    "pickup_after": {
+      "final_position": {
+        "alive": true,
+        "hp": 100,
+        "kick": 0.0,
+        "pitch": 0.0,
+        "x": 0.5487,
+        "y": 0.9001,
+        "yaw": 6.0382,
+        "z": -4.6644
+      },
+      "frames": 121,
+      "hash": "0cfe81931634e2b0905383807611b9fe",
+      "pickup": {
+        "active": false,
+        "surge_t": 10.0,
+        "taken": true
+      }
+    },
+    "pickup_before": {
+      "final_position": {
+        "alive": true,
+        "hp": 100,
+        "kick": 0.0,
+        "pitch": 0.0,
+        "x": 0.5487,
+        "y": 0.9001,
+        "yaw": 6.0382,
+        "z": -4.6644
+      },
+      "frames": 121,
+      "hash": "0cfe81931634e2b0905383807611b9fe",
+      "pickup": {
+        "active": false,
+        "surge_t": 10.0,
+        "taken": true
+      }
+    }
+  },
+  "route_deltas_changed_px": {
+    "burst": 0,
+    "combat": 9476,
+    "death": 0,
+    "pickup": 2543,
+    "spawn": 0
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-03/after",
+    "before_dir": "shots/shooter-campaign/cycle-03/before",
+    "route": "scripts/capture.py pickup_spawn; player re-staged at spawn (0,0.9002,8), yaw 0, pickup active, frame 182, viewport 960x540, seed 1, renderer S1C1P1B1"
+  },
+  "tests": {
+    "levels_tests": 4,
+    "suite": "54 passed"
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "level affordance",
+    "pickup visibility",
+    "onboarding"
+  ],
+  "visual_diff": {
+    "bbox": [
+      375,
+      92,
+      911,
+      291
+    ],
+    "changed_px": 2342,
+    "draws_after": 7,
+    "draws_before": 5,
+    "fraction": 0.0045,
+    "mean_luma_after": 31.585,
+    "mean_luma_before": 31.037,
+    "total_px": 518400,
+    "triangles_after": 324,
+    "triangles_before": 192
+  }
+}

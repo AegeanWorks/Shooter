@@ -67,6 +67,13 @@ def draw_shooter(canvas, hud, sim) -> None:
         canvas.text(bx, by - 18, "WARDEN", danger, 2)
         canvas.rect(bx - 2, by - 2, bw + 4, bh + 4, panel_c)
         canvas.rect(bx, by, max(1, int(bw * frac)), bh, (0.92, 0.20, 0.14, 0.95))
+    if boss is None and bool(getattr(sim, "pickup_active", False)):
+        # The beacon is the pointer; this label tells a new player what it is.
+        spot = getattr(sim, "levels", {}).get("pickup", {"x": 0.0, "z": -6.0})
+        dx = float(spot.get("x", 0.0)) - float(sim.player_pos.x)
+        dz = float(spot.get("z", -6.0)) - float(sim.player_pos.z)
+        if math.hypot(dx, dz) <= 18.0:
+            canvas.text(cx - 105, 100, "SURGE PICKUP READY", (0.40, 1.0, 0.52, 1.0), 2)
 
     # engine help lives bottom-left (overlay.py); keep the game panel above it.
     # overlay scale/help math mirrored here so panels never overlap.

@@ -61,10 +61,10 @@ python -m keystone --game shooter.game:ShooterGame --headless --frames 1 --size 
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core, mixer
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core/beacon, mixer
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/particles/engagement
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- crosshair/HP/ammo/score/streak/overdrive + damage/boss HUD
+│   ├── ui.py            <- crosshair/HP/ammo/score/streak/overdrive/damage/boss/pickup HUD
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
@@ -78,15 +78,17 @@ projects/shooter/
 │   ├── test_engagement.py  <- odds/stream/overdrive/lock/determinism
 │   ├── test_feedback.py    <- hurt-source telemetry + directional HUD cue
 │   ├── test_boss.py        <- warden data/wave/slam/summon/kill/bar/core
+│   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
-│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss reports
-│   └── capture.py     <- seeded screenshot routes (spawn/combat/burst/pickup/hurt/boss/death)
+│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/pickup reports
+│   └── capture.py     <- seeded routes (spawn/combat/burst/pickup/pickup_spawn/hurt/boss/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
-│   └── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
+│   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
+│   └── cycle-03.json  <- improvement-cycle 3 proof: beacon pair, pickup run, gates
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
 ├── start-shooter.sh        <- macOS/Linux entry point (python3 play.py)

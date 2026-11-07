@@ -38,6 +38,8 @@ class ShooterGame:
         self._tracer_nodes: list[Node] = []
         self._flash: Node | None = None
         self._pickup: Node | None = None
+        self._pickup_beam: Node | None = None
+        self._pickup_orb: Node | None = None
         self._boss_core: Node | None = None
         self._built = False
 
@@ -75,6 +77,7 @@ class ShooterGame:
         self.assets.register("mesh.flash", cube(1.0))
         self.assets.register("mesh.pickup", cube(0.6))
         self.assets.register("mesh.boss_core", sphere(0.35, segments=12, rings=8))
+        self.assets.register("mesh.beacon_orb", sphere(0.28, segments=10, rings=6))
         checker = TextureData.checker(64, (0.10, 0.12, 0.16), (0.18, 0.20, 0.25), name="floor-checker")
         self.assets.register("texture.floor", checker)
         self.assets.register("material.floor", Material(color=Vec3(1, 1, 1), specular=0.08, shininess=8.0, texture=checker, checker_scale=0.5))
@@ -148,6 +151,18 @@ class ShooterGame:
                                 float(self._pickup_spot["x"]), float(self._pickup_spot["y"]), float(self._pickup_spot["z"]))),
                             mesh=pickup_mesh, material=pickup_mat)
         self.scene.add(self._pickup)
+        # Pickup beacon: a thin emissive column + bobbing orb above the surge
+        # spot so the reward is visible over the centre cover from spawn.
+        self._pickup_beam = Node(
+            "surge-beam", id="surge-beam", visible=False,
+            mesh=self.assets.require("mesh.wall").payload, material=pickup_mat,
+        )
+        self.scene.add(self._pickup_beam)
+        self._pickup_orb = Node(
+            "surge-orb", id="surge-orb", visible=False,
+            mesh=self.assets.require("mesh.beacon_orb").payload, material=pickup_mat,
+        )
+        self.scene.add(self._pickup_orb)
         self._boss_core = Node(
             "warden-core", id="warden-core", visible=False,
             mesh=self.assets.require("mesh.boss_core").payload,
@@ -294,6 +309,23 @@ class ShooterGame:
                                   float(self._pickup_spot["y"]) + 0.15 * math.sin(sim.time * 3.0),
                                   float(self._pickup_spot["z"])),
                     rotation=Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), spin),
+                )
+        if self._pickup_beam is not None and self._pickup_orb is not None:
+            active = bool(sim.pickup_active)
+            self._pickup_beam.visible = active
+            self._pickup_orb.visible = active
+            if active:
+                bx = float(self._pickup_spot["x"])
+                by = float(self._pickup_spot["y"])
+                bz = float(self._pickup_spot["z"])
+                self._pickup_beam.transform = Transform(
+                    position=Vec3(bx, by + 1.35, bz),
+                    rotation=Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), (sim.time * 0.9) % math.tau),
+                    scale=Vec3(0.22, 3.0, 0.22),
+                )
+                self._pickup_orb.transform = Transform(
+                    position=Vec3(bx, by + 2.95 + 0.14 * math.sin(sim.time * 3.0), bz),
+                    scale=Vec3(1.0, 1.0, 1.0),
                 )
 
     def snapshot(self) -> dict:

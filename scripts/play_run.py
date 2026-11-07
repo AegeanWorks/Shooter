@@ -10,6 +10,7 @@ Modes:
   strafe   strafe_fire drill (minute-one regression run)
   ambush   staged alternating side attackers (damage-direction drill)
   boss     warden-only wave-3 fight with the kite policy (ends on boss death)
+  pickup   walk the clear side lane into the live surge pickup (ends on pickup)
 
 Writes a machine-readable report with per-frame health, event frames,
 hurt-source telemetry and the final deterministic snapshot hash.
@@ -18,6 +19,7 @@ hurt-source telemetry and the final deterministic snapshot hash.
 from __future__ import annotations
 
 import json
+import math
 import sys
 import time
 from pathlib import Path
@@ -56,6 +58,8 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         return kite_step(game.sim)
     if mode == "strafe":
         return strafe[frame % len(strafe)]
+    if mode == "pickup":
+        return ActionState(forward=1.0)
     return ActionState()
 
 
@@ -83,6 +87,22 @@ def main(
                 summon_cd=2.5,
             )
             game.sim.enemies = [boss]
+        if mode == "pickup":
+            sim = game.sim
+            sim.wave = 2
+            sim.pickup_active = True
+            sim.pickup_taken = False
+            sim.enemies = []
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            rest_y = float(sim.player_pos.y)  # keeps the 0.0002 floor skin gap
+            sim.player_pos = Vec3(3.5, rest_y, 8.0)
+            sim.body = sim.body.__class__(
+                position=Vec3(3.5, rest_y, 8.0), half_extents=sim.body.half_extents,
+                velocity=Vec3(), on_ground=True,
+            )
+            sim.yaw = math.atan2(0.0 - 3.5, -(-6.0 - 8.0))
+            sim.pitch = 0.0
         strafe = strafe_fire(frames)
         recorded: list[dict] = []
         hurts: list[dict] = []
@@ -139,6 +159,8 @@ def main(
                 last_wave = int(game.sim.wave)
             if boss is not None and not boss.alive:
                 break
+            if mode == "pickup" and game.sim.weapon == "surge":
+                break
             if (frame + 1) % CHUNK == 0:
                 chunks.append(
                     {
@@ -167,6 +189,11 @@ def main(
             "hurt_events": hurts,
             "wave_events": wave_events,
             "final": final,
+            "pickup": {
+                "active": bool(getattr(game.sim, "pickup_active", False)),
+                "taken": bool(getattr(game.sim, "pickup_taken", False)),
+                "surge_t": round(float(getattr(game.sim, "surge_t", 0.0)), 3),
+            },
             "hash": stable_hash(final),
         }
         if out:

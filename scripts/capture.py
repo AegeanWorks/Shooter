@@ -154,9 +154,10 @@ def route_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
 
         from keystone.math3d import Vec3 as _V
 
-        g.sim.player_pos = _V(3.5, 0.9, 8.0)
+        rest_y = float(g.sim.player_pos.y)  # keeps the 0.0002 floor skin gap
+        g.sim.player_pos = _V(3.5, rest_y, 8.0)
         # physics body overwrites player_pos each step: re-stage it too
-        g.sim.body = replace(g.sim.body, position=_V(3.5, 0.9, 8.0))
+        g.sim.body = replace(g.sim.body, position=_V(3.5, rest_y, 8.0), on_ground=True)
         g.sim.hvel = _V(0.0, 0.0, 0.0)
         g.sim.yaw = math.atan2(0.0 - 3.5, -(-6.0 - 8.0))
         g.sim.pitch = 0.0
@@ -265,6 +266,48 @@ def route_hurt(prefix: str, side: str = "right", shadows: bool = True, srgb: boo
         engine.close()
 
 
+def route_pickup_spawn(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Wave-2 pickup active, clean arena, player staged back at spawn.
+
+    Shows what a player sees when the surge pickup is ready: the centre cover
+    hides the cube from the spawn eye. Same staging before/after the beacon.
+    """
+    from keystone.app import Engine
+
+    game = ShooterGame()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        for _ in range(1200):
+            g.update(FIXED_STEP, kite_step(g.sim))
+            if g.sim.pickup_active:
+                break
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        rest_y = float(g.sim.player_pos.y)  # keeps the 0.0002 floor skin gap
+        g.sim.player_pos = Vec3(0.0, rest_y, 8.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, rest_y, 8.0), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = 0.0
+        g.sim.pitch = 0.0
+        g.sim.kick = 0.0
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"pickup-spawn frame={g.sim.tick} active={g.sim.pickup_active} "
+            f"hp={g.sim.hp} dist={abs(g.sim.player_pos.z + 6.0):.1f}"
+        )
+        engine.capture(f"{prefix}_pickup_spawn.png", f"{prefix}_pickup_spawn.json")
+        _profiler(engine)
+        print(f"wrote {prefix}_pickup_spawn.png + {prefix}_pickup_spawn.json")
+    finally:
+        engine.close()
+
+
 def route_death(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
@@ -300,6 +343,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
             route_hurt(prefix, side, shadows, srgb, post, bloom)
     if which == "boss":
         route_boss(prefix, "--no-boss" not in _flags, shadows, srgb, post, bloom)
+    if which == "pickup_spawn":
+        route_pickup_spawn(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 
