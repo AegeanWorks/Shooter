@@ -105,3 +105,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 58 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-04.json`.
+
+## Cycle 05 — Graphics and effects: arena floor grid + lit trim
+- **Area**: graphics and effects (5/7 rotation).
+- **Defect / evidence**: floor was a near-black checker with no landmarks;
+  spawn mean luma 30.35/255, edge density 2.657; cover tops and the wall
+  line dissolved into the background.
+- **Fix**: deterministic 128-px grid texture (dark checker + 2-px lit
+  lines), higher ambient/directional/point light, warmer covers, and ten
+  shared-material trim nodes (four wall lines + six cover caps) in one
+  instanced batch. No sim/collider/DATA changes.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-05/`;
+  960x540, seed 1, same routes/frames. Spawn luma 30.35 -> 34.68, edge
+  density 2.657 -> 3.066; combat 37.02 -> 40.03; boss 33.89 -> 38.33.
+  Changed pixels 270k-306k (52-59%) due to the global floor/light change.
+  Draws 3 -> 4 spawn, 8 -> 9 boss; tris 110 -> 218 / 1666 -> 1774
+  (limits 40/80k).
+- **Played runs**: `play_run.py kite 600` `0a107794…`, `strafe 300`
+  `973276f5…`, `boss` `1b602735…` all identical to pre-change runs.
+- **Gates**: `python -m pytest -q` 63 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-05.json`.

@@ -1,0 +1,205 @@
+{
+  "area": "graphics and effects",
+  "budget": {
+    "boss": {
+      "draws_after": 9,
+      "draws_before": 8,
+      "instanced_after": 6,
+      "instanced_before": 5,
+      "triangles_after": 1774,
+      "triangles_before": 1666
+    },
+    "limits": {
+      "draw_calls": 40,
+      "triangles": 80000
+    },
+    "spawn": {
+      "draws_after": 4,
+      "draws_before": 3,
+      "triangles_after": 218,
+      "triangles_before": 110
+    }
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py all <prefix>",
+    "python scripts/capture.py boss <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python scripts/play_run.py boss 1800 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 5,
+  "fix": "128-px floor grid texture, lifted ambient/directional/point lighting, warmer covers, ten shared-material lit trim nodes (wall lines + cover caps)",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "63 passed"
+  },
+  "play_runs": {
+    "boss_after": {
+      "frames": 507,
+      "hash": "1b6027350ff4a24aad528c0e87e8e942",
+      "hits": 56,
+      "hp": 100,
+      "kills": 3,
+      "score": 3080,
+      "shots": 56,
+      "wave": 4
+    },
+    "boss_before": {
+      "frames": 507,
+      "hash": "1b6027350ff4a24aad528c0e87e8e942",
+      "hits": 56,
+      "hp": 100,
+      "kills": 3,
+      "score": 3080,
+      "shots": 56,
+      "wave": 4
+    },
+    "kite_600_after": {
+      "frames": 600,
+      "hash": "0a1077943fd4b668c970dde00a3a76ba",
+      "hits": 31,
+      "hp": 100,
+      "kills": 9,
+      "score": 1500,
+      "shots": 36,
+      "wave": 2
+    },
+    "kite_600_before": {
+      "frames": 600,
+      "hash": "0a1077943fd4b668c970dde00a3a76ba",
+      "hits": 31,
+      "hp": 100,
+      "kills": 9,
+      "score": 1500,
+      "shots": 36,
+      "wave": 2
+    },
+    "parity": "all three hashes identical before/after: kite 0a107794?, strafe 973276f5?, boss 1b602735?",
+    "strafe_300_after": {
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hits": 2,
+      "hp": 84,
+      "kills": 0,
+      "score": 0,
+      "shots": 30,
+      "wave": 1
+    },
+    "strafe_300_before": {
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hits": 2,
+      "hp": 84,
+      "kills": 0,
+      "score": 0,
+      "shots": 30,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-05/after",
+    "before_dir": "shots/shooter-campaign/cycle-05/before",
+    "route": "scripts/capture.py all + boss; 960x540, seed 1, same routes/frames before/after, renderer S1C1P1B1"
+  },
+  "tests": {
+    "graphics_tests": 5,
+    "suite": "63 passed"
+  },
+  "timestamp": "2026-11-07",
+  "topics": [
+    "arena readability",
+    "floor grid",
+    "lit trim",
+    "auto-instancing"
+  ],
+  "visual_diff": {
+    "boss": {
+      "bbox": [
+        0,
+        92,
+        959,
+        539
+      ],
+      "changed_px": 286814,
+      "content_ratio_after": 0.6189,
+      "content_ratio_before": 0.621,
+      "fraction": 0.5533,
+      "mean_luma_after": 38.33,
+      "mean_luma_before": 33.89
+    },
+    "burst": {
+      "bbox": [
+        0,
+        92,
+        959,
+        539
+      ],
+      "changed_px": 269858,
+      "content_ratio_after": 0.5991,
+      "content_ratio_before": 0.6038,
+      "fraction": 0.5206,
+      "mean_luma_after": 37.09,
+      "mean_luma_before": 33.04
+    },
+    "combat": {
+      "bbox": [
+        0,
+        92,
+        959,
+        539
+      ],
+      "changed_px": 306008,
+      "content_ratio_after": 0.6691,
+      "content_ratio_before": 0.675,
+      "fraction": 0.5903,
+      "mean_luma_after": 40.03,
+      "mean_luma_before": 37.02
+    },
+    "death": {
+      "bbox": [
+        0,
+        92,
+        959,
+        539
+      ],
+      "changed_px": 276990,
+      "content_ratio_after": 0.903,
+      "content_ratio_before": 0.9029,
+      "fraction": 0.5343,
+      "mean_luma_after": 52.11,
+      "mean_luma_before": 47.16
+    },
+    "pickup": {
+      "bbox": [
+        0,
+        92,
+        959,
+        539
+      ],
+      "changed_px": 277292,
+      "content_ratio_after": 0.5926,
+      "content_ratio_before": 0.5719,
+      "fraction": 0.5349,
+      "mean_luma_after": 42.64,
+      "mean_luma_before": 36.56
+    },
+    "spawn": {
+      "bbox": [
+        0,
+        92,
+        959,
+        539
+      ],
+      "changed_px": 276918,
+      "content_ratio_after": 0.5982,
+      "content_ratio_before": 0.6008,
+      "fraction": 0.5342,
+      "mean_luma_after": 34.68,
+      "mean_luma_before": 30.35
+    }
+  }
+}

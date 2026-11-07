@@ -61,7 +61,7 @@ python -m keystone --game shooter.game:ShooterGame --headless --frames 1 --size 
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core/beacon, mixer
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core/beacon, floor grid/trim, mixer
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/particles/engagement
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: crosshair/wave/score/streak/overdrive/damage/boss/pickup
@@ -80,6 +80,7 @@ projects/shooter/
 │   ├── test_boss.py        <- warden data/wave/slam/summon/kill/bar/core
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
+│   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -90,7 +91,8 @@ projects/shooter/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
 │   ├── cycle-03.json  <- improvement-cycle 3 proof: beacon pair, pickup run, gates
-│   └── cycle-04.json  <- improvement-cycle 4 proof: HUD pair, crosshair, runs, gates
+│   ├── cycle-04.json  <- improvement-cycle 4 proof: HUD pair, crosshair, runs, gates
+│   └── cycle-05.json  <- improvement-cycle 5 proof: arena pair, luma, budget, runs
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
 ├── start-shooter.sh        <- macOS/Linux entry point (python3 play.py)

@@ -24,6 +24,27 @@ MAX_ENEMIES = 24
 MAX_TRACERS = 16
 
 
+def _floor_grid_texture(size: int = 128, cell: int = 16) -> TextureData:
+    """Deterministic dark floor with brighter 2-px grid lines (no image file)."""
+    base = (0.075, 0.090, 0.130)
+    alt = (0.095, 0.115, 0.160)
+    line = (0.22, 0.30, 0.40)
+    pixels = bytearray(size * size * 4)
+    for y in range(size):
+        for x in range(size):
+            if x % cell < 2 or y % cell < 2:
+                color = line
+            elif (x // cell + y // cell) % 2 == 0:
+                color = base
+            else:
+                color = alt
+            offset = (y * size + x) * 4
+            pixels[offset : offset + 4] = bytes(
+                (round(color[0] * 255), round(color[1] * 255), round(color[2] * 255), 255)
+            )
+    return TextureData(size, size, bytes(pixels), name="floor-grid")
+
+
 class ShooterGame:
     name = "shooter"
 
@@ -78,11 +99,12 @@ class ShooterGame:
         self.assets.register("mesh.pickup", cube(0.6))
         self.assets.register("mesh.boss_core", sphere(0.35, segments=12, rings=8))
         self.assets.register("mesh.beacon_orb", sphere(0.28, segments=10, rings=6))
-        checker = TextureData.checker(64, (0.10, 0.12, 0.16), (0.18, 0.20, 0.25), name="floor-checker")
-        self.assets.register("texture.floor", checker)
-        self.assets.register("material.floor", Material(color=Vec3(1, 1, 1), specular=0.08, shininess=8.0, texture=checker, checker_scale=0.5))
-        self.assets.register("material.wall", Material(color=Vec3(0.42, 0.44, 0.50), specular=0.2, shininess=24.0))
-        self.assets.register("material.cover", Material(color=Vec3(0.58, 0.46, 0.30), specular=0.15, shininess=18.0))
+        grid = _floor_grid_texture()
+        self.assets.register("texture.floor", grid)
+        self.assets.register("material.floor", Material(color=Vec3(1, 1, 1), specular=0.08, shininess=8.0, texture=grid, checker_scale=0.5))
+        self.assets.register("material.wall", Material(color=Vec3(0.40, 0.43, 0.50), specular=0.25, shininess=24.0))
+        self.assets.register("material.cover", Material(color=Vec3(0.64, 0.50, 0.32), specular=0.15, shininess=18.0))
+        self.assets.register("material.trim", Material(color=Vec3(0.18, 0.62, 0.72), specular=0.5, shininess=48.0, emissive=Vec3(0.05, 0.34, 0.42)))
         self.assets.register("material.mite", Material(color=Vec3(0.95, 0.45, 0.15), specular=0.4, shininess=48.0, emissive=Vec3(0.55, 0.18, 0.02)))
         self.assets.register("material.brute", Material(color=Vec3(0.60, 0.40, 0.90), specular=0.4, shininess=48.0, metallic=0.2, roughness=0.5))
         self.assets.register("material.wisp", Material(color=Vec3(0.30, 0.85, 1.00), specular=0.6, shininess=64.0, emissive=Vec3(0.10, 0.45, 0.55)))
@@ -94,15 +116,15 @@ class ShooterGame:
 
         self.scene.background = Vec3(0.035, 0.045, 0.07)
         self.scene.sky = Vec3(0.01, 0.015, 0.04)
-        self.scene.ambient = Vec3(0.22, 0.24, 0.30)
-        self.scene.fog_density = 0.008
+        self.scene.ambient = Vec3(0.30, 0.32, 0.38)
+        self.scene.fog_density = 0.006
         self.scene.camera.position = Vec3(0.0, 1.62, 8.0)
         self.scene.camera.fov_y = 75.0
         self.scene.camera.yaw = 0.0
         self.scene.camera.pitch = 0.0
         self.scene.camera.look_at(Vec3(0.0, 1.4, 0.0))
-        self.scene.light = DirectionalLight(direction=Vec3(-0.45, -1.0, -0.35), color=Vec3(1.0, 0.93, 0.82), intensity=1.1)
-        self.scene.point_light = PointLight(position=Vec3(0.0, 2.5, 8.0), color=Vec3(1.0, 0.8, 0.5), intensity=0.4, radius=14.0)
+        self.scene.light = DirectionalLight(direction=Vec3(-0.45, -1.0, -0.35), color=Vec3(1.0, 0.93, 0.82), intensity=1.25)
+        self.scene.point_light = PointLight(position=Vec3(0.0, 2.5, 8.0), color=Vec3(1.0, 0.8, 0.5), intensity=0.45, radius=14.0)
 
         floor = self.assets.require("mesh.floor").payload
         floor_mat = self.assets.require("material.floor").payload
@@ -121,6 +143,22 @@ class ShooterGame:
         cover_mat = self.assets.require("material.cover").payload
         for i, c in enumerate(self.sim.levels["arena"]["covers"]):
             wall(f"cover-{i}", float(c["x"]), float(c["h"]) / 2.0, float(c["z"]), float(c["w"]), float(c["h"]), float(c["d"]), mat=cover_mat)
+
+        # Arena trim: one shared mesh/material so the 10 lit edges stay in a
+        # single instanced batch. Purely visual (no colliders, no sim state).
+        trim_mat = self.assets.require("material.trim").payload
+        for name, x, y, z, sx, sy, sz in (
+            ("trim-wall-n", 0.0, 2.94, -19.52, 40.0, 0.08, 0.08),
+            ("trim-wall-s", 0.0, 2.94, 19.52, 40.0, 0.08, 0.08),
+            ("trim-wall-w", -19.52, 2.94, 0.0, 0.08, 0.08, 40.0),
+            ("trim-wall-e", 19.52, 2.94, 0.0, 0.08, 0.08, 40.0),
+        ):
+            wall(name, x, y, z, sx, sy, sz, mat=trim_mat)
+        for i, c in enumerate(self.sim.levels["arena"]["covers"]):
+            wall(
+                f"trim-cover-{i}", float(c["x"]), float(c["h"]) + 0.04, float(c["z"]),
+                float(c["w"]) + 0.08, 0.08, float(c["d"]) + 0.08, mat=trim_mat,
+            )
 
         # enemy pool (shared payloads -> auto-instancing)
         self._enemy_nodes = []
