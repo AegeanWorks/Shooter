@@ -390,4 +390,8 @@ rotation completes.
   `973276f5…` unchanged; fairness `witnessed_win:reference:2627`.
 - **Gates**: `python -m pytest -q` 102 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
+- **Post-cycle gate hardening**: one full-suite run hit the 10 s playtest
+  wall budget under load (`1 failed, 101 passed`). The 3000-frame fairness
+  test now passes `max_wall_seconds=30.0` to both `validate_fairness` and
+  `run_bot`; two consecutive full runs passed 102/102 afterwards.
 - **Evidence file**: `evidence/cycle-18.json`.
