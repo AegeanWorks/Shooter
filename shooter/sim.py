@@ -716,7 +716,17 @@ class Sim:
             )
             self.tracers = self.tracers[:16]
         self.flash_t = float(self.juice.get("flash_life_s", 0.06))
-        self.flash_pos = Vec3(origin.x + fwd.x * 0.7, origin.y + fwd.y * 0.7 - 0.1, origin.z + fwd.z * 0.7)
+        # Offset the flash down-right of the aim line so it never hides the
+        # target; distance/size are presentation DATA.
+        fwd_d = float(self.juice.get("flash_forward", 0.95))
+        right_d = float(self.juice.get("flash_right", 0.16))
+        down_d = float(self.juice.get("flash_down", 0.12))
+        rx, rz = math.cos(self.yaw), math.sin(self.yaw)
+        self.flash_pos = Vec3(
+            origin.x + fwd.x * fwd_d + rx * right_d,
+            origin.y + fwd.y * fwd_d - down_d,
+            origin.z + fwd.z * fwd_d + rz * right_d,
+        )
         self.kick += math.radians(float(w.get("kick_deg", 0.6)))
         self.kick = min(self.kick, math.radians(4.0))
 

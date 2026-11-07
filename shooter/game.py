@@ -518,7 +518,8 @@ class ShooterGame:
         if self._flash is not None:
             if sim.flash_t > 0.0:
                 self._flash.visible = True
-                self._flash.transform = Transform(position=sim.flash_pos, scale=Vec3(0.10, 0.10, 0.10))
+                scale = float(self.sim.juice.get("flash_scale", 0.055))
+                self._flash.transform = Transform(position=sim.flash_pos, scale=Vec3(scale, scale, scale))
             else:
                 self._flash.visible = False
         if self._boss_core is not None:

@@ -72,7 +72,7 @@ projects/shooter/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
 │       ├── levels.json     <- arena + low jump platform + 5 waves (wave 3 warden) + win_wave 4
-│       ├── juice.json      <- tracer/flash/particle caps, hitstop, flinch tuning
+│       ├── juice.json      <- tracer/flash offset/scale, particle caps, hitstop, flinch
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
 ├── tests/
@@ -90,6 +90,7 @@ projects/shooter/
 │   ├── test_enemy_cover.py <- cover collision, slide-around, spawn guard
 │   ├── test_levels_platform.py <- jumpable low platform + landing proof
 │   ├── test_kill_feed.py   <- typed kill event, feed draw/expiry
+│   ├── test_muzzle.py      <- off-axis flash offset and small node scale
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -110,7 +111,8 @@ projects/shooter/
 │   ├── cycle-10.json  <- improvement-cycle 10 proof: hit-flinch pair, same-hash runs
 │   ├── cycle-11.json  <- improvement-cycle 11 proof: cover-slide pair, fairness run
 │   ├── cycle-12.json  <- improvement-cycle 12 proof: jump-platform pair, landing run
-│   └── cycle-13.json  <- improvement-cycle 13 proof: kill-feed pair, same-hash runs
+│   ├── cycle-13.json  <- improvement-cycle 13 proof: kill-feed pair, same-hash runs
+│   └── cycle-14.json  <- improvement-cycle 14 proof: muzzle-flash pair, same-hash runs
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

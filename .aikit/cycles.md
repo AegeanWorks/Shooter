@@ -299,3 +299,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 90 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-13.json`.
+
+## Cycle 14 — Graphics and effects: off-axis muzzle flash
+- **Area**: graphics and effects (14th cycle).
+- **Defect / evidence**: the flash was a 0.10 cube at 0.70 m dead on the
+  aim line; the first-shot frame was a large white block covering the
+  crosshair and the mite. Baseline `test_muzzle.py` failed: lateral offset
+  0.0 and node scale 0.10.
+- **Fix**: `juice.json` flash offset (forward 0.95, right 0.16, down 0.12)
+  and scale 0.055; sim writes the offset position, game reads the scale.
+  Lifetime/point-light unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-14/`;
+  960x540 seed 1, first shot frame 1. 4,343 changed px (0.84%, bbox
+  448,290-557,359), mean luma 37.09 -> 36.96; draws 8, triangles 586.
+  Before: big centre block; after: small down-right flash, target visible.
+- **Played runs**: `kite 600` hash `8872be74…` and `strafe 300` hash
+  `973276f5…` identical to the cycle-13 worktree.
+- **Gates**: `python -m pytest -q` 92 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-14.json`.

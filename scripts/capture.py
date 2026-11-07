@@ -355,6 +355,35 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_muzzle(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Exact first-shot frame: the muzzle-flash occlusion pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=30, max_hp=30)]
+        fire = ActionState(held=frozenset({"fire"}))
+        for _ in range(20):
+            before = int(g.sim.shots)
+            g.update(FIXED_STEP, fire)
+            if int(g.sim.shots) > before:
+                print(
+                    f"muzzle frame={g.sim.tick} shots={g.sim.shots} hits={g.sim.hits} "
+                    f"flash=({g.sim.flash_pos.x:.2f},{g.sim.flash_pos.y:.2f},{g.sim.flash_pos.z:.2f}) "
+                    f"t={g.sim.flash_t:.2f}"
+                )
+                engine.capture(f"{prefix}_muzzle.png", f"{prefix}_muzzle.json")
+                break
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_killfeed(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First-kill frame after the flash clears: the kill-feed pair."""
     from keystone.app import Engine
@@ -630,6 +659,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_platform(prefix, shadows, srgb, post, bloom)
     if which == "killfeed":
         route_killfeed(prefix, shadows, srgb, post, bloom)
+    if which == "muzzle":
+        route_muzzle(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

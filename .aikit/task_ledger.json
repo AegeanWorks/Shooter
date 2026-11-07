@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-13-kill-feed",
+    "task_id": "shooter-cycle-14-muzzle-flash",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794088964.234144,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794089633.9866037,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794089039.1075284
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-07-progression-saves",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Progression proven: 77 tests, determinism 1800 ok, same death hash, 38516px debrief pair, profile saved; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794083494.6314585,
-      "timestamp_str": "2026-11-07 23:31:34",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-07-progression-saves",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-07-progression-saves' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794083564.5588844,
-      "timestamp_str": "2026-11-07 23:32:44",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-08-campaign-clear",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794089039.1075306,
       "timestamp_str": "2026-11-08 01:03:59",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-14-muzzle-flash",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Graphics cycle: off-axis small muzzle flash via juice DATA, failing-first tests, first-shot pair and same-hash runs",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794089633.5257962,
+      "timestamp_str": "2026-11-08 01:13:53",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The 0.10 muzzle cube sat on the aim line and hid the crosshair/target for the flash window.",
+        "benefits": "Target stays visible during fire while the flash and light boost remain.",
+        "risks": "contract: flash_pos presentation field only (snapshot unchanged); dependency: none; concurrency: none; state: juice DATA.",
+        "mitigation": "Pin offset/scale tests and compare play hashes to the pre-flash worktree."
+      },
+      "plan_digest": "0ee5360d92958542c05583771a6fefe5304363fef4d9a8e06aebc1feac695f31"
+    },
+    {
+      "task_id": "shooter-cycle-14-muzzle-flash",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Muzzle flash proven: 92 tests, determinism 1800 ok, 4343px first-shot pair, identical kite/strafe hashes; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794089633.9866037,
+      "timestamp_str": "2026-11-08 01:13:53",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

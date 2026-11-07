@@ -1,0 +1,99 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py muzzle <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 14,
+  "fix": "muzzle flash moved off the aim line (forward 0.95, right 0.16, down 0.12) and scaled 0.055 via juice DATA",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "92 passed"
+  },
+  "play_runs": {
+    "kite_600_after": {
+      "dropped_sfx": 0,
+      "frames": 600,
+      "hash": "8872be745ba27726bc6b8cde69316c6b",
+      "hp": 100,
+      "kills": 9,
+      "mean_step_ms": 0.822,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 1800,
+      "wave": 2
+    },
+    "kite_600_before": {
+      "dropped_sfx": 0,
+      "frames": 600,
+      "hash": "8872be745ba27726bc6b8cde69316c6b",
+      "hp": 100,
+      "kills": 9,
+      "mean_step_ms": 0.5429,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 1800,
+      "wave": 2
+    },
+    "parity": "kite 8872be74? and strafe 973276f5? identical before/after",
+    "strafe_300_after": {
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "mean_step_ms": 0.5657,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    },
+    "strafe_300_before": {
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "mean_step_ms": 0.3207,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-14/after",
+    "before_dir": "shots/shooter-campaign/cycle-14/before",
+    "route": "scripts/capture.py muzzle; mite hp30 at 2 m, first pulse shot, capture on the shot frame; 960x540 seed 1"
+  },
+  "tests": {
+    "failing_first": "cycle-13 commit c2bf904: lateral 0.0 and scale 0.10; both muzzle tests failed",
+    "muzzle_tests": 2,
+    "suite": "92 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "muzzle flash",
+    "target visibility",
+    "effects tuning"
+  ],
+  "visual_diff": {
+    "bbox": [
+      448,
+      290,
+      557,
+      359
+    ],
+    "changed_px": 4343,
+    "draws": 8,
+    "fraction": 0.0084,
+    "mean_luma_after": 36.96,
+    "mean_luma_before": 37.09,
+    "triangles": 586
+  }
+}
