@@ -355,6 +355,41 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_los(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Brute adjacent to a thin cover with the player on the other side."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.player_pos = Vec3(-6.0, 0.9002, 3.8)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-6.0, 0.9002, 3.8), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = 0.0
+        g.sim.enemies = [
+            _Enemy(etype="brute", pos=Vec3(-6.0, 0.7, 6.2), hp=120, max_hp=120)
+        ]
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"los frame={g.sim.tick} hp={g.sim.hp} "
+            f"brute=({g.sim.enemies[0].pos.x:.2f},{g.sim.enemies[0].pos.z:.2f})"
+        )
+        engine.capture(f"{prefix}_los.png", f"{prefix}_los.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_dry(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Fire with no magazine and no reserve: the dry-fire cue pair."""
     from keystone.app import Engine
@@ -715,6 +750,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_denied(prefix, shadows, srgb, post, bloom)
     if which == "dry":
         route_dry(prefix, shadows, srgb, post, bloom)
+    if which == "los":
+        route_los(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

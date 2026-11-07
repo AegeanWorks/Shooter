@@ -1,0 +1,79 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py los <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 18,
+  "fix": "brute melee requires enemy chest -> player eye LOS against colliders; open-field slam preserved",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "102 passed"
+  },
+  "play_runs": {
+    "fairness": {
+      "reason": "witnessed_win:reference:2627",
+      "verdict": "fair"
+    },
+    "kite_3000": {
+      "dropped_sfx": 0,
+      "frames": 3000,
+      "hash": "9b70e372088775c590660282fac556f8",
+      "hp": 2,
+      "kills": 32,
+      "mean_step_ms": 0.8338,
+      "outcome": "win",
+      "peak_voices": 8,
+      "score": 11955,
+      "wave": 4
+    },
+    "parity": "kite 9b70e372? and strafe 973276f5? identical to cycle 17",
+    "strafe_300": {
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "mean_step_ms": 0.197,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-18/after",
+    "before_dir": "shots/shooter-campaign/cycle-18/before",
+    "route": "scripts/capture.py los; player (-6,0.9,3.8) facing +Z, brute (-6,0.7,6.2), 1 m cover between, frame 1; 960x540 seed 1"
+  },
+  "tests": {
+    "failing_first": "baseline step dealt hp 80 + hurt through the cover",
+    "los_tests": 2,
+    "suite": "102 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "cover integrity",
+    "melee LOS",
+    "enemy fairness"
+  ],
+  "visual_diff": {
+    "bbox": [
+      60,
+      12,
+      947,
+      231
+    ],
+    "changed_px": 7216,
+    "draws": 6,
+    "fraction": 0.0139,
+    "mean_luma_after": 40.95,
+    "mean_luma_before": 41.16,
+    "triangles": 98
+  }
+}

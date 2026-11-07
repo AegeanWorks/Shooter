@@ -375,3 +375,19 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 100 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-17.json`.
+
+## Cycle 18 — Enemies/bosses: brute melee LOS
+- **Area**: enemies/bosses (18th cycle).
+- **Defect / evidence**: brute melee checked distance only; a brute at
+  (-6, 6.2) and player at (-6, 3.8) on opposite sides of the 1 m cover at
+  (-6, 5) dealt 20 damage through it (baseline hp 80, `hurt`).
+- **Fix**: `_enemy_has_los` chest->eye against colliders (0.3 m skin) now
+  gates the brute slam. Open-field slam still lands; wisp LOS unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-18/`;
+  960x540 seed 1, frame 1. 7,216 changed px (1.39%, bbox 60,12-947,231;
+  HP line, damage cue, AUDIO line), mean luma 41.16 -> 40.95.
+- **Played runs**: `kite 3000` hash `9b70e372…` and `strafe 300`
+  `973276f5…` unchanged; fairness `witnessed_win:reference:2627`.
+- **Gates**: `python -m pytest -q` 102 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-18.json`.

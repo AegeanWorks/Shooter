@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-17-dry-fire",
+    "task_id": "shooter-cycle-18-brute-los",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794092347.9198055,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794093045.7714972,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794092416.9813333
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-11-cover-collision",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Cover collision proven: 86 tests, determinism 1800 ok, 3116px pair, fair witnessed_win:2627; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794087129.2998126,
-      "timestamp_str": "2026-11-08 00:32:09",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-11-cover-collision",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-11-cover-collision' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794087194.4035952,
-      "timestamp_str": "2026-11-08 00:33:14",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-12-jump-platform",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794092416.9813354,
       "timestamp_str": "2026-11-08 02:00:16",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-18-brute-los",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Enemies cycle: brute melee LOS through covers, open-field parity, failing-first test, pair and same-hash runs",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794093045.4019973,
+      "timestamp_str": "2026-11-08 02:10:45",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Brute slams checked distance only and damaged through a 1 m cover.",
+        "benefits": "Cover protects from melee; open-field attacks unchanged.",
+        "risks": "contract: gameplay behavior changes (damage blocked); dependency: none; concurrency: none; state: helper reads colliders.",
+        "mitigation": "Cover-blocked and open-field tests, 3000-frame fairness and strafe hashes."
+      },
+      "plan_digest": "824876036ba2a6c1e5eb73096d7661db160124f821aa3ce7410704c5813201e9"
+    },
+    {
+      "task_id": "shooter-cycle-18-brute-los",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Brute LOS proven: 102 tests, determinism 1800 ok, 7216px pair, fairness 2627, same runs; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794093045.7714972,
+      "timestamp_str": "2026-11-08 02:10:45",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

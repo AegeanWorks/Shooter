@@ -294,6 +294,21 @@ class Sim:
                 return True
         return False
 
+    def _enemy_has_los(self, enemy: _Enemy) -> bool:
+        """True when no wall/cover intersects enemy chest -> player eye."""
+        src = Vec3(enemy.pos.x, enemy.pos.y + 0.3, enemy.pos.z)
+        target = self.eye()
+        vec = Vec3(target.x - src.x, target.y - src.y, target.z - src.z)
+        length = vec.length()
+        if length <= 1e-6:
+            return True
+        ray = Ray(src, vec.normalized(), t_max=length)
+        for box in self.colliders:
+            distance = ray_aabb(ray, box)
+            if distance is not None and distance < length - 0.3:
+                return False
+        return True
+
     def _move_enemy(self, enemy: _Enemy, dx: float, dz: float) -> None:
         """Move with cover collision; slide along a blocked face or tangent."""
         if abs(dx) + abs(dz) <= 1e-12:
@@ -771,7 +786,8 @@ class Sim:
                     self._move_enemy(e, direction.x * speed * dt, direction.z * speed * dt)
                     if dist < 6.0:
                         e.pause_t = 0.4
-                if dist <= float(edef["range"]) and e.attack_cd <= 0.0 and self.alive:
+                if (dist <= float(edef["range"]) and e.attack_cd <= 0.0
+                        and self.alive and self._enemy_has_los(e)):
                     self.hp -= int(edef["dmg"])
                     e.attack_cd = 2.0
                     events.append("hurt")
