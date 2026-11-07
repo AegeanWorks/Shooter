@@ -279,3 +279,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 88 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-12.json`.
+
+## Cycle 13 — UI readability: typed kill feed
+- **Area**: UI readability (13th cycle).
+- **Defect / evidence**: the sim emitted only a bare `kill` event; the HUD
+  moved the distant score/streak numbers but did not say what died or what
+  it was worth. The first-kill baseline frame showed score 110 / streak x1
+  with no event line.
+- **Fix**: append `kill:<etype>:<total>` after the legacy `kill`; game keeps
+  the last four entries for 2.5 s and draws `MITE +110` under the engine
+  status (warden in danger red). Presentation only; snapshot/damage/score
+  math untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-13/`;
+  960x540 seed 1, first kill at frame 8. Before no feed vs after
+  `MITE +110`: 424 changed px (0.08%, bbox 16,104-121,117), mean luma
+  36.20 -> 36.39; draws 6, triangles 294.
+- **Played runs**: `kite 600` hash `8872be74…` and `strafe 300` hash
+  `973276f5…` identical to the pre-feed cycle-12 worktree.
+- **Gates**: `python -m pytest -q` 90 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-13.json`.

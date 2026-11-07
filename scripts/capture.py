@@ -355,6 +355,36 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_killfeed(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """First-kill frame after the flash clears: the kill-feed pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=12, max_hp=30)]
+        fire = ActionState(held=frozenset({"fire"}))
+        for _ in range(20):
+            before = int(g.sim.kills)
+            g.update(FIXED_STEP, fire)
+            if int(g.sim.kills) > before:
+                for _ in range(7):
+                    g.update(FIXED_STEP, ActionState())
+                print(
+                    f"killfeed frame={g.sim.tick} kills={g.sim.kills} score={g.sim.score} "
+                    f"feed={getattr(g, 'kill_feed', None)}"
+                )
+                engine.capture(f"{prefix}_killfeed.png", f"{prefix}_killfeed.json")
+                break
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_platform(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Spawn view turned toward the rear low platform (before/after pair)."""
     import math
@@ -598,6 +628,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_cover(prefix, shadows, srgb, post, bloom)
     if which == "platform":
         route_platform(prefix, shadows, srgb, post, bloom)
+    if which == "killfeed":
+        route_killfeed(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 

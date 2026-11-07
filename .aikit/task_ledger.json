@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-12-jump-platform",
+    "task_id": "shooter-cycle-13-kill-feed",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794088158.66667,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794088964.234144,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794088204.8740182
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-06-audio-cues",
-      "phase": "resumed",
-      "phase_num": 4,
-      "description": "Resumed 'shooter-cycle-06-audio-cues' after a pause",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794082336.2274685,
-      "timestamp_str": "2026-11-07 23:12:16",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-06-audio-cues",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-06-audio-cues' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794082363.6541142,
-      "timestamp_str": "2026-11-07 23:12:43",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-07-progression-saves",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794088204.87402,
       "timestamp_str": "2026-11-08 00:50:04",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-13-kill-feed",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] UI readability cycle: typed kill event + last-four kill feed, visual pair and same-hash runs",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794088962.4340699,
+      "timestamp_str": "2026-11-08 01:02:42",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Kills only moved the distant score/streak numbers; no HUD line said what died or what it was worth.",
+        "benefits": "Immediate kill readability and useful event telemetry without touching sim damage/score.",
+        "risks": "contract: new event string only (snapshot unchanged); dependency: none; concurrency: none; state: feed timers are presentation-only.",
+        "mitigation": "Pin typed event/amount and feed expiry tests; compare baseline/after play hashes."
+      },
+      "plan_digest": "d46025c547acccf41db0205938d54496a5e697dea9f9527bcb09c28476fcc7f6"
+    },
+    {
+      "task_id": "shooter-cycle-13-kill-feed",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Kill feed proven: 90 tests, determinism 1800 ok, 424px first-kill pair, identical kite/strafe hashes; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794088964.234144,
+      "timestamp_str": "2026-11-08 01:02:44",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

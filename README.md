@@ -66,7 +66,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, boss core/beacon, floor grid/trim, mixer + cue captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: crosshair/ammo alert/reload/wave/score/streak/overdrive/damage/boss/pickup
+│   ├── ui.py            <- single-source HUD: crosshair/ammo alert/reload/wave/score/streak/kill-feed/overdrive/damage/boss/pickup
 │   ├── profile.py       <- versioned, atomic run profile (bests, runs, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -89,6 +89,7 @@ projects/shooter/
 │   ├── test_combat_feel.py <- non-lethal hit flinch, expiry, scene squash
 │   ├── test_enemy_cover.py <- cover collision, slide-around, spawn guard
 │   ├── test_levels_platform.py <- jumpable low platform + landing proof
+│   ├── test_kill_feed.py   <- typed kill event, feed draw/expiry
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -108,7 +109,8 @@ projects/shooter/
 │   ├── cycle-09.json  <- improvement-cycle 9 proof: low-ammo/reload HUD pair, runs
 │   ├── cycle-10.json  <- improvement-cycle 10 proof: hit-flinch pair, same-hash runs
 │   ├── cycle-11.json  <- improvement-cycle 11 proof: cover-slide pair, fairness run
-│   └── cycle-12.json  <- improvement-cycle 12 proof: jump-platform pair, landing run
+│   ├── cycle-12.json  <- improvement-cycle 12 proof: jump-platform pair, landing run
+│   └── cycle-13.json  <- improvement-cycle 13 proof: kill-feed pair, same-hash runs
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

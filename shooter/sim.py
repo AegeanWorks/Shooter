@@ -693,6 +693,7 @@ class Sim:
                     self.particles.burst("kill", int(self.juice.get("kill_burst", 20)), e.pos)
                     self.hitstop = int(self.juice.get("hitstop_ticks", 2))
                     events.append("kill")
+                    events.append(f"kill:{e.etype}:{int(total)}")
                     if e.etype == "warden":
                         events.append("boss_down")
             if not impacted:

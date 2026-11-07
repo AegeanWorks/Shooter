@@ -58,6 +58,7 @@ class ShooterGame:
         self.sound_cue = ""
         self.sound_cue_t = 0.0
         self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
+        self.kill_feed: list[dict] = []
         self._clip_hook = None
         self._clips: dict = {}
         self.profile_store = (
@@ -113,6 +114,7 @@ class ShooterGame:
         self.last_run = None
         self.campaign_cleared = False
         self.campaign_clear_t = 0.0
+        self.kill_feed = []
         self._run_recorded = False
         self._run_start_best = int(self.profile.get("best_score", 0))
         self.particles = self.sim.particles
@@ -307,6 +309,9 @@ class ShooterGame:
             self.campaign_cleared = True
             self.campaign_clear_t = 4.0
         self.campaign_clear_t = max(0.0, self.campaign_clear_t - float(dt))
+        for entry in self.kill_feed:
+            entry["t"] = float(entry.get("t", 0.0)) - float(dt)
+        self.kill_feed = [entry for entry in self.kill_feed if entry["t"] > 0.0][:4]
         self.sound_cue_t = max(0.0, self.sound_cue_t - float(dt))
         # cap voices: deterministic mixdown cost bounded via the public API
         # only (post-update invariant stays voice_count <= 8)
@@ -372,6 +377,19 @@ class ShooterGame:
 
     def _play_event(self, event: str) -> None:
         """Map one sim event to its audio voice and on-screen caption."""
+        if event.startswith("kill:"):
+            parts = event.split(":")
+            if len(parts) == 3:
+                self.kill_feed.insert(
+                    0,
+                    {
+                        "text": f"{parts[1].upper()} +{parts[2]}",
+                        "t": 2.5,
+                        "danger": parts[1] == "warden",
+                    },
+                )
+                self.kill_feed = self.kill_feed[:4]
+            return
         if event == "shoot":
             w = self.sim.weapon
             clip = self._clips.get(
@@ -578,6 +596,10 @@ class ShooterGame:
             top = height - 106
             canvas.rect(left, top, box_width, 26, (0.03, 0.04, 0.06, 0.78))
             canvas.text(left + 12, top + 7, text, self.sound_cue_color, 2)
+        for index, entry in enumerate(self.kill_feed):
+            alpha = min(1.0, float(entry["t"]) / 0.6)
+            color = (1.0, 0.35, 0.30, alpha) if entry.get("danger") else (0.95, 0.90, 0.80, alpha)
+            canvas.text(16, 104 + index * 18, str(entry["text"]), color, 2)
         best = int(self.profile.get("best_score", 0))
         if best > 0:
             canvas.text(int(state.width) // 2 - 60, 16, f"BEST {best}", (0.55, 0.60, 0.68, 1.0), 2)

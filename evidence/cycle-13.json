@@ -1,0 +1,102 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py killfeed <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 13,
+  "fix": "typed kill feed: kill:<etype>:<score> event, last four entries for 2.5 s under the status panel",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "90 passed"
+  },
+  "play_runs": {
+    "kite_600_after": {
+      "alive": true,
+      "dropped_sfx": 0,
+      "frames": 600,
+      "hash": "8872be745ba27726bc6b8cde69316c6b",
+      "hp": 100,
+      "kills": 9,
+      "mean_step_ms": 0.5429,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 1800,
+      "wave": 2
+    },
+    "kite_600_before": {
+      "alive": true,
+      "dropped_sfx": 0,
+      "frames": 600,
+      "hash": "8872be745ba27726bc6b8cde69316c6b",
+      "hp": 100,
+      "kills": 9,
+      "mean_step_ms": 1.2318,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 1800,
+      "wave": 2
+    },
+    "parity": "kite 8872be74? and strafe 973276f5? identical before/after; feed is presentation only",
+    "strafe_300_after": {
+      "alive": true,
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "mean_step_ms": 0.3207,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    },
+    "strafe_300_before": {
+      "alive": true,
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "973276f59774b1044ecc9dd474dc78da",
+      "hp": 84,
+      "kills": 0,
+      "mean_step_ms": 0.6474,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-13/after",
+    "before_dir": "shots/shooter-campaign/cycle-13/before",
+    "route": "scripts/capture.py killfeed; mite hp12 at 2 m, one pulse kill, 7 idle frames after hit; 960x540 seed 1"
+  },
+  "tests": {
+    "kill_feed_tests": 2,
+    "suite": "90 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "kill feedback",
+    "score readability",
+    "event telemetry"
+  ],
+  "visual_diff": {
+    "bbox": [
+      16,
+      104,
+      121,
+      117
+    ],
+    "changed_px": 424,
+    "draws": 6,
+    "fraction": 0.0008,
+    "mean_luma_after": 36.39,
+    "mean_luma_before": 36.2,
+    "triangles": 294
+  }
+}
