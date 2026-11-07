@@ -3,25 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-11-cover-collision",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794087129.2998126,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794087194.403585
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-06-audio-cues",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Audio cues proven: 69 tests, determinism 1800 ok, slam audio hurt->windup+slam same hash, captions 9696px, WAV/spectrogram; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794082322.0367222,
-      "timestamp_str": "2026-11-07 23:12:02",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-06-audio-cues",
       "phase": "superseded",
@@ -257,6 +247,16 @@
       "status": "in_progress",
       "timestamp": 1794087129.2998126,
       "timestamp_str": "2026-11-08 00:32:09",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-11-cover-collision",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-11-cover-collision' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794087194.4035952,
+      "timestamp_str": "2026-11-08 00:33:14",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
