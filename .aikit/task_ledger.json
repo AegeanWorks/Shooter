@@ -3,25 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-07-progression-saves",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794083494.6314585,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794083564.5588813
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-02-warden-boss",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[3/3] Warden boss proven: 50 tests, determinism 1800 ok, same-build 60282px boss pair, boss kill at 507f and wave-4 campaign; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794078430.4476757,
-      "timestamp_str": "2026-11-07 22:07:10",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-02-warden-boss",
       "phase": "completed",
@@ -257,6 +247,16 @@
       "status": "in_progress",
       "timestamp": 1794083494.6314585,
       "timestamp_str": "2026-11-07 23:31:34",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-07-progression-saves",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-07-progression-saves' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794083564.5588844,
+      "timestamp_str": "2026-11-07 23:32:44",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
