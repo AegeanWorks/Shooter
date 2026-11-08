@@ -372,6 +372,7 @@ class ShooterGame:
             "boss_slam": noise(0.30, seed=17, name="boss_slam"),
             "boss_summon": square(310.0, 0.12, name="boss_summon"),
             "boss_down": sine(330.0, 0.45, name="boss_down"),
+            "spawn": noise(0.08, seed=31, name="spawn"),
             "overdrive": sine(520.0, 0.22, name="overdrive"),
             "overdrive_end": sine(260.0, 0.18, name="overdrive_end"),
             "overdrive_denied": square(90.0, 0.14, name="overdrive_denied"),
@@ -554,6 +555,9 @@ class ShooterGame:
                 })
                 cap = max(1, int(cfg.get("max", MAX_SPAWN_MARKS)))
                 self.spawn_marks = self.spawn_marks[:cap]
+            self._play_clip(self._clips["spawn"], 0.30)
+            if self.sound_cue_t <= 0.0:
+                self._cue("HOSTILE INBOUND")
             return
         if event == "dry_fire":
             self._play_clip(self._clips["dry_fire"], 0.35)

@@ -1,0 +1,65 @@
+{
+  "area": "audio cues",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py spawn_cue <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 36,
+  "fix": "spawn noise clip at 0.30 gain plus a rate-limited HOSTILE INBOUND caption when no cue is active; the spawn marker is unchanged",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "157 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "after": {
+        "audio": 101,
+        "hash": "4fe640c52ae60bda8c2cffba018382af",
+        "hp": 100,
+        "kills": 10,
+        "score": 1950
+      },
+      "before": {
+        "audio": 90,
+        "hash": "4fe640c52ae60bda8c2cffba018382af",
+        "hp": 100,
+        "kills": 10,
+        "score": 1950
+      }
+    },
+    "parity": "same hash; 11 natural spawn voices added, 0 drops"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-36/after",
+    "before_dir": "shots/shooter-campaign/cycle-36/before",
+    "route": "scripts/capture.py spawn_cue; 960x540 seed 1, staged spawn at (0,0.5,-6)"
+  },
+  "tests": {
+    "spawn_cue_tests": 2,
+    "suite": "157 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "spawn warning",
+    "spatial audio cue",
+    "rate-limited caption"
+  ],
+  "visual_diff": {
+    "bbox": [
+      378,
+      164,
+      947,
+      459
+    ],
+    "changed_px": 10312,
+    "draws": 8,
+    "fraction": 0.0199,
+    "mean_luma_after": 35.34,
+    "mean_luma_before": 35.23,
+    "triangles": 622
+  }
+}

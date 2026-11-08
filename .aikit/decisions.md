@@ -364,3 +364,10 @@ Status: accepted
 Context: The four boundary walls were flat gray planes with a single cyan top trim; the spawn view had no vertical rhythm or depth. An initial 16-pilaster version (4 per wall) looked right but pushed the frame-budget plan to 45 draw calls (shadow calls 40) against the 40 limit, failing `test_frame_budget`.
 Decision: Add 8 shared-cube pilasters (0.18 × 3.0 × 0.18) at ±10 m on the long walls and ±10 m on the short walls, one `material.pilaster` and the shared wall mesh, flush inside the arena. They are decoration only: no colliders, no sim state. The count is 8 rather than 16 to stay under the 40-draw plan (37 calls, 32 shadow calls).
 Consequences: Suite 155/155 green (two new tests); determinism 1800 ok; aikit 4/4. At 960×540 seed 1 the spawn pair changes 1,296 px (0.25%, bbox 97,92-911,301), mean luma 35.14→35.20, draws 5→6, triangles 242→290. `kite 600` keeps hash `4fe640c5…` and its 10 kills / 1950 / hp 100. Evidence: `evidence/cycle-35.json`, images in workspace `shots/shooter-campaign/cycle-35/`.
+
+## ADR-053: Hostile-inbound spawn voice (audio cues)
+Date: 2026-11-08
+Status: accepted
+Context: The sim emits `spawn` and the game draws a 0.7 s origin marker (cycle 26), but the event was silent: the staged frame measured `cue='' voices=0`, so a spawn behind the player or cover gave no warning.
+Decision: Add a deterministic 0.08 s noise `spawn` clip at 0.30 gain. `_play_event("spawn")` plays it for every spawn and shows `HOSTILE INBOUND` only when no cue is active, so the caption cannot spam at the 0.8 s spawn cadence. The marker, spawn position, timing, RNG and sim state are untouched.
+Consequences: Suite 157/157 green (two new tests); determinism 1800 ok; aikit 4/4. The staged frame at 960×540 seed 1 changes 10,312 px (1.99%, bbox 378,164-947,459; caption + AUDIO line), mean luma 35.23→35.34, draws 8, triangles 622. `kite 600` goes from audio 90 to 101 (11 natural spawns) with the same hash `4fe640c5…`, 10 kills / 1950 / hp 100, peak 8, 0 drops. Evidence: `evidence/cycle-36.json`, images in workspace `shots/shooter-campaign/cycle-36/`.

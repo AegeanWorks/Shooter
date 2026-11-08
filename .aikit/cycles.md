@@ -743,3 +743,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 155 passed; determinism 1800 ok; aikit
   `check shooter` 4/4; frame-budget plan 37 <= 40.
 - **Evidence file**: `evidence/cycle-35.json`.
+
+## Cycle 36 - Audio cues: hostile-inbound spawn voice
+- **Area**: audio cues (36th cycle).
+- **Defect / evidence**: the sim emits `spawn` and the game draws a short
+  origin marker, but the event was silent. The staged spawn frame had
+  `cue='' voices=0`; off-screen spawns gave no warning.
+- **Fix**: add an 0.08 s `spawn` noise clip at 0.30 gain; when no cue is
+  active, show `HOSTILE INBOUND` (the caption is rate-limited, the clip
+  plays for every spawn). The spawn marker and all sim state are
+  untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-36/`;
+  960x540 seed 1, staged spawn at (0,0.5,-6). Before marker only; after
+  marker + `HOSTILE INBOUND` + `AUDIO 1 VOX`: 10,312 changed px (1.99%,
+  bbox 378,164-947,459), mean luma 35.23 -> 35.34; draws 8, triangles 622.
+- **Played runs**: `kite 600` before audio 90 / after 101 (11 natural
+  spawns), same hash `4fe640c5...`, 10 kills / 1950 / hp 100,
+  39 shots / 37 hits, peak 8, drops 0.
+- **Gates**: `python -m pytest -q` 157 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-36.json`.

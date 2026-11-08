@@ -417,6 +417,32 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_spawn_cue(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """A staged wave spawn at the pickup line: the spawn-voice pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, -6.0),
+                                hp=30, max_hp=30)]
+        g.sim.spawn_pos = Vec3(0.0, 0.5, -6.0)
+        g._play_event("spawn")
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"spawn-cue frame={g.sim.tick} cue={getattr(g, 'sound_cue', '')!r} "
+            f"voices={g.mixer.voice_count()} marks={len(g.spawn_marks)}"
+        )
+        engine.capture(f"{prefix}_spawn_cue.png", f"{prefix}_spawn_cue.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_wall_depth(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Spawn view of the north wall: the pilaster/depth pair."""
     from keystone.app import Engine
@@ -1185,6 +1211,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_pickup_arrow(prefix, shadows, srgb, post, bloom)
     if which == "wall_depth":
         route_wall_depth(prefix, shadows, srgb, post, bloom)
+    if which == "spawn_cue":
+        route_spawn_cue(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
