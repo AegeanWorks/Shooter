@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-98-physics",
+    "task_id": "shooter-cycle-99-raycast-scene",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794138915.2528439,
+    "updated_at": 1794139200.1856372,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794138915.832161
+    "completed_at": 1794139200.535524
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-92-pickup-prefab",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Pickup prefab proven: 285 tests, determinism 1800 ok (b25db520), aikit 4/4, 0-px pair, 3 roots/id lookup, same pickup hash 7f84f3e9; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794132497.2174764,
-      "timestamp_str": "2026-11-08 13:08:17",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-92-pickup-prefab",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-92-pickup-prefab' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794132497.7063253,
-      "timestamp_str": "2026-11-08 13:08:17",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-93-cache-material",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: load the ammo-cache material from a .kmaterial library, with library tests, a 0-px pair and a same-hash 3000-frame campaign",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794132973.6095047,
-      "timestamp_str": "2026-11-08 13:16:13",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The shooter is the Keystone testbed, but the file-backed material library had no consumer; the cache material was another hardcoded Material.",
-        "benefits": "cache_material.kmaterial now proves MaterialLibrary.save/entry/load in shipped gameplay, with a missing-file fallback.",
-        "risks": "contract: cache presentation only; dependency: .kmaterial asset; concurrency: none; state: no sim/hash change, same material fields.",
-        "mitigation": "Three library tests, a same-view 0-px capture pair, a same-hash kite 3000 and the full gates."
-      },
-      "plan_digest": "891dc8208c4a5cded55795eeb5e494e35da4281565731a368da954ce2137cbc4"
-    },
     {
       "task_id": "shooter-cycle-93-cache-material",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794138915.832163,
       "timestamp_str": "2026-11-08 14:55:15",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-99-raycast-scene",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover ray/sphere primitives, filtered raycast, AABB overlap, sphere pushout and a SceneLibrary round trip with shooter assets",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794139199.8573883,
+      "timestamp_str": "2026-11-08 14:59:59",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter uses ray/AABB queries and registered assets, but ray/sphere primitives, filtered hits, pushout and scene serialization had no direct project coverage.",
+        "benefits": "Four tests pin distances, misses/t_max, filtered nearest hits, cover sphere pushout and a .kscene save/load preserving assets, tags, layer, transforms and hierarchy.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change.",
+        "mitigation": "Four focused tests, full suite, determinism and project gates."
+      },
+      "plan_digest": "7bc69af3caa6b642b126f35b33f4ac683f55a45413f26119d9603dc78765647e"
+    },
+    {
+      "task_id": "shooter-cycle-99-raycast-scene",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Ray/scene covered: 318 tests, determinism 1800 ok (b25db520), aikit 4/4, rays/pushout/.kscene green; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794139200.1856372,
+      "timestamp_str": "2026-11-08 15:00:00",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-99-raycast-scene",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-99-raycast-scene' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794139200.5355258,
+      "timestamp_str": "2026-11-08 15:00:00",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

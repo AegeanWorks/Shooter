@@ -2050,3 +2050,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 314 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-98.json`.
+
+## Cycle 99 - Keystone testbed: raycasts, sphere collision and scene serialization
+- **Area**: keystone testbed (99th cycle).
+- **Feature / evidence**: The shooter uses ray/AABB queries and
+  registered assets, but ray/sphere primitives, filtered raycasts,
+  sphere pushout and SceneLibrary save/load had no direct project
+  coverage.
+- **Fix**: add `tests/test_keystone_raycast_scene_mechanics.py`
+  covering nearest AABB/sphere distances, `t_max` and inside-origin
+  zero hits, nearest/filtered raycast, shooter-cover AABB overlap,
+  shallowest-axis sphere pushout and a `.kscene` round trip built from
+  the registered pickup/wall/cache assets.
+- **Proof**: ray AABB/sphere hits are 4.0 and misses/limit misses are
+  None; the nearest raycast is `near` at 1.5 and the predicate skips to
+  `far`; the cover sphere overlaps and pushes to `high.x + 0.5`
+  with no overlap after; the scene library saves 2 nodes and reloads the
+  same mesh/material objects, tags, layer, transform and child parent.
+- **Gates**: `python -m pytest -q` 318 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-99.json`.

@@ -1,0 +1,57 @@
+{
+  "area": "keystone testbed: raycasts, sphere collision and scene serialization",
+  "commands": [
+    "python -m pytest tests/test_keystone_raycast_scene_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 99,
+  "feature": "Ray/ray_aabb/ray_sphere, filtered raycast, AABB overlap, sphere pushout, SceneLibrary save/load",
+  "fix": "add tests/test_keystone_raycast_scene_mechanics.py covering nearest AABB/sphere distances, t_max misses, inside-origin zero hits, nearest/filtered raycast, cover AABB overlap, shallowest-axis sphere pushout and a .kscene round trip built from the shooter's registered pickup/wall/cache assets",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "318 passed"
+  },
+  "mechanics": {
+    "rays": {
+      "ray_aabb_hit": 4.0,
+      "ray_aabb_miss": null,
+      "ray_aabb_t_max_miss": null,
+      "ray_aabb_inside": 0.0,
+      "ray_sphere_hit": 4.0,
+      "ray_sphere_miss": null,
+      "ray_sphere_inside": 0.0
+    },
+    "raycast": {"nearest_key": "near", "nearest_distance": 1.5, "filtered_key": "far", "reject_all": null},
+    "sphere": {
+      "cover_overlap": true,
+      "pushout_x": "cover.high.x + 0.5",
+      "overlap_after_pushout": false,
+      "outside_unchanged": true,
+      "aabb_self_overlap": true,
+      "aabb_far_overlap": false
+    },
+    "scene_library": {
+      "entry": "cache_level",
+      "node_count": 2,
+      "assets_resolved": ["mesh.pickup", "material.cache", "mesh.wall"],
+      "tags": ["loot"],
+      "layer": "props",
+      "child_parent": true
+    }
+  },
+  "tests": {
+    "raycast_scene_tests": 4,
+    "suite": "318 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone raycast",
+    "sphere pushout",
+    "aabb overlap",
+    "scene library",
+    "scene serialization"
+  ]
+}
