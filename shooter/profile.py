@@ -1,9 +1,10 @@
 """Versioned, crash-safe run profile: bests, run count and last-run summary.
 
 State contract (project guideline): a loader refuses an unsupported schema
-without touching the file; schema 0 migrates to 1. Saves go through the
-engine's temp+fsync+atomic-replace writer with a .bak, guarded by a short
-advisory lock. Corrupt files are quarantined and the backup is tried.
+without touching the file; schemas 0 -> 1 -> 2 -> 3 migrate in order. Saves
+go through the engine's temp+fsync+atomic-replace writer with a .bak, guarded
+by a short advisory lock. Corrupt files are quarantined and the backup is
+tried.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ from pathlib import Path
 
 from keystone.serialization import read_json, write_json_atomic
 
-SCHEMA = 2
+SCHEMA = 3
 DEFAULT_PATH = Path(__file__).resolve().parent.parent / "saves" / "profile.json"
 _LOCK_STALE_S = 30.0
 _LAST_RUN_KEYS = ("score", "kills", "wave", "best_streak", "time_s", "outcome")
@@ -31,7 +32,22 @@ def default_profile() -> dict:
         "best_wave": 0,
         "best_streak": 0,
         "last_run": None,
+        "history": [],
     }
+
+
+def _clean_run(value: object) -> dict | None:
+    if not isinstance(value, dict):
+        return None
+    cleaned = {}
+    for key in _LAST_RUN_KEYS:
+        item = value.get(key)
+        if key == "outcome":
+            if item in ("win", "lose"):
+                cleaned[key] = item
+        elif isinstance(item, int) and not isinstance(item, bool) and item >= 0:
+            cleaned[key] = item
+    return cleaned if "score" in cleaned else None
 
 
 def _normalize(raw: dict) -> dict:
@@ -40,18 +56,15 @@ def _normalize(raw: dict) -> dict:
         value = raw.get(key, 0)
         if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
             profile[key] = value
-    last = raw.get("last_run")
-    if isinstance(last, dict):
-        cleaned = {}
-        for key in _LAST_RUN_KEYS:
-            value = last.get(key)
-            if key == "outcome":
-                if value in ("win", "lose"):
-                    cleaned[key] = value
-            elif isinstance(value, int) and not isinstance(value, bool) and value >= 0:
-                cleaned[key] = value
-        if "score" in cleaned:
-            profile["last_run"] = cleaned
+    profile["last_run"] = _clean_run(raw.get("last_run"))
+    history = raw.get("history")
+    if isinstance(history, list):
+        cleaned_history = []
+        for item in history[:5]:
+            cleaned = _clean_run(item)
+            if cleaned is not None:
+                cleaned_history.append(cleaned)
+        profile["history"] = cleaned_history
     return profile
 
 
@@ -66,8 +79,15 @@ def _migrate_v0(raw: dict) -> dict:
 
 def _migrate_v1(raw: dict) -> dict:
     migrated = dict(raw)
-    migrated["schema"] = SCHEMA
+    migrated["schema"] = 2
     migrated.setdefault("wins", 0)
+    return migrated
+
+
+def _migrate_v2(raw: dict) -> dict:
+    migrated = dict(raw)
+    migrated["schema"] = SCHEMA
+    migrated.setdefault("history", [])
     return migrated
 
 
@@ -96,6 +116,9 @@ class ProfileStore:
             schema = 1
         if schema == 1:
             raw = _migrate_v1(raw)
+            schema = 2
+        if schema == 2:
+            raw = _migrate_v2(raw)
             schema = SCHEMA
         if schema != SCHEMA:
             raise ValueError(f"unsupported profile schema {schema!r}; expected {SCHEMA}")

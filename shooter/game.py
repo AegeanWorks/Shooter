@@ -399,6 +399,9 @@ class ShooterGame:
             return
         self.profile["runs"] = int(self.profile.get("runs", 0)) + 1
         self.profile["last_run"] = run
+        history = list(self.profile.get("history", []))
+        history.insert(0, dict(run))
+        self.profile["history"] = history[:5]
         for profile_key, run_key in (
             ("best_score", "score"), ("best_kills", "kills"),
             ("best_wave", "wave"), ("best_streak", "best_streak"),
@@ -730,7 +733,18 @@ class ShooterGame:
             width = int(state.width)
             cx = width // 2
             top = int(state.height) // 2 - 8
-            panel_height = 122 if self.campaign_cleared else 100
+            history = [
+                str(item.get("score", 0))
+                for item in list(self.profile.get("history", []))[:3]
+            ]
+            extras: list[tuple[str, tuple]] = []
+            if self.campaign_cleared:
+                extras.append(("CAMPAIGN CLEARED", (1.0, 0.62, 0.20, 1.0)))
+            if self.run_new_best:
+                extras.append(("NEW BEST", (1.0, 0.62, 0.20, 1.0)))
+            if history:
+                extras.append((f"RECENT {' / '.join(history)}", (0.55, 0.60, 0.68, 1.0)))
+            panel_height = 100 + 22 * max(0, len(extras) - 1)
             canvas.rect(cx - 190, top, 380, panel_height, (0.03, 0.04, 0.06, 0.86))
             canvas.text(cx - 170, top + 6, "RUN OVER", (1.0, 0.30, 0.30, 1.0), 2)
             canvas.text(
@@ -743,8 +757,5 @@ class ShooterGame:
                 f"BEST STREAK {run['best_streak']}  TIME {run['time_s']}s",
                 (0.55, 0.60, 0.68, 1.0), 2,
             )
-            if self.campaign_cleared:
-                canvas.text(cx - 170, top + 72, "CAMPAIGN CLEARED", (1.0, 0.62, 0.20, 1.0), 2)
-            if self.run_new_best:
-                canvas.text(cx - 170, top + (94 if self.campaign_cleared else 72),
-                            "NEW BEST", (1.0, 0.62, 0.20, 1.0), 2)
+            for index, (label, color) in enumerate(extras):
+                canvas.text(cx - 170, top + 72 + index * 22, label, color, 2)

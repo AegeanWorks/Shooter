@@ -1,0 +1,111 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py death_profile <prefix>",
+    "python scripts/play_run.py death 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 23,
+  "fix": "profile schema 3 bounded run history (max 5), schema-2 migration, RECENT scores in the death debrief",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "114 passed"
+  },
+  "play_runs": {
+    "death_after": {
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "mean_step_ms": 9.1079,
+      "outcome": "lose",
+      "profile": {
+        "best_score": 1500,
+        "disabled": false,
+        "history": [
+          {
+            "best_streak": 4,
+            "kills": 9,
+            "outcome": "lose",
+            "score": 1500,
+            "time_s": 0,
+            "wave": 2
+          }
+        ],
+        "last_run": {
+          "best_streak": 4,
+          "kills": 9,
+          "outcome": "lose",
+          "score": 1500,
+          "time_s": 0,
+          "wave": 2
+        },
+        "runs": 1,
+        "save_errors": 0,
+        "wins": 0
+      },
+      "score": 1500,
+      "wave": 2
+    },
+    "death_before": {
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "mean_step_ms": 10.1582,
+      "outcome": "lose",
+      "profile": {
+        "best_score": 1500,
+        "disabled": false,
+        "history": [],
+        "last_run": {
+          "best_streak": 4,
+          "kills": 9,
+          "outcome": "lose",
+          "score": 1500,
+          "time_s": 0,
+          "wave": 2
+        },
+        "runs": 1,
+        "save_errors": 0,
+        "wins": 0
+      },
+      "score": 1500,
+      "wave": 2
+    },
+    "parity": "same hash f8cd9e28?, 1 frame, score 1500, hp 0; before history [], after [1500] persisted"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-23/after",
+    "before_dir": "shots/shooter-campaign/cycle-23/before",
+    "route": "scripts/capture.py death_profile; seeded history 980/740 plus current 1500; 960x540 seed 1"
+  },
+  "tests": {
+    "history_tests": 3,
+    "migration": "schema 0 -> 1 -> 2 -> 3",
+    "suite": "114 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "run history",
+    "schema migration",
+    "debrief"
+  ],
+  "visual_diff": {
+    "bbox": [
+      290,
+      356,
+      669,
+      383
+    ],
+    "changed_px": 8844,
+    "draws": 5,
+    "fraction": 0.0171,
+    "mean_luma_after": 47.21,
+    "mean_luma_before": 48.31,
+    "triangles": 230
+  }
+}

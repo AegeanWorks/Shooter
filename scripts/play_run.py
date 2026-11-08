@@ -293,6 +293,7 @@ def main(
                 "last_run": getattr(game, "last_run", None),
                 "disabled": bool(getattr(game, "profile_disabled", False)),
                 "save_errors": int(getattr(game, "profile_save_errors", 0)),
+                "history": list(getattr(game, "profile", {}).get("history", [])),
             },
             "platform": {
                 "landed": bool(game.sim.player_pos.y > 1.3 and game.sim.body.on_ground),

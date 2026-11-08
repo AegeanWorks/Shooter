@@ -710,6 +710,12 @@ def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, po
         seeded = default_profile()
         seeded.update({"runs": 3, "best_score": 1000, "best_kills": 12,
                        "best_wave": 4, "best_streak": 6})
+        seeded["history"] = [
+            {"score": 980, "kills": 8, "wave": 3, "best_streak": 5,
+             "time_s": 41, "outcome": "lose"},
+            {"score": 740, "kills": 6, "wave": 2, "best_streak": 3,
+             "time_s": 30, "outcome": "lose"},
+        ]
         ProfileStore(profile_path).save(seeded)
     try:
         game = ShooterGame(profile_path=profile_path)

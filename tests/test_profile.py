@@ -64,8 +64,9 @@ def test_schema_zero_migrates(tmp_path):
         encoding="utf-8",
     )
     profile = ProfileStore(path).load()
-    assert profile["schema"] == 2
+    assert profile["schema"] == 3
     assert profile["wins"] == 0
+    assert profile["history"] == []
     assert profile["best_score"] == 7 and profile["best_kills"] == 2
     assert profile["best_wave"] == 3 and profile["best_streak"] == 4
     assert profile["runs"] == 5

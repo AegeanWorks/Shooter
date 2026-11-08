@@ -40,8 +40,9 @@ def test_schema_one_migrates_with_zero_wins(tmp_path):
         encoding="utf-8",
     )
     profile = ProfileStore(path).load()
-    assert profile["schema"] == 2
+    assert profile["schema"] == 3
     assert profile["wins"] == 0
+    assert profile["history"] == []
     assert profile["best_score"] == 77
     assert profile["runs"] == 5
 
@@ -66,7 +67,7 @@ def test_campaign_clear_persists_wins(tmp_path):
     assert g.campaign_cleared is True
     assert g.profile["wins"] == 1
     saved = ProfileStore(tmp_path / "profile.json").load()
-    assert saved["schema"] == 2
+    assert saved["schema"] == 3
     assert saved["wins"] == 1
     assert saved["best_wave"] >= 4
 

@@ -468,3 +468,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 111 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-22.json`.
+
+## Cycle 23 — Progression and saves: bounded run history
+- **Area**: progression and saves (23rd cycle).
+- **Defect / evidence**: only `last_run` persisted; after a second run the
+  previous result was gone, so the debrief had no run comparison. Baseline
+  schema 2 had no history.
+- **Fix**: schema 3 newest-first `history` (max five, cleaned), schema-2
+  migration with `history: []`, append/trim in `_finish_run`, and a
+  `RECENT <scores>` line in the debrief. Schema 0/1 chains still migrate.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-23/`;
+  960x540 seed 1, seeded 980/740 plus current 1500. 8,844 changed px
+  (1.71%, bbox 290,356-669,383; RECENT line/taller panel), mean luma
+  48.31 -> 47.21.
+- **Played runs**: `death 240` before/after same hash `f8cd9e28…`;
+  before history `[]`, after `[1500]` persisted through `ProfileStore`.
+- **Gates**: `python -m pytest -q` 114 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-23.json`.
