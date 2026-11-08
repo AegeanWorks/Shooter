@@ -3,24 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-133-boss-death",
     "last_phase": "phase 4",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794170051.9138832,
     "owner": "commandcode:goal",
     "started_by": "commandcode:goal",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794170058.602603
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-128-api-contract",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-128-api-contract' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794165263.1415823,
-      "timestamp_str": "2026-11-08 22:14:23",
-      "agent": "commandcode:goal"
-    },
     {
       "task_id": "shooter-cycle-129-enemy-animation",
       "phase": "phase 2",
@@ -259,6 +250,16 @@
       "status": "in_progress",
       "timestamp": 1794170051.9138832,
       "timestamp_str": "2026-11-08 23:34:11",
+      "agent": "commandcode:goal"
+    },
+    {
+      "task_id": "shooter-cycle-133-boss-death",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-133-boss-death' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794170058.6026053,
+      "timestamp_str": "2026-11-08 23:34:18",
       "agent": "commandcode:goal"
     }
   ]
