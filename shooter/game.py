@@ -16,6 +16,7 @@ from keystone.math3d import Quat, Vec3
 from keystone.primitives import cone, cube, plane, sphere
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
 from keystone.texture import TextureData
+from keystone.ui.font import text_width
 
 from .profile import ProfileStore, default_profile
 from .sim import Sim
@@ -758,7 +759,11 @@ class ShooterGame:
             canvas.text(16, 104 + index * 18, str(entry["text"]), color, 2)
         best = int(self.profile.get("best_score", 0))
         if best > 0:
-            canvas.text(int(state.width) // 2 - 60, 16, f"BEST {best}", (0.55, 0.60, 0.68, 1.0), 2)
+            label = f"BEST {best}"
+            canvas.text(
+                int(state.width) // 2 - text_width(label, 2) // 2, 16,
+                label, (0.55, 0.60, 0.68, 1.0), 2,
+            )
         if self.sim.alive and self.campaign_clear_t > 0.0:
             width = int(state.width)
             cx = width // 2

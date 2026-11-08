@@ -557,3 +557,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 126 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-26.json`.
+
+## Cycle 27 - UI readability: centered top-center status
+- **Area**: UI readability (27th cycle).
+- **Defect / evidence**: every top-center line used a fixed x offset
+  (`cx - 90`, BEST `cx - 60`). At score 12345 the baseline test measured
+  WAVE at x 390 (expected 367), STREAK 390 (427), OVERDRIVE 390 (379),
+  NEAR-MISS 390 (415), SURGE 390 (307) and BEST 420 (427); the primary
+  progress line drifted right as the score grew.
+- **Fix**: add `ui._center` (text_width-based) and center WAVE/SCORE,
+  STREAK, OVERDRIVE, SURGE, NEAR-MISS and the pickup label; center BEST
+  from `text_width` in `game.draw_ui`. No sim/HUD content change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-27/`;
+  960x540 seed 1, frame 1, wave 3, score 12345, best 9999, streak 7,
+  overdrive 5.0s, near-miss 3. 4,724 changed px (0.91%, bbox
+  367,16-615,97, all in the top band), mean luma 36.01 -> 36.01; draws 5,
+  triangles 242.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950 /
+  hp 100, 39 shots / 37 hits, 90 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 129 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-27.json`.

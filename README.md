@@ -66,7 +66,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon, spawn marks, floor grid/trim, mixer + cue captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: spread-aware crosshair/ammo alert/reload/wave/score/streak/kill-feed/overdrive/damage/boss/pickup
+│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, ammo/reload, kill-feed, damage, boss/pickup
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, history, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -103,13 +103,14 @@ projects/shooter/
 │   ├── test_reticle.py     <- per-weapon hip-fire reticle gap; pulse reference
 │   ├── test_melee_reach.py <- platform high-ground vertical melee reach
 │   ├── test_spawn_mark.py  <- wave-spawn origin marker, expiry, parity
+│   ├── test_ui_center.py   <- top-center WAVE/STREAK/OVERDRIVE/SURGE/BEST centering
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/pickup/highground
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -136,7 +137,8 @@ projects/shooter/
 │   ├── cycle-23.json  <- improvement-cycle 23 proof: persisted-history debrief pair, run
 │   ├── cycle-24.json  <- improvement-cycle 24 proof: spread-reticle pairs, same-hash runs
 │   ├── cycle-25.json  <- improvement-cycle 25 proof: high-ground melee pair, reach run
-│   └── cycle-26.json  <- improvement-cycle 26 proof: spawn-marker pair, same-hash run
+│   ├── cycle-26.json  <- improvement-cycle 26 proof: spawn-marker pair, same-hash run
+│   └── cycle-27.json  <- improvement-cycle 27 proof: centered status pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

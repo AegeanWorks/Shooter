@@ -417,6 +417,37 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_score_center(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """High-score HUD with every top-center status line live: centering pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    game.profile["best_score"] = 9999
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.wave = 3
+        g.sim.score = 12345
+        g.sim.streak = 7
+        g.sim.best_streak = 9
+        g.sim.overdrive_t = 5.0
+        g.sim.near_miss = 3
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"score-center frame={g.sim.tick} wave={g.sim.wave} "
+            f"score={g.sim.score} best={g.profile.get('best_score')} "
+            f"streak={g.sim.streak} near={g.sim.near_miss}"
+        )
+        engine.capture(f"{prefix}_score_center.png", f"{prefix}_score_center.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_spawn_mark(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """A staged wave spawn at the pickup line: the spawn-marker pair.
 
@@ -925,6 +956,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_highground(prefix, shadows, srgb, post, bloom)
     if which == "spawn_mark":
         route_spawn_mark(prefix, shadows, srgb, post, bloom)
+    if which == "score_center":
+        route_score_center(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

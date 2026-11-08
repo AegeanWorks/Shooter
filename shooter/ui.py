@@ -7,6 +7,11 @@ import math
 from keystone.ui.font import text_width
 
 
+def _center(canvas, cx: int, y: int, text: str, color, scale: int = 2) -> None:
+    """Draw one top-center HUD line centered on the viewport."""
+    canvas.text(cx - text_width(text, scale) // 2, y, text, color, scale)
+
+
 def reticle_gap(sim) -> int:
     """Crosshair half-gap in px for the equipped weapon's hip-fire cone.
 
@@ -130,7 +135,7 @@ def draw_shooter(canvas, hud, sim) -> None:
         dx = float(spot.get("x", 0.0)) - float(sim.player_pos.x)
         dz = float(spot.get("z", -6.0)) - float(sim.player_pos.z)
         if math.hypot(dx, dz) <= 18.0:
-            canvas.text(cx - 105, 100, "SURGE PICKUP READY", (0.40, 1.0, 0.52, 1.0), 2)
+            _center(canvas, cx, 100, "SURGE PICKUP READY", (0.40, 1.0, 0.52, 1.0))
 
     # HP/ammo is owned by the engine status panel (top-left); the old
     # bottom-left copy was removed so the HUD shows each fact once.
@@ -142,20 +147,22 @@ def draw_shooter(canvas, hud, sim) -> None:
         canvas.rect(0, h - 6, w, 6, edge)
         canvas.rect(0, 0, 6, h, edge)
         canvas.rect(w - 6, 0, 6, h, edge)
-    # top-center wave/score/streak (single source; engine status() omits these)
-    canvas.text(cx - 90, 34, f"WAVE {int(getattr(sim, 'wave', 1))}  "
-               f"SCORE {int(getattr(sim, 'score', 0))}", white, 2)
+    # top-center wave/score/streak (single source; engine status() omits these).
+    # Every line is centered from its actual text width, so five-digit scores
+    # and long status labels no longer drift right.
+    _center(canvas, cx, 34, f"WAVE {int(getattr(sim, 'wave', 1))}  "
+            f"SCORE {int(getattr(sim, 'score', 0))}", white)
     streak = int(getattr(sim, "streak", 0))
     od_t = float(getattr(sim, "overdrive_t", 0.0))
     if streak > 0:
-        canvas.text(cx - 90, 52, f"STREAK x{streak}", accent, 2)
+        _center(canvas, cx, 52, f"STREAK x{streak}", accent)
     if od_t > 0.0:
-        canvas.text(cx - 90, 68, f"OVERDRIVE {od_t:.1f}s x2", accent, 2)
+        _center(canvas, cx, 68, f"OVERDRIVE {od_t:.1f}s x2", accent)
     elif str(getattr(sim, "weapon", "")) == "surge" and float(getattr(sim, "surge_t", 0.0)) > 0.0:
         # Keep this inside the top-right stats panel (<=30 chars at scale 2).
-        canvas.text(cx - 90, 68, f"SURGE {float(getattr(sim, 'surge_t', 0.0)):.1f}s - SWITCH DROPS IT", dim, 2)
+        _center(canvas, cx, 68, f"SURGE {float(getattr(sim, 'surge_t', 0.0)):.1f}s - SWITCH DROPS IT", dim)
     if int(getattr(sim, "near_miss", 0)) > 0:
-        canvas.text(cx - 90, 84, f"NEAR-MISS {int(getattr(sim, 'near_miss', 0))}", dim, 2)
+        _center(canvas, cx, 84, f"NEAR-MISS {int(getattr(sim, 'near_miss', 0))}", dim)
     if not bool(getattr(sim, "alive", True)):
         canvas.rect(0, 0, w, h, (0.45, 0.02, 0.02, 0.28))
         canvas.text(cx - 70, cy - 60, "YOU DIED", danger, 4)

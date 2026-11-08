@@ -1,0 +1,59 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py score_center <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 27,
+  "fix": "center every top-center HUD line (WAVE/SCORE, STREAK, OVERDRIVE, SURGE, NEAR-MISS, BEST) from text_width instead of fixed x offsets",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "129 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 90,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "hits": 37,
+      "kills": 10,
+      "score": 1950,
+      "shots": 39
+    },
+    "parity": "same hash as the cycle-26 baseline; HUD-only change"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-27/after",
+    "before_dir": "shots/shooter-campaign/cycle-27/before",
+    "route": "scripts/capture.py score_center; 960x540 seed 1, frame 1, wave 3, score 12345, best 9999, streak 7, overdrive 5.0, near-miss 3"
+  },
+  "tests": {
+    "suite": "129 passed",
+    "ui_center_tests": 3
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "HUD centering",
+    "high-score readability",
+    "top-center status"
+  ],
+  "visual_diff": {
+    "bbox": [
+      367,
+      16,
+      615,
+      97
+    ],
+    "changed_px": 4724,
+    "draws": 5,
+    "fraction": 0.0091,
+    "mean_luma_after": 36.01,
+    "mean_luma_before": 36.01,
+    "top_band_changed_px": 4724,
+    "triangles": 242
+  }
+}
