@@ -83,6 +83,7 @@ class ShooterGame:
         self._tracer_nodes: list[Node] = []
         self._spawn_nodes: list[Node] = []
         self._slam_ring: list[Node] = []
+        self._wall_pilasters: list[Node] = []
         self.spawn_marks: list[dict] = []
         self._flash: Node | None = None
         self._view_body: Node | None = None
@@ -236,6 +237,35 @@ class ShooterGame:
                 f"trim-cover-{i}", float(c["x"]), float(c["h"]) + 0.04, float(c["z"]),
                 float(c["w"]) + 0.08, 0.08, float(c["d"]) + 0.08, mat=trim_mat,
             )
+
+        # Wall pilasters: shared vertical strips that give the four flat
+        # boundary walls depth. Decoration only (no colliders, no sim).
+        self.assets.register(
+            "material.pilaster",
+            Material(color=Vec3(0.50, 0.58, 0.66), specular=0.25,
+                     shininess=32.0, emissive=Vec3(0.02, 0.06, 0.08)),
+        )
+        pilaster_mat = self.assets.require("material.pilaster").payload
+        positions = [
+            (x, z)
+            for x in (-10.0, 10.0)
+            for z in (-19.4, 19.4)
+        ]
+        positions += [
+            (x, z)
+            for z in (-10.0, 10.0)
+            for x in (-19.4, 19.4)
+        ]
+        self._wall_pilasters = []
+        for index, (x, z) in enumerate(positions):
+            node = Node(
+                f"pilaster-{index:02d}", id=f"pilaster-{index:02d}",
+                transform=Transform(position=Vec3(x, 1.5, z),
+                                    scale=Vec3(0.18, 3.0, 0.18)),
+                mesh=wall_mesh, material=pilaster_mat,
+            )
+            self.scene.add(node)
+            self._wall_pilasters.append(node)
 
         # enemy pool (shared payloads -> auto-instancing)
         self._enemy_nodes = []

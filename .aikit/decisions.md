@@ -357,3 +357,10 @@ Status: accepted
 Context: The death debrief used a fixed 380 px panel. After the cycle-30 W/L markers, a six-digit RECENT line measured 406 px at x 310, ending at 716 while the panel ended at 670, so the history spilled onto the floor. The baseline fit test failed.
 Decision: Compute `widest` from the extra lines and keep at least 340 px, set `panel_width = max(380, widest + 40)`, center the panel on `cx`, and draw every debrief line from `panel_left + 20`. Normal-score layouts remain exactly 380 px wide; the fixed text column moves with the panel for consistent margins.
 Consequences: Suite 153/153 green (two new tests); determinism 1800 ok; aikit 4/4. The seeded six-digit pair at 960×540 seed 1 changes 15,022 px (2.9%, bbox 257,262-715,383), mean luma 51.61→50.55, draws 5, triangles 230. `death 240` keeps hash `f8cd9e28…`, 1 frame, hp 0, score 1500, audio 2, 0 drops. Evidence: `evidence/cycle-34.json`, images in workspace `shots/shooter-campaign/cycle-34/`.
+
+## ADR-052: Arena wall pilasters (graphics/effects)
+Date: 2026-11-08
+Status: accepted
+Context: The four boundary walls were flat gray planes with a single cyan top trim; the spawn view had no vertical rhythm or depth. An initial 16-pilaster version (4 per wall) looked right but pushed the frame-budget plan to 45 draw calls (shadow calls 40) against the 40 limit, failing `test_frame_budget`.
+Decision: Add 8 shared-cube pilasters (0.18 × 3.0 × 0.18) at ±10 m on the long walls and ±10 m on the short walls, one `material.pilaster` and the shared wall mesh, flush inside the arena. They are decoration only: no colliders, no sim state. The count is 8 rather than 16 to stay under the 40-draw plan (37 calls, 32 shadow calls).
+Consequences: Suite 155/155 green (two new tests); determinism 1800 ok; aikit 4/4. At 960×540 seed 1 the spawn pair changes 1,296 px (0.25%, bbox 97,92-911,301), mean luma 35.14→35.20, draws 5→6, triangles 242→290. `kite 600` keeps hash `4fe640c5…` and its 10 kills / 1950 / hp 100. Evidence: `evidence/cycle-35.json`, images in workspace `shots/shooter-campaign/cycle-35/`.

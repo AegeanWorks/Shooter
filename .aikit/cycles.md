@@ -724,3 +724,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 153 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-34.json`.
+
+## Cycle 35 - Graphics and effects: arena wall depth
+- **Area**: graphics and effects (35th cycle).
+- **Opportunity**: the four boundary walls were flat 3 m gray planes
+  with only a cyan top trim; the spawn view had no vertical rhythm.
+- **Fix**: add 8 shared-cube vertical pilasters (0.18 x 3.0 x 0.18) at
+  +/-10 m on the long walls and +/-10 m on the short walls, using one
+  `material.pilaster`; decoration only (no colliders, no sim state).
+  An initial 16-pilaster version failed the 40-draw plan at 45 calls
+  (shadow 40), so the final count is 8 (plan 37, shadow 32).
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-35/`;
+  960x540 seed 1, spawn view. 1,296 changed px (0.25%, bbox
+  97,92-911,301), mean luma 35.14 -> 35.20; draws 5 -> 6, triangles
+  242 -> 290, shadow calls 24 -> 32.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950 /
+  hp 100, 39 shots / 37 hits, 90 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 155 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4; frame-budget plan 37 <= 40.
+- **Evidence file**: `evidence/cycle-35.json`.

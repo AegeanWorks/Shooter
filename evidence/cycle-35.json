@@ -1,0 +1,60 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py wall_depth <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 35,
+  "fix": "8 shared-material vertical pilasters on the four boundary walls; decoration only, reduced from 16 to keep the 40-draw plan budget green",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "155 passed",
+    "budget": "draw plan 37 <= 40; shadow calls 32"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 90,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "hits": 37,
+      "kills": 10,
+      "score": 1950,
+      "shots": 39
+    },
+    "parity": "same hash as the cycle-34 baseline; pilasters are game nodes only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-35/after",
+    "before_dir": "shots/shooter-campaign/cycle-35/before",
+    "route": "scripts/capture.py wall_depth; 960x540 seed 1, spawn view"
+  },
+  "tests": {
+    "suite": "155 passed",
+    "wall_depth_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "wall depth",
+    "pilasters",
+    "draw budget"
+  ],
+  "visual_diff": {
+    "bbox": [
+      97,
+      92,
+      911,
+      301
+    ],
+    "changed_px": 1296,
+    "draws": 6,
+    "fraction": 0.0025,
+    "mean_luma_after": 35.2,
+    "mean_luma_before": 35.14,
+    "shadow_calls": 32,
+    "triangles": 290
+  }
+}
