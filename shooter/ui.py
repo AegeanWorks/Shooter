@@ -141,6 +141,19 @@ def draw_shooter(canvas, hud, sim) -> None:
         dz = float(spot.get("z", -6.0)) - float(sim.player_pos.z)
         if math.hypot(dx, dz) <= 18.0:
             _center(canvas, cx, 100, "SURGE PICKUP READY", (0.40, 1.0, 0.52, 1.0))
+            # Directional edge tag when the beacon is outside the forward
+            # view: a green SURGE chip at the bearing.
+            yaw = float(getattr(sim, "yaw", 0.0))
+            dot = dx * math.sin(yaw) + dz * -math.cos(yaw)
+            side = dx * math.cos(yaw) + dz * math.sin(yaw)
+            bearing = math.atan2(side, dot)
+            if abs(bearing) > 1.35:
+                ux, uy = math.sin(bearing), -math.cos(bearing)
+                px = max(48.0, min(w - 48.0, cx + ux * (w * 0.40)))
+                py = max(140.0, min(h - 150.0, cy + uy * (h * 0.28)))
+                canvas.rect(px - 34, py - 13, 68, 26, (0.40, 1.0, 0.52, 0.35))
+                canvas.rect(px - 32, py - 11, 64, 22, panel_c)
+                canvas.text(px - 30, py - 6, "SURGE", (0.40, 1.0, 0.52, 1.0), 2)
 
     # HP/ammo is owned by the engine status panel (top-left); the old
     # bottom-left copy was removed so the HUD shows each fact once.

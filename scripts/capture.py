@@ -417,6 +417,45 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_pickup_arrow(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Pickup active behind the player at spawn: the edge-tag pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.wave = 2
+        g.sim.pickup_active = True
+        g.sim.pickup_taken = False
+        g.sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, 0.9002, 8.0),
+            half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = 0.0
+        g.sim.kick = 0.0
+        g.update(FIXED_STEP, ActionState())
+        spot = g.sim.levels.get("pickup", {"x": 0.0, "z": -6.0})
+        print(
+            f"pickup-arrow active={g.sim.pickup_active} yaw={g.sim.yaw:.2f} "
+            f"pickup=({float(spot['x']):.1f},{float(spot['z']):.1f})"
+        )
+        engine.capture(f"{prefix}_pickup_arrow.png", f"{prefix}_pickup_arrow.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_slam_ring(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Staged warden windup with the player outside the slam: the ring pair."""
     from keystone.app import Engine
@@ -1099,6 +1138,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_killmark(prefix, shadows, srgb, post, bloom)
     if which == "slam_ring":
         route_slam_ring(prefix, shadows, srgb, post, bloom)
+    if which == "pickup_arrow":
+        route_pickup_arrow(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

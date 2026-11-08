@@ -1,0 +1,63 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py pickup_arrow <prefix>",
+    "python scripts/play_run.py pickup 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 33,
+  "fix": "green SURGE edge chip at the pickup bearing when the active beacon is off-screen (|bearing| > 1.35 rad, within 18 m, no boss)",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "151 passed"
+  },
+  "play_runs": {
+    "parity": "same hash 7f84f3e9 before/after; pickup trigger and sim untouched",
+    "pickup_240": {
+      "after": {
+        "audio": 1,
+        "frames": 147,
+        "hash": "7f84f3e957177531fff1493c27a6b762",
+        "hp": 100
+      },
+      "before": {
+        "audio": 1,
+        "frames": 147,
+        "hash": "7f84f3e957177531fff1493c27a6b762",
+        "hp": 100
+      }
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-33/after",
+    "before_dir": "shots/shooter-campaign/cycle-33/before",
+    "route": "scripts/capture.py pickup_arrow; 960x540 seed 1, pickup active, player at spawn facing +Z"
+  },
+  "tests": {
+    "pickup_arrow_tests": 3,
+    "suite": "151 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "pickup direction",
+    "off-screen affordance",
+    "level readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      446,
+      377,
+      513,
+      402
+    ],
+    "changed_px": 1768,
+    "draws": 5,
+    "fraction": 0.0034,
+    "mean_luma_after": 34.18,
+    "mean_luma_before": 34.12,
+    "triangles": 62
+  }
+}

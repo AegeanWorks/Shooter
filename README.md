@@ -66,7 +66,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn marks, fire tints, switch cues, win history, floor grid/trim, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, kill marker, ammo/reload, kill-feed, damage, boss/pickup
+│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, kill marker, ammo/reload, kill-feed, damage, boss/pickup direction
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, W/L history, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -109,13 +109,14 @@ projects/shooter/
 │   ├── test_win_history.py <- campaign win recorded, no duplicate, W/L debrief
 │   ├── test_killmark.py    <- kill-only timer, red corner ticks, expiry
 │   ├── test_slam_ring.py   <- warden windup ring radius, visibility, DATA
+│   ├── test_pickup_arrow.py <- off-screen pickup edge tag, ahead/inactive gates
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/pickup/highground/switch
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/slam_ring/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/slam_ring/pickup_arrow/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -148,7 +149,8 @@ projects/shooter/
 │   ├── cycle-29.json  <- improvement-cycle 29 proof: weapon-switch cue pair, same-hash run
 │   ├── cycle-30.json  <- improvement-cycle 30 proof: win-history debrief pair, campaign run
 │   ├── cycle-31.json  <- improvement-cycle 31 proof: kill-marker crosshair pair, same-hash run
-│   └── cycle-32.json  <- improvement-cycle 32 proof: slam-radius ring pair, same-hash run
+│   ├── cycle-32.json  <- improvement-cycle 32 proof: slam-radius ring pair, same-hash run
+│   └── cycle-33.json  <- improvement-cycle 33 proof: pickup edge-tag pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

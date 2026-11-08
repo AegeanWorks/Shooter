@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-32-slam-ring",
+    "task_id": "shooter-cycle-33-pickup-arrow",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794101380.0902085,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794101749.6916978,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794101418.0606346
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-26-spawn-marks",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Spawn marks proven: 126 tests, determinism 1800 ok, aikit 4/4, 386 px pair (126 in beam), same kite hash 4fe640c5; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794099348.0647814,
-      "timestamp_str": "2026-11-08 03:55:48",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-26-spawn-marks",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-26-spawn-marks' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794099369.8481944,
-      "timestamp_str": "2026-11-08 03:56:09",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-27-centered-status",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794101418.0606365,
       "timestamp_str": "2026-11-08 04:30:18",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-33-pickup-arrow",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Levels cycle: off-screen surge-pickup edge tag, failing-first tests, facing-away pair and same-hash pickup run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794101740.42618,
+      "timestamp_str": "2026-11-08 04:35:40",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The pickup label named the reward but gave no direction when the beacon was behind the player.",
+        "benefits": "A green SURGE chip at the bearing points to the reward when off-screen.",
+        "risks": "contract: HUD draw-only; dependency: none; concurrency: none; state: none.",
+        "mitigation": "Off-screen/ahead/inactive tests, facing-away pair, same pickup hash."
+      },
+      "plan_digest": "7104977fcd2595bc3bfbe677bcb71a2f471825c7dd25c98f3a2b2081066a1ccf"
+    },
+    {
+      "task_id": "shooter-cycle-33-pickup-arrow",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Pickup arrow proven: 151 tests, determinism 1800 ok, aikit 4/4, 1768 px edge chip, same pickup hash 7f84f3e9; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794101749.6916978,
+      "timestamp_str": "2026-11-08 04:35:49",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

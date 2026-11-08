@@ -684,3 +684,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 148 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-32.json`.
+
+## Cycle 33 - Levels: off-screen surge-pickup direction
+- **Area**: levels (33rd cycle).
+- **Defect / evidence**: the pickup beacon and the `SURGE PICKUP READY`
+  label name the reward, but when the pickup is behind the player there
+  is no direction. The staged frame at spawn facing +Z had the label and
+  no tag; baseline `test_pickup_arrow.py` failed 1/3.
+- **Fix**: draw a green `SURGE` edge chip at the pickup bearing when it
+  is active, within 18 m, no boss is shown and `|bearing| > 1.35` rad;
+  the chip is clamped to the screen edges. Presentation-only; trigger,
+  spot and sim state are untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-33/`;
+  960x540 seed 1, pickup active, player at spawn facing +Z. Before label
+  only; after label + green chip: 1,768 changed px (0.34%, bbox
+  446,377-513,402), mean luma 34.12 -> 34.18; draws 5, triangles 62.
+- **Played runs**: `pickup 240` before/after same hash `7f84f3e9...`,
+  147 frames, hp 100, audio 1, peak 1, drops 0.
+- **Gates**: `python -m pytest -q` 151 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-33.json`.
