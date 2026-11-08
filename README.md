@@ -90,6 +90,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `mesh_builder` | quad/box counts, mesh merge, matrix normals, skinned concat/mode | `tests/test_keystone_mesh_builder_mechanics.py` |
 | `serialization` | binary/JSON atomic writes, backup chain, BOM reads, temp cleanup | `tests/test_keystone_serialization_mechanics.py` |
 | `primitives` | cube/plane/cone/cylinder/sphere counts, bounds, normals, UVs | `tests/test_keystone_primitives_mechanics.py` |
+| `gpu.instancing` | grouping, culling, ordering, savings, skinned exclusion | `tests/test_keystone_instancing_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -151,6 +152,7 @@ projects/shooter/
 │   ├── test_keystone_mesh_builder_mechanics.py <- quad/box, merge, matrix normals, skin concat
 │   ├── test_keystone_serialization_mechanics.py <- binary/JSON atomic, backup, BOM, temp cleanup
 │   ├── test_keystone_primitives_mechanics.py <- cube/plane/cone/cylinder/sphere geometry
+│   ├── test_keystone_instancing_mechanics.py <- grouping, culling, ordering, savings
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -359,7 +361,8 @@ projects/shooter/
 │   ├── cycle-113.json <- asset loaders, fingerprints, reload
 │   ├── cycle-114.json <- mesh builder, matrix normals, skin
 │   ├── cycle-115.json <- atomic writes, backups, BOM
-│   └── cycle-116.json <- primitive counts, bounds, normals, UVs
+│   ├── cycle-116.json <- primitive counts, bounds, normals, UVs
+│   └── cycle-117.json <- instancing grouping, culling, ordering
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

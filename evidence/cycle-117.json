@@ -1,0 +1,77 @@
+{
+  "area": "keystone testbed: CPU instancing grouping and plans",
+  "commands": [
+    "python -m pytest tests/test_keystone_instancing_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 117,
+  "feature": "shared mesh/material grouping, frustum-plane culling reuse, deterministic group/node ordering, JSON-safe plan counts/savings and conservative skinned exclusion",
+  "fix": "add tests/test_keystone_instancing_mechanics.py with five small scenes using explicit ids",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "401 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "grouping": {
+      "shared_group": ["a", "b", "d"],
+      "shared_count": 3,
+      "shared_triangles": 36,
+      "separate_material_group": ["c"],
+      "separate_triangles": 12,
+      "hidden_skipped": true,
+      "non_mesh_skipped": true,
+      "models_per_node": true
+    },
+    "culling": {
+      "culled_groups": [["a", "b"], ["c"]],
+      "legacy_groups": [["a", "b", "d"], ["c"]],
+      "behind_camera_skipped": true
+    },
+    "ordering": {
+      "groups": [["b1", "b2", "b3"], ["a1", "a2"], ["c1"], ["d1"], ["e1"]],
+      "stable_across_calls": true,
+      "nodes_sorted_by_id": true
+    },
+    "plan": {
+      "groups": 2,
+      "draw_calls": 4,
+      "instanced_calls": 1,
+      "saved_calls": 2,
+      "instances": 3,
+      "triangles": 48,
+      "batch_nodes": ["a", "b", "d"],
+      "batch_matrices": "3x16",
+      "empty_plan": "all zeroes",
+      "json_safe": true
+    },
+    "skinned": {
+      "groups": 1,
+      "draw_calls": 2,
+      "instanced_calls": 0,
+      "saved_calls": 0,
+      "instances": 0,
+      "triangles": 2,
+      "mixed_groups": 2,
+      "mixed_draw_calls": 4,
+      "mixed_instanced_calls": 1,
+      "mixed_saved_calls": 1,
+      "mixed_instances": 2,
+      "mixed_triangles": 26
+    }
+  },
+  "tests": {
+    "instancing_tests": 5,
+    "suite": "401 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone instancing",
+    "draw-call grouping",
+    "frustum culling",
+    "deterministic ordering",
+    "skinned conservatism"
+  ]
+}

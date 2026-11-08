@@ -2402,3 +2402,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 396 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-116.json`.
+
+## Cycle 117 - Keystone testbed: CPU instancing grouping and plans
+- **Area**: keystone testbed (117th cycle).
+- **Feature / evidence**: `gpu.instancing` groups shared meshes/materials
+  for draw-call savings but had no direct shooter coverage of grouping,
+  culling reuse, ordering or skinned conservatism.
+- **Fix**: add `tests/test_keystone_instancing_mechanics.py` with five
+  small scenes using explicit ids.
+- **Proof**: shared mesh/material nodes group with sorted keys and correct
+  triangle totals; distinct materials split; hidden/non-mesh nodes skip;
+  frustum planes drop a behind-camera node while legacy grouping keeps it;
+  groups sort by count then first key and nodes by id; plans report
+  draw/instanced/saved/instance/triangle counts with 16-float matrices;
+  skinned groups report no savings while plain groups still do.
+- **Gates**: `python -m pytest -q` 401 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-117.json`.
