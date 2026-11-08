@@ -763,3 +763,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 157 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-36.json`.
+
+## Cycle 37 - Progression and saves: career totals in the debrief
+- **Area**: progression and saves (37th cycle).
+- **Opportunity**: the profile tracks lifetime `runs`/`wins`, but the
+  death debrief showed only bests and recent runs; the clear banner was
+  the only wins display. The baseline `test_career_debrief.py` found no
+  `RUNS`/`WINS` row.
+- **Fix**: append `RUNS <n>  WINS <m>` to the debrief extras when the
+  profile has runs; the cycle-34 dynamic panel width/height already
+  contain the extra row. No schema or save-format change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-37/`;
+  960x540 seed 1, seeded win/loss profile, staged death; profile runs=4,
+  wins=1. Before no row; after `RUNS 4  WINS 1` and a taller panel:
+  8,608 changed px (1.66%, bbox 290,378-669,405), mean luma
+  51.42 -> 50.06; draws 6, triangles 278.
+- **Played runs**: `death 240` before/after same hash `f8cd9e28...`,
+  1 frame, hp 0, score 1500, audio 2, peak 2, drops 0.
+- **Gates**: `python -m pytest -q` 159 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-37.json`.

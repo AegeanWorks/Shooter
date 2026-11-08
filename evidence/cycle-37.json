@@ -1,0 +1,65 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py win_history <prefix>",
+    "python scripts/play_run.py death 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 37,
+  "fix": "append RUNS n / WINS m to the death debrief extras when the profile has runs; the existing dynamic width/height contain the added row",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "159 passed"
+  },
+  "play_runs": {
+    "death_240": {
+      "after": {
+        "audio": 2,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      },
+      "before": {
+        "audio": 2,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      }
+    },
+    "parity": "same hash; the career row is draw-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-37/after",
+    "before_dir": "shots/shooter-campaign/cycle-37/before",
+    "route": "scripts/capture.py win_history; 960x540 seed 1, seeded win/loss, staged death; profile runs=4 wins=1"
+  },
+  "tests": {
+    "career_debrief_tests": 2,
+    "suite": "159 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "career totals",
+    "debrief",
+    "runs and wins"
+  ],
+  "visual_diff": {
+    "bbox": [
+      290,
+      378,
+      669,
+      405
+    ],
+    "changed_px": 8608,
+    "draws": 6,
+    "fraction": 0.0166,
+    "mean_luma_after": 50.06,
+    "mean_luma_before": 51.42,
+    "triangles": 278
+  }
+}

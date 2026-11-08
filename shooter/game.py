@@ -916,6 +916,10 @@ class ShooterGame:
                 extras.append(("NEW BEST", (1.0, 0.62, 0.20, 1.0)))
             if history:
                 extras.append((f"RECENT {' / '.join(history)}", (0.55, 0.60, 0.68, 1.0)))
+            runs = int(self.profile.get("runs", 0))
+            wins = int(self.profile.get("wins", 0))
+            if runs > 0:
+                extras.append((f"RUNS {runs}  WINS {wins}", (0.55, 0.60, 0.68, 1.0)))
             widest = max([text_width(label, 2) for label, _color in extras] + [340])
             panel_width = max(380, widest + 40)
             panel_left = cx - panel_width // 2

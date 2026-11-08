@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn marks/cue, fire tints, switch cues, win history, dynamic debrief, floor grid/trim/pilasters, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn marks/cue, fire tints, switch cues, win history, career debrief, floor grid/trim/pilasters, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, kill marker, ammo/reload, kill-feed, damage, boss/pickup direction
@@ -113,6 +113,7 @@ projects/shooter/
 │   ├── test_debrief_width.py <- wide W/L history fits the debrief panel
 │   ├── test_wall_depth.py  <- 8 wall pilasters, shared material, budget-safe
 │   ├── test_spawn_cue.py   <- spawn voice + rate-limited HOSTILE INBOUND
+│   ├── test_career_debrief.py <- RUNS/WINS career row, hidden without runs
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -156,7 +157,8 @@ projects/shooter/
 │   ├── cycle-33.json  <- improvement-cycle 33 proof: pickup edge-tag pair, same-hash run
 │   ├── cycle-34.json  <- improvement-cycle 34 proof: wide-debrief pair, same-hash run
 │   ├── cycle-35.json  <- improvement-cycle 35 proof: wall-depth pair, same-hash run
-│   └── cycle-36.json  <- improvement-cycle 36 proof: spawn-voice pair, same-hash run
+│   ├── cycle-36.json  <- improvement-cycle 36 proof: spawn-voice pair, same-hash run
+│   └── cycle-37.json  <- improvement-cycle 37 proof: career-debrief pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
