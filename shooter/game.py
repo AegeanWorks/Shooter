@@ -84,6 +84,7 @@ class ShooterGame:
         self._spawn_nodes: list[Node] = []
         self._slam_ring: list[Node] = []
         self._wall_pilasters: list[Node] = []
+        self._platform_rim: list[Node] = []
         self.spawn_marks: list[dict] = []
         self._flash: Node | None = None
         self._view_body: Node | None = None
@@ -238,6 +239,30 @@ class ShooterGame:
                 f"trim-cover-{i}", float(c["x"]), float(c["h"]) + 0.04, float(c["z"]),
                 float(c["w"]) + 0.08, 0.08, float(c["d"]) + 0.08, mat=trim_mat,
             )
+
+        # Jump-platform rim: two lit strips on the long top edges of the
+        # 0.7 m platform. Decoration only, no colliders, no sim.
+        self._platform_rim = []
+        platform = next(
+            (c for c in self.sim.levels["arena"]["covers"] if float(c["h"]) < 1.0),
+            None,
+        )
+        if platform is not None:
+            px, pz = float(platform["x"]), float(platform["z"])
+            pw, pd, ph = (float(platform["w"]), float(platform["d"]),
+                          float(platform["h"]))
+            trim_mat = self.assets.require("material.trim").payload
+            for index, z in enumerate((pz - pd / 2.0 + 0.05, pz + pd / 2.0 - 0.05)):
+                node = Node(
+                    f"platform-rim-{index}", id=f"platform-rim-{index}",
+                    transform=Transform(
+                        position=Vec3(px, ph + 0.04, z),
+                        scale=Vec3(pw + 0.10, 0.08, 0.10),
+                    ),
+                    mesh=wall_mesh, material=trim_mat,
+                )
+                self.scene.add(node)
+                self._platform_rim.append(node)
 
         # Wall pilasters: shared vertical strips that give the four flat
         # boundary walls depth. Decoration only (no colliders, no sim).

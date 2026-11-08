@@ -392,3 +392,10 @@ Status: accepted
 Context: `boss_summon` had a caption and a distinct voice, but the two summoned mites appeared with no origin cue; only normal `spawn` events used the marker pool. The staged summon frame measured `positions=0 marks=0` while the cue was already visible.
 Decision: `_summon_mites` records each clamped escort spawn in `summon_positions` (presentation telemetry, not in the snapshot); `_play_event("boss_summon")` inserts a spawn mark for each position into the existing 0.7 s marker pool, capped at `MAX_SPAWN_MARKS`. Summon count, positions, attack cooldowns, damage and RNG are unchanged.
 Consequences: Suite 163/163 green (two new tests); determinism 1800 ok; aikit 4/4. The staged summon pair at 960×540 seed 1 changes 6,296 px (1.21%, bbox 302,92-935,406), mean luma 38.49→38.75, draws 9→10, triangles 1134→1158. `boss 1800` keeps hash `81f05265…`, 507 frames, 3 kills, 3080, hp 100, 56/56, 121 audio, peak 8, 0 drops. Evidence: `evidence/cycle-39.json`, images in workspace `shots/shooter-campaign/cycle-39/`.
+
+## ADR-057: Lit rim on the jump platform (levels)
+Date: 2026-11-08
+Status: accepted
+Context: The 0.7 m platform is the only walkable elevated surface; cycle 05 skipped its lit cap because the top must stay clear. From the approach view it looked like a solid blue cover, with no cue that it is jumpable.
+Decision: Add two lit trim strips (6.1 × 0.08 × 0.10) on the long top edges at y 0.74, sharing `material.trim` with the existing wall/cover trim batch. They are decoration only, with no colliders or sim state. The count is two rather than four to keep the frame-budget plan under 40 (shadow calls 32→34, draws unchanged).
+Consequences: Suite 165/165 green (two new tests); determinism 1800 ok; aikit 4/4; frame budget green. The approach pair at 960×540 seed 1 changes 14,003 px (2.7%, bbox 51,92-908,399), mean luma 49.08→48.24, draws 6, triangles 98→122. `platform 120` keeps hash `c1603d79…`, 28 frames, hp 100, score 250, landed, audio 1, 0 drops. Evidence: `evidence/cycle-40.json`, images in workspace `shots/shooter-campaign/cycle-40/`.

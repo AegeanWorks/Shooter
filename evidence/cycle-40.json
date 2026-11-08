@@ -1,0 +1,68 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py platform_rim <prefix>",
+    "python scripts/play_run.py platform 120 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 40,
+  "fix": "two lit trim strips on the long top edges of the jump platform, sharing material.trim; decoration only, budget-safe",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "165 passed"
+  },
+  "play_runs": {
+    "parity": "same platform hash c1603d79 before/after; the rim has no colliders",
+    "platform_120": {
+      "after": {
+        "audio": 1,
+        "frames": 28,
+        "hash": "c1603d797193787331a17b9ebb62c55d",
+        "hp": 100,
+        "landed": true,
+        "score": 250
+      },
+      "before": {
+        "audio": 1,
+        "frames": 28,
+        "hash": "c1603d797193787331a17b9ebb62c55d",
+        "hp": 100,
+        "landed": true,
+        "score": 250
+      }
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-40/after",
+    "before_dir": "shots/shooter-campaign/cycle-40/before",
+    "route": "scripts/capture.py platform_rim; 960x540 seed 1, approach view at (-16,9.5) facing +Z"
+  },
+  "tests": {
+    "platform_rim_tests": 2,
+    "suite": "165 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "jump platform",
+    "lit rim",
+    "level readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      51,
+      92,
+      908,
+      399
+    ],
+    "changed_px": 14003,
+    "draws": 6,
+    "fraction": 0.027,
+    "mean_luma_after": 48.24,
+    "mean_luma_before": 49.08,
+    "shadow_calls": 34,
+    "triangles": 122
+  }
+}

@@ -824,3 +824,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 163 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-39.json`.
+
+## Cycle 40 - Levels: lit rim on the jump platform
+- **Area**: levels (40th cycle).
+- **Opportunity**: the 0.7 m jump platform has a walkable top, so cycle 05
+  deliberately skipped its lit cap; from the approach it reads like a
+  solid blue cover with no jumpable edge.
+- **Fix**: add two lit trim strips (6.1 x 0.08 x 0.10) on the long top
+  edges at y 0.74, sharing `material.trim` with the existing trim batch.
+  Decoration only: no colliders, no sim state. Two strips (not four)
+  keep the frame-budget plan under 40; shadow calls 32 -> 34.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-40/`;
+  960x540 seed 1, approach view at (-16,9.5) facing +Z. 14,003 changed
+  px (2.7%, bbox 51,92-908,399), mean luma 49.08 -> 48.24; draws 6,
+  triangles 98 -> 122.
+- **Played runs**: `platform 120` before/after same hash `c1603d79...`,
+  28 frames, hp 100, score 250, landed, audio 1, peak 1, drops 0.
+- **Gates**: `python -m pytest -q` 165 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4; frame budget green.
+- **Evidence file**: `evidence/cycle-40.json`.
