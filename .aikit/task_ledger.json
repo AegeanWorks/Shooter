@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-119-scene-graph",
+    "task_id": "shooter-cycle-120-history",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794149424.386036,
+    "updated_at": 1794149832.7159913,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794149424.796204
+    "completed_at": 1794149832.993412
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-113-asset-io",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Asset sources covered: 381 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794145837.1544576,
-      "timestamp_str": "2026-11-08 16:50:37",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-113-asset-io",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-113-asset-io' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794145837.5793672,
-      "timestamp_str": "2026-11-08 16:50:37",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-114-mesh-builder",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover MeshBuilder quad/box composition, mesh merging, matrix normals and skinned concatenation",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794145934.232344,
-      "timestamp_str": "2026-11-08 16:52:14",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "MeshBuilder composes primitives and merged geometry but the shooter testbed has no direct coverage of its mode rules, UV/color/normal handling or skin concatenation.",
-        "benefits": "Five tests pin quad/box counts and bounds, add_mesh scaling/color products, inverse-transpose normals, skinned joint/inverse-bind agreement and plain-vs-skin mode errors.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp meshes only; no game/sim/hash change.",
-        "mitigation": "Small in-memory meshes, full suite, determinism and project gates."
-      },
-      "plan_digest": "0090757f1319693475ed1730319435ff9c5564d1fc5abe0ef957bb7ad20abb8c"
-    },
     {
       "task_id": "shooter-cycle-114-mesh-builder",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794149424.7962065,
       "timestamp_str": "2026-11-08 17:50:24",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-120-history",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover bounded History push/undo/redo, copy isolation, branch discard, capacity eviction and clear",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794149452.5962017,
+      "timestamp_str": "2026-11-08 17:50:52",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "History backs editor undo/redo but the testbed covers it only through GameSession; direct stack semantics and capacity behavior are untested.",
+        "benefits": "Five tests pin round trips, deep-copy isolation, redo-branch discard, oldest-entry eviction with index repair and clear/empty behavior.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: in-memory values only; no game/sim/hash change.",
+        "mitigation": "Small scalar/list snapshots, full suite, determinism and project gates."
+      },
+      "plan_digest": "ecabf4a6d2863e32c7b0e62b0ef6349faf7a9a03708b65f20256c9bd7734710e"
+    },
+    {
+      "task_id": "shooter-cycle-120-history",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] History covered: 416 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794149832.7159913,
+      "timestamp_str": "2026-11-08 17:57:12",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-120-history",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-120-history' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794149832.9934144,
+      "timestamp_str": "2026-11-08 17:57:12",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

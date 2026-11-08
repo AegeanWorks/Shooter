@@ -2455,3 +2455,18 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 411 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-119.json`.
+
+## Cycle 120 - Keystone testbed: bounded undo/redo history
+- **Area**: keystone testbed (120th cycle).
+- **Feature / evidence**: `History` backs editor undo/redo but was covered
+  only through GameSession; direct stack semantics and capacity behavior
+  were untested.
+- **Fix**: add `tests/test_keystone_history_mechanics.py` with five direct
+  stack tests.
+- **Proof**: push/peek/undo/redo round trips and flags hold; snapshots are
+  deep-copied on push and every read; pushing after undo drops the redo
+  branch; capacity 3 evicts the oldest and repairs the index, capacity 1
+  keeps only the latest; invalid capacities raise; clear resets everything.
+- **Gates**: `python -m pytest -q` 416 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-120.json`.

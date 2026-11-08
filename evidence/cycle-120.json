@@ -1,0 +1,65 @@
+{
+  "area": "keystone testbed: bounded undo/redo history",
+  "commands": [
+    "python -m pytest tests/test_keystone_history_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 120,
+  "feature": "push/peek/undo/redo round trips, deep-copy isolation on push/read, redo-branch discard, oldest-entry eviction with index repair, capacity validation and clear/empty behavior",
+  "fix": "add tests/test_keystone_history_mechanics.py with five direct stack tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "416 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "round_trip": {
+      "peak_start": null,
+      "push_undo_redo": [3, 2, 1, 2, 3],
+      "undo_bottom": null,
+      "redo_top": null,
+      "flags": {"can_undo": true, "can_redo": true, "redo_available": true}
+    },
+    "copy_isolation": {
+      "source_mutation_ignored": true,
+      "peek_mutation_ignored": true,
+      "values_mutation_ignored": true,
+      "undo_mutation_ignored": true
+    },
+    "branch_discard": {
+      "values_after_undo_push": [1, 2, 4],
+      "redo_cleared": true
+    },
+    "capacity": {
+      "capacity_3_values": [2, 3, 4],
+      "undo_sequence": [3, 2, null],
+      "redo_sequence": [3, 4, null],
+      "capacity_1_values": [2],
+      "invalid_values": "ValueError",
+      "invalid_types": "TypeError",
+      "capacity_property": 5
+    },
+    "clear": {
+      "len": 0,
+      "values": [],
+      "peek": null,
+      "undo": null,
+      "redo": null,
+      "flags": {"can_undo": false, "can_redo": false}
+    }
+  },
+  "tests": {
+    "history_tests": 5,
+    "suite": "416 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone history",
+    "undo redo",
+    "deep copy",
+    "bounded stack",
+    "capacity eviction"
+  ]
+}
