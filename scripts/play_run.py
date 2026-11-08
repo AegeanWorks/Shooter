@@ -24,6 +24,7 @@ Modes:
   platform run at the rear low platform, jump onto it, stop on the top
   highground stand on the platform edge with a mite at its base (reach drill)
   switch   press slot2 -> slot3 -> slot1 (weapon-switch cue drill)
+  overdrive press overdrive on an empty arena (state/material drill)
   forfeit  arm surge, then press slot1 (surge-forfeit cue drill)
   denied   press overdrive with no pulse reserve (audio/caption drill)
   dry      hold fire with 0 magazine and 0 reserve (dry-fire drill)
@@ -94,6 +95,8 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         return ActionState()
     if mode == "forfeit":
         return ActionState(pressed=frozenset({"slot1"})) if frame == 2 else ActionState()
+    if mode == "overdrive":
+        return ActionState(pressed=frozenset({"overdrive"})) if frame == 0 else ActionState()
     if mode == "campaign":
         return (
             ActionState(held=frozenset({"fire"}))
@@ -222,6 +225,10 @@ def main(
             sim.weapon = "surge"
             sim.surge_t = 5.0
             sim.ammo["surge"] = 20
+        if mode == "overdrive":
+            game.sim.spawn_queue = ["mite"]
+            game.sim.spawn_t = 999.0
+            game.sim.enemies = []
         if mode == "highground":
             sim = game.sim
             sim.player_pos = Vec3(-16.0, 1.6002, 17.5)
@@ -505,6 +512,12 @@ def main(
                 "voices": int(game.mixer.voice_count()),
                 "reserve": int(game.sim.reserve.get("pulse", 0)),
                 "overdrive_t": round(float(game.sim.overdrive_t), 3),
+            },
+            "overdrive": {
+                "cue": getattr(game, "sound_cue", ""),
+                "t": round(float(game.sim.overdrive_t), 2),
+                "voices": int(game.mixer.voice_count()),
+                "reserve": int(game.sim.reserve.get("pulse", 0)),
             },
             "dry": {
                 "cue": getattr(game, "sound_cue", ""),

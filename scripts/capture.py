@@ -291,6 +291,31 @@ def route_summon_cover(prefix: str, shadows: bool = True, srgb: bool = True, pos
         engine.close()
 
 
+def route_overdrive_glow(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Three seconds of overdrive left: the held-gun state pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.overdrive_t = 3.0
+        g._sync_scene()
+        print(
+            f"overdrive-glow t={g.sim.overdrive_t:.1f} "
+            f"body_material={getattr(g._view_body.material, 'name', '?')} "
+            f"barrel_material={getattr(g._view_barrel.material, 'name', '?')}"
+        )
+        engine.capture(f"{prefix}_overdrive_glow.png", f"{prefix}_overdrive_glow.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_pickup_pop(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Six frames after the surge pickup is taken: the orb-pop pair."""
     from keystone.app import Engine
@@ -2113,6 +2138,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_pickup(prefix, shadows, srgb, post, bloom)
     if which == "pickup_pop":
         route_pickup_pop(prefix, shadows, srgb, post, bloom)
+    if which == "overdrive_glow":
+        route_overdrive_glow(prefix, shadows, srgb, post, bloom)
     if which == "hurt":
         for side in ("left", "right", "behind"):
             route_hurt(prefix, side, shadows, srgb, post, bloom)

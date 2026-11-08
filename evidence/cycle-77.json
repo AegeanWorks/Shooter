@@ -1,0 +1,71 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py overdrive_glow <prefix>",
+    "python scripts/play_run.py overdrive 10 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 77,
+  "fix": "add a brighter per-weapon material.gun_<weapon>_od variant and select it for the viewmodel while overdrive_t > 0, reverting automatically; no new nodes, draws, sim or timer changes",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "248 passed"
+  },
+  "play_runs": {
+    "overdrive_after": {
+      "audio": 1,
+      "cue": "OVERDRIVE",
+      "drops": 0,
+      "frames": 10,
+      "hash": "7c1080cece685e88dfb6ccdaea505535",
+      "hp": 100,
+      "reserve": 90,
+      "t": 7.83,
+      "voices": 1
+    },
+    "overdrive_before": {
+      "audio": 1,
+      "cue": "OVERDRIVE",
+      "drops": 0,
+      "frames": 10,
+      "hash": "7c1080cece685e88dfb6ccdaea505535",
+      "hp": 100,
+      "reserve": 90,
+      "t": 7.83,
+      "voices": 1
+    },
+    "parity": "same hash 7c1080ce before/after; material selection only, overdrive timer and reserve identical"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-77/after",
+    "before_dir": "shots/shooter-campaign/cycle-77/before",
+    "route": "scripts/capture.py overdrive_glow; 960x540 seed 1, overdrive_t=3.0"
+  },
+  "tests": {
+    "overdrive_glow_tests": 2,
+    "suite": "248 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "overdrive state",
+    "weapon material",
+    "visual feedback"
+  ],
+  "visual_diff": {
+    "bbox": [
+      546,
+      326,
+      655,
+      411
+    ],
+    "changed_px": 5338,
+    "draws": 6,
+    "fraction": 0.0103,
+    "mean_luma_after": 33.19,
+    "mean_luma_before": 32.74,
+    "triangles": 290
+  }
+}

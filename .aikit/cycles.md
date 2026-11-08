@@ -1589,3 +1589,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 246 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-76.json`.
+
+## Cycle 77 - Graphics/effects: overdrive weapon glow
+- **Area**: graphics and effects (77th cycle).
+- **Opportunity**: overdrive is a prominent eight-second x2 state, but only
+  the HUD timer line changed; the held weapon kept its normal material, so
+  the power-up had no first-person visual state.
+- **Fix**: register a brighter per-weapon `material.gun_<weapon>_od`
+  variant and select it for both viewmodel nodes while `overdrive_t > 0`,
+  falling back automatically when the timer ends. No new nodes, draws,
+  colliders, sim state or timer changes.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-77/`;
+  960x540 seed 1, overdrive_t=3.0. 5,338 changed px (1.03%, bbox
+  546,326-655,411), mean luma 32.74 -> 33.19; draws 6, triangles 290.
+- **Played runs**: `overdrive 10` before/after same hash `7c1080ce...`,
+  t 7.83, reserve 90, cue OVERDRIVE, hp 100, audio 1, drops 0.
+- **Gates**: `python -m pytest -q` 248 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-77.json`.

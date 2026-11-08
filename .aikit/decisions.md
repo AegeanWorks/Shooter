@@ -651,3 +651,10 @@ Status: accepted
 Context: Cycle 64 added a transient `CRITICAL` caption and chime, but the persistent kill feed still recorded `MITE +220` with no marker. Once the caption faded, a critical kill was indistinguishable from a normal kill except by comparing scores.
 Decision: Set a same-update pending flag when the sim's `critical` event arrives and consume it in the following `kill:<type>:<total>` entry: prefix `CRIT `, store `critical=True`, and draw that entry in accent orange ahead of the normal white/warden-red colors. Normal kills and the 2.5 s feed lifetime are unchanged; no sim, reward or save data changes.
 Consequences: Suite 246/246 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The forced-critical pair at 960x540 seed 1 changes 900 px (0.17%, bbox 16,104-181,117), mean luma 35.60 -> 35.62, draws 10, triangles 698. `kite 3000` keeps hash `54bdc60c...`, 30 kills, hp 76, 4 hurts, audio 439, 0 drops, 4 critical rewards. Evidence: `evidence/cycle-76.json`, images in workspace `shots/shooter-campaign/cycle-76/`.
+
+## ADR-094: Overdrive weapon glow (graphics/effects)
+Date: 2026-11-08
+Status: accepted
+Context: Overdrive is a prominent eight-second x2 state, but only the HUD timer line changed. The held weapon kept its normal material, so the power-up had no first-person visual state.
+Decision: Register a brighter per-weapon `material.gun_<weapon>_od` variant and select it for both viewmodel nodes while `overdrive_t > 0`; fall back to the normal material when the timer ends. Variants brighten color, specular, shininess and emissive; no new nodes, draws, colliders, sim state or timer changes.
+Consequences: Suite 248/248 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The staged pair at 960x540 seed 1 changes 5,338 px (1.03%, bbox 546,326-655,411), mean luma 32.74 -> 33.19, draws 6, triangles 290. `overdrive 10` before/after same hash `7c1080ce...`, 10 frames, t 7.83, reserve 90, cue OVERDRIVE, hp 100, audio 1, 0 drops. Evidence: `evidence/cycle-77.json`, images in workspace `shots/shooter-campaign/cycle-77/`.

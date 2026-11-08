@@ -257,6 +257,15 @@ class ShooterGame:
                 f"material.gun_{wid}",
                 Material(color=Vec3(*color), specular=0.55, shininess=48.0, emissive=Vec3(*glow)),
             )
+            boost_color = tuple(min(1.0, c * 1.25 + 0.06) for c in color)
+            boost_glow = tuple(min(1.0, g * 1.6 + 0.08) for g in glow)
+            self.assets.register(
+                f"material.gun_{wid}_od",
+                Material(
+                    color=Vec3(*boost_color), specular=0.65, shininess=64.0,
+                    emissive=Vec3(*boost_glow),
+                ),
+            )
         self.assets.register("material.tracer", Material(color=Vec3(1.0, 0.85, 0.30), emissive=Vec3(0.9, 0.65, 0.15)))
         self.assets.register("material.flash", Material(color=Vec3(1.0, 1.0, 1.0), emissive=Vec3(1.0, 0.9, 0.6)))
         # Per-weapon fire tints: the tracer and muzzle flash say which gun
@@ -1025,6 +1034,8 @@ class ShooterGame:
                     ),
                 )
                 gun_id = f"material.gun_{sim.weapon}"
+                if float(getattr(sim, "overdrive_t", 0.0)) > 0.0:
+                    gun_id += "_od"
                 try:
                     gun_mat = self.assets.require(gun_id).payload
                 except KeyError:
