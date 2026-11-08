@@ -175,6 +175,7 @@ class Sim:
         self.pitch = 0.0
         self.hp = int(self.levels["player"]["hp"])
         self.alive = True
+        self.victory = False
         self.hvel = Vec3()
         self.coyote = 0.0
         self.buffer = 0.0
@@ -239,6 +240,10 @@ class Sim:
         self.tracker = TriggerTracker()
 
     def _build_wave(self) -> None:
+        if self.victory:
+            self.spawn_queue = []
+            self.spawn_t = float("inf")
+            return
         waves = self.levels["waves"]
         spec = waves[(self.wave - 1) % len(waves)]
         queue: list[str] = []
@@ -252,6 +257,12 @@ class Sim:
             self.pickup_active = True
         else:
             self.pickup_active = self.pickup_active and not self.pickup_taken
+
+    def seal_campaign(self) -> None:
+        """Stop future wave construction after the campaign is won."""
+        self.victory = True
+        self.spawn_queue = []
+        self.spawn_t = float("inf")
 
     def _spawn_enemy(self, etype: str) -> None:
         edef = self.enemy_defs[etype]
@@ -561,7 +572,7 @@ class Sim:
                 self._spawn_enemy(self.spawn_queue.pop(0))
                 self.spawn_t = float(self.levels.get("spawn_interval_s", 0.8))
                 events.append("spawn")
-            if not self.spawn_queue and alive_count == 0 and self.alive:
+            if not self.spawn_queue and alive_count == 0 and self.alive and not self.victory:
                 # wave clear bonus then next wave
                 # CLUTCH is flavor-only (almost-lost, not Clark near-miss): never
                 # counted in near_miss, never pays a bonus.

@@ -14,6 +14,7 @@ Modes:
   brute    stand in a brute's slam range (brute-slam cue drill)
   summon   stand on the platform edge while a warden summons by the cover
   summon_overlap  idle at spawn while a centre warden summons (overlap drill)
+  campaign stage a wave-3 warden kill, then idle through the clear banner
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
   save_fail staged near-death run with the profile lock held (save-error proof)
@@ -91,6 +92,12 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         return ActionState()
     if mode == "forfeit":
         return ActionState(pressed=frozenset({"slot1"})) if frame == 2 else ActionState()
+    if mode == "campaign":
+        return (
+            ActionState(held=frozenset({"fire"}))
+            if int(game.sim.wave) < 4
+            else ActionState()
+        )
     if mode == "denied":
         return ActionState(pressed=frozenset({"overdrive"})) if frame == 0 else ActionState()
     if mode == "dry":
@@ -236,6 +243,19 @@ def main(
             sim.enemies = [
                 _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 0.0), hp=600,
                        max_hp=600, summon_cd=0.0)
+            ]
+        if mode == "campaign":
+            sim = game.sim
+            sim.wave = 3
+            sim.spawn_queue = []
+            sim.spawn_t = 999.0
+            sim.pickup_taken = True
+            sim.score = 5000
+            sim.kills = 20
+            sim.best_streak = 5
+            sim.enemies = [
+                _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 2.0), hp=12,
+                       max_hp=600, summon_cd=999.0)
             ]
         if mode == "pickup":
             sim = game.sim
@@ -422,6 +442,15 @@ def main(
                     for p in getattr(game.sim, "summon_positions", [])
                 ],
                 "spawn": summon_snapshot,
+            },
+            "campaign": {
+                "cleared": bool(getattr(game, "campaign_cleared", False)),
+                "victory": bool(getattr(game.sim, "victory", False)),
+                "banner_t": round(float(getattr(game, "campaign_clear_t", 0.0)), 2),
+                "wave": int(game.sim.wave),
+                "alive_enemies": [
+                    e.etype for e in game.sim.enemies if e.alive
+                ],
             },
             "profile": {
                 "best_score": int(getattr(game, "profile", {}).get("best_score", 0)),

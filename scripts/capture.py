@@ -1681,6 +1681,45 @@ def route_hud_ammo(prefix: str, shadows: bool = True, srgb: bool = True, post: b
         engine.close()
 
 
+def route_campaign_seal(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Three seconds after the campaign clear: the wave-4 seal pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.spawn_t = 999.0
+        g.sim.pickup_taken = True
+        g.sim.wave = 3
+        g.sim.score = 5000
+        g.sim.kills = 20
+        g.sim.best_streak = 5
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 2.0), hp=12, max_hp=600,
+                   summon_cd=999.0)
+        ]
+        fire = ActionState(held=frozenset({"fire"}))
+        for _ in range(60):
+            g.update(FIXED_STEP, fire)
+            if int(g.sim.wave) >= 4:
+                break
+        for _ in range(180):
+            g.update(FIXED_STEP, ActionState())
+        alive = [e.etype for e in g.sim.enemies if e.alive]
+        print(
+            f"campaign-seal wave={g.sim.wave} cleared={g.campaign_cleared} "
+            f"victory={getattr(g.sim, 'victory', False)} banner_t={g.campaign_clear_t:.2f} "
+            f"queue={len(g.sim.spawn_queue)} alive={alive} hp={g.sim.hp}"
+        )
+        engine.capture(f"{prefix}_campaign_seal.png", f"{prefix}_campaign_seal.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_win(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Kill the wave-3 warden and capture the wave-4 clear frame."""
     from keystone.app import Engine
@@ -1868,6 +1907,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_history5(prefix, shadows, srgb, post, bloom)
     if which == "win":
         route_win(prefix, shadows, srgb, post, bloom)
+    if which == "campaign_seal":
+        route_campaign_seal(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":
         route_hud_ammo(prefix, shadows, srgb, post, bloom)
     if which == "flinch":

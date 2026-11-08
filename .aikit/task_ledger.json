@@ -1,67 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-67-summon-overlap",
+    "task_id": "shooter-cycle-68-campaign-seal",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794117285.4306023,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794117860.0919943,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794117297.7413719
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-61-platform-perimeter",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Four-edge platform frame proven: 211 tests, determinism 1800 ok, aikit 4/4, 5403 px pair, same platform hash c1603d79, draws 7/shadow 34; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794114429.5309691,
-      "timestamp_str": "2026-11-08 08:07:09",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-61-platform-perimeter",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-61-platform-perimeter' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794114449.5158896,
-      "timestamp_str": "2026-11-08 08:07:29",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-62-no-reserve",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] UI cycle: add a NO RESERVE second line to the near-crosshair low-ammo panel when the magazine runs dry, with a HUD pair and dry-fire parity",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794114788.61204,
-      "timestamp_str": "2026-11-08 08:13:08",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The cycle-55 panel shows LOW AMMO <mag> but never says the reserve is empty, so the warning implies a reload will help when it cannot.",
-        "benefits": "The player can tell an empty reserve from an ordinary low magazine at the aim point; full counts stay in the engine status.",
-        "risks": "contract: HUD draw only; dependency: none; concurrency: none; state: no sim, ammo, input or save change.",
-        "mitigation": "Failing-first label tests, the hud_ammo capture pair at 960x540, dry-fire hash parity and the full gates."
-      },
-      "plan_digest": "8b50ac1e70e31f715ffe12a645fc1d03c0a2db5d0dabe84e2964668a1b80910d"
-    },
-    {
-      "task_id": "shooter-cycle-62-no-reserve",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Empty-reserve warning proven: 213 tests, determinism 1800 ok, aikit 4/4, 2768 px HUD pair, same dry hash d33f43e4, reserve 0; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794114944.8905385,
-      "timestamp_str": "2026-11-08 08:15:44",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-62-no-reserve",
       "phase": "completed",
@@ -265,6 +214,63 @@
       "status": "completed",
       "timestamp": 1794117297.7413738,
       "timestamp_str": "2026-11-08 08:54:57",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-68-platform-runway",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Levels cycle: mark the launch run-up with one shared-trim runway strip from the pad to the platform edge, with an approach pair and platform-drill parity",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794117527.3584845,
+      "timestamp_str": "2026-11-08 08:58:47",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The launch pad marks the takeoff spot but the 2.5 m gap to the platform edge is unmarked, so the intended jump line is guesswork.",
+        "benefits": "A lit runway connects pad to edge, making the jump route readable without new colliders or sim state.",
+        "risks": "contract: decoration only; dependency: none; concurrency: none; state: no sim, collider, camera or save change.",
+        "mitigation": "Failing-first runway test, an approach capture pair at 960x540, platform-drill hash parity and the full gates."
+      },
+      "plan_digest": "076f511efd6db95a807ba9be504d4d84d039642517773206f811c0cd96ecd8a6"
+    },
+    {
+      "task_id": "shooter-cycle-68-platform-runway",
+      "phase": "abandoned",
+      "phase_num": 2,
+      "description": "Task 'shooter-cycle-68-platform-runway' abandoned: platform runway dead end: pad already nearly touches the platform edge; superseded by campaign seal",
+      "status": "abandoned",
+      "timestamp": 1794117775.7278438,
+      "timestamp_str": "2026-11-08 09:02:55",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-68-campaign-seal",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Levels cycle: seal the campaign on clear so wave 4 cannot spawn or attack during the victory banner, with a banner pair and campaign drill",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794117775.9271166,
+      "timestamp_str": "2026-11-08 09:02:55",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Campaign clear is recorded at wave-4 entry, but the sim had already built wave 4 and kept spawning enemies during the four-second banner; the player could be attacked in a won run.",
+        "benefits": "The victory beat is safe and the arena is empty; wave construction stops permanently after the campaign win.",
+        "risks": "contract: sim victory state + game clear hook; dependency: none; concurrency: none; state: wave/campaign flow only, no level geometry.",
+        "mitigation": "Failing-first seal test, a three-second banner pair, campaign drill telemetry and the full suite including the fairness replay."
+      },
+      "plan_digest": "7c8d0e2c94896475970bf94cf506ac96253b0355413fee33e33a370935877b5a"
+    },
+    {
+      "task_id": "shooter-cycle-68-campaign-seal",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Campaign seal proven: 225 tests, determinism 1800 ok, aikit 4/4, 18368 px banner pair, wave-4 enemies 4->0, same hp/banner; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794117860.0919943,
+      "timestamp_str": "2026-11-08 09:04:20",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

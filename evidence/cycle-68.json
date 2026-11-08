@@ -1,0 +1,78 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py campaign_seal <prefix>",
+    "python scripts/play_run.py campaign 180 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 68,
+  "fix": "add sim.victory and seal_campaign(): clear the spawn queue, stop wave construction and skip wave-clear advancement once the campaign is won; ShooterGame calls it when setting campaign_cleared",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "225 passed"
+  },
+  "play_runs": {
+    "campaign_after": {
+      "alive_enemies": [],
+      "audio": 5,
+      "banner_t": 1.0,
+      "cleared": true,
+      "frames": 180,
+      "hash": "14fa12cd7ba4bc6ea522c77db6eb9bc6",
+      "hp": 100,
+      "hurts": 0,
+      "victory": true,
+      "wave": 4
+    },
+    "campaign_before": {
+      "alive_enemies": [
+        "mite",
+        "brute",
+        "mite",
+        "wisp"
+      ],
+      "audio": 9,
+      "banner_t": 1.0,
+      "cleared": true,
+      "frames": 180,
+      "hash": "e2c6d0d78d09ecddac3821cf6cef3053",
+      "hp": 100,
+      "hurts": 0,
+      "victory": false,
+      "wave": 4
+    },
+    "parity": "same staging and 180 frames; the seal removes the four wave-4 spawns (audio 9 -> 5) while both runs stay at hp 100 with 0 hurts"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-68/after",
+    "before_dir": "shots/shooter-campaign/cycle-68/before",
+    "route": "scripts/capture.py campaign_seal; 960x540 seed 1, warden kill at wave 3, 180 frames into the banner"
+  },
+  "tests": {
+    "campaign_seal_tests": 1,
+    "suite": "225 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "campaign clear",
+    "wave seal",
+    "victory banner"
+  ],
+  "visual_diff": {
+    "bbox": [
+      367,
+      12,
+      947,
+      459
+    ],
+    "changed_px": 18368,
+    "draws": 6,
+    "fraction": 0.0354,
+    "mean_luma_after": 34.19,
+    "mean_luma_before": 34.13,
+    "triangles": 290
+  }
+}

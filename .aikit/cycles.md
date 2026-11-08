@@ -1400,3 +1400,27 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 224 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-67.json`.
+
+## Cycle 68 - Levels: seal the campaign on clear
+- **Area**: levels (68th cycle).
+- **Defect / evidence**: campaign clear is recorded at wave-4 entry, but
+  the sim had already queued wave 4 and kept spawning it during the
+  four-second banner. A staged win reproduced four live wave-4 enemies and
+  four spawn voices while `CAMPAIGN CLEAR` was up; a completed run could be
+  attacked.
+- **Fix**: add `Sim.victory` and `seal_campaign()` — clear the queue, set
+  `spawn_t` to infinity, skip wave-clear advancement and guard
+  `_build_wave`. `ShooterGame` calls it when setting `campaign_cleared`.
+  Banner, win recording, wave number, HUD and geometry are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-68/`;
+  960x540 seed 1, warden kill at wave 3, 180 frames into the banner.
+  Before: live wave-4 enemies and HOSTILE INBOUND; after: empty arena under
+  the same banner. 18,368 changed px (3.54%, bbox 367,12-947,459), mean
+  luma 34.13 -> 34.19; draws 8 -> 6, triangles 942 -> 290.
+- **Played runs**: `campaign 180` before/after alive enemies 4 -> 0,
+  audio 9 -> 5, victory false -> true, wave 4 and banner 1.0 s in both,
+  hp 100, 0 hurts, 0 drops. The existing fairness replay still wins
+  without a reference re-record.
+- **Gates**: `python -m pytest -q` 225 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-68.json`.

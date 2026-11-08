@@ -543,6 +543,7 @@ class ShooterGame:
         ):
             self.campaign_cleared = True
             self.campaign_clear_t = 4.0
+            self.sim.seal_campaign()
             self._record_campaign_clear()
         self.campaign_clear_t = max(0.0, self.campaign_clear_t - float(dt))
         self._pickup_fx_t = max(0.0, self._pickup_fx_t - float(dt))
