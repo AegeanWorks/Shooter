@@ -24,6 +24,7 @@ from keystone.project import (
     ProjectManifest,
     create_project,
     load_project,
+    load_project_game,
     save_project,
     validate_project,
 )
@@ -203,14 +204,13 @@ def test_export_rejects_missing_and_broken_projects():
 
 @pytest.mark.xfail(
     strict=True,
-    raises=ValueError,
     reason=(
         "keystone validate_project re-imports manifest assets after "
         "load_project_game has already attached them"
     ),
 )
-def test_export_with_manifest_asset_reports_duplicate():
+def test_manifest_asset_validation_after_load_game_duplicates():
     with tempfile.TemporaryDirectory() as directory:
-        root = Path(directory) / "project"
-        context = _project_with_png(root, _name())
-        export_project(context.directory, Path(directory) / "build")
+        context = _project_with_png(Path(directory) / "project", _name())
+        report = validate_project(context, load_project_game(context))
+        assert report["ok"] is True, report["errors"]

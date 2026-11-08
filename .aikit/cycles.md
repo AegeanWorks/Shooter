@@ -2205,3 +2205,26 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 345 passed, 1 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-105.json`.
+
+## Cycle 106 - Keystone testbed: Engine loop, pause and CLI gates
+- **Area**: keystone testbed (106th cycle).
+- **Feature / evidence**: The Engine headless loop, pause overlay and
+  no-GL `--expect-hash`/`--replay` CLI were only exercised
+  indirectly; the manifest-asset bug now has a minimal reproducer.
+- **Fix**: add `tests/test_keystone_engine_loop_mechanics.py` covering
+  the headless Engine loop and FixedStepClock stepping, the
+  HumanOverlay pause menu and engine pause/resume, and both CLI gates;
+  replace the export-level xfail with a minimal
+  `validate_project(context, load_project_game(context))` reproducer.
+- **Proof**: three headless Engine frames tick the sim 3 times with
+  elapsed 0.05; a 1/30 clock advance releases 2 steps; the overlay shows
+  PAUSED with resume/toggle_ui/quit hits; two paused frames leave the
+  tick unchanged and resuming advances it once; `--expect-hash`
+  returns 0/ok for `7e4b602e...` and 1/ok=false for a wrong hash;
+  `--replay bot_campaign.json` returns 0 with 3000 frames, win wave 4
+  and hash `bb425a57...`. The minimal validation reproducer remains a
+  strict xfail because the manifest PNG is re-imported after
+  `load_project_game` attached it.
+- **Gates**: `python -m pytest -q` 349 passed, 1 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-106.json`.

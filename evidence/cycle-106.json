@@ -1,0 +1,60 @@
+{
+  "area": "keystone testbed: Engine loop, pause overlay and CLI gates",
+  "commands": [
+    "python -m pytest tests/test_keystone_engine_loop_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 106,
+  "feature": "Engine headless fixed-step loop + FixedStepClock, HumanOverlay pause menu/engine pause, --expect-hash and --replay CLI; minimal manifest-asset validation reproducer",
+  "fix": "add tests/test_keystone_engine_loop_mechanics.py covering the headless Engine loop, clock stepping, pause overlay/engine pause and the two no-GL CLI gates; replace the export-level xfail with a minimal validate_project(load_project_game(...)) reproducer",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "349 passed, 1 xfailed"
+  },
+  "mechanics": {
+    "engine": {
+      "clock": "FixedStepClock",
+      "advance_1_30_steps": 2,
+      "run_frames": 3,
+      "game_tick": 3,
+      "elapsed": 0.05
+    },
+    "pause": {
+      "overlay_labels_have_paused": true,
+      "hits": ["resume", "toggle_ui", "quit"],
+      "hit_test_resume": true,
+      "hidden_quads": 0,
+      "paused_frames_without_tick": 2,
+      "resume_tick_delta": 1,
+      "toggle_ui": [false, true]
+    },
+    "cli": {
+      "expect_hash_ok": {"status": 0, "ok": true, "hash": "7e4b602e029d12d68672790318d119cd"},
+      "expect_hash_wrong": {"status": 1, "ok": false},
+      "replay": {"status": 0, "frames": 3000, "outcome": "win", "wave": 4, "hash": "bb425a57b9839e001906cff227fb618f"}
+    },
+    "known_issue": {
+      "test": "test_manifest_asset_validation_after_load_game_duplicates",
+      "status": "strict xfail",
+      "minimal_call": "validate_project(context, load_project_game(context))",
+      "expected": "report ok=true",
+      "actual": "report ok=false because project:assets/swatch.png is re-imported after load_project_game attached it"
+    }
+  },
+  "tests": {
+    "engine_loop_tests": 4,
+    "suite": "349 passed, 1 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone engine loop",
+    "fixed-step clock",
+    "pause overlay",
+    "expect-hash",
+    "replay CLI",
+    "manifest asset reproducer"
+  ]
+}
