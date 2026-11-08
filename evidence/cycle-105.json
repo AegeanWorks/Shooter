@@ -1,0 +1,62 @@
+{
+  "area": "keystone testbed: project manifests and export bundles",
+  "commands": [
+    "python -m pytest tests/test_keystone_project_export_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 105,
+  "feature": "create_project/load_project/ProjectManifest/save_project/validate_project and export_project bundle validation, contents, hashes and launcher",
+  "fix": "add tests/test_keystone_project_export_mechanics.py creating a temp shooter-style project, checking manifest load/validation, a PNG asset and broken-scene reporting, export bundle files/BUILD hashes/launcher, missing/broken export failures, and a strict xfail pinning the manifest-asset re-import bug",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "345 passed, 1 xfailed"
+  },
+  "mechanics": {
+    "manifest": {
+      "name": "shooter_probe_<hex>",
+      "game": "shooter_probe_<hex>:Game",
+      "startup_scene": "main",
+      "files": ["keystone.json", "<module>.py", "scenes/main.kscene", "prefabs/cube.kprefab"],
+      "non_empty_guard": "FileExistsError",
+      "missing_manifest": "FileNotFoundError with Why/Fix",
+      "invalid_shapes": "ValueError"
+    },
+    "validation": {
+      "assets": ">=1 (PNG imported)",
+      "scenes_ok": true,
+      "broken_scene": "ok=false with a scene error"
+    },
+    "export": {
+      "entry": "run.py",
+      "files": ["keystone.json", "<module>.py", "run.py", "requirements.txt", "EXPORT.md", "vendor/keystone/__main__.py", "scenes/main.kscene", "prefabs/cube.kprefab", "assets/swatch.png"],
+      "summary": {"scenes": ">=1", "prefabs": ">=1", "files": ">10"},
+      "run_hash_matches": true,
+      "non_empty": "FileExistsError",
+      "force": true,
+      "launcher_simulate": {"returncode": 0, "ok": true, "game": "<name>"}
+    },
+    "failures": {"missing_project": "FileNotFoundError", "broken_project": "ValueError and no target created"},
+    "known_issue": {
+      "test": "test_export_with_manifest_asset_reports_duplicate",
+      "status": "strict xfail",
+      "reason": "validate_project re-imports manifest assets after load_project_game has attached them",
+      "error": "asset 'project:assets/swatch.png' is already registered; pass replace=True to replace it"
+    }
+  },
+  "tests": {
+    "project_export_tests": "4 passed, 1 xfailed",
+    "suite": "345 passed, 1 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone project manifest",
+    "create/load project",
+    "project validation",
+    "export bundle",
+    "build manifest",
+    "launcher"
+  ]
+}

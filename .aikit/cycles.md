@@ -2180,3 +2180,28 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 341 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-104.json`.
+
+## Cycle 105 - Keystone testbed: project manifests and export bundles
+- **Area**: keystone testbed (105th cycle).
+- **Feature / evidence**: Keystone scaffolds projects, validates
+  manifests/assets/scenes/prefabs and exports hashed runnable bundles,
+  but the shooter suite covered none of it.
+- **Fix**: add `tests/test_keystone_project_export_mechanics.py`
+  creating a temp shooter-style project, checking create/load manifest
+  shapes, PNG asset and broken-scene validation, export bundle
+  files/BUILD hashes/launcher, missing/broken export failures and a
+  strict xfail pinning the manifest-asset re-import bug.
+- **Proof**: the scaffold has the manifest/game/scene/prefab files and
+  rejects non-empty dirs and bad shapes; validation imports the PNG and
+  reports a broken scene; export writes run.py/game/manifest/vendor/
+  scenes/prefabs/assets with >10 hashed files, refuses non-empty
+  targets, force-reexports and the bundled `--simulate` launcher
+  returns ok; missing projects raise FileNotFoundError and broken ones
+  ValueError without creating a target.
+- **Known issue**: exporting a manifest with a PNG asset currently
+  raises `asset 'project:assets/swatch.png' is already registered`
+  because `validate_project` re-imports assets after
+  `load_project_game` attached them; pinned as a strict xfail.
+- **Gates**: `python -m pytest -q` 345 passed, 1 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-105.json`.
