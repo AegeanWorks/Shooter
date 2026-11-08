@@ -249,6 +249,7 @@ projects/shooter/
 │   ├── test_campaign_complete.py <- persistent post-banner completion line
 │   ├── test_cache_visual.py <- dropped ammo caches render from a shared pool
 │   ├── test_cache_asset.py <- .obj crate registration, fallback, reload report
+│   ├── test_warden_armor.py <- deterministic armor texture and live material
 │   ├── test_cache_drop_cue.py <- cache drop voice/caption, standard-kill parity
 │   ├── test_profile_recovery.py <- corrupt-profile flags and debrief reset/recovered
 │   ├── test_profile_backup_restart.py <- missing-main backup restore on restart
@@ -405,7 +406,8 @@ projects/shooter/
 │   ├── cycle-127.json <- GLB/source, buffers, accessors, validation
 │   ├── cycle-128.json <- exports, schema versions, describe parity, determinism
 │   ├── cycle-129.json <- .kanim enemy idle clips, crossfade, sim parity
-│   └── cycle-130.json <- .obj cache crate, hot reload report
+│   ├── cycle-130.json <- .obj cache crate, hot reload report
+│   └── cycle-131.json <- warden armor texture, boss capture pair, boss run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

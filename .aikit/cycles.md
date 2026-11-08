@@ -2638,3 +2638,35 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 465 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-130.json`.
+
+## Cycle 131 - Enemies/bosses: warden armor surface
+- **FIND**: in `before_boss.png` (960x540, seed 1, capture route
+  `boss`) the 2.2 m warden body is a flat, textureless dark-red slab,
+  the only large arena object without surface detail; floor, walls,
+  covers and the cache all carry deterministic textures. The baseline
+  `boss` played run is healthy (507 frames, wave 4, 3 kills, hp 100,
+  hash `cfd263b7...`), so this is a visual-identity gap, not a mechanics
+  defect.
+- **ANALYZE**: `material.warden` is registered with no texture; only
+  `mesh.warden` consumes it and no test pins its fields. Killed:
+  multi-node body remodelling (changes draw budget and core placement,
+  more than one area) and core changes (already covered). Survivor: add a
+  deterministic armor texture to the existing material, proven by the
+  same `boss` capture pair, a `play_run.py boss` before/after pair and a
+  new unit test.
+- **IMPLEMENT**: add `_warden_armor_texture` (64x64 plate grid, dark
+  seams, mid-plate band, bright rivets) and register
+  `texture.warden`; `material.warden` now wraps it with
+  `checker_scale=0.3`. Three failing-first tests cover the texture,
+  the material and the live warden node.
+- **VISUAL PROOF**: `before_boss.png` and `after_boss.png` are the same
+  route (seed 1, 960x540, frame 1). `keystone.analysis.diff_images`
+  reports 46,623 changed pixels (8.99%), bbox 365,209-594,438, max
+  delta 78, mean 3.689: the change is confined to the warden body.
+  `after_warden_charge.png` shows the same plates during the charge.
+- **PLAY PROOF**: `play_run.py boss 900` before and after both run 507
+  frames to wave 4 with 3 kills, 3080 score, hp 100 and hash
+  `cfd263b7...`; the fight is unchanged.
+- **Gates**: `python -m pytest -q` 468 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-131.json`.

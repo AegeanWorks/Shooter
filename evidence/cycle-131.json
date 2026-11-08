@@ -1,0 +1,49 @@
+{
+  "cycle": 131,
+  "area": "enemies/bosses: warden armor surface",
+  "find": {
+    "evidence": "shots/shooter-campaign/cycle-131/before_boss.png",
+    "setup": "capture route boss, seed 1, 960x540, frame 1",
+    "defect": "the 2.2 m warden body is a flat, textureless dark-red slab, the only large arena object without surface detail; floor, walls, covers and the cache all carry deterministic textures",
+    "baseline_play": "play_run.py boss 900 -> 507 frames, wave 4, kills 3, hp 100, hash cfd263b7f43f1d735914c52729cdc10e"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py build_scene (material.warden registered with no texture)",
+      "shooter/game.py _floor_grid_texture/_cover_panel_texture/_wall_panel_texture",
+      "keystone.geometry.Material texture/checker_scale"
+    ],
+    "call_sites": "material.warden is consumed only by mesh.warden in _sync_scene; no test pinned its fields",
+    "killed": [
+      "multi-node body remodelling: changes draw budget and core placement, more than one area",
+      "core changes: already covered by the state machine and material graph cycles"
+    ],
+    "survivor": "add a deterministic armor texture to the existing warden material"
+  },
+  "fix": "add _warden_armor_texture (64x64 plate grid, seams, band, rivets), register texture.warden and wrap material.warden with texture + checker_scale 0.3",
+  "files": ["shooter/game.py", "tests/test_warden_armor.py"],
+  "visuals": {
+    "before": "shots/shooter-campaign/cycle-131/before_boss.png",
+    "after": "shots/shooter-campaign/cycle-131/after_boss.png",
+    "diff": "shots/shooter-campaign/cycle-131/diff_boss.png",
+    "same_setup": "boss route, seed 1, 960x540, frame 1, same save/staging",
+    "changed_pixels": 46623,
+    "changed_ratio": 0.0899,
+    "bbox": [365, 209, 594, 438],
+    "max_delta": 78,
+    "mean_delta": 3.689
+  },
+  "play": {
+    "mode": "boss",
+    "frames": 900,
+    "before": "507 frames, wave 4, kills 3, score 3080, hp 100, hash cfd263b7f43f1d735914c52729cdc10e",
+    "after": "507 frames, wave 4, kills 3, score 3080, hp 100, hash cfd263b7f43f1d735914c52729cdc10e",
+    "verdict": "identical outcome and hash; the visual change did not touch rules or frame health"
+  },
+  "gates": {
+    "pytest": "468 passed, 2 xfailed",
+    "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049",
+    "aikit_check": "4/4 gates passed"
+  },
+  "timestamp": "2026-11-08"
+}

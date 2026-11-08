@@ -792,3 +792,10 @@ Status: accepted
 Context: Keystone's obj_loader, asset_io suffix inference, fingerprints and ReloadReport were proven by the shooter testbed, but the game built every mesh in code and never loaded a file asset, so the asset pipeline had no game consumer.
 Decision: Add shooter/data/cache_crate.obj (0.6 body plus a 0.08 lid rim, 24 triangles) and shooter/asset_pipeline.py, which registers it through AssetRegistry.register_file and falls back to the previous pickup cube when the file is missing or invalid. The ammo-cache pool renders the loaded crate, and ShooterGame.update refreshes bound sources once per second through ShooterGame.reload_assets(), which stores ReloadReport.describe() for diagnostics.
 Consequences: Suite 465/465 green plus 2 xfailed (four asset tests, two updated cache assertions); determinism 1800 ok (hash b25db520); aikit 4/4. The file is fingerprinted and hot-reloadable, the fallback keeps play safe, and the sim hash never changes. Evidence: evidence/cycle-130.json.
+
+## ADR-114: Give the warden a deterministic armor texture
+Date: 2026-11-08
+Status: accepted
+Context: The 2.2 m warden was the only large arena object with no surface detail; in the boss capture it read as a flat dark-red slab while floor, walls, covers and the cache all carried procedural textures.
+Decision: Add _warden_armor_texture, a 64x64 grayscale plate grid with dark seams, a mid-plate band and bright rivets, register it as texture.warden, and give material.warden that texture with checker_scale 0.3. The warden mesh, scale, core, hitboxes and sim are unchanged.
+Consequences: Suite 468/468 green plus 2 xfailed (three armor tests); determinism 1800 ok (hash b25db520); aikit 4/4. The same boss capture pair differs in 46,623 pixels (8.99%) confined to the body bbox 365,209-594,438, and the boss play run is bit-identical (hash cfd263b7..., 507 frames, wave 4, 3 kills, hp 100). Evidence: evidence/cycle-131.json.

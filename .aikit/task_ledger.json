@@ -1,74 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-130-asset-pipeline",
+    "task_id": "shooter-cycle-131-warden-armor",
     "last_phase": "phase 4",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794166948.4690797,
+    "updated_at": 1794168622.5521061,
     "owner": "commandcode:goal",
     "started_by": "commandcode:goal",
     "continuations": [],
-    "completed_at": 1794166952.8674645
+    "completed_at": 1794168627.8113818
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-125-obj-loader",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover OBJ parsing, negative indices/quads, homogeneous vertices, ignored directives and validation errors",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794151249.639454,
-      "timestamp_str": "2026-11-08 18:20:49",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "obj_loader feeds mesh assets but the testbed only loads simple OBJs through asset tests; fan triangulation, negative indices and error paths are untested.",
-        "benefits": "Five tests pin positions/uvs/normals, generated flat normals, negative-index fan quads, homogeneous vertices, ignored directives and malformed-input errors.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp OBJ text only; no game/sim/hash change.",
-        "mitigation": "Small inline OBJ strings, full suite, determinism and project gates."
-      },
-      "plan_digest": "218daeb896a97944ebcaea35184262a0b0bc8c0b5821f2b866f9b43cdc85357b"
-    },
-    {
-      "task_id": "shooter-cycle-125-obj-loader",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] OBJ loader covered: 441 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794151654.3437207,
-      "timestamp_str": "2026-11-08 18:27:34",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-125-obj-loader",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-125-obj-loader' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794151655.3527703,
-      "timestamp_str": "2026-11-08 18:27:35",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-126-gltf-import",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover glTF suffix detection, prefab import, registry assets, textures, name overrides and validation",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794151756.57761,
-      "timestamp_str": "2026-11-08 18:29:16",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "gltf_import is the asset-pipeline adapter used by project manifests but direct prefab/registry/texture and validation behavior is untested.",
-        "benefits": "Five tests pin .gltf/.glb detection, triangle prefab saves and registry ids, textured materials, name overrides/re-imports and import errors.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp glTF/PNG files; no game/sim/hash change.",
-        "mitigation": "Inline data-URI glTF fixtures, full suite, determinism and project gates."
-      },
-      "plan_digest": "928d528ede599051b2c51e801d4de8d7e248697e9c992275caa555cb476e25f8"
-    },
     {
       "task_id": "shooter-cycle-126-gltf-import",
       "phase": "in_progress",
@@ -267,6 +210,56 @@
       "status": "completed",
       "timestamp": 1794166952.867467,
       "timestamp_str": "2026-11-08 22:42:32",
+      "agent": "commandcode:goal"
+    },
+    {
+      "task_id": "shooter-cycle-131-warden-armor",
+      "phase": "phase 2",
+      "phase_num": 2,
+      "description": "[1/3] Plan: give the warden a deterministic armor texture; same boss capture pair + boss played run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794168607.1920755,
+      "timestamp_str": "2026-11-08 23:10:07",
+      "agent": "commandcode:goal",
+      "impact_assessment": {
+        "why": "The warden is the campaign climax but renders as the only large flat, textureless slab in the arena; the boss capture shows no surface detail while every other large object has a deterministic texture.",
+        "benefits": "The boss gains a readable armored identity in boss, charge and campaign frames with no rule, hitbox or budget change.",
+        "risks": "contract: material.warden fields (no test pins them); dependency: none; concurrency: none; state: game.py, tests, cycles, decisions, README, evidence/cycle-131.json",
+        "mitigation": "failing-first texture/material/live-node tests; same boss capture pair diffed with keystone.analysis; before/after boss played run; full suite, determinism and aikit check"
+      },
+      "plan_digest": "10bbaefdf1b512871cd163873d8208e6db3791e8a5285df140f34bbd682fbd1e"
+    },
+    {
+      "task_id": "shooter-cycle-131-warden-armor",
+      "phase": "phase 3",
+      "phase_num": 3,
+      "description": "[2/3] Warden armor implemented: 3 failing-first tests, boss pair diff 46,623 px (8.99%) confined to the body, boss run hash unchanged; 468 unit tests pass",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794168615.77115,
+      "timestamp_str": "2026-11-08 23:10:15",
+      "agent": "commandcode:goal"
+    },
+    {
+      "task_id": "shooter-cycle-131-warden-armor",
+      "phase": "phase 4",
+      "phase_num": 4,
+      "description": "[3/3] Warden armor verified: 468 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794168622.5521061,
+      "timestamp_str": "2026-11-08 23:10:22",
+      "agent": "commandcode:goal"
+    },
+    {
+      "task_id": "shooter-cycle-131-warden-armor",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-131-warden-armor' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794168627.8113837,
+      "timestamp_str": "2026-11-08 23:10:27",
       "agent": "commandcode:goal"
     }
   ]

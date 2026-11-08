@@ -123,6 +123,32 @@ def _wall_panel_texture(size: int = 64) -> TextureData:
     return TextureData(size, size, bytes(pixels), name="wall-panel")
 
 
+def _warden_armor_texture(size: int = 64) -> TextureData:
+    """Deterministic grayscale armor plates for the campaign boss body.
+
+    A 16-px plate grid with dark seams, a mid-plate band and bright rivets
+    gives the 2.2 m warden cube a surface that reads as armor; the material's
+    dark-red tint supplies the color.
+    """
+    base, seam, band, rivet = 210, 74, 150, 246
+    pixels = bytearray(size * size * 4)
+    for y in range(size):
+        for x in range(size):
+            if x < 2 or y < 2 or x >= size - 2 or y >= size - 2:
+                value = seam
+            elif x % 16 < 2 or y % 16 < 2:
+                value = seam
+            elif 4 <= x % 16 <= 5 and 4 <= y % 16 <= 5:
+                value = rivet
+            elif y % 16 in (8, 9):
+                value = band
+            else:
+                value = base
+            offset = (y * size + x) * 4
+            pixels[offset : offset + 4] = bytes((value, value, value, 255))
+    return TextureData(size, size, bytes(pixels), name="warden-armor")
+
+
 def _platform_frame_mesh(
     width: float, depth: float, thickness: float, height: float,
     bottom_y: float | None = None,
@@ -286,7 +312,9 @@ class ShooterGame:
         self.assets.register("material.mite", Material(color=Vec3(0.95, 0.45, 0.15), specular=0.4, shininess=48.0, emissive=Vec3(0.55, 0.18, 0.02)))
         self.assets.register("material.brute", Material(color=Vec3(0.60, 0.40, 0.90), specular=0.4, shininess=48.0, metallic=0.2, roughness=0.5))
         self.assets.register("material.wisp", Material(color=Vec3(0.30, 0.85, 1.00), specular=0.6, shininess=64.0, emissive=Vec3(0.10, 0.45, 0.55)))
-        self.assets.register("material.warden", Material(color=Vec3(0.62, 0.09, 0.10), specular=0.35, shininess=32.0, emissive=Vec3(0.38, 0.02, 0.02), metallic=0.15, roughness=0.65))
+        warden_armor = _warden_armor_texture()
+        self.assets.register("texture.warden", warden_armor)
+        self.assets.register("material.warden", Material(color=Vec3(0.62, 0.09, 0.10), specular=0.35, shininess=32.0, emissive=Vec3(0.38, 0.02, 0.02), metallic=0.15, roughness=0.65, texture=warden_armor, checker_scale=0.3))
         self.assets.register("material.enemy_hit", Material(color=Vec3(1.0, 0.96, 0.86), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.62, 0.28)))
         for wid, color, glow in (
             ("pulse", (0.36, 0.44, 0.56), (0.04, 0.08, 0.14)),
