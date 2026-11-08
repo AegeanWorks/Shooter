@@ -10,6 +10,7 @@
       "score": 100,
       "radius": 0.5,
       "height": 1.0,
+      "reach_up": 0.30,
       "behavior": "seek_orbit_lunge"
     },
     {
@@ -21,6 +22,7 @@
       "score": 300,
       "radius": 0.7,
       "height": 1.4,
+      "reach_up": 0.45,
       "behavior": "advance_pause_slam"
     },
     {
@@ -43,6 +45,7 @@
       "score": 2000,
       "radius": 1.0,
       "height": 2.2,
+      "reach_up": 0.45,
       "behavior": "advance_slam_summon",
       "windup_s": 0.7,
       "attack_cd_s": 3.0,

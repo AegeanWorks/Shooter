@@ -1,0 +1,93 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py highground <prefix>",
+    "python scripts/play_run.py highground 200 <report> <png> <capture>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 25,
+  "fix": "DATA reach_up plus Sim._in_melee_reach gate the mite bite, brute slam and warden slam by vertical reach, so a 1.0 m mite cannot bite a player on the 0.7 m platform",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "122 passed"
+  },
+  "play_runs": {
+    "highground_200": {
+      "after": {
+        "audio": 0,
+        "frames": 200,
+        "hash": "a605d8b47e9287eecc8198e00cb5a4ab",
+        "hp": 100,
+        "hurts": 0,
+        "mean_step_ms": 0.3194
+      },
+      "before": {
+        "audio": 4,
+        "frames": 200,
+        "hash": "e30d3110847362bcab75a0b299c95aad",
+        "hp": 68,
+        "hurts": 4,
+        "mean_step_ms": 0.3071
+      }
+    },
+    "kite_600": {
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "kills": 10,
+      "score": 1950
+    },
+    "parity": "ground paths keep their hashes; only the high-ground mite path changes",
+    "strafe_300": {
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "hits": 0,
+      "shots": 30
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-25/after",
+    "before_dir": "shots/shooter-campaign/cycle-25/before",
+    "route": "scripts/capture.py highground; 960x540 seed 1, frame 1, player on the 0.7 m platform edge, mite at its base"
+  },
+  "tests": {
+    "melee_reach_tests": 4,
+    "suite": "122 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "vertical melee reach",
+    "jumpable platform",
+    "mite/brute/warden"
+  ],
+  "visual_diff": {
+    "bbox": [
+      60,
+      12,
+      947,
+      231
+    ],
+    "changed_px": 7276,
+    "draws": 5,
+    "fraction": 0.014,
+    "mean_luma_after": 73.38,
+    "mean_luma_before": 73.41,
+    "triangles": 382
+  },
+  "visual_diff_play": {
+    "bbox": [
+      60,
+      12,
+      947,
+      231
+    ],
+    "changed_px": 7256,
+    "fraction": 0.014,
+    "mean_luma_after": 73.38,
+    "mean_luma_before": 73.42
+  }
+}

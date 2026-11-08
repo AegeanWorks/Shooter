@@ -417,6 +417,48 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_highground(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Player on the low platform edge with a mite at its base.
+
+    The mite is below the platform; the first frame is the vertical-reach
+    proof (hp 100 after the fix, 92 before). Same staging in both builds.
+    """
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.player_pos = Vec3(-16.0, 1.6002, 17.5)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-16.0, 1.6002, 17.5), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = -0.9
+        g.sim.kick = 0.0
+        g.sim.enemies = [
+            _Enemy(etype="mite", pos=Vec3(-16.0, 0.5, 18.6), hp=30, max_hp=30)
+        ]
+        g.update(FIXED_STEP, ActionState())
+        e = g.sim.enemies[0]
+        print(
+            f"highground frame={g.sim.tick} hp={g.sim.hp} "
+            f"mite=({e.pos.x:.2f},{e.pos.y:.2f},{e.pos.z:.2f}) "
+            f"cue_t={float(getattr(g.sim, 'hurt_t', 0.0)):.2f}"
+        )
+        engine.capture(f"{prefix}_highground.png", f"{prefix}_highground.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_boss_hp(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Half-health warden bar: the numeric-HP HUD pair."""
     from keystone.app import Engine
@@ -849,6 +891,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_boss_hp(prefix, shadows, srgb, post, bloom)
     if which == "reticle":
         route_reticle(prefix, shadows, srgb, post, bloom)
+    if which == "highground":
+        route_highground(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

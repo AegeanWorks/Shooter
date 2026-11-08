@@ -14,6 +14,7 @@ Modes:
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
   platform run at the rear low platform, jump onto it, stop on the top
+  highground stand on the platform edge with a mite at its base (reach drill)
   denied   press overdrive with no pulse reserve (audio/caption drill)
   dry      hold fire with 0 magazine and 0 reserve (dry-fire drill)
   reload   finish a reload tail (reload-completion cue drill)
@@ -150,6 +151,23 @@ def main(
             )
             sim.yaw = math.pi
             sim.pitch = 0.0
+        if mode == "highground":
+            sim = game.sim
+            sim.player_pos = Vec3(-16.0, 1.6002, 17.5)
+            sim.body = sim.body.__class__(
+                position=Vec3(-16.0, 1.6002, 17.5),
+                half_extents=sim.body.half_extents,
+                velocity=Vec3(), on_ground=True,
+            )
+            sim.hvel = Vec3()
+            sim.yaw = math.pi
+            sim.pitch = -0.9
+            sim.kick = 0.0
+            sim.enemies = [
+                _Enemy(etype="mite", pos=Vec3(-16.0, 0.5, 18.6), hp=30, max_hp=30)
+            ]
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
         if mode == "pickup":
             sim = game.sim
             sim.wave = 2

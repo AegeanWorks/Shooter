@@ -511,3 +511,28 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 118 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-24.json`.
+
+## Cycle 25 - Enemies/bosses: vertical melee reach
+- **Area**: enemies/bosses (25th cycle).
+- **Defect / evidence**: a 1.0 m mite at the base of the 0.7 m platform
+  dealt 8 damage to a player standing on top (hp 92 at frame 1; 4 bites
+  over 200 frames left hp 68). Melee checked horizontal distance only, so
+  the jumpable platform gave no protection from short enemies.
+- **Fix**: add DATA `reach_up` (mite 0.30, brute 0.45, warden 0.45) and
+  `Sim._in_melee_reach` (player body origin vs enemy top + reach); gate
+  the mite bite, brute slam and warden slam. Open-floor bites are
+  unchanged; the 1.4 m brute and 2.2 m warden still reach the platform
+  edge. Wisp ranged attacks are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-25/`;
+  960x540 seed 1, frame 1, same staging. Before hp 92 + red bite cue +
+  `AUDIO 1 VOX`; after hp 100, no cue. 7,276 changed px (1.41%, bbox
+  60,12-947,231), mean luma 73.41 -> 73.38; the 200-frame played capture
+  changes 7,256 px (1.40%), mean luma 73.42 -> 73.38.
+- **Played runs**: `highground 200` before hp 68 / 4 hurts / 4 audio /
+  hash `e30d3110...`; after hp 100 / 0 hurts / 0 audio / hash
+  `a605d8b4...`. Ground parity: `strafe 300` hash `14a48660...`
+  (30 shots / 0 hits / hp 92) and `kite 600` hash `4fe640c5...`
+  (10 kills / 1950 / hp 100), both unchanged.
+- **Gates**: `python -m pytest -q` 122 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-25.json`.

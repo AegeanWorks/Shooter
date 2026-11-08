@@ -309,6 +309,18 @@ class Sim:
                 return False
         return True
 
+    def _in_melee_reach(self, enemy: _Enemy) -> bool:
+        """Vertical melee gate: a short enemy cannot bite through a platform.
+
+        The player's body origin is at foot level. The enemy's top plus its
+        DATA reach defines the highest feet it can hit; the 1.0 m mite cannot
+        reach a player standing on the 0.7 m platform, while the 1.4 m brute
+        and 2.2 m warden still can.
+        """
+        edef = self.enemy_defs[enemy.etype]
+        top = float(enemy.pos.y) + float(edef["height"]) / 2.0
+        return float(self.player_pos.y) <= top + float(edef.get("reach_up", 0.45))
+
     def _move_enemy(self, enemy: _Enemy, dx: float, dz: float) -> None:
         """Move with cover collision; slide along a blocked face or tangent."""
         if abs(dx) + abs(dz) <= 1e-12:
@@ -770,7 +782,8 @@ class Sim:
                 vel = direction * speed + side * strafe
                 if dist > 1.2:
                     self._move_enemy(e, vel.x * dt, vel.z * dt)
-                if dist <= float(edef["range"]) and e.attack_cd <= 0.0 and self.alive:
+                if (dist <= float(edef["range"]) and e.attack_cd <= 0.0
+                        and self.alive and self._in_melee_reach(e)):
                     self.hp -= int(edef["dmg"])
                     e.attack_cd = 1.0
                     events.append("hurt")
@@ -787,7 +800,8 @@ class Sim:
                     if dist < 6.0:
                         e.pause_t = 0.4
                 if (dist <= float(edef["range"]) and e.attack_cd <= 0.0
-                        and self.alive and self._enemy_has_los(e)):
+                        and self.alive and self._enemy_has_los(e)
+                        and self._in_melee_reach(e)):
                     self.hp -= int(edef["dmg"])
                     e.attack_cd = 2.0
                     events.append("hurt")
@@ -838,7 +852,8 @@ class Sim:
                     e.windup_t = max(0.0, e.windup_t - dt)
                     if e.windup_t <= 0.0:
                         events.append("boss_slam")
-                        if dist <= float(edef["range"]) and self.alive:
+                        if (dist <= float(edef["range"]) and self.alive
+                                and self._in_melee_reach(e)):
                             self.hp -= int(edef["dmg"])
                             events.append("hurt")
                             self._on_hurt(events, e)
