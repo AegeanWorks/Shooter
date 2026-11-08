@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-74-brute-gap",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794119975.0547605,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794119990.4120977
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-68-campaign-seal",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Levels cycle: seal the campaign on clear so wave 4 cannot spawn or attack during the victory banner, with a banner pair and campaign drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794117775.9271166,
-      "timestamp_str": "2026-11-08 09:02:55",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Campaign clear is recorded at wave-4 entry, but the sim had already built wave 4 and kept spawning enemies during the four-second banner; the player could be attacked in a won run.",
-        "benefits": "The victory beat is safe and the arena is empty; wave construction stops permanently after the campaign win.",
-        "risks": "contract: sim victory state + game clear hook; dependency: none; concurrency: none; state: wave/campaign flow only, no level geometry.",
-        "mitigation": "Failing-first seal test, a three-second banner pair, campaign drill telemetry and the full suite including the fairness replay."
-      },
-      "plan_digest": "7c8d0e2c94896475970bf94cf506ac96253b0355413fee33e33a370935877b5a"
-    },
     {
       "task_id": "shooter-cycle-68-campaign-seal",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794119975.0547605,
       "timestamp_str": "2026-11-08 09:39:35",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-74-brute-gap",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-74-brute-gap' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794119990.4120998,
+      "timestamp_str": "2026-11-08 09:39:50",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
