@@ -107,7 +107,8 @@ class ProfileStore:
         try:
             raw = read_json(self.path)
         except FileNotFoundError:
-            return default_profile()
+            backup = self._backup_profile()
+            return backup if backup is not None else default_profile()
         except (OSError, json.JSONDecodeError, ValueError):
             return self._recover()
         if not isinstance(raw, dict):
@@ -134,17 +135,22 @@ class ProfileStore:
             os.replace(self.path, quarantine)
         except OSError:  # hygiene: allow best-effort quarantine; read-only dir keeps the bad file
             pass
+        backup = self._backup_profile()
+        return backup if backup is not None else default_profile()
+
+    def _backup_profile(self) -> dict | None:
         backup = self.path.with_name(self.path.name + ".bak")
         try:
             raw = read_json(backup)
         except (OSError, json.JSONDecodeError, ValueError):
-            return default_profile()
+            return None
         if not isinstance(raw, dict):
-            return default_profile()
+            return None
         try:
             normalized = _normalize(raw)
         except (TypeError, ValueError):
-            return default_profile()
+            return None
+        self.recovered = True
         self.recovered_from_backup = True
         return normalized
 

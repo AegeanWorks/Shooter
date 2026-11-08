@@ -1,0 +1,73 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py profile_backup <prefix>",
+    "python scripts/play_run.py profile_backup_restart 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 86,
+  "fix": "extract ProfileStore._backup_profile() and use it on FileNotFoundError as well as in _recover, so a missing main with a valid .bak restores the backup and flags PROFILE RECOVERED; a fresh profile with no backup still defaults",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "269 passed"
+  },
+  "play_runs": {
+    "backup_after": {
+      "audio": 3,
+      "best_score": 4321,
+      "drops": 0,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "recovered": true,
+      "recovered_from_backup": true,
+      "runs": 1,
+      "wins": 2
+    },
+    "backup_before": {
+      "audio": 3,
+      "best_score": 1500,
+      "drops": 0,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "recovered": false,
+      "recovered_from_backup": false,
+      "runs": 1,
+      "wins": 0
+    },
+    "parity": "same death hash f8cd9e28; the drill starts with a valid .bak and no main, so only the recovered profile differs"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-86/after",
+    "before_dir": "shots/shooter-campaign/cycle-86/before",
+    "route": "scripts/capture.py profile_backup; 960x540 seed 1, missing main + valid .bak, staged brute death"
+  },
+  "tests": {
+    "profile_backup_restart_tests": 3,
+    "suite": "269 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "backup restart",
+    "missing main",
+    "profile recovery"
+  ],
+  "visual_diff": {
+    "bbox": [
+      281,
+      16,
+      678,
+      427
+    ],
+    "changed_px": 13048,
+    "draws": 6,
+    "fraction": 0.0252,
+    "mean_luma_after": 47.05,
+    "mean_luma_before": 48.2,
+    "triangles": 278
+  }
+}

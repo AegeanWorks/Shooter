@@ -1761,3 +1761,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 266 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-85.json`.
+
+## Cycle 86 - Progression/saves: restart from backup when main is missing
+- **Area**: progression and saves (86th cycle).
+- **Defect / evidence**: after a corrupt main was quarantined and `.bak`
+  loaded in memory, quitting before the next save left no main. The next
+  launch caught `FileNotFoundError` and returned defaults without checking
+  the backup, silently discarding recovered best/wins.
+- **Fix**: extract `ProfileStore._backup_profile()` and call it both in
+  `_recover` and on `FileNotFoundError`. A missing main with a valid backup
+  restores it and flags `PROFILE RECOVERED`; a fresh profile with no backup
+  still defaults. Schema/quarantine/atomic writes unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-86/`;
+  960x540 seed 1, missing main + valid .bak, staged brute death. 13,048
+  changed px (2.52%, bbox 281,16-678,427), mean luma 48.20 -> 47.05;
+  draws 6, triangles 278. Before: no BEST/PROFILE line; after: BEST 4321,
+  PROFILE RECOVERED, WINS 2.
+- **Played runs**: `profile_backup_restart 240` before/after same death
+  hash `f8cd9e28...`: best_score 1500 -> 4321, wins 0 -> 2, recovered
+  false -> true, from_backup false -> true, runs 1, 0 drops.
+- **Gates**: `python -m pytest -q` 269 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-86.json`.

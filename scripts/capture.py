@@ -1340,6 +1340,42 @@ def route_save_retry(prefix: str, shadows: bool = True, srgb: bool = True, post:
         engine.close()
 
 
+def route_profile_backup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Restart with a missing main and valid .bak: the recovery pair."""
+    from keystone.app import Engine
+
+    profile_dir = Path(tempfile.mkdtemp(prefix="shooter-backup-"))
+    profile_path = profile_dir / "profile.json"
+    store = ProfileStore(profile_path)
+    profile = default_profile()
+    profile["best_score"] = 4321
+    profile["wins"] = 2
+    store.save(profile)
+    store.save(profile)
+    profile_path.unlink()
+    game = ShooterGame(profile_path=profile_path)
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.hp = 5
+        g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
+        for _ in range(120):
+            g.update(FIXED_STEP, ActionState())
+            if not g.sim.alive:
+                break
+        print(
+            f"profile-backup recovered={getattr(g, 'profile_recovered', False)} "
+            f"backup={getattr(g, 'profile_recovered_from_backup', False)} "
+            f"best={int(g.profile.get('best_score', 0))} wins={int(g.profile.get('wins', 0))}"
+        )
+        engine.capture(f"{prefix}_profile_backup.png", f"{prefix}_profile_backup.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_profile_reset(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Death debrief after an unrecoverable corrupt profile: the reset pair."""
     from keystone.app import Engine
@@ -2454,6 +2490,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_profile_disabled(prefix, shadows, srgb, post, bloom)
     if which == "profile_reset":
         route_profile_reset(prefix, shadows, srgb, post, bloom)
+    if which == "profile_backup":
+        route_profile_backup(prefix, shadows, srgb, post, bloom)
     if which == "save_retry":
         route_save_retry(prefix, shadows, srgb, post, bloom)
     if which == "killmark":

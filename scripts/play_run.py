@@ -25,6 +25,7 @@ Modes:
   save_retry failed wave save, then lock released and a death save (retry proof)
   profile_bad staged near-death run with an unsupported schema (disabled proof)
   profile_corrupt staged near-death run with an unrecoverable corrupt profile (reset proof)
+  profile_backup_restart missing main + valid .bak before game start (restart proof)
   platform run at the rear low platform, jump onto it, stop on the top
   highground stand on the platform edge with a mite at its base (reach drill)
   switch   press slot2 -> slot3 -> slot1 (weapon-switch cue drill)
@@ -138,6 +139,16 @@ def main(
         profile_path.write_text('{"schema": 99, "best_score": 1}', encoding="utf-8")
     if mode == "profile_corrupt":
         profile_path.write_text('{"broken":', encoding="utf-8")
+    if mode == "profile_backup_restart":
+        from shooter.profile import ProfileStore, default_profile
+
+        store = ProfileStore(profile_path)
+        seeded = default_profile()
+        seeded["best_score"] = 4321
+        seeded["wins"] = 2
+        store.save(seeded)
+        store.save(seeded)
+        profile_path.unlink()
     try:
         game = ShooterGame(profile_path=profile_path)
     except TypeError:  # older checkout without profile support
@@ -231,7 +242,8 @@ def main(
                 _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 6.0), hp=600,
                        max_hp=600, windup_t=0.01, summon_cd=999.0)
             ]
-        if mode in ("death", "save_fail", "profile_bad", "profile_corrupt"):
+        if mode in ("death", "save_fail", "profile_bad", "profile_corrupt",
+                    "profile_backup_restart"):
             sim = game.sim
             sim.wave = 2
             sim.hp = 10
@@ -482,7 +494,8 @@ def main(
                 break
             if mode == "death" and not game.sim.alive:
                 break
-            if mode in ("save_fail", "profile_bad", "profile_corrupt") and not game.sim.alive:
+            if mode in ("save_fail", "profile_bad", "profile_corrupt",
+                        "profile_backup_restart") and not game.sim.alive:
                 break
             if mode == "save_retry" and not game.sim.alive:
                 break
