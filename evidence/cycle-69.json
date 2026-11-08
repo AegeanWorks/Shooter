@@ -1,0 +1,73 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py campaign_complete <prefix>",
+    "python scripts/play_run.py campaign 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 69,
+  "fix": "draw a compact CAMPAIGN COMPLETE line at y=116 once the four-second clear banner has expired and sim.victory is set; the banner keeps the screen while it lasts and no sim state changes",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "228 passed"
+  },
+  "play_runs": {
+    "campaign_after": {
+      "alive_enemies": [],
+      "audio": 5,
+      "banner_t": 0.0,
+      "cleared": true,
+      "frames": 300,
+      "hash": "236ec7661555833030e2cc73c80fd8d2",
+      "hp": 100,
+      "hurts": 0,
+      "victory": true,
+      "wave": 4
+    },
+    "campaign_before": {
+      "alive_enemies": [],
+      "audio": 5,
+      "banner_t": 0.0,
+      "cleared": true,
+      "frames": 300,
+      "hash": "236ec7661555833030e2cc73c80fd8d2",
+      "hp": 100,
+      "hurts": 0,
+      "victory": true,
+      "wave": 4
+    },
+    "parity": "same hash 236ec766 before/after; HUD-only change, both runs finish wave 4 with no enemies"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-69/after",
+    "before_dir": "shots/shooter-campaign/cycle-69/before",
+    "route": "scripts/capture.py campaign_complete; 960x540 seed 1, 300 frames after the warden kill"
+  },
+  "tests": {
+    "campaign_complete_tests": 3,
+    "suite": "228 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "campaign complete",
+    "post-banner status",
+    "HUD readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      379,
+      116,
+      580,
+      129
+    ],
+    "changed_px": 988,
+    "draws": 6,
+    "fraction": 0.0019,
+    "mean_luma_after": 33.4,
+    "mean_luma_before": 33.07,
+    "triangles": 290
+  }
+}

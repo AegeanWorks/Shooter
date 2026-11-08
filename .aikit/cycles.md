@@ -1424,3 +1424,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 225 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-68.json`.
+
+## Cycle 69 - UI readability: persistent campaign-complete line
+- **Area**: UI readability (69th cycle).
+- **Defect / evidence**: cycle 68 seals wave construction at the campaign
+  win, so the arena is empty after the four-second clear banner. Once the
+  banner expires the HUD looks like an ordinary wave-4 lull, with no enemies
+  and no message explaining that the run is complete.
+- **Fix**: draw a compact accent `CAMPAIGN COMPLETE` line at y=116 when
+  `sim.alive`, `sim.victory` is set and `campaign_clear_t` has expired. The
+  existing `CAMPAIGN CLEAR` banner keeps the screen while it runs, so the
+  lines never double up. Draw-only; no sim, wave or save changes.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-69/`;
+  960x540 seed 1, 300 frames after the warden kill. 988 changed px
+  (0.19%, bbox 379,116-580,129), mean luma 33.07 -> 33.40; draws 6,
+  triangles 290.
+- **Played runs**: `campaign 300` before/after same hash `236ec766...`,
+  wave 4, victory true, banner 0, no enemies, hp 100, audio 5, drops 0.
+- **Gates**: `python -m pytest -q` 228 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-69.json`.

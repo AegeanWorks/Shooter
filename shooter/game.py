@@ -1119,6 +1119,12 @@ class ShooterGame:
                 f"CAMPAIGNS WON {int(self.profile.get('wins', 0))}",
                 (0.95, 0.90, 0.80, 1.0), 2,
             )
+        elif self.sim.alive and bool(getattr(self.sim, "victory", False)):
+            label = "CAMPAIGN COMPLETE"
+            canvas.text(
+                int(state.width) // 2 - text_width(label, 2) // 2, 116,
+                label, (1.0, 0.62, 0.20, 1.0), 2,
+            )
         if not self.sim.alive and self.last_run is not None:
             run = self.last_run
             width = int(state.width)
