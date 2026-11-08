@@ -128,6 +128,7 @@ class ShooterGame:
         self.sound_cue_t = 0.0
         self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
         self._forfeit_cue_pending = False
+        self._pickup_fx_t = 0.0
         self.kill_feed: list[dict] = []
         self.score_pop: dict | None = None
         self._clip_hook = None
@@ -190,6 +191,7 @@ class ShooterGame:
         self.sound_cue = ""
         self.sound_cue_t = 0.0
         self._forfeit_cue_pending = False
+        self._pickup_fx_t = 0.0
         self.run_new_best = False
         self.last_run = None
         self.campaign_cleared = False
@@ -542,6 +544,7 @@ class ShooterGame:
             self.campaign_clear_t = 4.0
             self._record_campaign_clear()
         self.campaign_clear_t = max(0.0, self.campaign_clear_t - float(dt))
+        self._pickup_fx_t = max(0.0, self._pickup_fx_t - float(dt))
         for entry in self.kill_feed:
             entry["t"] = float(entry.get("t", 0.0)) - float(dt)
         self.kill_feed = [entry for entry in self.kill_feed if entry["t"] > 0.0][:4]
@@ -738,6 +741,8 @@ class ShooterGame:
         elif event in ("pickup", "wave"):
             self._play_clip(self._clips["pickup" if event == "pickup" else "wave"], 0.7)
             self._cue("SURGE ACQUIRED" if event == "pickup" else "WAVE CLEAR")
+            if event == "pickup":
+                self._pickup_fx_t = float(self.sim.juice.get("pickup_fx_s", 0.30))
         elif event == "hurt":
             self._play_clip(self._clips["hurt"], 0.8)
         elif event == "reload":
@@ -1006,8 +1011,9 @@ class ShooterGame:
             )
         if self._pickup_beam is not None and self._pickup_orb is not None:
             active = bool(sim.pickup_active)
+            fx_t = float(getattr(self, "_pickup_fx_t", 0.0))
             self._pickup_beam.visible = active
-            self._pickup_orb.visible = active
+            self._pickup_orb.visible = bool(active or fx_t > 0.0)
             if active:
                 bx = float(self._pickup_spot["x"])
                 by = float(self._pickup_spot["y"])
@@ -1020,6 +1026,21 @@ class ShooterGame:
                 self._pickup_orb.transform = Transform(
                     position=Vec3(bx, by + 2.95 + 0.14 * math.sin(sim.time * 3.0), bz),
                     scale=Vec3(1.0, 1.0, 1.0),
+                )
+            elif fx_t > 0.0:
+                # Collection pop: reuse the orb, expanding and rising as the
+                # beam disappears. Presentation only; no new node or draw.
+                duration = max(1e-6, float(sim.juice.get("pickup_fx_s", 0.30)))
+                k = max(0.0, min(1.0, 1.0 - fx_t / duration))
+                size = 1.0 + float(sim.juice.get("pickup_fx_scale", 3.0)) * k
+                rise = float(sim.juice.get("pickup_fx_rise", 1.2)) * k
+                self._pickup_orb.transform = Transform(
+                    position=Vec3(
+                        float(self._pickup_spot["x"]),
+                        float(self._pickup_spot["y"]) + 2.95 + rise,
+                        float(self._pickup_spot["z"]),
+                    ),
+                    scale=Vec3(size, size, size),
                 )
 
     def snapshot(self) -> dict:

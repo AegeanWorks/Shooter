@@ -1,46 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-62-no-reserve",
+    "task_id": "shooter-cycle-63-pickup-pop",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794114944.8905385,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794115610.8374166,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794114959.7981727
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-57-surge-forfeit-cue",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Audio cycle: map the existing surge_forfeit event to a distinct voice and danger caption, prove with the forfeit drill, caption pair and WAV probe",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794111150.3453486,
-      "timestamp_str": "2026-11-08 07:12:30",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Switching away from surge silently forfeits the remaining timer and ammo; only the ordinary switch click plays, so the penalty looks like a free weapon change.",
-        "benefits": "A distinct 120 Hz voice and red SURGE FORFEIT caption make the lost surge time and ammo audible and visible without touching the sim.",
-        "risks": "contract: event/audio/caption only; dependency: none; concurrency: none; state: no sim, ammo or save change.",
-        "mitigation": "Failing-first cue tests, a seeded forfeit capture pair, a same-hash played drill and a WAV/spectrogram probe; normal switch caption stays covered by a guard test."
-      },
-      "plan_digest": "fc86ff58e08aec13b002038fc8a9a0d2ccdf3b8407b9133069490ca68922d8a7"
-    },
-    {
-      "task_id": "shooter-cycle-57-surge-forfeit-cue",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Surge-forfeit cue proven: 204 tests, determinism 1800 ok, aikit 4/4, 3060 px caption pair, same forfeit hash 3fe96786, audio 1->2; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794111150.6484087,
-      "timestamp_str": "2026-11-08 07:12:30",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-57-surge-forfeit-cue",
       "phase": "completed",
@@ -266,6 +236,35 @@
       "status": "completed",
       "timestamp": 1794114959.7981749,
       "timestamp_str": "2026-11-08 08:15:59",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-63-pickup-pop",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Graphics cycle: burst the existing pickup orb for 0.30 s on collection, with DATA-tuned growth/rise, a staged pair and pickup-drill parity",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794115524.8973007,
+      "timestamp_str": "2026-11-08 08:25:24",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Collecting the surge pickup vanishes the beam and orb instantly; the only payoff is a caption, so a major power-up has no world-space effect.",
+        "benefits": "A short expanding, rising orb pop marks the collection using the existing node and material, with no new nodes or draw types.",
+        "risks": "contract: presentation timer and orb transform only; dependency: none; concurrency: none; state: no sim, pickup trigger, ammo or save change.",
+        "mitigation": "Failing-first burst/clear tests, a staged pickup pair at 960x540, pickup-drill hash parity and the full gates."
+      },
+      "plan_digest": "69af32685ddcbd9c6cf28fd649f0699ccd5aae0a8bbcc0f65bfdb0f5570c9081"
+    },
+    {
+      "task_id": "shooter-cycle-63-pickup-pop",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Pickup pop proven: 215 tests, determinism 1800 ok, aikit 4/4, 15698 px pair, same pickup hash 7f84f3e9, tuned 3.0->1.5 scale; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794115610.8374166,
+      "timestamp_str": "2026-11-08 08:26:50",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

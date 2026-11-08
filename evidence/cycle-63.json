@@ -1,0 +1,75 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py pickup_pop <prefix>",
+    "python scripts/play_run.py pickup 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 63,
+  "fix": "keep the existing pickup orb visible for 0.30 s after collection, expanding to 1.5x and rising 0.9 m while the beam hides; tuning lives in juice pickup_fx_s/scale/rise",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "215 passed"
+  },
+  "play_runs": {
+    "parity": "same hash 7f84f3e9 before/after; pickup presentation only",
+    "pickup_after": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 147,
+      "hash": "7f84f3e957177531fff1493c27a6b762",
+      "hp": 100,
+      "hurts": 0,
+      "wave": 2
+    },
+    "pickup_before": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 147,
+      "hash": "7f84f3e957177531fff1493c27a6b762",
+      "hp": 100,
+      "hurts": 0,
+      "wave": 2
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-63/after",
+    "before_dir": "shots/shooter-campaign/cycle-63/before",
+    "route": "scripts/capture.py pickup_pop; 960x540 seed 1, six frames after the surge trigger"
+  },
+  "tests": {
+    "pickup_pop_tests": 2,
+    "suite": "215 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "pickup feedback",
+    "collection burst",
+    "existing-node animation"
+  ],
+  "visual_diff": {
+    "bbox": [
+      411,
+      92,
+      899,
+      257
+    ],
+    "changed_px": 15698,
+    "draws": 3,
+    "fraction": 0.0303,
+    "mean_luma_after": 17.73,
+    "mean_luma_before": 14.19,
+    "scene_bbox": [
+      411,
+      116,
+      555,
+      257
+    ],
+    "scene_changed_px": 15386,
+    "shadow_calls": 35,
+    "triangles": 146
+  }
+}

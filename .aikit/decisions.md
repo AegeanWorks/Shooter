@@ -553,3 +553,10 @@ Status: accepted
 Context: The cycle-55 low-ammo panel shows `LOW AMMO <mag>`, but with zero reserve rounds the player cannot reload. The warning looked like an ordinary low-magazine prompt and implied a reload would help; the full reserve count lived only in the top-left engine status.
 Decision: Read the equipped weapon's reserve in the HUD; when the low-ammo branch runs and reserve is zero, add a red `NO RESERVE` second line and grow the panel from 150x22 to 150x40. With reserve rounds the panel keeps its existing size and label. Draw-only: no sim, ammo, input or save change.
 Consequences: Suite 213/213 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The magazine-3, reserve-0 pair at 960x540 seed 1 changes 2,768 px (0.53%, bbox 405,321-554,339), mean luma 32.33 -> 32.36, draws 6, triangles 290. `dry 60` keeps hash `d33f43e4...`, ammo 0/reserve 0, cue NO AMMO, 11 frames, hp 100, audio 1, 0 drops. Evidence: `evidence/cycle-62.json`, images in workspace `shots/shooter-campaign/cycle-62/`.
+
+## ADR-080: Pickup collection orb pop (graphics/effects)
+Date: 2026-11-08
+Status: accepted
+Context: The surge pickup beam and orb vanished on the trigger frame; the only feedback was the `SURGE ACQUIRED` caption. A major power-up had no world-space payoff, so the collection read as the beacon simply disappearing.
+Decision: Keep the existing pickup orb visible for 0.30 s after collection, expanding to 1.5x and rising 0.9 m while the beam hides. Tuning lives in `juice.pickup_fx_s/scale/rise`; the timer and transform are presentation-only, using the existing node, mesh and material. The trigger, ammo, surge timer and sim are untouched.
+Consequences: Suite 215/215 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The staged six-frame pair at 960x540 seed 1 changes 15,698 px (3.03%, bbox 411,92-899,257; 15,386 px in the 3D scene, bbox 411,116-555,257), mean luma 14.19 -> 17.73, draws 3, triangles 146, shadow calls 35. `pickup 300` keeps hash `7f84f3e9...`, 147 frames, wave 2, hp 100, audio 1, 0 drops. Evidence: `evidence/cycle-63.json`, images in workspace `shots/shooter-campaign/cycle-63/`.

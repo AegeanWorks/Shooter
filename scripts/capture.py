@@ -219,6 +219,46 @@ def route_summon_cover(prefix: str, shadows: bool = True, srgb: bool = True, pos
         engine.close()
 
 
+def route_pickup_pop(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Six frames after the surge pickup is taken: the orb-pop pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.wave = 2
+        g.sim.pickup_active = True
+        g.sim.pickup_taken = False
+        rest_y = float(g.sim.player_pos.y)
+        g.sim.player_pos = Vec3(0.0, rest_y, -5.2)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, rest_y, -5.2),
+            half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = 0.0
+        g.sim.pitch = 1.0
+        g.update(FIXED_STEP, ActionState())
+        for _ in range(6):
+            g.update(FIXED_STEP, ActionState())
+        print(
+            f"pickup-pop active={g.sim.pickup_active} weapon={g.sim.weapon} "
+            f"fx_t={float(getattr(g, '_pickup_fx_t', 0.0)):.3f} "
+            f"orb_scale={g._pickup_orb.transform.scale.x:.2f} "
+            f"orb_visible={g._pickup_orb.visible}"
+        )
+        engine.capture(f"{prefix}_pickup_pop.png", f"{prefix}_pickup_pop.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
@@ -1675,6 +1715,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_summon_cover(prefix, shadows, srgb, post, bloom)
     if which in ("all", "pickup"):
         route_pickup(prefix, shadows, srgb, post, bloom)
+    if which == "pickup_pop":
+        route_pickup_pop(prefix, shadows, srgb, post, bloom)
     if which == "hurt":
         for side in ("left", "right", "behind"):
             route_hurt(prefix, side, shadows, srgb, post, bloom)

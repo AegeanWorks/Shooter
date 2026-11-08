@@ -1291,3 +1291,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 213 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-62.json`.
+
+## Cycle 63 - Graphics and effects: pickup collection pop
+- **Area**: graphics and effects (63rd cycle).
+- **Opportunity**: the surge pickup beam and orb vanished on the trigger
+  frame; the only feedback was the `SURGE ACQUIRED` caption, so a major
+  power-up had no world-space payoff.
+- **Fix**: keep the existing pickup orb visible for 0.30 s after
+  collection, expanding to 1.5x and rising 0.9 m while the beam hides.
+  Tuning lives in `juice.pickup_fx_s/scale/rise`; the timer and transform
+  are presentation-only. No new nodes, meshes, materials or sim changes.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-63/`;
+  960x540 seed 1, six frames after the surge trigger. 15,698 changed px
+  (3.03%, bbox 411,92-899,257; 15,386 px in the 3D scene, bbox
+  411,116-555,257), mean luma 14.19 -> 17.73; draws 3, triangles 146,
+  shadow calls 35. The first 3.0x growth covered the crosshair, so the
+  scale was tuned to 1.5 and the pair re-captured.
+- **Played runs**: `pickup 300` before/after same hash `7f84f3e9...`,
+  147 frames, wave 2, hp 100, audio 1, drops 0.
+- **Gates**: `python -m pytest -q` 215 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-63.json`.
