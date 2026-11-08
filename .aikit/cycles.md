@@ -2700,3 +2700,27 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 471 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-132.json`.
+
+## Cycle 133 - Graphics/effects: boss death flash
+- **FIND**: `before_win.png` (win route, seed 1, 960x540) is dominated by
+  a screen-filling white block: the warden death silhouette reuses the
+  full-size white hit cube on the 2.2 m boss, hiding the boss, crosshair
+  and +2200 pop. The baseline boss play run is healthy (507 frames, wave
+  4, 3 kills, hp 100, hash `cfd263b7...`).
+- **ANALYZE**: the dead-enemy branch is the only writer of the death
+  silhouette and no test pinned its boss material or scale. Killed:
+  removing the death FX (loses body-exit feedback) and shrinking all
+  enemies (weakens normal kills). Survivor: boss-only ember material plus
+  a per-type scale cap from DATA.
+- **IMPLEMENT**: register `material.boss_death`, add
+  `juice.death_fx_scale` (mite 1.0, brute 0.7, wisp 1.0, warden 0.45) and
+  cap the dead-enemy silhouette per type. Three failing-first tests cover
+  the boss material/scale, the normal white shrink and the warm palette.
+- **VISUAL PROOF**: `before_win`/`after_win` are the same route; the diff
+  is 19,672 px (3.79%), bbox 363,240-551,385, max delta 250. The block is
+  replaced by a compact ember collapse and the +2200 pop reads cleanly.
+- **PLAY PROOF**: `play_run.py boss 900` before/after both run 507 frames
+  to wave 4 with 3 kills, 3080 score, hp 100 and hash `cfd263b7...`.
+- **Gates**: `python -m pytest -q` 474 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-133.json`.

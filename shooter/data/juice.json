@@ -9,6 +9,12 @@
   "impact_burst": 12,
   "kill_burst": 20,
   "death_fx_s": 0.15,
+  "death_fx_scale": {
+    "mite": 1.0,
+    "brute": 0.7,
+    "wisp": 1.0,
+    "warden": 0.45
+  },
   "max_particles": 256,
   "kick_deg": 0.6,
   "kick_decay": 8.0,

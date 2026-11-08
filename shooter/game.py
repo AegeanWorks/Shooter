@@ -317,6 +317,7 @@ class ShooterGame:
         self.assets.register("texture.warden", warden_armor)
         self.assets.register("material.warden", Material(color=Vec3(0.62, 0.09, 0.10), specular=0.35, shininess=32.0, emissive=Vec3(0.38, 0.02, 0.02), metallic=0.15, roughness=0.65, texture=warden_armor, checker_scale=0.3))
         self.assets.register("material.enemy_hit", Material(color=Vec3(1.0, 0.96, 0.86), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.62, 0.28)))
+        self.assets.register("material.boss_death", Material(color=Vec3(1.0, 0.42, 0.12), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.30, 0.04)))
         for wid, color, glow in (
             ("pulse", (0.36, 0.44, 0.56), (0.04, 0.08, 0.14)),
             ("scatter", (0.54, 0.36, 0.22), (0.12, 0.05, 0.01)),
@@ -1043,8 +1044,10 @@ class ShooterGame:
             "warden": (self.assets.require("mesh.warden").payload, self.assets.require("material.warden").payload, Vec3(1, 1, 1)),
         }
         hit_mat = self.assets.require("material.enemy_hit").payload
+        boss_death_mat = self.assets.require("material.boss_death").payload
         hit_span = max(1e-6, float(self.sim.juice.get("hit_flinch_s", 0.25)))
         death_span = max(1e-6, float(self.sim.juice.get("death_fx_s", 0.15)))
+        death_caps = dict(self.sim.juice.get("death_fx_scale", {}))
         ordered = sorted(sim.enemies, key=lambda e: (0 if e.alive else 1, e.etype))
         for i, node in enumerate(self._enemy_nodes):
             if i < len(ordered) and (ordered[i].alive or ordered[i].death_t > 0.0):
@@ -1053,11 +1056,14 @@ class ShooterGame:
                 node.mesh = mesh
                 node.visible = True
                 if not e.alive:
-                    # Brief white-hot shrink so the kill has a body exit.
+                    # Brief shrink so the kill has a body exit. The boss uses
+                    # a warm flash and a per-type cap: a full-size white 2.2 m
+                    # cube filled the campaign-clear frame.
                     k = max(0.0, min(1.0, e.death_t / death_span))
-                    node.material = hit_mat
+                    s = k * float(death_caps.get(e.etype, 1.0))
+                    node.material = boss_death_mat if e.etype == "warden" else hit_mat
                     node.transform = Transform(
-                        position=e.pos, scale=Vec3(k, k, k)
+                        position=e.pos, scale=Vec3(s, s, s)
                     )
                     continue
                 node.material = hit_mat if e.hit_t > hit_span * 0.4 else mat

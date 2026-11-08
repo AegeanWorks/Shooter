@@ -225,6 +225,7 @@ projects/shooter/
 │   ├── test_platform_base.py <- platform base frame and step readability
 │   ├── test_streak_bonus.py <- 10%/kill cap 50%, shown as STREAK +P%
 │   ├── test_death_fx.py    <- death timer, shrinking white silhouette
+│   ├── test_boss_death_fx.py <- boss ember flash, scale cap
 │   ├── test_brute_slam.py  <- brute_slam event, clip, caption
 │   ├── test_brute_windup.py <- brute windup tell, delayed slam, swell/caption
 │   ├── test_enemy_spacing.py <- melee crowds keep their combined DATA radii
@@ -409,7 +410,8 @@ projects/shooter/
 │   ├── cycle-129.json <- .kanim enemy idle clips, crossfade, sim parity
 │   ├── cycle-130.json <- .obj cache crate, hot reload report
 │   ├── cycle-131.json <- warden armor texture, boss capture pair, boss run
-│   └── cycle-132.json <- viewmodel grip, spawn/reload/burst pairs, kite run
+│   ├── cycle-132.json <- viewmodel grip, spawn/reload/burst pairs, kite run
+│   └── cycle-133.json <- boss ember death flash
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

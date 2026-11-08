@@ -1,0 +1,46 @@
+{
+  "cycle": 133,
+  "area": "graphics/effects: boss death flash",
+  "find": {
+    "evidence": "shots/shooter-campaign/cycle-133/before_win.png",
+    "setup": "capture route win, seed 1, 960x540, wave-3 warden killed at close range",
+    "defect": "the warden death silhouette reuses the full-size white hit cube and scales it with the 2.2 m warden body, so the campaign-clear frame is dominated by a screen-filling white block that hides the boss, the crosshair and the +2200 pop",
+    "baseline_play": "play_run.py boss 900 -> 507 frames, wave 4, kills 3, score 3080, hp 100, hash cfd263b7f43f1d735914c52729cdc10e"
+  },
+  "analyze": {
+    "read": ["shooter/game.py _sync_scene dead-enemy branch", "shooter/data/juice.json death_fx_s", "scripts/capture.py route_win"],
+    "call_sites": "the dead branch is the only writer of the death silhouette; no test pinned the boss death material or scale",
+    "killed": [
+      "removing the death FX: loses the body-exit feedback for every enemy",
+      "shrinking all enemies: weakens normal kill feedback to fix one large body"
+    ],
+    "survivor": "boss-only ember death material plus a per-type scale cap driven by DATA"
+  },
+  "fix": "register material.boss_death (warm ember), add juice.death_fx_scale (mite/brute/wisp/warden), and cap the death silhouette per type in the dead-enemy branch",
+  "files": ["shooter/game.py", "shooter/data/juice.json", "tests/test_boss_death_fx.py"],
+  "visuals": {
+    "before": "before_win.png",
+    "after": "after_win.png",
+    "diff": "diff_win.png",
+    "same_setup": "win route, seed 1, 960x540, same warden staging and kill frame",
+    "changed_pixels": 19672,
+    "changed_ratio": 0.0379,
+    "bbox": [363, 240, 551, 385],
+    "mean_delta": 7.378,
+    "max_delta": 250,
+    "verdict": "the 2.2 m white block is replaced by a compact ember collapse; the +2200 pop and WAVE CLEAR read cleanly"
+  },
+  "play": {
+    "mode": "boss",
+    "frames": 900,
+    "before": "507 frames, wave 4, kills 3, score 3080, hp 100, hash cfd263b7f43f1d735914c52729cdc10e",
+    "after": "507 frames, wave 4, kills 3, score 3080, hp 100, hash cfd263b7f43f1d735914c52729cdc10e",
+    "verdict": "identical outcome and hash; the flash is presentation-only"
+  },
+  "gates": {
+    "pytest": "474 passed, 2 xfailed",
+    "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049",
+    "aikit_check": "4/4 gates passed"
+  },
+  "timestamp": "2026-11-08"
+}

@@ -806,3 +806,10 @@ Status: accepted
 Context: The first-person weapon was two cubes with no grip; spawn and reload screenshots showed a bare gray bar floating above the bottom edge instead of a held gun.
 Decision: Add a third viewmodel node, _view_grip, using the shared gun cube mesh and the active weapon material, hidden on death and moved with the same recoil/reload/bob basis. Tune the viewmodel DATA to forward 0.60, right 0.27, down 0.21, body 0.06x0.06x0.20, barrel 0.028x0.028x0.24 and add grip_forward/grip_down/grip_width/grip_height/grip_length. Update the testbed scene snapshot pins to the larger scene (nodes 113, plan draw_calls 35, triangles 494, merged saved_calls 28); the grip shares the gun mesh and material, so rendered instanced groups are unchanged.
 Consequences: Suite 471/471 green plus 2 xfailed (three grip tests); determinism 1800 ok (hash b25db520); aikit 4/4. The spawn/reload/burst pairs change 11,100/9,436/12,372 px in the lower-right gun region, and the matched kite run is bit-identical (hash 4fe640c5..., 600 frames, 10 kills, hp 100). Evidence: evidence/cycle-132.json.
+
+## ADR-116: Give the boss a compact ember death flash
+Date: 2026-11-08
+Status: accepted
+Context: Every enemy death reused the white-hot hit material at a scale of death_t/death_span. On the 2.2 m warden that produced a screen-filling white block in the campaign-clear frame, hiding the boss, crosshair and score pop.
+Decision: Register material.boss_death (warm ember color 1.0/0.42/0.12, emissive 1.0/0.30/0.04) and juice.death_fx_scale (mite 1.0, brute 0.7, wisp 1.0, warden 0.45). The dead-enemy branch multiplies the shrink factor by the per-type cap and uses the ember material only for the warden; every other enemy keeps the white shrink.
+Consequences: Suite 474/474 green plus 2 xfailed (three boss-death tests); determinism 1800 ok (hash b25db520); aikit 4/4. The win capture pair changes 19,672 px (3.79%) confined to the old white block bbox 363,240-551,385, and the boss play run is bit-identical (hash cfd263b7..., 507 frames, wave 4, 3 kills, hp 100). Evidence: evidence/cycle-133.json.
