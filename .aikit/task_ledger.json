@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-33-pickup-arrow",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794101749.6916978,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794101768.474115
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-27-centered-status",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] UI cycle: center top-center status lines, failing-first width tests, high-score pair and same-hash run",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794099663.458561,
-      "timestamp_str": "2026-11-08 04:01:03",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Fixed x offsets made five-digit scores and long status labels drift off-center.",
-        "benefits": "The primary progress line and every status line share one centered axis.",
-        "risks": "contract: HUD positions only; dependency: keystone.ui.font text_width (already used); concurrency: none; state: none.",
-        "mitigation": "Width-derived centering tests for WAVE/STREAK/OVERDRIVE/SURGE/BEST, high-score pair, same kite hash."
-      },
-      "plan_digest": "925ec224c4ef5e3303cb71e77f2a208df79a0803e17a1583f2f21f67aff05271"
-    },
     {
       "task_id": "shooter-cycle-27-centered-status",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794101749.6916978,
       "timestamp_str": "2026-11-08 04:35:49",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-33-pickup-arrow",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-33-pickup-arrow' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794101768.4741173,
+      "timestamp_str": "2026-11-08 04:36:08",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
