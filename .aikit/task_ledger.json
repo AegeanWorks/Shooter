@@ -3,24 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-69-campaign-complete",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794118159.352005,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794118174.143269
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-63-pickup-pop",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-63-pickup-pop' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794115625.772859,
-      "timestamp_str": "2026-11-08 08:27:05",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-64-critical-cue",
       "phase": "in_progress",
@@ -271,6 +262,16 @@
       "status": "in_progress",
       "timestamp": 1794118159.352005,
       "timestamp_str": "2026-11-08 09:09:19",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-69-campaign-complete",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-69-campaign-complete' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794118174.1432707,
+      "timestamp_str": "2026-11-08 09:09:34",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
