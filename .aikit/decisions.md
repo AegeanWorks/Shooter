@@ -679,3 +679,10 @@ Status: accepted
 Context: The <=30 HP warning was a static 0.28-alpha red edge. Critical health looked identical at every moment and could blend into the scene.
 Decision: Pulse the four edge strips' alpha between 0.20 and 0.44 at 6 Hz from `sim.time`, with the range and rate in `juice.low_hp_cue`. Draw-only: no sim, HP, damage, camera or save change.
 Consequences: Suite 255/255 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The hp-30 peak pair at 960x540 seed 1 changes 17,856 px (3.44%, bbox 0,0-959,539), mean luma 33.20 -> 33.63, draws 6, triangles 290. `clutch 1` before/after keeps hash `ae293bcd...`, hp 30, wave 2, cue CLUTCH CLEAR, audio 2, 0 drops. Evidence: `evidence/cycle-80.json`, images in workspace `shots/shooter-campaign/cycle-80/`.
+
+## ADR-098: Warden slam obeys cover LOS (enemies/bosses)
+Date: 2026-11-08
+Status: accepted
+Context: The warden slam applied its 30-damage hit on distance and vertical reach only. Unlike the brute and wisp branches, it never checked line of sight, so a slam behind the 2 m north cover still damaged the player at 70 HP in the reproduced frame.
+Decision: Add the shared `_enemy_has_los()` gate to the warden slam damage condition. The windup, slam event, ring, 4.5 m range, reach and cooldown are unchanged; open-field slams still hit.
+Consequences: Suite 257/257 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4; the fairness reference still replays a win without re-recording. The covered-slam pair at 960x540 seed 1 changes 123,656 px (23.85%, bbox 0,12-959,539), mean luma 60.76 -> 61.14, draws 8, triangles 302. `warden_cover 10` before/after: hp 70 -> 100, hurts 1 -> 0, audio 2 -> 1, wave 3 in both; hashes differ by design. Evidence: `evidence/cycle-81.json`, images in workspace `shots/shooter-campaign/cycle-81/`.

@@ -942,7 +942,8 @@ class Sim:
                     if e.windup_t <= 0.0:
                         events.append("boss_slam")
                         if (dist <= float(edef["range"]) and self.alive
-                                and self._in_melee_reach(e)):
+                                and self._in_melee_reach(e)
+                                and self._enemy_has_los(e)):
                             self.hp -= int(edef["dmg"])
                             events.append("hurt")
                             self._on_hurt(events, e)

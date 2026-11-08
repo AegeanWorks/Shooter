@@ -1665,3 +1665,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 255 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-80.json`.
+
+## Cycle 81 - Enemies/bosses: warden slam obeys cover LOS
+- **Area**: enemies and bosses (81st cycle).
+- **Defect / evidence**: the warden slam applied its 30-damage hit on
+  distance and vertical reach only. Unlike the brute and wisp branches it
+  never checked line of sight, so a slam behind the 2 m north cover still
+  damaged the player at 70 HP.
+- **Fix**: add the shared `_enemy_has_los()` gate to the warden slam damage
+  condition. Windup, slam event, ring, range, reach and cooldown are
+  unchanged; open-field slams still hit.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-81/`;
+  960x540 seed 1, player behind the 2 m north cover, warden slam. 123,656
+  changed px (23.85%, bbox 0,12-959,539), mean luma 60.76 -> 61.14; draws
+  8, triangles 302. Before: hp 70 and damage cue; after: hp 100, clean.
+- **Played runs**: `warden_cover 10` before/after hp 70 -> 100, hurts
+  1 -> 0, audio 2 -> 1, wave 3 both; hashes differ by design. The fairness
+  reference still replays a win unchanged.
+- **Gates**: `python -m pytest -q` 257 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-81.json`.

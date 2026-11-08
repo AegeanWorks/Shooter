@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-80-lowhp-pulse",
+    "task_id": "shooter-cycle-81-warden-los",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794122680.1729167,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794123140.4770737,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794122696.8582954
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-74-brute-gap",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Brute gap closed: 242 tests, determinism 1800 ok, aikit 4/4, 101970 px slam pair, brute_gap hp 100->80, brute_slam fires; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794119975.0547605,
-      "timestamp_str": "2026-11-08 09:39:35",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-74-brute-gap",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-74-brute-gap' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794119990.4120998,
-      "timestamp_str": "2026-11-08 09:39:50",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-75-platform-base",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794122696.8582976,
       "timestamp_str": "2026-11-08 10:24:56",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-81-warden-los",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Enemies cycle: require warden slam LOS so cover blocks the hit, with a cover test, slam pair and warden_cover drill",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794122750.9522076,
+      "timestamp_str": "2026-11-08 10:25:50",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The warden slam applies damage on distance and vertical reach only; unlike the brute and wisp paths it never checks cover LOS, so a 30-damage slam lands through the 2 m north cover.",
+        "benefits": "Cover now reliably blocks the slam; the windup, ring, range, damage and cooldown are unchanged.",
+        "risks": "contract: warden damage gate only; dependency: none; concurrency: none; state: deterministic LOS only, no new tuning.",
+        "mitigation": "Failing-first cover-slam test, a staged cover pair, a warden_cover drill and the fairness/campaign suites."
+      },
+      "plan_digest": "d22fec95f1fd9a59288fa911188897dd1a466077b353e5d173b5fc6d3e837a70"
+    },
+    {
+      "task_id": "shooter-cycle-81-warden-los",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Warden LOS proven: 257 tests, determinism 1800 ok, aikit 4/4, 123656 px cover pair, warden_cover hp 70->100, slam event intact; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794123140.4770737,
+      "timestamp_str": "2026-11-08 10:32:20",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

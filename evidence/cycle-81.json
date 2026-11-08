@@ -1,0 +1,67 @@
+{
+  "area": "enemies and bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py warden_cover <prefix>",
+    "python scripts/play_run.py warden_cover 10 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 81,
+  "fix": "add the shared enemy-to-player cover LOS check to the warden slam damage gate; windup, ring, range, damage and cooldown are unchanged",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "257 passed"
+  },
+  "play_runs": {
+    "parity": "hash changes by design (the covered slam no longer damages); both runs stay alive at wave 3 for 10 frames",
+    "warden_cover_after": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 10,
+      "hash": "16602d9b7feef1da0d9f3c9a8b399f31",
+      "hp": 100,
+      "hurts": 0,
+      "wave": 3
+    },
+    "warden_cover_before": {
+      "audio": 2,
+      "drops": 0,
+      "frames": 10,
+      "hash": "eb34b068e1da00926e4224eb1a175ba4",
+      "hp": 70,
+      "hurts": 1,
+      "wave": 3
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-81/after",
+    "before_dir": "shots/shooter-campaign/cycle-81/before",
+    "route": "scripts/capture.py warden_cover; 960x540 seed 1, player behind the 2 m north cover, warden slam"
+  },
+  "tests": {
+    "suite": "257 passed",
+    "warden_cover_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "warden slam",
+    "cover LOS",
+    "boss fairness"
+  ],
+  "visual_diff": {
+    "bbox": [
+      0,
+      12,
+      959,
+      539
+    ],
+    "changed_px": 123656,
+    "draws": 8,
+    "fraction": 0.2385,
+    "mean_luma_after": 61.14,
+    "mean_luma_before": 60.76,
+    "triangles": 302
+  }
+}
