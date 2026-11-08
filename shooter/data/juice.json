@@ -39,6 +39,11 @@
   "hit_flinch_scale": 0.28,
   "hit_flinch_push": 0.12,
   "dry_fire_cd_s": 0.25,
+  "low_hp_cue": {
+    "min_alpha": 0.20,
+    "max_alpha": 0.44,
+    "hz": 6.0
+  },
   "pickup_fx_s": 0.30,
   "pickup_fx_scale": 1.5,
   "pickup_fx_rise": 0.9,

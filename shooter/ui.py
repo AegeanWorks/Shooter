@@ -180,7 +180,12 @@ def draw_shooter(canvas, hud, sim) -> None:
     hp = int(getattr(sim, "hp", 100))
     # low-hp edge warning (translucent, presentation-only)
     if hp <= 30 and bool(getattr(sim, "alive", True)):
-        edge = (1.0, 0.15, 0.15, 0.28)
+        cue = dict((getattr(sim, "juice", {}) or {}).get("low_hp_cue", {}))
+        low = float(cue.get("min_alpha", 0.20))
+        high = float(cue.get("max_alpha", 0.44))
+        hz = float(cue.get("hz", 6.0))
+        phase = 0.5 + 0.5 * math.sin(float(getattr(sim, "time", 0.0)) * hz)
+        edge = (1.0, 0.15, 0.15, low + (high - low) * phase)
         canvas.rect(0, 0, w, 6, edge)
         canvas.rect(0, h - 6, w, 6, edge)
         canvas.rect(0, 0, 6, h, edge)

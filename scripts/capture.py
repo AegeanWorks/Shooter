@@ -1966,6 +1966,30 @@ def route_campaign_seal(prefix: str, shadows: bool = True, srgb: bool = True, po
         engine.close()
 
 
+def route_lowhp_pulse(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """A 30 HP frame at the pulse peak: the low-health edge pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.hp = 30
+        g.sim.time = math.pi / 12.0
+        g._sync_scene()
+        print(f"lowhp-pulse hp={g.sim.hp} time={g.sim.time:.3f}")
+        engine.capture(f"{prefix}_lowhp_pulse.png", f"{prefix}_lowhp_pulse.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_clutch(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """A wave clear at 30 HP: the clutch-cue pair."""
     from keystone.app import Engine
@@ -2225,6 +2249,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_campaign_complete(prefix, shadows, srgb, post, bloom)
     if which == "clutch":
         route_clutch(prefix, shadows, srgb, post, bloom)
+    if which == "lowhp_pulse":
+        route_lowhp_pulse(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":
         route_hud_ammo(prefix, shadows, srgb, post, bloom)
     if which == "flinch":

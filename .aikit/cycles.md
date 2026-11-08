@@ -1648,3 +1648,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 253 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-79.json`.
+
+## Cycle 80 - Combat feel: pulsing low-health warning
+- **Area**: combat feel (80th cycle).
+- **Opportunity**: the <=30 HP warning was a static 0.28-alpha red
+  edge; critical health looked identical at every moment and could blend
+  into the scene.
+- **Fix**: pulse the four edge strips' alpha between 0.20 and 0.44 at
+  6 Hz from `sim.time`, with the range/rate DATA-owned in
+  `juice.low_hp_cue`. Draw-only: no sim, HP, damage, camera or save change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-80/`;
+  960x540 seed 1, hp 30 at time pi/12. 17,856 changed px (3.44%, bbox
+  0,0-959,539), mean luma 33.20 -> 33.63; draws 6, triangles 290.
+- **Played runs**: `clutch 1` before/after same hash `ae293bcd...`,
+  hp 30, wave 2, cue CLUTCH CLEAR, audio 2, 0 drops.
+- **Gates**: `python -m pytest -q` 255 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-80.json`.

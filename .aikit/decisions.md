@@ -672,3 +672,10 @@ Status: accepted
 Context: Cycle 58 made failed profile writes visible via `profile_save_errors`, a lifetime counter. One transient locked write therefore left `PROFILE NOT SAVED` on every later debrief, even after a later save succeeded, falsely implying current progress was unsafe.
 Decision: Track `profile_save_failed` as the latest write outcome: set it on failure, clear it on success, and base the debrief warning on it. Keep `profile_save_errors` as the lifetime telemetry counter for soak/evidence. Atomic writes and schema policy are unchanged.
 Consequences: Suite 253/253 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The failed-then-successful pair at 960x540 seed 1 changes 13,360 px (2.58%, bbox 281,334-678,449), mean luma 45.91 -> 47.28, draws 9, triangles 422: warning present before, absent after, with both runs at save_errors 1. `save_retry 120` before/after same hash `99f337e7...`, 2 frames, wave 2, hp 0, audio 4, last_run recorded, runs 1, save_errors 1, save_failed false, 0 drops. Evidence: `evidence/cycle-79.json`, images in workspace `shots/shooter-campaign/cycle-79/`.
+
+## ADR-097: Pulsing low-health edge warning (combat feel)
+Date: 2026-11-08
+Status: accepted
+Context: The <=30 HP warning was a static 0.28-alpha red edge. Critical health looked identical at every moment and could blend into the scene.
+Decision: Pulse the four edge strips' alpha between 0.20 and 0.44 at 6 Hz from `sim.time`, with the range and rate in `juice.low_hp_cue`. Draw-only: no sim, HP, damage, camera or save change.
+Consequences: Suite 255/255 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The hp-30 peak pair at 960x540 seed 1 changes 17,856 px (3.44%, bbox 0,0-959,539), mean luma 33.20 -> 33.63, draws 6, triangles 290. `clutch 1` before/after keeps hash `ae293bcd...`, hp 30, wave 2, cue CLUTCH CLEAR, audio 2, 0 drops. Evidence: `evidence/cycle-80.json`, images in workspace `shots/shooter-campaign/cycle-80/`.
