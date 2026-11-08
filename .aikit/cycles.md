@@ -1313,3 +1313,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 215 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-63.json`.
+
+## Cycle 64 - Audio cues: critical-kill reward
+- **Area**: audio cues (64th cycle).
+- **Defect / evidence**: critical kills roll at 12% and pay double
+  bounty, but the `critical` event was unmapped. The only signals were the
+  generic kill voice and a larger score pop, so the reward was not legible
+  as critical.
+- **Fix**: map the existing event to a 0.08 s 1760 Hz sine at 0.55 gain and
+  an accent `CRITICAL` caption. The generic kill voice still plays; reward
+  roll, bounty, kill feed, streak and sim state are untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-64/`;
+  960x540 seed 1, forced critical on a 1 hp mite. 3,204 changed px
+  (0.62%, bbox 420,164-827,459), mean luma 35.70 -> 35.60; draws 10,
+  triangles 698; voices 3 -> 4. WAV/spectrogram: 0.08 s voice, peak 1.0.
+- **Played runs**: `kite 3000` before/after same hash `945e3fdd...`,
+  exactly 4 natural critical clips at frames 705/779/943/2486, audio
+  462 -> 466, 32 kills, hp 82, peak 8, 0 drops.
+- **Gates**: `python -m pytest -q` 218 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-64.json`.

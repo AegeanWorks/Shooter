@@ -1,46 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-63-pickup-pop",
+    "task_id": "shooter-cycle-64-critical-cue",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794115610.8374166,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794116078.7059166,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794115625.7728577
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-58-save-error",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Progression cycle: surface failed profile saves in the debrief and keep an unwritable path from crashing the run; prove with a locked-profile death pair and drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794111533.7614946,
-      "timestamp_str": "2026-11-08 07:18:53",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "A failed save only incremented profile_save_errors; the debrief looked normal while the run was lost, and a profile parent that cannot be created raised out of the finish.",
-        "benefits": "The death screen names PROFILE NOT SAVED in red, and a save-path failure loses only the run, never the crash-free finish.",
-        "risks": "contract: debrief draw + save error handling; dependency: none; concurrency: lock semantics unchanged; state: profile schema and sim untouched.",
-        "mitigation": "Failing-first tests for the silent debrief and the crash path, a locked-profile capture pair, a same-hash save_fail drill, and the full gate set."
-      },
-      "plan_digest": "c20dee81e204e3edcc5f017469d2b21475a66cdd33dd24ec666d37e21bdac704"
-    },
-    {
-      "task_id": "shooter-cycle-58-save-error",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Save failure surfaced: 207 tests, determinism 1800 ok, aikit 4/4, 13320 px debrief pair, same death hash f8cd9e28, save_errors 1; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794111578.7241538,
-      "timestamp_str": "2026-11-08 07:19:38",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-58-save-error",
       "phase": "in_progress",
@@ -266,6 +236,35 @@
       "status": "completed",
       "timestamp": 1794115625.772859,
       "timestamp_str": "2026-11-08 08:27:05",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-64-critical-cue",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Audio cycle: give critical kills a distinct high chime and CRITICAL caption, with a forced-critical pair, campaign clip count and WAV probe",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794115977.5230434,
+      "timestamp_str": "2026-11-08 08:32:57",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Critical kills roll at 12% and pay double bounty, but only the generic kill voice and a larger score pop mark them; the reward is not legible as critical.",
+        "benefits": "A 1760 Hz chime plus CRITICAL caption distinguishes the reward without touching the roll, bounty, kill feed or sim state.",
+        "risks": "contract: event/audio/caption only; dependency: none; concurrency: none; state: no sim, reward RNG or save change.",
+        "mitigation": "Failing-first forced-critical tests, a seeded critical pair, a 3000-frame campaign clip count and a WAV/spectrogram probe."
+      },
+      "plan_digest": "0bae3ea9df490bbcd0879962f32709e43b1e11620cb27920fd48857b3174730a"
+    },
+    {
+      "task_id": "shooter-cycle-64-critical-cue",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Critical cue proven: 218 tests, determinism 1800 ok, aikit 4/4, 3204 px pair, 4 natural clips 462->466, same campaign hash 945e3fdd; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794116078.7059166,
+      "timestamp_str": "2026-11-08 08:34:38",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

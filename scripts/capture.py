@@ -1370,6 +1370,33 @@ def route_denied(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_critical(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Forced critical kill frame: the critical-cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.engagement["reward"] = {
+            "standard_p": 0.0, "critical_p": 1.0, "critical_mult": 2.0,
+            "cache_p": 0.0, "cache_reserve": 12, "cache_expire_s": 8.0,
+        }
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=1, max_hp=30)]
+        g.update(FIXED_STEP, ActionState(held=frozenset({"fire"})))
+        print(
+            f"critical kills={g.sim.kills} cue={getattr(g, 'sound_cue', '')!r} "
+            f"rewards={g.sim.rewards} voices={g.mixer.voice_count()}"
+        )
+        engine.capture(f"{prefix}_critical.png", f"{prefix}_critical.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_muzzle(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Exact first-shot frame: the muzzle-flash occlusion pair."""
     from keystone.app import Engine
@@ -1748,6 +1775,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_killfeed(prefix, shadows, srgb, post, bloom)
     if which == "muzzle":
         route_muzzle(prefix, shadows, srgb, post, bloom)
+    if which == "critical":
+        route_critical(prefix, shadows, srgb, post, bloom)
     if which == "denied":
         route_denied(prefix, shadows, srgb, post, bloom)
     if which == "dry":

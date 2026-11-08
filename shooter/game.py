@@ -475,6 +475,7 @@ class ShooterGame:
             "lance": square(440.0, 0.12, name="lance"),
             "hit": noise(0.05, seed=9, name="hit"),
             "kill": sine(220.0, 0.15, name="kill"),
+            "critical": sine(1760.0, 0.08, name="critical"),
             "pickup": sine(880.0, 0.12, name="pickup"),
             "hurt": square(110.0, 0.15, name="hurt"),
             "wave": sine(660.0, 0.20, name="wave"),
@@ -713,6 +714,9 @@ class ShooterGame:
             self._play_clip(self._clips["hit"], 0.5)
         elif event == "kill":
             self._play_clip(self._clips["kill"], 0.8)
+        elif event == "critical":
+            self._play_clip(self._clips["critical"], 0.55)
+            self._cue("CRITICAL")
         elif event == "boss_down":
             self._play_clip(self._clips["boss_down"], 1.0)
             self._cue("WARDEN DOWN")
