@@ -3,25 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-59-viewmodel-recoil",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794112664.2574599,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794112676.4880834
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-53-target-dead",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Clean death screen proven: 195 tests, determinism 1800 ok, aikit 4/4, 1548 px death pair, same death hash f8cd9e28; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794109159.701842,
-      "timestamp_str": "2026-11-08 06:39:19",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-53-target-dead",
       "phase": "completed",
@@ -265,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794112664.2574599,
       "timestamp_str": "2026-11-08 07:37:44",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-59-viewmodel-recoil",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-59-viewmodel-recoil' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794112676.4880857,
+      "timestamp_str": "2026-11-08 07:37:56",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
