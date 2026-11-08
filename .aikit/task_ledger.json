@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-92-pickup-prefab",
+    "task_id": "shooter-cycle-93-cache-material",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794132497.2174764,
+    "updated_at": 1794132979.4104834,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794132497.7063234
+    "completed_at": 1794132979.8747616
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-86-backup-restart",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Backup restart proven: 269 tests, determinism 1800 ok, aikit 4/4, 13048 px pair, same hash f8cd9e28, best 1500->4321/wins 2; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794125142.5808427,
-      "timestamp_str": "2026-11-08 11:05:42",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-86-backup-restart",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-86-backup-restart' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794125160.5686233,
-      "timestamp_str": "2026-11-08 11:06:00",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-87-brute-windup",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Combat-feel cycle: add a 0.35 s brute windup with a swell and cue, with first-frame delay tests, a windup pair and drills",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794125223.202027,
-      "timestamp_str": "2026-11-08 11:07:03",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The brute slam deals 20 damage on the first in-range frame with no prior event; unlike the warden it cannot be read or dodged.",
-        "benefits": "A short windup, visible swell and BRUTE WINDUP cue make the slam readable while preserving damage, range, LOS and cooldown.",
-        "risks": "contract: brute attack timing/visual/audio; dependency: none; concurrency: none; state: deterministic windup field, fairness needs rechecking.",
-        "mitigation": "Failing-first delay tests, a windup pair, short/long brute drills and the full fairness suite."
-      },
-      "plan_digest": "6a6862f6e213e8635e6e861499e41834bc0c5d1be3c235ee04064fa92bc2c2bd"
-    },
     {
       "task_id": "shooter-cycle-87-brute-windup",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794132497.7063253,
       "timestamp_str": "2026-11-08 13:08:17",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-93-cache-material",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: load the ammo-cache material from a .kmaterial library, with library tests, a 0-px pair and a same-hash 3000-frame campaign",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794132973.6095047,
+      "timestamp_str": "2026-11-08 13:16:13",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter is the Keystone testbed, but the file-backed material library had no consumer; the cache material was another hardcoded Material.",
+        "benefits": "cache_material.kmaterial now proves MaterialLibrary.save/entry/load in shipped gameplay, with a missing-file fallback.",
+        "risks": "contract: cache presentation only; dependency: .kmaterial asset; concurrency: none; state: no sim/hash change, same material fields.",
+        "mitigation": "Three library tests, a same-view 0-px capture pair, a same-hash kite 3000 and the full gates."
+      },
+      "plan_digest": "891dc8208c4a5cded55795eeb5e494e35da4281565731a368da954ce2137cbc4"
+    },
+    {
+      "task_id": "shooter-cycle-93-cache-material",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Cache material library proven: 288 tests, determinism 1800 ok (b25db520), aikit 4/4, 0-px pair, same kite 3000 hash bb425a57; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794132979.4104834,
+      "timestamp_str": "2026-11-08 13:16:19",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-93-cache-material",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-93-cache-material' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794132979.8747635,
+      "timestamp_str": "2026-11-08 13:16:19",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

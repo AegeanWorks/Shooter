@@ -1,0 +1,73 @@
+{
+  "area": "keystone testbed: material library",
+  "commands": [
+    "python -m pytest tests/test_cache_material_library.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py cache_visual <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 93,
+  "feature": "keystone MaterialLibrary (.kmaterial) file-backed materials",
+  "fix": "author shooter/data/cache_material.kmaterial through MaterialLibrary.save and load it at build time for material.cache; the hardcoded material remains only as a missing-file fallback",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "288 passed"
+  },
+  "keystone": {
+    "entry": {"name": "cache_material", "error": null},
+    "material": {"color": [1.0, 0.68, 0.22], "emissive": [0.82, 0.38, 0.04], "specular": 0.5, "shininess": 48.0, "texture": null},
+    "runtime_calls": ["MaterialLibrary.save", "MaterialLibrary.entry", "MaterialLibrary.load"]
+  },
+  "play_runs": {
+    "kite_after": {
+      "audio": 434,
+      "drops": 0,
+      "frames": 3000,
+      "hash": "bb425a57b9839e001906cff227fb618f",
+      "hp": 38,
+      "hurts": 6,
+      "kills": 30,
+      "score": 11560,
+      "wave": 4
+    },
+    "kite_before": {
+      "audio": 434,
+      "drops": 0,
+      "frames": 3000,
+      "hash": "bb425a57b9839e001906cff227fb618f",
+      "hp": 38,
+      "hurts": 6,
+      "kills": 30,
+      "score": 11560,
+      "wave": 4
+    },
+    "parity": "same 3000-frame campaign hash bb425a57, wave 4, 30 kills, 11560, hp 38, 6 hurts; the material library is presentation-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-93/after_cache_visual.*",
+    "before_dir": "shots/shooter-campaign/cycle-93/before_cache_visual.*",
+    "route": "scripts/capture.py cache_visual; 960x540 seed 1, one live cache at (0, 4), one update"
+  },
+  "tests": {
+    "cache_material_tests": 3,
+    "suite": "288 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone material library",
+    "ammo cache",
+    "file-backed material"
+  ],
+  "visual_diff": {
+    "bbox": null,
+    "changed_px": 0,
+    "draws": 7,
+    "fraction": 0.0,
+    "mean_luma_after": 33.51,
+    "mean_luma_before": 33.51,
+    "triangles": 302
+  }
+}

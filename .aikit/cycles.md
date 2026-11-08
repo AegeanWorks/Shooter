@@ -1930,3 +1930,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 285 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-92.json`.
+
+## Cycle 93 - Keystone testbed: cache material library
+- **Area**: keystone testbed (93rd cycle).
+- **Feature / evidence**: Keystone's file-backed material library
+  persists validated `.kmaterial` documents; the shooter had no
+  consumer and the dropped ammo-cache material was hardcoded.
+- **Fix**: author `shooter/data/cache_material.kmaterial` through
+  `MaterialLibrary.save` and load it at build time for
+  `material.cache`; the hardcoded material remains only as a
+  missing-file fallback.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-93/`;
+  960x540 seed 1, one live cache at (0, 4), one update. Exactly 0
+  changed px (bbox null), mean luma 33.51 -> 33.51; draws 7, triangles
+  302. The library material reproduces the hardcoded one
+  pixel-for-pixel.
+- **Played runs**: `kite 3000` before/after share hash
+  `bb425a57...`, wave 4, 30 kills, score 11560, hp 38, 6 hurts, 0
+  drops; presentation-only.
+- **Gates**: `python -m pytest -q` 288 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-93.json`.

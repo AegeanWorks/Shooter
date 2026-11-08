@@ -17,6 +17,7 @@ from keystone.audio import Mixer, noise, sine, square
 from keystone.geometry import Material, MeshData
 from keystone.lifecycle import ComponentRuntime
 from keystone.material_graph import MaterialGraph
+from keystone.material_library import MaterialLibrary
 from keystone.math3d import Quat, Vec3
 from keystone.prefab_library import PrefabLibrary
 from keystone.primitives import cone, cube, plane, sphere
@@ -327,7 +328,16 @@ class ShooterGame:
                 Material(color=Vec3(*color), emissive=Vec3(*glow)),
             )
         self.assets.register("material.pickup", Material(color=Vec3(0.25, 1.0, 0.45), emissive=Vec3(0.10, 0.55, 0.20)))
-        self.assets.register("material.cache", Material(color=Vec3(1.0, 0.68, 0.22), specular=0.5, shininess=48.0, emissive=Vec3(0.82, 0.38, 0.04)))
+        # Keystone material library: the dropped ammo-cache material is a
+        # committed .kmaterial document; a missing file keeps the same
+        # hardcoded fallback so presentation never blocks play.
+        try:
+            cache_material = MaterialLibrary(
+                Path(__file__).parent / "data"
+            ).load("cache_material")
+        except (KeyError, OSError, ValueError):
+            cache_material = Material(color=Vec3(1.0, 0.68, 0.22), specular=0.5, shininess=48.0, emissive=Vec3(0.82, 0.38, 0.04))
+        self.assets.register("material.cache", cache_material)
         # Keystone material graph: the boss core is a declarative checker
         # material document, evaluated through keystone.material_graph.
         core_graph = MaterialGraph.from_dict(
