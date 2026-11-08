@@ -2011,3 +2011,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 302 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-96.json`.
+
+## Cycle 97 - Keystone testbed: audio buses and asset hot reload
+- **Area**: keystone testbed (97th cycle).
+- **Feature / evidence**: The shooter uses the named-bus Mixer and the
+  AssetRegistry, but bus gain/mixdown, dependency tracking and file hot
+  reload were not directly covered.
+- **Fix**: add `tests/test_keystone_audio_assets.py` covering a bus
+  gain at 1.0/0.25/0.0, invalid bus/gain rejection, the shooter mixer's
+  sfx mute and 12-to-8 voice cap, asset dependencies/missing edges,
+  duplicate digests, replace guards and a temp `.kprefab` hot reload.
+- **Proof**: the 0.25 bus renders exactly 0.25x the full peak and a zero
+  bus is silent; the shooter mute is silent and the update caps 12
+  voices at <=8; `material.gold` depends on `texture.checker` and
+  reports missing after removal; duplicate textures form one digest
+  group; replace updates the digest; the edited prefab reloads with
+  root `surge-pickup-v2` and the deleted source reports missing.
+- **Gates**: `python -m pytest -q` 308 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-97.json`.

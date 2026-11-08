@@ -1,0 +1,50 @@
+{
+  "area": "keystone testbed: audio buses and asset registry",
+  "commands": [
+    "python -m pytest tests/test_keystone_audio_assets.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 97,
+  "feature": "Mixer named-bus gain/mixdown/validation/voice cap; AssetRegistry dependencies/duplicates/replace guard/file hot reload",
+  "fix": "add tests/test_keystone_audio_assets.py covering bus gain scaling to 0.25x and silence, invalid bus/gain rejection, the shooter mixer's sfx mute and 12-to-8 voice cap, asset dependency/missing tracking, duplicate digests, replace guards and a temp .kprefab hot reload with reloaded/missing reports",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "308 passed"
+  },
+  "mechanics": {
+    "audio": {
+      "bus_full_peak_positive": true,
+      "bus_0_25_peak_ratio": 0.25,
+      "bus_zero_peak": 0.0,
+      "invalid_bus_rejected": true,
+      "negative_gain_rejected": true,
+      "shooter_sfx_mute_peak": 0.0,
+      "voices_before_update": 12,
+      "voices_after_update": "<=8"
+    },
+    "assets": {
+      "dependency": ["material.gold", "texture.checker"],
+      "missing_after_remove": true,
+      "duplicate_group": ["texture.checker", "texture.copy"],
+      "replace_guard": true,
+      "replace_digest_changed": true,
+      "hot_reload": {"asset": "prefab.test", "reloaded": true, "root_name": "surge-pickup-v2"},
+      "missing_after_unlink": true
+    }
+  },
+  "tests": {
+    "audio_asset_tests": 6,
+    "suite": "308 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone mixer",
+    "audio buses",
+    "asset registry",
+    "hot reload",
+    "dependency tracking"
+  ]
+}

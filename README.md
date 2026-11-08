@@ -71,6 +71,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `GameSession` web/editor/JSON API | describe/scene/editor/simulate | `tests/test_keystone_web_api.py` |
 | `CommandLog`/`verify_log` + `TriggerTracker` + `ParticleSystem` + `plan_batches` + `SpatialGrid` | replay, trigger edges, particle bursts, batch plan, broadphase | `tests/test_keystone_mechanics.py` |
 | `AnimationLibrary` + `Track`/`AnimationController` + `apply_pose` | `.kanim` clips, sampling, crossfade, events, poses | `tests/test_keystone_animation_mechanics.py` |
+| `Mixer` + `AssetRegistry` | bus gain/mixdown/voice cap, dependencies/duplicates/hot reload | `tests/test_keystone_audio_assets.py` |
 
 ```powershell
 python play.py --describe
@@ -113,6 +114,7 @@ projects/shooter/
 │   ├── test_keystone_web_api.py <- GameSession describe/scene/editor/simulate
 │   ├── test_keystone_mechanics.py <- replay/triggers/particles/batching/broadphase
 │   ├── test_keystone_animation_mechanics.py <- .kanim/sampling/crossfade/events/apply_pose
+│   ├── test_keystone_audio_assets.py <- mixer buses/mixdown, asset deps/hot reload
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -299,7 +301,8 @@ projects/shooter/
 │   ├── cycle-93.json  <- cycle 93 proof: keystone cache material, 0-px same-hash campaign
 │   ├── cycle-94.json  <- cycle 94 proof: GameSession describe/scene/editor/simulate coverage
 │   ├── cycle-95.json  <- cycle 95 proof: replay/trigger/particle/batch/broadphase mechanics
-│   └── cycle-96.json  <- cycle 96 proof: animation library, sampling, crossfade, events, poses
+│   ├── cycle-96.json  <- cycle 96 proof: animation library, sampling, crossfade, events, poses
+│   └── cycle-97.json  <- cycle 97 proof: mixer buses/mixdown, asset deps/hot reload
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
