@@ -1,46 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-61-platform-perimeter",
+    "task_id": "shooter-cycle-62-no-reserve",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794114429.5309691,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794114944.8905385,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794114449.5158875
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-56-wall-texture",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Graphics cycle: deterministic 64x64 wall-panel texture on material.wall, capture route and before/after pair, inspect for stretching",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794110224.7142198,
-      "timestamp_str": "2026-11-08 06:57:04",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Boundary walls are flat gray boxes; cover panels got seams in cycle 49 but walls still read as untextured slabs, weakening the arena enclosure at spawn and long sightlines.",
-        "benefits": "A material-only panel texture adds seams/bands to all four walls with no new nodes, draw calls or colliders, and keeps determinism.",
-        "risks": "contract: material/texture only; dependency: none; concurrency: none; state: no sim, save or physics change.",
-        "mitigation": "Failing-first texture tests, a seeded wall_texture capture pair at 960x540, and a same-hash played run; keep checker_scale gentle to avoid world-block banding."
-      },
-      "plan_digest": "a9dc39aa19e04b6beccb705c4cde5c0aa132b943092cffadad1728d160673b5e"
-    },
-    {
-      "task_id": "shooter-cycle-56-wall-texture",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Wall panels proven: 201 tests, determinism 1800 ok, aikit 4/4, 34064 px spawn pair, same kite hash 4fe640c5; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794110719.6483054,
-      "timestamp_str": "2026-11-08 07:05:19",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-56-wall-texture",
       "phase": "completed",
@@ -266,6 +236,35 @@
       "status": "completed",
       "timestamp": 1794114449.5158896,
       "timestamp_str": "2026-11-08 08:07:29",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-62-no-reserve",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] UI cycle: add a NO RESERVE second line to the near-crosshair low-ammo panel when the magazine runs dry, with a HUD pair and dry-fire parity",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794114788.61204,
+      "timestamp_str": "2026-11-08 08:13:08",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The cycle-55 panel shows LOW AMMO <mag> but never says the reserve is empty, so the warning implies a reload will help when it cannot.",
+        "benefits": "The player can tell an empty reserve from an ordinary low magazine at the aim point; full counts stay in the engine status.",
+        "risks": "contract: HUD draw only; dependency: none; concurrency: none; state: no sim, ammo, input or save change.",
+        "mitigation": "Failing-first label tests, the hud_ammo capture pair at 960x540, dry-fire hash parity and the full gates."
+      },
+      "plan_digest": "8b50ac1e70e31f715ffe12a645fc1d03c0a2db5d0dabe84e2964668a1b80910d"
+    },
+    {
+      "task_id": "shooter-cycle-62-no-reserve",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Empty-reserve warning proven: 213 tests, determinism 1800 ok, aikit 4/4, 2768 px HUD pair, same dry hash d33f43e4, reserve 0; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794114944.8905385,
+      "timestamp_str": "2026-11-08 08:15:44",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

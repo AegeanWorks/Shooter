@@ -1497,7 +1497,15 @@ def route_hud_ammo(prefix: str, shadows: bool = True, srgb: bool = True, post: b
         g.sim.reload_t = 0.55
         g.update(FIXED_STEP, ActionState())
         engine.capture(f"{prefix}_reload.png", f"{prefix}_reload.json")
-        print(f"hud-ammo mag={g.sim.ammo['pulse']} reload_t={g.sim.reload_t:.2f}")
+        g.sim.reload_t = 0.0
+        g.sim.ammo["pulse"] = 3
+        g.sim.reserve["pulse"] = 0
+        g.update(FIXED_STEP, ActionState())
+        engine.capture(f"{prefix}_no_reserve.png", f"{prefix}_no_reserve.json")
+        print(
+            f"hud-ammo mag={g.sim.ammo['pulse']} "
+            f"reserve={g.sim.reserve['pulse']} reload_t={g.sim.reload_t:.2f}"
+        )
         _profiler(engine)
     finally:
         engine.close()

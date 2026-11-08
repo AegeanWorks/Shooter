@@ -87,6 +87,7 @@ def draw_shooter(canvas, hud, sim) -> None:
     wdef = getattr(sim, "weapons", {}).get(weapon, {})
     mag = int(getattr(sim, "ammo", {}).get(weapon, 0))
     mag_size = max(1, int(wdef.get("mag", 1)))
+    reserve = int(getattr(sim, "reserve", {}).get(weapon, 0))
     reload_t = float(getattr(sim, "reload_t", 0.0))
     if bool(getattr(sim, "alive", True)):
         if reload_t > 0.0:
@@ -98,8 +99,12 @@ def draw_shooter(canvas, hud, sim) -> None:
             canvas.text(cx - 50, by + 10, "RELOADING", dim, 2)
         elif mag <= mag_size // 4:
             label = f"LOW AMMO {mag}"
-            canvas.rect(cx - 75, cy + 30, 150, 22, panel_c)
+            no_reserve = reserve <= 0
+            panel_h = 40 if no_reserve else 22
+            canvas.rect(cx - 75, cy + 30, 150, panel_h, panel_c)
             canvas.text(cx - 65, cy + 35, label, danger, 2)
+            if no_reserve:
+                canvas.text(cx - 65, cy + 51, "NO RESERVE", danger, 2)
 
     # Directional damage cue: point at the last attacker for a short window.
     # World-space source + camera yaw -> bearing around the crosshair; the

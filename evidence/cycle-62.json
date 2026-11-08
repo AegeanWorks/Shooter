@@ -1,0 +1,71 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py hud_ammo <prefix>",
+    "python scripts/play_run.py dry 60 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 62,
+  "fix": "show a red NO RESERVE second line and grow the near-crosshair low-ammo panel from 22 to 40 px when the equipped weapon has no reserve rounds; the normal low-magazine panel keeps its 150x22 size",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "213 passed"
+  },
+  "play_runs": {
+    "dry_after": {
+      "ammo": 0,
+      "audio": 1,
+      "cue": "NO AMMO",
+      "drops": 0,
+      "frames": 11,
+      "hash": "d33f43e4018be5eb6990ed5c473a70c7",
+      "hp": 100,
+      "reserve": 0,
+      "shots": 0
+    },
+    "dry_before": {
+      "ammo": 0,
+      "audio": 1,
+      "cue": "NO AMMO",
+      "drops": 0,
+      "frames": 11,
+      "hash": "d33f43e4018be5eb6990ed5c473a70c7",
+      "hp": 100,
+      "reserve": 0,
+      "shots": 0
+    },
+    "parity": "same hash d33f43e4 before/after; HUD-only change"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-62/after",
+    "before_dir": "shots/shooter-campaign/cycle-62/before",
+    "route": "scripts/capture.py hud_ammo; 960x540 seed 1, pulse magazine 3 with reserve 0"
+  },
+  "tests": {
+    "no_reserve_tests": 2,
+    "suite": "213 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "empty reserve",
+    "low-ammo warning",
+    "reload decision"
+  ],
+  "visual_diff": {
+    "bbox": [
+      405,
+      321,
+      554,
+      339
+    ],
+    "changed_px": 2768,
+    "draws": 6,
+    "fraction": 0.0053,
+    "mean_luma_after": 32.36,
+    "mean_luma_before": 32.33,
+    "triangles": 290
+  }
+}

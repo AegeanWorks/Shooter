@@ -66,7 +66,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/cover-safe summons/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload, kill-feed, damage, boss/pickup direction (tag survives boss)
+│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload/no-reserve, kill-feed, damage, boss/pickup direction (tag survives boss)
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, W/L history, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -132,6 +132,7 @@ projects/shooter/
 │   ├── test_target_dead.py <- target bar hidden on the death screen
 │   ├── test_pad_pulse.py   <- launch pad sine scale pulse
 │   ├── test_lowammo_count.py <- LOW AMMO <mag> near the crosshair
+│   ├── test_no_reserve.py  <- NO RESERVE second line only when reserve is empty
 │   ├── test_wall_texture.py <- deterministic wall panel texture, no new draws
 │   ├── test_surge_forfeit_cue.py <- surge-forfeit voice + caption, switch parity
 │   ├── test_save_error.py <- failed profile write warns, unwritable parent no crash
@@ -205,7 +206,8 @@ projects/shooter/
 │   ├── cycle-58.json  <- improvement-cycle 58 proof: save-error debrief pair, death drill
 │   ├── cycle-59.json  <- improvement-cycle 59 proof: viewmodel-recoil pair, same-hash run
 │   ├── cycle-60.json  <- improvement-cycle 60 proof: cover-safe summon pair, summon drill
-│   └── cycle-61.json  <- improvement-cycle 61 proof: four-edge platform rim pair, same-hash run
+│   ├── cycle-61.json  <- improvement-cycle 61 proof: four-edge platform rim pair, same-hash run
+│   └── cycle-62.json  <- improvement-cycle 62 proof: no-reserve HUD pair, dry-fire run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

@@ -1271,3 +1271,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 211 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-61.json`.
+
+## Cycle 62 - UI readability: empty-reserve warning
+- **Area**: UI readability (62nd cycle).
+- **Defect / evidence**: the cycle-55 low-ammo panel shows
+  `LOW AMMO <mag>`, but with zero reserve rounds the player cannot reload.
+  The warning looked like an ordinary low-magazine prompt and implied a
+  reload would help; the reserve count lived only in the top-left status.
+- **Fix**: read the equipped weapon's reserve in the HUD; when the
+  low-ammo branch runs and reserve is zero, add a red `NO RESERVE` second
+  line and grow the panel from 150x22 to 150x40. With reserve rounds the
+  panel keeps its existing size and label. Draw-only.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-62/`;
+  960x540 seed 1, pulse magazine 3 with reserve 0. 2,768 changed px
+  (0.53%, bbox 405,321-554,339), mean luma 32.33 -> 32.36; draws 6,
+  triangles 290.
+- **Played runs**: `dry 60` before/after same hash `d33f43e4...`,
+  ammo 0/reserve 0, cue NO AMMO, 11 frames, hp 100, audio 1, drops 0.
+- **Gates**: `python -m pytest -q` 213 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-62.json`.
