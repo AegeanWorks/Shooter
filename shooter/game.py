@@ -18,6 +18,7 @@ from keystone.geometry import Material, MeshData
 from keystone.lifecycle import ComponentRuntime
 from keystone.material_graph import MaterialGraph
 from keystone.math3d import Quat, Vec3
+from keystone.prefab_library import PrefabLibrary
 from keystone.primitives import cone, cube, plane, sphere
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
 from keystone.state_machine_library import StateMachineLibrary
@@ -492,23 +493,39 @@ class ShooterGame:
         pickup_mesh = self.assets.require("mesh.pickup").payload
         pickup_mat = self.assets.require("material.pickup").payload
         self._pickup_spot = self.sim.levels.get("pickup", {"x": 0.0, "y": 0.5, "z": -6.0})
-        self._pickup = Node("surge-pickup", id="surge-pickup", visible=False,
-                            transform=Transform(position=Vec3(
-                                float(self._pickup_spot["x"]), float(self._pickup_spot["y"]), float(self._pickup_spot["z"]))),
-                            mesh=pickup_mesh, material=pickup_mat)
-        self.scene.add(self._pickup)
-        # Pickup beacon: a thin emissive column + bobbing orb above the surge
-        # spot so the reward is visible over the centre cover from spawn.
-        self._pickup_beam = Node(
-            "surge-beam", id="surge-beam", visible=False,
-            mesh=self.assets.require("mesh.wall").payload, material=pickup_mat,
-        )
-        self.scene.add(self._pickup_beam)
-        self._pickup_orb = Node(
-            "surge-orb", id="surge-orb", visible=False,
-            mesh=self.assets.require("mesh.beacon_orb").payload, material=pickup_mat,
-        )
-        self.scene.add(self._pickup_orb)
+        # Keystone prefab: the reward marker is a committed multi-root
+        # .kprefab (cube + beam + orb) instantiated at build time; its
+        # mesh/material ids resolve through the game asset registry.
+        try:
+            pickup_prefab = PrefabLibrary(
+                Path(__file__).parent / "data", registry=self.assets
+            ).load("pickup_beacon")
+        except (KeyError, OSError, ValueError):
+            pickup_prefab = None
+        if pickup_prefab is not None:
+            (
+                self._pickup,
+                self._pickup_beam,
+                self._pickup_orb,
+            ) = pickup_prefab.instantiate(self.scene, instance="pickup")
+        else:
+            self._pickup = Node("surge-pickup", id="surge-pickup", visible=False,
+                                transform=Transform(position=Vec3(
+                                    float(self._pickup_spot["x"]), float(self._pickup_spot["y"]), float(self._pickup_spot["z"]))),
+                                mesh=pickup_mesh, material=pickup_mat)
+            self.scene.add(self._pickup)
+            # Pickup beacon: a thin emissive column + bobbing orb above the surge
+            # spot so the reward is visible over the centre cover from spawn.
+            self._pickup_beam = Node(
+                "surge-beam", id="surge-beam", visible=False,
+                mesh=self.assets.require("mesh.wall").payload, material=pickup_mat,
+            )
+            self.scene.add(self._pickup_beam)
+            self._pickup_orb = Node(
+                "surge-orb", id="surge-orb", visible=False,
+                mesh=self.assets.require("mesh.beacon_orb").payload, material=pickup_mat,
+            )
+            self.scene.add(self._pickup_orb)
         # Ammo-cache pool: shared glowing cubes mark sim-dropped caches.
         # Presentation only; lifetime, pickup and reward RNG stay in sim.
         self._cache_nodes = []

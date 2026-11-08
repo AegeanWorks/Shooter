@@ -1907,3 +1907,26 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 282 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-91.json`.
+
+## Cycle 92 - Keystone testbed: pickup beacon prefab
+- **Area**: keystone testbed (92nd cycle).
+- **Feature / evidence**: Keystone's prefab system captures reusable
+  subtrees, persists versioned `.kprefab` documents against registered
+  mesh/material ids and instantiates caller-prefixed copies. The shooter
+  had no prefab consumer; the surge pickup marker was three hand-built
+  nodes.
+- **Fix**: author `shooter/data/pickup_beacon.kprefab` through
+  `Prefab.from_nodes` / `PrefabLibrary.save` and instantiate it at
+  build time with the asset registry (instance prefix `pickup`); the
+  fallback keeps the old nodes if the file is missing.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-92/`;
+  960x540 seed 1, wave 2 active pickup, staged viewer at (3.5, 8).
+  Exactly 0 changed px (bbox null), mean luma 38.39 -> 38.39; draws 12,
+  triangles 824. The 3-root prefab reproduces the hand-built group
+  pixel-for-pixel.
+- **Played runs**: `pickup 300` before/after share hash
+  `7f84f3e9...`, 147 frames, wave 2, hp 100, 0 hurts; the prefab is
+  presentation-only.
+- **Gates**: `python -m pytest -q` 285 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-92.json`.

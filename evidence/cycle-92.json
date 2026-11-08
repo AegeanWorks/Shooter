@@ -1,0 +1,69 @@
+{
+  "area": "keystone testbed: prefab library",
+  "commands": [
+    "python -m pytest tests/test_pickup_prefab.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py pickup <prefix>",
+    "python scripts/play_run.py pickup 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 92,
+  "feature": "keystone Prefab + PrefabLibrary (.kprefab) multi-root instantiation",
+  "fix": "author shooter/data/pickup_beacon.kprefab through Prefab.from_nodes/PrefabLibrary.save and instantiate it at build time with the game asset registry; the pickup cube, beacon beam and orb become one 3-root prefab instance (or the hand-built fallback if the file is missing)",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "285 passed"
+  },
+  "keystone": {
+    "entry": {"name": "pickup_beacon", "node_count": 3, "error": null},
+    "instantiate": {"instance": "pickup", "roots": 3, "ids": ["pickup:surge-pickup", "pickup:surge-beam", "pickup:surge-orb"]},
+    "runtime_calls": ["Prefab.from_nodes", "PrefabLibrary.save", "PrefabLibrary.entry", "PrefabLibrary.load", "Prefab.instantiate"]
+  },
+  "play_runs": {
+    "pickup_after": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 147,
+      "hash": "7f84f3e957177531fff1493c27a6b762",
+      "hp": 100,
+      "hurts": 0,
+      "wave": 2
+    },
+    "pickup_before": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 147,
+      "hash": "7f84f3e957177531fff1493c27a6b762",
+      "hp": 100,
+      "hurts": 0,
+      "wave": 2
+    },
+    "parity": "same 147-frame pickup walk hash 7f84f3e9, wave 2, hp 100, 0 hurts; the prefab is presentation-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-92/after_pickup.*",
+    "before_dir": "shots/shooter-campaign/cycle-92/before_pickup.*",
+    "route": "scripts/capture.py pickup; 960x540 seed 1, wave 2 active pickup, staged viewer at (3.5, 8)"
+  },
+  "tests": {
+    "pickup_prefab_tests": 3,
+    "suite": "285 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone prefab",
+    "prefab library",
+    "pickup beacon"
+  ],
+  "visual_diff": {
+    "bbox": null,
+    "changed_px": 0,
+    "draws": 12,
+    "fraction": 0.0,
+    "mean_luma_after": 38.39,
+    "mean_luma_before": 38.39,
+    "triangles": 824
+  }
+}

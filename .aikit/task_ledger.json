@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-91-core-material-graph",
+    "task_id": "shooter-cycle-92-pickup-prefab",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794131686.0382476,
+    "updated_at": 1794132497.2174764,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794131686.4197938
+    "completed_at": 1794132497.7063234
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-85-overdrive-kill-cue",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Overdrive-kill cue proven: 266 tests, determinism 1800 ok, aikit 4/4, 5076 px pair, same hash 00065237, audio 3->4; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794124709.4207752,
-      "timestamp_str": "2026-11-08 10:58:29",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-85-overdrive-kill-cue",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-85-overdrive-kill-cue' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794124736.9602134,
-      "timestamp_str": "2026-11-08 10:58:56",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-86-backup-restart",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Progression cycle: load .bak when the main profile is missing, with restart tests, a recovery pair and backup-restart drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794124786.1401718,
-      "timestamp_str": "2026-11-08 10:59:46",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "After a corrupt main is quarantined and .bak loads in memory, quitting without a save leaves no main; the next launch treats the missing file as a fresh profile and ignores the backup, losing progress.",
-        "benefits": "A missing main with a valid backup now restores the profile and reports PROFILE RECOVERED instead of defaulting.",
-        "risks": "contract: profile load path only; dependency: none; concurrency: none; state: schema, quarantine and atomic writes unchanged.",
-        "mitigation": "Failing-first restart tests, a backup-restart capture pair, a drill and the full gates."
-      },
-      "plan_digest": "9f9702d08b719bb3a6dda2c0a37e8388159440ab5d7d256f8a0f6e8ac9a626ba"
-    },
     {
       "task_id": "shooter-cycle-86-backup-restart",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794131686.4197962,
       "timestamp_str": "2026-11-08 12:54:46",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-92-pickup-prefab",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: author and instantiate the 3-root pickup beacon prefab through PrefabLibrary, with prefab tests, a 0-px pair and a same-hash pickup walk",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794132486.4534094,
+      "timestamp_str": "2026-11-08 13:08:06",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter is the Keystone testbed, but the prefab system and .kprefab library had no consumer; the pickup marker was three hand-built nodes.",
+        "benefits": "One committed multi-root prefab now proves registry-resolved save/load/instantiate in shipped gameplay, with a fallback for a missing file.",
+        "risks": "contract: pickup presentation only; dependency: .kprefab asset; concurrency: none; state: no sim/hash change, same meshes/materials/transforms.",
+        "mitigation": "Three prefab tests, a same-view 0-px capture pair, a same-hash pickup walk and the full gates."
+      },
+      "plan_digest": "992b56c280ed921526c74d80f0eb6df2ca073c4c2dbe22c0f0bf3fe047ff6b70"
+    },
+    {
+      "task_id": "shooter-cycle-92-pickup-prefab",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Pickup prefab proven: 285 tests, determinism 1800 ok (b25db520), aikit 4/4, 0-px pair, 3 roots/id lookup, same pickup hash 7f84f3e9; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794132497.2174764,
+      "timestamp_str": "2026-11-08 13:08:17",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-92-pickup-prefab",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-92-pickup-prefab' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794132497.7063253,
+      "timestamp_str": "2026-11-08 13:08:17",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

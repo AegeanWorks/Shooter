@@ -1,0 +1,96 @@
+{
+  "name": "pickup_beacon",
+  "roots": [
+    {
+      "children": [],
+      "components": [],
+      "id": "surge-pickup",
+      "layer": "default",
+      "material": "material.pickup",
+      "mesh": "mesh.pickup",
+      "name": "surge-pickup",
+      "prefab_link": null,
+      "tags": [],
+      "transform": {
+        "position": [
+          0.0,
+          0.5,
+          -6.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "visible": false
+    },
+    {
+      "children": [],
+      "components": [],
+      "id": "surge-beam",
+      "layer": "default",
+      "material": "material.pickup",
+      "mesh": "mesh.wall",
+      "name": "surge-beam",
+      "prefab_link": null,
+      "tags": [],
+      "transform": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "visible": false
+    },
+    {
+      "children": [],
+      "components": [],
+      "id": "surge-orb",
+      "layer": "default",
+      "material": "material.pickup",
+      "mesh": "mesh.beacon_orb",
+      "name": "surge-orb",
+      "prefab_link": null,
+      "tags": [],
+      "transform": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "visible": false
+    }
+  ],
+  "schema": 2
+}
