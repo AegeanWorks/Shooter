@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-42-death-fx",
+    "task_id": "shooter-cycle-43-brute-slam",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794104702.339632,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794105011.2932222,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794104726.9814584
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-36-spawn-cue",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Spawn cue proven: 157 tests, determinism 1800 ok, aikit 4/4, 10312 px pair, audio 90->101, same hash 4fe640c5; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794102724.6097584,
-      "timestamp_str": "2026-11-08 04:52:04",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-36-spawn-cue",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-36-spawn-cue' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794102743.4246447,
-      "timestamp_str": "2026-11-08 04:52:23",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-37-career-totals",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794104726.981461,
       "timestamp_str": "2026-11-08 05:25:26",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-43-brute-slam",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Audio cycle: brute-slam voice/caption, failing-first tests, close-range pair and brute drill",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794105003.2670581,
+      "timestamp_str": "2026-11-08 05:30:03",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The brute's 20-damage slam had only the generic hurt clip.",
+        "benefits": "A distinct slam cue names the biggest normal-enemy hit.",
+        "risks": "contract: event/audio/caption only; dependency: none; concurrency: none; state: no sim change.",
+        "mitigation": "Event/voice/caption tests, staged pair, brute 60 drill, same kite hash."
+      },
+      "plan_digest": "2a4e6a0f9c471041bd2f9f08d546e50387a847298191503a54d24a2ef0ff4404"
+    },
+    {
+      "task_id": "shooter-cycle-43-brute-slam",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Brute slam cue proven: 172 tests, determinism 1800 ok, aikit 4/4, 3800 px pair, brute drill audio 2, same kite hash 4fe640c5; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794105011.2932222,
+      "timestamp_str": "2026-11-08 05:30:11",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

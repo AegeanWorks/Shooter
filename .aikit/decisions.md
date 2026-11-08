@@ -413,3 +413,10 @@ Status: accepted
 Context: A killed enemy node disappeared on the kill frame. The burst, feed, sound, hitstop and killmark all played, but the body had no exit transition, so the final hit read as a sudden deletion.
 Decision: Add `juice.death_fx_s` (0.15 s) and `_Enemy.death_t`, set when an enemy dies and decremented for dead enemies in `_step_enemies`. `_sync_scene` shows a dead enemy while `death_t > 0`, shrinking it to zero and using `material.enemy_hit`; then the node hides. `death_t` is excluded from the snapshot; damage, AI, movement and RNG are untouched.
 Consequences: Suite 170/170 green (three new tests); determinism 1800 ok; aikit 4/4. Two frames after a kill at 960×540 seed 1 the pair changes 3,255 px (0.63%, bbox 438,92-923,373), mean luma 38.25→38.64, draws 9→10, triangles 378→698. `kite 600` keeps hash `4fe640c5…`, 10 kills / 1950 / hp 100, 101 audio, peak 8, 0 drops. Evidence: `evidence/cycle-42.json`, images in workspace `shots/shooter-campaign/cycle-42/`.
+
+## ADR-060: Brute slam voice and caption (audio cues)
+Date: 2026-11-08
+Status: accepted
+Context: The warden has dedicated windup/slam voices, but the brute's 20-damage slam only produced the generic `hurt` clip and the damage-direction cue. The staged close-range hit measured events `['hurt']`, cue `''`, one voice, so the strongest normal-enemy attack had no distinct audio identity.
+Decision: Emit `brute_slam` in the brute attack branch before the existing hurt event; add a 0.15 s noise clip and a danger `BRUTE SLAM` caption. The hurt clip still plays. Damage, LOS, cooldown, RNG and the snapshot are untouched.
+Consequences: Suite 172/172 green (two new tests); determinism 1800 ok; aikit 4/4. The staged hit pair at 960×540 seed 1 changes 3,800 px (0.73%, bbox 408,164-827,459), mean luma 48.55→48.22, draws 7, triangles 302. `brute 60` records `brute_slam` + `hurt` at frame 1, hp 80, peak 2, 0 drops, hash `830dcbe4…`; `kite 600` keeps hash `4fe640c5…` and its 10 kills / 1950 / hp 100. Evidence: `evidence/cycle-43.json`, images in workspace `shots/shooter-campaign/cycle-43/`.

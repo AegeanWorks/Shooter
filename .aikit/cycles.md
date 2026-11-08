@@ -883,3 +883,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 170 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-42.json`.
+
+## Cycle 43 - Audio cues: brute slam voice
+- **Area**: audio cues (43rd cycle).
+- **Defect / evidence**: the brute's 20-damage slam produced only the
+  generic `hurt` clip; the warden has dedicated slam cues. The staged
+  close-range hit measured events `['hurt']`, cue `''`, one voice.
+- **Fix**: emit `brute_slam` in the brute attack branch; add a 0.15 s
+  noise clip and a danger `BRUTE SLAM` caption. Damage, LOS, cooldown
+  and the snapshot are unchanged; the generic hurt clip still plays.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-43/`;
+  960x540 seed 1, brute at 1.5 m, first hit frame. Before hp 80 + empty
+  cue + 1 voice; after hp 80 + `BRUTE SLAM` + `AUDIO 2 VOX`:
+  3,800 changed px (0.73%, bbox 408,164-827,459), mean luma
+  48.55 -> 48.22; draws 7, triangles 302.
+- **Played runs**: `brute 60` hp 80, 1 hurt, audio events frame 1
+  `brute_slam` + `hurt`, peak 2, drops 0, hash `830dcbe4...`;
+  `kite 600` keeps hash `4fe640c5...` (no brute hit on that path).
+- **Gates**: `python -m pytest -q` 172 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-43.json`.

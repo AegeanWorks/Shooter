@@ -11,6 +11,7 @@ Modes:
   ambush   staged alternating side attackers (damage-direction drill)
   boss     warden-only wave-3 fight with the kite policy (ends on boss death)
   slam     close-range warden windup/slam (audio + caption drill)
+  brute    stand in a brute's slam range (brute-slam cue drill)
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
   platform run at the rear low platform, jump onto it, stop on the top
@@ -125,6 +126,13 @@ def main(
                 summon_cd=999.0,
             )
             game.sim.enemies = [boss]
+        if mode == "brute":
+            game.sim.spawn_queue = ["mite"]
+            game.sim.spawn_t = 999.0
+            game.sim.enemies = [
+                _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 6.5), hp=120,
+                       max_hp=120, attack_cd=0.0)
+            ]
         if mode == "death":
             sim = game.sim
             sim.wave = 2

@@ -830,6 +830,7 @@ class Sim:
                 if (dist <= float(edef["range"]) and e.attack_cd <= 0.0
                         and self.alive and self._enemy_has_los(e)
                         and self._in_melee_reach(e)):
+                    events.append("brute_slam")
                     self.hp -= int(edef["dmg"])
                     e.attack_cd = 2.0
                     events.append("hurt")

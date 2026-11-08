@@ -417,6 +417,35 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_brute_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """First brute hit at close range: the brute-slam cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 6.5),
+                                hp=120, max_hp=120, attack_cd=0.0)]
+        for _ in range(30):
+            before = int(g.sim.hp)
+            g.update(FIXED_STEP, ActionState())
+            if int(g.sim.hp) < before:
+                print(
+                    f"brute-slam frame={g.sim.tick} hp={g.sim.hp} "
+                    f"cue={getattr(g, 'sound_cue', '')!r} "
+                    f"voices={g.mixer.voice_count()}"
+                )
+                engine.capture(f"{prefix}_brute_slam.png", f"{prefix}_brute_slam.json")
+                break
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_death_fx(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Two frames after a kill: the shrinking death-silhouette pair."""
     from keystone.app import Engine
@@ -1370,6 +1399,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_streak_bonus(prefix, shadows, srgb, post, bloom)
     if which == "death_fx":
         route_death_fx(prefix, shadows, srgb, post, bloom)
+    if which == "brute_slam":
+        route_brute_slam(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

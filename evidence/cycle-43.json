@@ -1,0 +1,68 @@
+{
+  "area": "audio cues",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py brute_slam <prefix>",
+    "python scripts/play_run.py brute 60 <report>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 43,
+  "fix": "brute attack emits brute_slam; a 0.15 s noise clip plus a danger BRUTE SLAM caption sit alongside the generic hurt event",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "172 passed"
+  },
+  "play_runs": {
+    "brute_60": {
+      "audio_events": [
+        [1, "brute_slam"],
+        [1, "hurt"]
+      ],
+      "dropped_sfx": 0,
+      "hash": "830dcbe46c59d36dc84109e6087fa05e",
+      "hp": 80,
+      "hurts": 1,
+      "peak_voices": 2
+    },
+    "kite_600": {
+      "audio": 101,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "kills": 10,
+      "score": 1950
+    },
+    "parity": "the kite path has no brute hit; the brute drill is the played cue proof"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-43/after",
+    "before_dir": "shots/shooter-campaign/cycle-43/before",
+    "route": "scripts/capture.py brute_slam; 960x540 seed 1, brute at 1.5 m, first hit frame"
+  },
+  "tests": {
+    "brute_slam_tests": 2,
+    "suite": "172 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "brute slam",
+    "enemy attack cue",
+    "caption"
+  ],
+  "visual_diff": {
+    "bbox": [
+      408,
+      164,
+      827,
+      459
+    ],
+    "changed_px": 3800,
+    "draws": 7,
+    "fraction": 0.0073,
+    "mean_luma_after": 48.22,
+    "mean_luma_before": 48.55,
+    "triangles": 302
+  }
+}
