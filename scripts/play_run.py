@@ -19,6 +19,7 @@ Modes:
   death    staged near-death run (profile/debrief proof; ends on death)
   save_fail staged near-death run with the profile lock held (save-error proof)
   profile_bad staged near-death run with an unsupported schema (disabled proof)
+  profile_corrupt staged near-death run with an unrecoverable corrupt profile (reset proof)
   platform run at the rear low platform, jump onto it, stop on the top
   highground stand on the platform edge with a mite at its base (reach drill)
   switch   press slot2 -> slot3 -> slot1 (weapon-switch cue drill)
@@ -120,6 +121,8 @@ def main(
         )
     if mode == "profile_bad":
         profile_path.write_text('{"schema": 99, "best_score": 1}', encoding="utf-8")
+    if mode == "profile_corrupt":
+        profile_path.write_text('{"broken":', encoding="utf-8")
     try:
         game = ShooterGame(profile_path=profile_path)
     except TypeError:  # older checkout without profile support
@@ -153,7 +156,7 @@ def main(
                 _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 6.5), hp=120,
                        max_hp=120, attack_cd=0.0)
             ]
-        if mode in ("death", "save_fail", "profile_bad"):
+        if mode in ("death", "save_fail", "profile_bad", "profile_corrupt"):
             sim = game.sim
             sim.wave = 2
             sim.hp = 10
@@ -376,7 +379,7 @@ def main(
                 break
             if mode == "death" and not game.sim.alive:
                 break
-            if mode in ("save_fail", "profile_bad") and not game.sim.alive:
+            if mode in ("save_fail", "profile_bad", "profile_corrupt") and not game.sim.alive:
                 break
             if mode == "platform" and game.sim.player_pos.y > 1.3 and game.sim.body.on_ground:
                 break
@@ -459,6 +462,10 @@ def main(
                 "last_run": getattr(game, "last_run", None),
                 "disabled": bool(getattr(game, "profile_disabled", False)),
                 "save_errors": int(getattr(game, "profile_save_errors", 0)),
+                "recovered": bool(getattr(game, "profile_recovered", False)),
+                "recovered_from_backup": bool(
+                    getattr(game, "profile_recovered_from_backup", False)
+                ),
                 "history": list(getattr(game, "profile", {}).get("history", [])),
             },
             "platform": {

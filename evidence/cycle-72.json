@@ -1,0 +1,79 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py profile_reset <prefix>",
+    "python scripts/play_run.py profile_corrupt 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 72,
+  "fix": "record ProfileStore recovered/recovered_from_backup during quarantine recovery and show PROFILE RESET (red) or PROFILE RECOVERED (amber) in the debrief; schema, quarantine, backup restore and atomic save policy are unchanged",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "238 passed"
+  },
+  "play_runs": {
+    "parity": "same death hash f8cd9e28 before/after; load diagnostics/debrief only",
+    "profile_corrupt_after": {
+      "audio": 3,
+      "disabled": false,
+      "drops": 0,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "last_run": true,
+      "recovered": true,
+      "recovered_from_backup": false,
+      "runs": 1,
+      "save_errors": 0,
+      "score": 1500
+    },
+    "profile_corrupt_before": {
+      "audio": 3,
+      "disabled": false,
+      "drops": 0,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "last_run": true,
+      "recovered": false,
+      "recovered_from_backup": false,
+      "runs": 1,
+      "save_errors": 0,
+      "score": 1500
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-72/after",
+    "before_dir": "shots/shooter-campaign/cycle-72/before",
+    "route": "scripts/capture.py profile_reset; 960x540 seed 1, corrupt profile without backup, staged brute death"
+  },
+  "tests": {
+    "profile_recovery_tests": 4,
+    "suite": "238 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "corrupt profile",
+    "quarantine recovery",
+    "debrief warning"
+  ],
+  "visual_diff": {
+    "bbox": [
+      281,
+      334,
+      678,
+      449
+    ],
+    "changed_px": 13136,
+    "draws": 6,
+    "fraction": 0.0253,
+    "mean_luma_after": 45.68,
+    "mean_luma_before": 47.08,
+    "triangles": 278
+  }
+}

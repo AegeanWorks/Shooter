@@ -96,6 +96,8 @@ class ProfileStore:
 
     def __init__(self, path: str | Path | None = None) -> None:
         self.path = Path(path) if path is not None else DEFAULT_PATH
+        self.recovered = False
+        self.recovered_from_backup = False
 
     @classmethod
     def default(cls) -> ProfileStore:
@@ -125,6 +127,7 @@ class ProfileStore:
         return _normalize(raw)
 
     def _recover(self) -> dict:
+        self.recovered = True
         stamp = int(time.time())
         quarantine = self.path.with_name(f"{self.path.name}.corrupt-{stamp}")
         try:
@@ -139,9 +142,11 @@ class ProfileStore:
         if not isinstance(raw, dict):
             return default_profile()
         try:
-            return _normalize(raw)
+            normalized = _normalize(raw)
         except (TypeError, ValueError):
             return default_profile()
+        self.recovered_from_backup = True
+        return normalized
 
     def save(self, profile: dict) -> bool:
         lock = self._acquire_lock()

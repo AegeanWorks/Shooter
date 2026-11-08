@@ -144,6 +144,10 @@ class ShooterGame:
         except ValueError:
             self.profile = default_profile()
             self.profile_disabled = True
+        self.profile_recovered = bool(getattr(self.profile_store, "recovered", False))
+        self.profile_recovered_from_backup = bool(
+            getattr(self.profile_store, "recovered_from_backup", False)
+        )
         self.run_new_best = False
         self.last_run = None
         self.campaign_cleared = False
@@ -1172,6 +1176,12 @@ class ShooterGame:
             extras: list[tuple[str, tuple]] = []
             if self.profile_disabled:
                 extras.append(("PROFILE DISABLED", (1.0, 0.30, 0.30, 1.0)))
+            elif self.profile_recovered:
+                label = ("PROFILE RECOVERED" if self.profile_recovered_from_backup
+                         else "PROFILE RESET")
+                color = ((1.0, 0.62, 0.20, 1.0) if self.profile_recovered_from_backup
+                         else (1.0, 0.30, 0.30, 1.0))
+                extras.append((label, color))
             elif self.profile_save_errors > 0:
                 extras.append(("PROFILE NOT SAVED", (1.0, 0.30, 0.30, 1.0)))
             if self.campaign_cleared:

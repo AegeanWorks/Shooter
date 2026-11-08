@@ -1485,3 +1485,27 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 234 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-71.json`.
+
+## Cycle 72 - Progression/saves: visible corrupt-profile recovery
+- **Area**: progression and saves (72nd cycle).
+- **Defect / evidence**: `ProfileStore._recover` quarantines a corrupt
+  file and falls back to `.bak` or defaults, but the game could not tell
+  which happened. A corrupt save without a backup silently reset
+  wins/history behind a normal debrief; a backup restore was invisible.
+- **Fix**: record `recovered` and `recovered_from_backup` on the store
+  during `_recover`, expose them on `ShooterGame`, and add a debrief line:
+  red `PROFILE RESET` when defaults were used, amber `PROFILE RECOVERED`
+  when `.bak` restored the profile. Priority is disabled profile, then
+  recovery, then save error. Quarantine/backup/schema/atomic saves are
+  unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-72/`;
+  960x540 seed 1, corrupt profile without backup, staged brute death.
+  13,136 changed px (2.53%, bbox 281,334-678,449), mean luma
+  47.08 -> 45.68; draws 6, triangles 278.
+- **Played runs**: `profile_corrupt 240` before/after same death hash
+  `f8cd9e28...`, recovered false -> true, from_backup false, last_run
+  recorded, runs 1, save_errors 0, hp 0, 0 drops; the corrupt file is
+  quarantined and a new profile saved.
+- **Gates**: `python -m pytest -q` 238 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-72.json`.
