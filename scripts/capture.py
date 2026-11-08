@@ -417,6 +417,42 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_tracer_tint(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One first-shot frame per weapon: the tracer/flash tint pair.
+
+    The target is a 600 hp brute at 6 m, so no shot kills and every frame
+    keeps its live tracer and flash. Same staging in both builds.
+    """
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        for wid in ("pulse", "scatter", "lance", "surge"):
+            g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 2.0),
+                                    hp=600, max_hp=600, attack_cd=10.0)]
+            g.sim.weapon = wid
+            g.sim.ammo[wid] = int(g.sim.weapons[wid]["mag"])
+            g.sim.cooldown = 0.0
+            g.sim.reload_t = 0.0
+            g.sim.surge_t = 10.0 if wid == "surge" else 0.0
+            g.sim.flash_t = 0.0
+            g.sim.tracers = []
+            g.update(FIXED_STEP, ActionState(mouse_clicked=True))
+            print(
+                f"tracer {wid} frame={g.sim.tick} flash={g.sim.flash_t:.3f} "
+                f"tracers={len(g.sim.tracers)} hp={g.sim.enemies[0].hp}"
+            )
+            engine.capture(f"{prefix}_{wid}.png", f"{prefix}_{wid}.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_score_center(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """High-score HUD with every top-center status line live: centering pair."""
     from keystone.app import Engine
@@ -958,6 +994,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_spawn_mark(prefix, shadows, srgb, post, bloom)
     if which == "score_center":
         route_score_center(prefix, shadows, srgb, post, bloom)
+    if which == "tracer_tint":
+        route_tracer_tint(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

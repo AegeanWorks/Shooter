@@ -1,0 +1,71 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py tracer_tint <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 28,
+  "fix": "each tracer records its firing weapon (non-snapshot) and the game uses per-weapon tracer/flash materials; pulse keeps the legacy yellow/white",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "133 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 90,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "hits": 37,
+      "kills": 10,
+      "score": 1950,
+      "shots": 39
+    },
+    "parity": "same hash as the cycle-27 baseline; terrain and sim untouched"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-28/after",
+    "before_dir": "shots/shooter-campaign/cycle-28/before",
+    "route": "scripts/capture.py tracer_tint; 960x540 seed 1, first-shot frames 1-4, 600 hp brute at 6 m"
+  },
+  "tests": {
+    "suite": "133 passed",
+    "tracer_tint_tests": 4
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "weapon identity",
+    "tracer tint",
+    "muzzle flash tint"
+  ],
+  "visual_diff": {
+    "draws": 9,
+    "mean_luma_after": 40.1,
+    "mean_luma_before": 40.1,
+    "per_weapon": {
+      "lance": {
+        "bbox": [528, 325, 530, 346],
+        "changed_px": 62,
+        "fraction": 0.0001
+      },
+      "pulse": {
+        "changed_px": 0,
+        "control": true
+      },
+      "scatter": {
+        "bbox": [528, 312, 557, 347],
+        "changed_px": 882,
+        "fraction": 0.0017
+      },
+      "surge": {
+        "bbox": [528, 324, 557, 355],
+        "changed_px": 226,
+        "fraction": 0.0004
+      }
+    },
+    "triangles": 542
+  }
+}

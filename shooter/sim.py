@@ -748,6 +748,8 @@ class Sim:
                     "y1": origin.y + direction.y * end_dist,
                     "z1": origin.z + direction.z * end_dist,
                     "life": float(self.juice.get("tracer_life_s", 0.08)),
+                    # Presentation telemetry: which gun fired this beam.
+                    "weapon": self.weapon,
                 }
             )
             self.tracers = self.tracers[:16]

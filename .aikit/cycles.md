@@ -578,3 +578,26 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 129 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-27.json`.
+
+## Cycle 28 - Graphics and effects: per-weapon fire tints
+- **Area**: graphics and effects (28th cycle).
+- **Defect / evidence**: every weapon shared one yellow tracer material and
+  one white flash material; the tracer dict had no weapon identity, so
+  pulse/scatter/lance/surge fire looked identical. Baseline
+  `tests/test_tracer_tint.py` failed 4/4 (no `weapon` key, no
+  `material.tracer_*`/`material.flash_*`).
+- **Fix**: `_fire` records the firing weapon on the non-snapshot tracer
+  dict; the game registers four tracer and four flash materials (scatter
+  orange, lance cyan, surge green; pulse keeps the legacy yellow/white)
+  and assigns them in `_sync_scene`. No sim state, damage, hitboxes or
+  snapshot change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-28/`;
+  960x540 seed 1, first-shot frames 1-4, 600 hp brute at 6 m. Pulse
+  control 0 px; scatter 882 px (0.17%, bbox 528,312-557,347), surge
+  226 px (0.04%, bbox 528,324-557,355), lance 62 px (0.01%, bbox
+  528,325-530,346); mean luma ~40.1; draws 9, triangles 542.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950 /
+  hp 100, 39 shots / 37 hits, 90 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 133 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-28.json`.

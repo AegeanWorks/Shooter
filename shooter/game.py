@@ -161,6 +161,28 @@ class ShooterGame:
             )
         self.assets.register("material.tracer", Material(color=Vec3(1.0, 0.85, 0.30), emissive=Vec3(0.9, 0.65, 0.15)))
         self.assets.register("material.flash", Material(color=Vec3(1.0, 1.0, 1.0), emissive=Vec3(1.0, 0.9, 0.6)))
+        # Per-weapon fire tints: the tracer and muzzle flash say which gun
+        # fired without reading the status line.
+        for wid, color, glow in (
+            ("pulse", (1.0, 0.85, 0.30), (0.90, 0.65, 0.15)),
+            ("scatter", (1.0, 0.50, 0.15), (0.90, 0.25, 0.04)),
+            ("lance", (0.35, 0.85, 1.00), (0.05, 0.45, 0.80)),
+            ("surge", (0.35, 1.00, 0.55), (0.05, 0.55, 0.18)),
+        ):
+            self.assets.register(
+                f"material.tracer_{wid}",
+                Material(color=Vec3(*color), emissive=Vec3(*glow)),
+            )
+        for wid, color, glow in (
+            ("pulse", (1.00, 0.95, 0.75), (1.00, 0.90, 0.60)),
+            ("scatter", (1.00, 0.65, 0.25), (1.00, 0.35, 0.05)),
+            ("lance", (0.55, 0.90, 1.00), (0.20, 0.60, 0.90)),
+            ("surge", (0.50, 1.00, 0.65), (0.10, 0.70, 0.30)),
+        ):
+            self.assets.register(
+                f"material.flash_{wid}",
+                Material(color=Vec3(*color), emissive=Vec3(*glow)),
+            )
         self.assets.register("material.pickup", Material(color=Vec3(0.25, 1.0, 0.45), emissive=Vec3(0.10, 0.55, 0.20)))
         self.assets.register("material.boss_core", Material(color=Vec3(1.0, 0.78, 0.24), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.48, 0.08)))
 
@@ -596,6 +618,12 @@ class ShooterGame:
                 yaw = math.atan2(dx, dz) if (abs(dx) + abs(dz)) > 1e-6 else 0.0
                 pitch = -math.atan2(dy, math.hypot(dx, dz))
                 node.visible = True
+                try:
+                    node.material = self.assets.require(
+                        f"material.tracer_{t.get('weapon', 'pulse')}"
+                    ).payload
+                except KeyError:
+                    node.material = self.assets.require("material.tracer").payload
                 node.transform = Transform(
                     position=Vec3((x0 + x1) / 2.0, (y0 + y1) / 2.0, (z0 + z1) / 2.0),
                     rotation=Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), yaw)
@@ -607,6 +635,12 @@ class ShooterGame:
         if self._flash is not None:
             if sim.flash_t > 0.0:
                 self._flash.visible = True
+                try:
+                    self._flash.material = self.assets.require(
+                        f"material.flash_{sim.weapon}"
+                    ).payload
+                except KeyError:
+                    self._flash.material = self.assets.require("material.flash").payload
                 scale = float(self.sim.juice.get("flash_scale", 0.055))
                 self._flash.transform = Transform(position=sim.flash_pos, scale=Vec3(scale, scale, scale))
             else:
