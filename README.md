@@ -75,7 +75,8 @@ projects/shooter/
 │       ├── juice.json      <- tracer/flash, viewmodel, reticle, spawn mark, killmark, score pop, slam ring, death fx, particles, hitstop, flinch
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       ├── grade.json      <- renderer flags adopted as DATA
-│       └── warden_core.kstate <- keystone state machine: calm/charge core pulse
+│       ├── warden_core.kstate <- keystone state machine: calm/charge core pulse
+│       └── core_material.json <- keystone material graph: checker boss core
 ├── tests/
 │   ├── conftest.py         <- adds keystone + shooter to sys.path
 │   ├── test_shooter.py     <- move/shoot/hit/kill/die/score/determinism/budget
@@ -83,6 +84,7 @@ projects/shooter/
 │   ├── test_feedback.py    <- hurt-source telemetry + directional HUD cue
 │   ├── test_boss.py        <- warden data/wave/slam/summon/kill/bar/core
 │   ├── test_boss_anim_state.py <- keystone .kstate core calm/charge pulse
+│   ├── test_core_material_graph.py <- keystone material graph drives the core
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -263,7 +265,8 @@ projects/shooter/
 │   ├── cycle-87.json  <- improvement-cycle 87 proof: brute-windup pair, delayed-slam drill
 │   ├── cycle-88.json  <- improvement-cycle 88 proof: enemy-spacing pair, crowd drill + re-recorded reference
 │   ├── cycle-89.json  <- cycle 89 proof: keystone .kstate core pair, same-hash slam run
-│   └── cycle-90.json  <- cycle 90 proof: keystone lifecycle pad, 0-px same-hash pair
+│   ├── cycle-90.json  <- cycle 90 proof: keystone lifecycle pad, 0-px same-hash pair
+│   └── cycle-91.json  <- cycle 91 proof: keystone material graph core, same-hash slam run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

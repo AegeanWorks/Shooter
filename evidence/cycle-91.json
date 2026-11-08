@@ -1,0 +1,69 @@
+{
+  "area": "keystone testbed: material graph",
+  "commands": [
+    "python -m pytest tests/test_core_material_graph.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py warden_charge <prefix>",
+    "python scripts/play_run.py slam 60 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 91,
+  "feature": "keystone MaterialGraph declarative material evaluation",
+  "fix": "author shooter/data/core_material.json (checker + material nodes) and evaluate it through MaterialGraph.from_dict/evaluate at build time for material.boss_core; the plain hardcoded Material registration is gone and the graph is DATA-owned",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "282 passed"
+  },
+  "keystone": {
+    "evaluation": ["MaterialGraph.from_dict", "MaterialGraph.validate", "MaterialGraph.evaluate"],
+    "graph": "shooter/data/core_material.json",
+    "nodes": ["checker", "material"],
+    "texture": "core-checker 16x16",
+    "uniforms": {"color": [1.0, 0.88, 0.55], "emissive": [1.0, 0.48, 0.08], "specular": 0.8, "shininess": 64.0}
+  },
+  "play_runs": {
+    "slam_after": {
+      "audio": 3,
+      "drops": 0,
+      "frames": 43,
+      "hash": "4580b9daedea28aa1897b0b08b12c25b",
+      "hp": 70,
+      "hurts": 1
+    },
+    "slam_before": {
+      "audio": 3,
+      "drops": 0,
+      "frames": 43,
+      "hash": "4580b9daedea28aa1897b0b08b12c25b",
+      "hp": 70,
+      "hurts": 1
+    },
+    "parity": "same 43-frame slam hash 4580b9da, hp 70, 1 hurt; the graph is presentation-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-91/after_warden_charge.*",
+    "before_dir": "shots/shooter-campaign/cycle-91/before_warden_charge.*",
+    "route": "scripts/capture.py warden_charge; 960x540 seed 1, warden z 4.0, 15 updates (charge peak)"
+  },
+  "tests": {
+    "material_graph_tests": 3,
+    "suite": "282 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone material graph",
+    "checker texture",
+    "warden core"
+  ],
+  "visual_diff": {
+    "bbox": [421, 230, 541, 351],
+    "changed_px": 10627,
+    "draws": 9,
+    "fraction": 0.0205,
+    "mean_luma_after": 36.42,
+    "mean_luma_before": 37.21,
+    "triangles": 650
+  }
+}

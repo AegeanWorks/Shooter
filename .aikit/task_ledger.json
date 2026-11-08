@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-90-pad-lifecycle",
+    "task_id": "shooter-cycle-91-core-material-graph",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794130963.0078135,
+    "updated_at": 1794131686.0382476,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794130964.1466348
+    "completed_at": 1794131686.4197938
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-84-tracer-muzzle",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Muzzle tracers proven: 263 tests, determinism 1800 ok, aikit 4/4, 5583 px fire pair, same strafe hash 14a48660, start eye->muzzle; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794124323.6018581,
-      "timestamp_str": "2026-11-08 10:52:03",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-84-tracer-muzzle",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-84-tracer-muzzle' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794124339.5193326,
-      "timestamp_str": "2026-11-08 10:52:19",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-85-overdrive-kill-cue",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Audio cycle: map overdrive_hit to a distinct kill voice and OVERDRIVE KILL caption, with a forced pair, overdrive-kill drill and WAV",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794124400.1000626,
-      "timestamp_str": "2026-11-08 10:53:20",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Kills during the eight-second x2 overdrive emit overdrive_hit but the game only plays the normal kill cue; the power payoff is not acknowledged.",
-        "benefits": "A distinct chime and caption confirm the x2 kill while the kill feed and score pop remain unchanged.",
-        "risks": "contract: event/audio/caption only; dependency: none; concurrency: none; state: no sim, timer, score or save change.",
-        "mitigation": "Failing-first forced overdrive-kill tests, a captioned pair at 960x540, a drill and a WAV/spectrogram probe."
-      },
-      "plan_digest": "43cb8fa9a758a5207e903745aa3bcb7122df94167e49741dfcc8629e1c8904fd"
-    },
     {
       "task_id": "shooter-cycle-85-overdrive-kill-cue",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794130964.1466372,
       "timestamp_str": "2026-11-08 12:42:44",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-91-core-material-graph",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: evaluate a declarative material graph into the warden core material, with graph tests, a charge pair and a same-hash slam run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794131678.892499,
+      "timestamp_str": "2026-11-08 12:54:38",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter is the Keystone testbed, but the material graph evaluator had no consumer; the boss core was a hardcoded Material.",
+        "benefits": "core_material.json now drives material.boss_core through MaterialGraph.from_dict/evaluate, proving the checker/texture path in shipped gameplay.",
+        "risks": "contract: boss-core material only; dependency: none; concurrency: none; state: no sim/hash change, same mesh/node/draws.",
+        "mitigation": "Three graph tests, a charge-peak capture pair, a same-hash slam run and the full gates."
+      },
+      "plan_digest": "e978d9e43094aace7878ba1c17ec333b50e890fdb26282eaafb50892fc6f33ea"
+    },
+    {
+      "task_id": "shooter-cycle-91-core-material-graph",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Core material graph proven: 282 tests, determinism 1800 ok (b25db520), aikit 4/4, 10627 px pair, checker 16x16, same slam hash 4580b9da; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794131686.0382476,
+      "timestamp_str": "2026-11-08 12:54:46",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-91-core-material-graph",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-91-core-material-graph' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794131686.4197962,
+      "timestamp_str": "2026-11-08 12:54:46",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

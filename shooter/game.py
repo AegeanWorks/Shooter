@@ -6,6 +6,7 @@ shooter/data/*.json, never hardcoded one-offs.
 
 from __future__ import annotations
 
+import json
 import math
 from dataclasses import dataclass, replace
 from pathlib import Path
@@ -15,6 +16,7 @@ from keystone.assets import AssetRegistry
 from keystone.audio import Mixer, noise, sine, square
 from keystone.geometry import Material, MeshData
 from keystone.lifecycle import ComponentRuntime
+from keystone.material_graph import MaterialGraph
 from keystone.math3d import Quat, Vec3
 from keystone.primitives import cone, cube, plane, sphere
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
@@ -325,7 +327,16 @@ class ShooterGame:
             )
         self.assets.register("material.pickup", Material(color=Vec3(0.25, 1.0, 0.45), emissive=Vec3(0.10, 0.55, 0.20)))
         self.assets.register("material.cache", Material(color=Vec3(1.0, 0.68, 0.22), specular=0.5, shininess=48.0, emissive=Vec3(0.82, 0.38, 0.04)))
-        self.assets.register("material.boss_core", Material(color=Vec3(1.0, 0.78, 0.24), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.48, 0.08)))
+        # Keystone material graph: the boss core is a declarative checker
+        # material document, evaluated through keystone.material_graph.
+        core_graph = MaterialGraph.from_dict(
+            json.loads(
+                (Path(__file__).parent / "data" / "core_material.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+        )
+        self.assets.register("material.boss_core", core_graph.evaluate())
 
         self.scene.background = Vec3(0.035, 0.045, 0.07)
         self.scene.sky = Vec3(0.01, 0.015, 0.04)

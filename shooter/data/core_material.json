@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "output": "core",
+  "nodes": [
+    {
+      "id": "checker",
+      "kind": "checker",
+      "params": {
+        "size": 16,
+        "cell": 2,
+        "dark": [0.45, 0.16, 0.02],
+        "light": [1.0, 0.72, 0.22],
+        "name": "core-checker"
+      },
+      "inputs": []
+    },
+    {
+      "id": "core",
+      "kind": "material",
+      "params": {
+        "color": [1.0, 0.88, 0.55],
+        "emissive": [1.0, 0.48, 0.08],
+        "specular": 0.8,
+        "shininess": 64.0,
+        "metallic": 0.1,
+        "roughness": 0.4
+      },
+      "inputs": ["checker"]
+    }
+  ]
+}

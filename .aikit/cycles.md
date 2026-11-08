@@ -1885,3 +1885,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 279 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-90.json`.
+
+## Cycle 91 - Keystone testbed: warden core material graph
+- **Area**: keystone testbed (91st cycle).
+- **Feature / evidence**: Keystone's declarative material graph
+  validates/evaluates JSON node graphs into a `Material`. The boss
+  core was still a hardcoded `Material` so the checker/texture path
+  had no consumer.
+- **Fix**: add `shooter/data/core_material.json` (16x16
+  `core-checker` into a material node) and evaluate it through
+  `MaterialGraph.from_dict/evaluate` in `build_scene` for
+  `material.boss_core`. The sphere mesh, node, geometry and sim are
+  unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-91/`;
+  960x540 seed 1, warden z 4.0, 15 updates (charge peak). 10,627
+  changed px (2.05%, bbox 421,230-541,351), mean luma 37.21 -> 36.42;
+  draws 9, triangles 650. The core shows a mechanical checker pattern
+  instead of a smooth orb.
+- **Played runs**: `slam 60` before/after share hash
+  `4580b9da...`, 43 frames, hp 70, one hurt; presentation-only.
+- **Gates**: `python -m pytest -q` 282 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-91.json`.
