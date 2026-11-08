@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-48-boss-pickup-tag",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794106725.6089637,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794106758.8180835
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-42-death-fx",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Graphics cycle: shrinking enemy death silhouette, failing-first tests, two-frame pair and same-hash run",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794104693.327091,
-      "timestamp_str": "2026-11-08 05:24:53",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Killed enemies vanished on the kill frame with no body exit.",
-        "benefits": "A brief white-hot shrink makes the kill readable without changing behavior.",
-        "risks": "contract: presentation timer only, not in snapshot; dependency: none; concurrency: none; state: juice death_fx_s.",
-        "mitigation": "Death/expiry/scene tests, two-frame pair, same kite hash."
-      },
-      "plan_digest": "656f61b393ad8f846243611bc302c47c448350521056886fb7ae20f700ebdca5"
-    },
     {
       "task_id": "shooter-cycle-42-death-fx",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794106725.6089637,
       "timestamp_str": "2026-11-08 05:58:45",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-48-boss-pickup-tag",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-48-boss-pickup-tag' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794106758.8180854,
+      "timestamp_str": "2026-11-08 05:59:18",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
