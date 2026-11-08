@@ -536,3 +536,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 122 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-25.json`.
+
+## Cycle 26 - Levels: readable enemy spawn points
+- **Area**: levels (26th cycle).
+- **Defect / evidence**: the sim emitted a bare `spawn` event but the game
+  ignored it, so a wave enemy appeared at its random origin with no visual
+  cue. The baseline `test_spawn_mark.py` found no `spawn_marks`/`_spawn_nodes`
+  (4/4 failed), and the staged frame had no beam.
+- **Fix**: `_spawn_enemy` records `spawn_pos` (telemetry only, never in the
+  snapshot); the game keeps up to four `spawn_marks` (`juice.spawn_mark`:
+  0.7 s life, 0.18 x 2.4 column) and draws a short emissive column at the
+  origin. Spawn positions, counts, timing, RNG and damage are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-26/`;
+  960x540 seed 1, frame 1, same staged spawn at (0,0.5,-6) and camera.
+  386 changed px (0.07%, bbox 451,92-911,310; 126 px in the beam crop),
+  mean luma 35.18 -> 35.17; draws 6 -> 7, triangles 562 -> 574.
+- **Played runs**: `kite 600` keeps the cycle-25 hash `4fe640c5...`
+  (10 kills / 1950 / hp 100, 39 shots / 37 hits, 90 audio, peak 8,
+  drops 0); natural wave spawns create markers without touching the sim.
+- **Gates**: `python -m pytest -q` 126 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-26.json`.

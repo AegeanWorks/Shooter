@@ -23,6 +23,7 @@ from .ui import draw_shooter
 
 MAX_ENEMIES = 24
 MAX_TRACERS = 16
+MAX_SPAWN_MARKS = 4
 
 
 def _floor_grid_texture(size: int = 128, cell: int = 16) -> TextureData:
@@ -79,6 +80,8 @@ class ShooterGame:
         self._run_start_best = int(self.profile.get("best_score", 0))
         self._enemy_nodes: list[Node] = []
         self._tracer_nodes: list[Node] = []
+        self._spawn_nodes: list[Node] = []
+        self.spawn_marks: list[dict] = []
         self._flash: Node | None = None
         self._view_body: Node | None = None
         self._view_barrel: Node | None = None
@@ -117,6 +120,7 @@ class ShooterGame:
         self.campaign_cleared = False
         self.campaign_clear_t = 0.0
         self.kill_feed = []
+        self.spawn_marks = []
         self._run_recorded = False
         self._run_start_best = int(self.profile.get("best_score", 0))
         self.particles = self.sim.particles
@@ -266,6 +270,21 @@ class ShooterGame:
             material=self.assets.require("material.boss_core").payload,
         )
         self.scene.add(self._boss_core)
+        # Spawn markers: short-lived emissive columns at the wave-spawn
+        # origin. Presentation only; the sim emits `spawn`, the game owns
+        # the timer.
+        self.assets.register(
+            "material.spawn_mark",
+            Material(color=Vec3(1.0, 0.35, 0.18), specular=0.4,
+                     shininess=32.0, emissive=Vec3(0.75, 0.12, 0.03)),
+        )
+        spawn_mat = self.assets.require("material.spawn_mark").payload
+        self._spawn_nodes = []
+        for i in range(MAX_SPAWN_MARKS):
+            node = Node(f"spawn-mark-{i}", id=f"spawn-mark-{i}", visible=False,
+                        mesh=wall_mesh, material=spawn_mat)
+            self.scene.add(node)
+            self._spawn_nodes.append(node)
 
         # pre-synthesized deterministic SFX (no per-frame synth)
         self._clips = {
@@ -338,6 +357,9 @@ class ShooterGame:
         for entry in self.kill_feed:
             entry["t"] = float(entry.get("t", 0.0)) - float(dt)
         self.kill_feed = [entry for entry in self.kill_feed if entry["t"] > 0.0][:4]
+        for mark in self.spawn_marks:
+            mark["t"] = float(mark.get("t", 0.0)) - float(dt)
+        self.spawn_marks = [mark for mark in self.spawn_marks if mark["t"] > 0.0]
         self.sound_cue_t = max(0.0, self.sound_cue_t - float(dt))
         # cap voices: deterministic mixdown cost bounded via the public API
         # only (post-update invariant stays voice_count <= 8)
@@ -437,6 +459,17 @@ class ShooterGame:
                     },
                 )
                 self.kill_feed = self.kill_feed[:4]
+            return
+        if event == "spawn":
+            cfg = dict(self.sim.juice.get("spawn_mark", {}))
+            pos = getattr(self.sim, "spawn_pos", None)
+            if pos is not None:
+                self.spawn_marks.insert(0, {
+                    "x": float(pos.x), "z": float(pos.z),
+                    "t": float(cfg.get("life_s", 0.7)),
+                })
+                cap = max(1, int(cfg.get("max", MAX_SPAWN_MARKS)))
+                self.spawn_marks = self.spawn_marks[:cap]
             return
         if event == "dry_fire":
             self._play_clip(self._clips["dry_fire"], 0.35)
@@ -659,6 +692,19 @@ class ShooterGame:
                     gun_mat = self.assets.require("material.gun_pulse").payload
                 self._view_body.material = gun_mat
                 self._view_barrel.material = gun_mat
+        mark_cfg = dict(self.sim.juice.get("spawn_mark", {}))
+        mark_w = float(mark_cfg.get("width", 0.18))
+        mark_h = float(mark_cfg.get("height", 2.4))
+        for i, node in enumerate(self._spawn_nodes):
+            if i < len(self.spawn_marks):
+                m = self.spawn_marks[i]
+                node.visible = True
+                node.transform = Transform(
+                    position=Vec3(float(m["x"]), mark_h / 2.0, float(m["z"])),
+                    scale=Vec3(mark_w, mark_h, mark_w),
+                )
+            else:
+                node.visible = False
         if self._pickup_beam is not None and self._pickup_orb is not None:
             active = bool(sim.pickup_active)
             self._pickup_beam.visible = active

@@ -1,0 +1,61 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py spawn_mark <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 26,
+  "fix": "spawn-origin telemetry plus up to four 0.7 s emissive spawn markers from juice.spawn_mark; presentation-only",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "126 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 90,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "hits": 37,
+      "kills": 10,
+      "mean_step_ms": 0.5303,
+      "peak_voices": 8,
+      "score": 1950,
+      "shots": 39
+    },
+    "parity": "same hash as the cycle-25 ground baseline; the marker is game-state only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-26/after",
+    "before_dir": "shots/shooter-campaign/cycle-26/before",
+    "route": "scripts/capture.py spawn_mark; 960x540 seed 1, frame 1, staged spawn at (0,0.5,-6)"
+  },
+  "tests": {
+    "spawn_mark_tests": 4,
+    "suite": "126 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "spawn points",
+    "level readability",
+    "presentation markers"
+  ],
+  "visual_diff": {
+    "bbox": [
+      451,
+      92,
+      911,
+      310
+    ],
+    "beam_crop_changed_px": 126,
+    "changed_px": 386,
+    "draws": 7,
+    "fraction": 0.0007,
+    "mean_luma_after": 35.17,
+    "mean_luma_before": 35.18,
+    "triangles": 574
+  }
+}

@@ -21,6 +21,12 @@
     "hit_gap_px": 4.0
   },
   "hurt_cue_s": 0.8,
+  "spawn_mark": {
+    "life_s": 0.7,
+    "width": 0.18,
+    "height": 2.4,
+    "max": 4
+  },
   "hit_flinch_s": 0.25,
   "hit_flinch_scale": 0.28,
   "hit_flinch_push": 0.12,

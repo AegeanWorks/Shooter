@@ -206,6 +206,9 @@ class Sim:
         self.wave = 1
         self.spawn_queue: list[str] = []
         self.spawn_t = 0.0
+        # Presentation telemetry: where the last wave spawn appeared. Never
+        # read by damage/RNG/movement and never part of the snapshot.
+        self.spawn_pos = Vec3()
         self.pickup_active = False
         self.pickup_taken = False
         self._build_wave()
@@ -260,6 +263,7 @@ class Sim:
                 summon_cd=float(edef.get("summon_first_s", 0.0)),
             )
         )
+        self.spawn_pos = Vec3(x, y, z)
         self._next_enemy += 1
 
     def _summon_mites(self, boss: _Enemy, count: int, events: list[str]) -> None:
