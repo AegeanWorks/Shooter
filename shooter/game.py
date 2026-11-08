@@ -82,6 +82,7 @@ class ShooterGame:
         self._enemy_nodes: list[Node] = []
         self._tracer_nodes: list[Node] = []
         self._spawn_nodes: list[Node] = []
+        self._slam_ring: list[Node] = []
         self.spawn_marks: list[dict] = []
         self._flash: Node | None = None
         self._view_body: Node | None = None
@@ -308,6 +309,22 @@ class ShooterGame:
                         mesh=wall_mesh, material=spawn_mat)
             self.scene.add(node)
             self._spawn_nodes.append(node)
+        # Warden slam ring: a dashed ground circle at the DATA range,
+        # visible only during the windup. Presentation-only.
+        self.assets.register(
+            "material.slam_ring",
+            Material(color=Vec3(1.0, 0.45, 0.15), specular=0.3,
+                     shininess=24.0, emissive=Vec3(0.8, 0.2, 0.03)),
+        )
+        ring_cfg = dict(self.sim.juice.get("slam_ring", {}))
+        ring_segments = max(4, int(ring_cfg.get("segments", 24)))
+        self._slam_ring = []
+        for i in range(ring_segments):
+            node = Node(f"slam-ring-{i}", id=f"slam-ring-{i}", visible=False,
+                        mesh=wall_mesh,
+                        material=self.assets.require("material.slam_ring").payload)
+            self.scene.add(node)
+            self._slam_ring.append(node)
 
         # pre-synthesized deterministic SFX (no per-frame synth)
         self._clips = {
@@ -741,6 +758,27 @@ class ShooterGame:
                     gun_mat = self.assets.require("material.gun_pulse").payload
                 self._view_body.material = gun_mat
                 self._view_barrel.material = gun_mat
+        ring_cfg = dict(self.sim.juice.get("slam_ring", {}))
+        ring_w = float(ring_cfg.get("width", 0.20))
+        ring_h = float(ring_cfg.get("height", 0.025))
+        ring_boss = next(
+            (e for e in sim.enemies if e.alive and e.etype == "warden"),
+            None,
+        )
+        show_ring = ring_boss is not None and ring_boss.windup_t > 0.0
+        ring_radius = float(self.sim.enemy_defs["warden"]["range"])
+        for i, node in enumerate(self._slam_ring):
+            node.visible = bool(show_ring)
+            if show_ring:
+                angle = math.tau * i / max(1, len(self._slam_ring))
+                node.transform = Transform(
+                    position=Vec3(
+                        ring_boss.pos.x + math.cos(angle) * ring_radius,
+                        ring_h / 2.0,
+                        ring_boss.pos.z + math.sin(angle) * ring_radius,
+                    ),
+                    scale=Vec3(ring_w, ring_h, ring_w),
+                )
         mark_cfg = dict(self.sim.juice.get("spawn_mark", {}))
         mark_w = float(mark_cfg.get("width", 0.18))
         mark_h = float(mark_cfg.get("height", 2.4))

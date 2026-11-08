@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon, spawn marks, fire tints, switch cues, win history, floor grid/trim, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn marks, fire tints, switch cues, win history, floor grid/trim, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, kill marker, ammo/reload, kill-feed, damage, boss/pickup
@@ -72,7 +72,7 @@ projects/shooter/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss + melee reach
 │       ├── levels.json     <- arena + low jump platform + open spawn lane + 5 waves (wave 3 warden) + win_wave 4
-│       ├── juice.json      <- tracer/flash offset/scale, viewmodel, reticle, spawn mark, killmark, particle caps, hitstop, flinch
+│       ├── juice.json      <- tracer/flash, viewmodel, reticle, spawn mark, killmark, slam ring, particles, hitstop, flinch
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
 ├── tests/
@@ -108,13 +108,14 @@ projects/shooter/
 │   ├── test_switch_cue.py  <- weapon-switch click + caption, distinct slot clips
 │   ├── test_win_history.py <- campaign win recorded, no duplicate, W/L debrief
 │   ├── test_killmark.py    <- kill-only timer, red corner ticks, expiry
+│   ├── test_slam_ring.py   <- warden windup ring radius, visibility, DATA
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/pickup/highground/switch
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/slam_ring/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -146,7 +147,8 @@ projects/shooter/
 │   ├── cycle-28.json  <- improvement-cycle 28 proof: per-weapon fire-tint pairs, same-hash run
 │   ├── cycle-29.json  <- improvement-cycle 29 proof: weapon-switch cue pair, same-hash run
 │   ├── cycle-30.json  <- improvement-cycle 30 proof: win-history debrief pair, campaign run
-│   └── cycle-31.json  <- improvement-cycle 31 proof: kill-marker crosshair pair, same-hash run
+│   ├── cycle-31.json  <- improvement-cycle 31 proof: kill-marker crosshair pair, same-hash run
+│   └── cycle-32.json  <- improvement-cycle 32 proof: slam-radius ring pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

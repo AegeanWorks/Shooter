@@ -417,6 +417,34 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_slam_ring(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Staged warden windup with the player outside the slam: the ring pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.wave = 3
+        g.sim.enemies = [_Enemy(etype="warden", pos=Vec3(0.0, 1.1, 2.0),
+                                hp=600, max_hp=600, summon_cd=999.0,
+                                windup_t=0.5)]
+        g.update(FIXED_STEP, ActionState())
+        boss = g.sim.enemies[0]
+        print(
+            f"slam-ring frame={g.sim.tick} windup={boss.windup_t:.3f} "
+            f"ring={sum(1 for n in getattr(g, '_slam_ring', []) if n.visible)} "
+            f"radius={float(g.sim.enemy_defs['warden']['range']):.1f}"
+        )
+        engine.capture(f"{prefix}_slam_ring.png", f"{prefix}_slam_ring.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_killmark(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First-kill frame after the flash clears: the kill-marker pair."""
     from keystone.app import Engine
@@ -1069,6 +1097,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_switch_cue(prefix, shadows, srgb, post, bloom)
     if which == "killmark":
         route_killmark(prefix, shadows, srgb, post, bloom)
+    if which == "slam_ring":
+        route_slam_ring(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

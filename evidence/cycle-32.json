@@ -1,0 +1,65 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py slam_ring <prefix>",
+    "python scripts/play_run.py slam 180 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 32,
+  "fix": "dashed ground ring of 24 shared cubes at the warden's DATA slam range, visible only during windup; presentation-only",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "148 passed"
+  },
+  "play_runs": {
+    "parity": "same slam hash 4580b9da before/after; the ring is game state",
+    "slam_180": {
+      "after": {
+        "audio": 3,
+        "frames": 43,
+        "hash": "4580b9daedea28aa1897b0b08b12c25b",
+        "hp": 70,
+        "hurts": 1
+      },
+      "before": {
+        "audio": 3,
+        "frames": 43,
+        "hash": "4580b9daedea28aa1897b0b08b12c25b",
+        "hp": 70,
+        "hurts": 1
+      }
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-32/after",
+    "before_dir": "shots/shooter-campaign/cycle-32/before",
+    "route": "scripts/capture.py slam_ring; 960x540 seed 1, warden at (0,1.1,2.0), windup 0.483"
+  },
+  "tests": {
+    "slam_ring_tests": 4,
+    "suite": "148 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "warden telegraph",
+    "slam radius",
+    "boss readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      55,
+      92,
+      911,
+      539
+    ],
+    "changed_px": 3560,
+    "draws": 8,
+    "fraction": 0.0069,
+    "mean_luma_after": 37.56,
+    "mean_luma_before": 36.96,
+    "triangles": 698
+  }
+}

@@ -28,6 +28,11 @@
     "height": 2.4,
     "max": 4
   },
+  "slam_ring": {
+    "segments": 24,
+    "width": 0.20,
+    "height": 0.025
+  },
   "hit_flinch_s": 0.25,
   "hit_flinch_scale": 0.28,
   "hit_flinch_push": 0.12,

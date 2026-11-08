@@ -664,3 +664,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 144 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-31.json`.
+
+## Cycle 32 - Enemies/bosses: warden slam-radius ring
+- **Area**: enemies/bosses (32nd cycle).
+- **Defect / evidence**: during the 0.7 s warden windup the boss swelled
+  and the caption/audio warned, but the 4.5 m slam radius had no ground
+  cue. The staged windup frame measured `ring=0`; the player could not
+  tell whether they were inside. Baseline `test_slam_ring.py` failed 4/4.
+- **Fix**: add 24 shared-cube ground tiles at the warden's DATA `range`
+  (`juice.slam_ring`: segments 24, width 0.20, height 0.025), visible only
+  while a live warden has `windup_t > 0`; hidden otherwise. Presentation
+  only; slam timing/damage are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-32/`;
+  960x540 seed 1, warden at (0,1.1,2.0), windup 0.483. Before no ring;
+  after 24 orange tiles: 3,560 changed px (0.69%, bbox 55,92-911,539),
+  mean luma 36.96 -> 37.56; draws 7 -> 8, triangles 446 -> 698.
+- **Played runs**: `slam 180` before/after same hash `4580b9da...`,
+  43 frames, hp 70, 1 hurt, audio 3, peak 3, drops 0.
+- **Gates**: `python -m pytest -q` 148 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-32.json`.
