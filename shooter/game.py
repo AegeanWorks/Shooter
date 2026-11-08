@@ -80,6 +80,8 @@ class ShooterGame:
         self._enemy_nodes: list[Node] = []
         self._tracer_nodes: list[Node] = []
         self._flash: Node | None = None
+        self._view_body: Node | None = None
+        self._view_barrel: Node | None = None
         self._pickup: Node | None = None
         self._pickup_beam: Node | None = None
         self._pickup_orb: Node | None = None
@@ -142,6 +144,16 @@ class ShooterGame:
         self.assets.register("material.wisp", Material(color=Vec3(0.30, 0.85, 1.00), specular=0.6, shininess=64.0, emissive=Vec3(0.10, 0.45, 0.55)))
         self.assets.register("material.warden", Material(color=Vec3(0.62, 0.09, 0.10), specular=0.35, shininess=32.0, emissive=Vec3(0.38, 0.02, 0.02), metallic=0.15, roughness=0.65))
         self.assets.register("material.enemy_hit", Material(color=Vec3(1.0, 0.96, 0.86), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.62, 0.28)))
+        for wid, color, glow in (
+            ("pulse", (0.36, 0.44, 0.56), (0.04, 0.08, 0.14)),
+            ("scatter", (0.54, 0.36, 0.22), (0.12, 0.05, 0.01)),
+            ("lance", (0.22, 0.44, 0.54), (0.02, 0.10, 0.14)),
+            ("surge", (0.24, 0.52, 0.36), (0.02, 0.12, 0.05)),
+        ):
+            self.assets.register(
+                f"material.gun_{wid}",
+                Material(color=Vec3(*color), specular=0.55, shininess=48.0, emissive=Vec3(*glow)),
+            )
         self.assets.register("material.tracer", Material(color=Vec3(1.0, 0.85, 0.30), emissive=Vec3(0.9, 0.65, 0.15)))
         self.assets.register("material.flash", Material(color=Vec3(1.0, 1.0, 1.0), emissive=Vec3(1.0, 0.9, 0.6)))
         self.assets.register("material.pickup", Material(color=Vec3(0.25, 1.0, 0.45), emissive=Vec3(0.10, 0.55, 0.20)))
@@ -218,6 +230,16 @@ class ShooterGame:
         flash_mat = self.assets.require("material.flash").payload
         self._flash = Node("muzzle", id="muzzle", visible=False, mesh=flash_mesh, material=flash_mat)
         self.scene.add(self._flash)
+        # First-person viewmodel: two shared cubes follow the camera and tint
+        # with the active weapon; purely visual until _sync_scene moves them.
+        gun_mesh = self.assets.require("mesh.wall").payload
+        gun_mat = self.assets.require("material.gun_pulse").payload
+        self._view_body = Node("viewmodel-body", id="viewmodel-body", visible=True,
+                               mesh=gun_mesh, material=gun_mat)
+        self._view_barrel = Node("viewmodel-barrel", id="viewmodel-barrel", visible=True,
+                                 mesh=gun_mesh, material=gun_mat)
+        self.scene.add(self._view_body)
+        self.scene.add(self._view_barrel)
         pickup_mesh = self.assets.require("mesh.pickup").payload
         pickup_mat = self.assets.require("material.pickup").payload
         self._pickup_spot = self.sim.levels.get("pickup", {"x": 0.0, "y": 0.5, "z": -6.0})
@@ -576,6 +598,60 @@ class ShooterGame:
                                   float(self._pickup_spot["z"])),
                     rotation=Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), spin),
                 )
+        if self._view_body is not None and self._view_barrel is not None:
+            cfg = self.sim.juice.get("viewmodel", {})
+            forward = sim.forward()
+            right = Vec3(math.cos(sim.yaw), 0.0, math.sin(sim.yaw))
+            up = right.cross(forward)
+            eye = sim.eye()
+            rotation = (
+                Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), sim.yaw)
+                * Quat.from_axis_angle(Vec3(1.0, 0.0, 0.0), sim.pitch)
+            )
+
+            def gun_pos(forward_d: float, right_d: float, down_d: float) -> Vec3:
+                return Vec3(
+                    eye.x + forward.x * forward_d + right.x * right_d - up.x * down_d,
+                    eye.y + forward.y * forward_d + right.y * right_d - up.y * down_d,
+                    eye.z + forward.z * forward_d + right.z * right_d - up.z * down_d,
+                )
+
+            self._view_body.visible = bool(sim.alive)
+            self._view_barrel.visible = bool(sim.alive)
+            if sim.alive:
+                self._view_body.transform = Transform(
+                    position=gun_pos(
+                        float(cfg.get("forward", 0.40)),
+                        float(cfg.get("right", 0.18)),
+                        float(cfg.get("down", 0.16)),
+                    ),
+                    rotation=rotation,
+                    scale=Vec3(
+                        float(cfg.get("body_width", 0.07)),
+                        float(cfg.get("body_height", 0.07)),
+                        float(cfg.get("body_length", 0.30)),
+                    ),
+                )
+                self._view_barrel.transform = Transform(
+                    position=gun_pos(
+                        float(cfg.get("barrel_forward", 0.62)),
+                        float(cfg.get("right", 0.18)),
+                        float(cfg.get("barrel_down", 0.20)),
+                    ),
+                    rotation=rotation,
+                    scale=Vec3(
+                        float(cfg.get("barrel_size", 0.035)),
+                        float(cfg.get("barrel_size", 0.035)),
+                        float(cfg.get("barrel_length", 0.32)),
+                    ),
+                )
+                gun_id = f"material.gun_{sim.weapon}"
+                try:
+                    gun_mat = self.assets.require(gun_id).payload
+                except KeyError:
+                    gun_mat = self.assets.require("material.gun_pulse").payload
+                self._view_body.material = gun_mat
+                self._view_barrel.material = gun_mat
         if self._pickup_beam is not None and self._pickup_orb is not None:
             active = bool(sim.pickup_active)
             self._pickup_beam.visible = active

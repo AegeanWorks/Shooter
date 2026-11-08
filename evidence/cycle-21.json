@@ -1,0 +1,126 @@
+{
+  "area": "graphics and effects",
+  "budget": {
+    "combat": {
+      "draws_after": 9,
+      "draws_before": 8,
+      "triangles_after": 608,
+      "triangles_before": 584
+    },
+    "spawn": {
+      "draws_after": 5,
+      "draws_before": 4,
+      "triangles_after": 242,
+      "triangles_before": 218
+    }
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py spawn <prefix>",
+    "python scripts/capture.py combat <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 21,
+  "fix": "first-person viewmodel (body+barrel) following camera yaw/pitch, tinted by weapon, hidden on death",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "109 passed"
+  },
+  "play_runs": {
+    "kite_600_after": {
+      "dropped_sfx": 0,
+      "frames": 600,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "kills": 10,
+      "mean_step_ms": 1.373,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 1950,
+      "wave": 2
+    },
+    "kite_600_before": {
+      "dropped_sfx": 0,
+      "frames": 600,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "kills": 10,
+      "mean_step_ms": 1.325,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 1950,
+      "wave": 2
+    },
+    "parity": "kite 4fe640c5? and strafe 14a48660? identical before/after",
+    "strafe_300_after": {
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "kills": 0,
+      "mean_step_ms": 0.5056,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    },
+    "strafe_300_before": {
+      "dropped_sfx": 0,
+      "frames": 300,
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "kills": 0,
+      "mean_step_ms": 0.6291,
+      "outcome": "ongoing",
+      "peak_voices": 8,
+      "score": 0,
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-21/after",
+    "before_dir": "shots/shooter-campaign/cycle-21/before",
+    "route": "scripts/capture.py spawn + combat; 960x540 seed 1; same staged routes before/after"
+  },
+  "tests": {
+    "failing_first": "cycle-20 commit 15ee90e: no _view_body and no gun materials",
+    "suite": "109 passed",
+    "viewmodel_tests": 3
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "first-person weapon",
+    "camera follow",
+    "weapon tint"
+  ],
+  "visual_diff": {
+    "combat": {
+      "bbox": [
+        526,
+        92,
+        899,
+        419
+      ],
+      "changed_px": 6839,
+      "fraction": 0.0132,
+      "mean_luma_after": 46.6,
+      "mean_luma_before": 46.51
+    },
+    "spawn": {
+      "bbox": [
+        551,
+        92,
+        911,
+        411
+      ],
+      "changed_px": 4783,
+      "fraction": 0.0092,
+      "mean_luma_after": 35.14,
+      "mean_luma_before": 34.74
+    }
+  }
+}

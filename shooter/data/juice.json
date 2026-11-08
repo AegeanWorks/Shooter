@@ -17,5 +17,17 @@
   "hit_flinch_s": 0.25,
   "hit_flinch_scale": 0.28,
   "hit_flinch_push": 0.12,
-  "dry_fire_cd_s": 0.25
+  "dry_fire_cd_s": 0.25,
+  "viewmodel": {
+    "forward": 0.62,
+    "right": 0.21,
+    "down": 0.17,
+    "body_width": 0.055,
+    "body_height": 0.055,
+    "body_length": 0.26,
+    "barrel_forward": 0.84,
+    "barrel_down": 0.19,
+    "barrel_size": 0.030,
+    "barrel_length": 0.26
+  }
 }

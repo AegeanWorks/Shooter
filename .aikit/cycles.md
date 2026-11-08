@@ -430,3 +430,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 106 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-20.json`.
+
+## Cycle 21 — Graphics and effects: first-person viewmodel
+- **Area**: graphics and effects (21st cycle).
+- **Defect / evidence**: no weapon body existed; the first-person frame was
+  an empty camera with a crosshair and floating flash, so the equipped gun
+  had no visual presence. Baseline `test_viewmodel.py` failed all three
+  checks (no `_view_body`/gun materials).
+- **Fix**: two shared-cube viewmodel nodes from `juice.viewmodel`, following
+  camera yaw/pitch, tinted by `material.gun_{pulse,scatter,lance,surge}`,
+  hidden on death. Presentation only.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-21/`;
+  960x540 seed 1. Spawn 4,783 changed px (0.92%, bbox 551,92-911,411;
+  gun lower-right + status line), mean luma 34.74 -> 35.14; combat 6,839 px
+  (1.32%, bbox 526,92-899,419), mean luma 46.51 -> 46.60. Draws
+  4 -> 5 / 8 -> 9; tris 218 -> 242 / 584 -> 608.
+- **Played runs**: `kite 600` hash `4fe640c5…` and `strafe 300`
+  `14a48660…` identical to the cycle-20 worktree; 10 kills/1950 and
+  hp 92 respectively.
+- **Gates**: `python -m pytest -q` 109 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-21.json`.
