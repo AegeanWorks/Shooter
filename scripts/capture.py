@@ -799,6 +799,32 @@ def route_wall_depth(prefix: str, shadows: bool = True, srgb: bool = True, post:
         engine.close()
 
 
+def route_wall_texture(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Spawn view of the north wall: the wall-panel pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.update(FIXED_STEP, ActionState())
+        mat = g.assets.require("material.wall").payload
+        tex = mat.texture
+        print(
+            f"wall-texture frame={g.sim.tick} "
+            f"texture={None if tex is None else tex.name} "
+            f"checker={mat.checker_scale:.2f}"
+        )
+        engine.capture(f"{prefix}_wall_texture.png", f"{prefix}_wall_texture.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_pickup_arrow(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Pickup active behind the player at spawn: the edge-tag pair."""
     import math
@@ -1563,6 +1589,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_pickup_arrow(prefix, shadows, srgb, post, bloom)
     if which == "wall_depth":
         route_wall_depth(prefix, shadows, srgb, post, bloom)
+    if which == "wall_texture":
+        route_wall_texture(prefix, shadows, srgb, post, bloom)
     if which == "spawn_cue":
         route_spawn_cue(prefix, shadows, srgb, post, bloom)
     if which == "wisp_bolt":

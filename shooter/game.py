@@ -65,6 +65,32 @@ def _cover_panel_texture(size: int = 64) -> TextureData:
     return TextureData(size, size, bytes(pixels), name="cover-panel")
 
 
+def _wall_panel_texture(size: int = 64) -> TextureData:
+    """Deterministic grayscale panel detail for the boundary walls.
+
+    Narrow vertical seams and a horizontal band every 16 rows read as
+    architectural paneling along the 41 m walls; the material's gray-blue
+    tint supplies the color. Rivets sit inside each panel face.
+    """
+    base, seam, band, rivet = 205, 88, 155, 235
+    pixels = bytearray(size * size * 4)
+    for y in range(size):
+        for x in range(size):
+            if x < 2 or y < 2 or x >= size - 2 or y >= size - 2:
+                value = seam
+            elif x % 8 < 1:
+                value = seam
+            elif y % 16 < 2:
+                value = band
+            elif 3 <= x % 8 <= 4 and 5 <= y % 16 <= 6:
+                value = rivet
+            else:
+                value = base
+            offset = (y * size + x) * 4
+            pixels[offset : offset + 4] = bytes((value, value, value, 255))
+    return TextureData(size, size, bytes(pixels), name="wall-panel")
+
+
 class ShooterGame:
     name = "shooter"
 
@@ -162,7 +188,9 @@ class ShooterGame:
         grid = _floor_grid_texture()
         self.assets.register("texture.floor", grid)
         self.assets.register("material.floor", Material(color=Vec3(1, 1, 1), specular=0.08, shininess=8.0, texture=grid, checker_scale=0.5))
-        self.assets.register("material.wall", Material(color=Vec3(0.40, 0.43, 0.50), specular=0.25, shininess=24.0))
+        wall_panel = _wall_panel_texture()
+        self.assets.register("texture.wall", wall_panel)
+        self.assets.register("material.wall", Material(color=Vec3(0.40, 0.43, 0.50), specular=0.25, shininess=24.0, texture=wall_panel, checker_scale=0.15))
         cover_panel = _cover_panel_texture()
         self.assets.register("texture.cover", cover_panel)
         self.assets.register("material.cover", Material(color=Vec3(0.64, 0.50, 0.32), specular=0.15, shininess=18.0, texture=cover_panel, checker_scale=1.0))

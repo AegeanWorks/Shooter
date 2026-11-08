@@ -1,0 +1,77 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py wall_texture <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 56,
+  "fix": "deterministic 64x64 grayscale wall-panel texture (seams, bands, rivets) on the existing material.wall with checker_scale 0.15; no new nodes, draw calls or colliders",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "201 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "after": {
+        "audio": 101,
+        "drops": 0,
+        "hash": "4fe640c52ae60bda8c2cffba018382af",
+        "hits": 37,
+        "hp": 100,
+        "hurts": 0,
+        "kills": 10,
+        "peak_vox": 8,
+        "score": 1950,
+        "shots": 39,
+        "wave": 2
+      },
+      "before": {
+        "audio": 101,
+        "drops": 0,
+        "hash": "4fe640c52ae60bda8c2cffba018382af",
+        "hits": 37,
+        "hp": 100,
+        "hurts": 0,
+        "kills": 10,
+        "peak_vox": 8,
+        "score": 1950,
+        "shots": 39,
+        "wave": 2
+      }
+    },
+    "parity": "same hash 4fe640c5 before/after; texture-only change"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-56/after",
+    "before_dir": "shots/shooter-campaign/cycle-56/before",
+    "route": "scripts/capture.py wall_texture; 960x540 seed 1, spawn view facing the north wall"
+  },
+  "tests": {
+    "suite": "201 passed",
+    "wall_texture_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "wall detail",
+    "panel texture",
+    "material-only change"
+  ],
+  "visual_diff": {
+    "bbox": [
+      0,
+      236,
+      959,
+      307
+    ],
+    "changed_px": 34064,
+    "draws": 6,
+    "fraction": 0.0657,
+    "mean_luma_after": 32.49,
+    "mean_luma_before": 34.09,
+    "triangles": 290
+  }
+}

@@ -504,3 +504,10 @@ Status: accepted
 Context: The near-crosshair low-ammo warning said only `LOW AMMO`; the exact magazine count lived in the top-left engine status, so the player could not tell 3 rounds from 1 at the aim point, which changes the reload decision. The baseline test measured the countless label.
 Decision: Show `LOW AMMO <mag>` and widen the panel from 110 to 150 px so two-digit magazines fit. The engine status remains the full ammo source (weapon + magazine + reserve); the sim and all ammo values are untouched.
 Consequences: Suite 199/199 green (three new tests); determinism 1800 ok; aikit 4/4. The magazine-3 pair at 960×540 seed 1 changes 1,448 px (0.28%, bbox 405,300-554,321), mean luma 34.04→34.02, draws 6, triangles 290. `strafe 300` keeps hash `14a48660…`, 30 shots, hp 92, 1 hurt, 36 audio, peak 8, 0 drops. Evidence: `evidence/cycle-55.json`, images in workspace `shots/shooter-campaign/cycle-55/`.
+
+## ADR-073: Wall panel texture (graphics/effects)
+Date: 2026-11-08
+Status: accepted
+Context: The four boundary walls were flat gray boxes. Cycle 49 gave the covers a panel texture, but the arena shell still read as untextured slabs at spawn and along sightlines; the baseline test measured `material.wall.texture=None` and `checker_scale=0`.
+Decision: Add `_wall_panel_texture()` (deterministic 64x64 grayscale: 8 px vertical seams, 16-row horizontal bands and rivets) and bind it to `material.wall` with `checker_scale=0.15`. Material-only: same wall nodes, mesh, draw calls, colliders and sim. The gray-blue color still tints the grayscale detail.
+Consequences: Suite 201/201 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The spawn pair at 960x540 seed 1 changes 34,064 px (6.57%, bbox 0,236-959,307), mean luma 34.09 -> 32.49, draws 6, triangles 290. `kite 600` keeps hash `4fe640c5...`, 10 kills, hp 100, score 1950, 39 shots/37 hits, audio 101, peak 8, 0 drops. Evidence: `evidence/cycle-56.json`, images in workspace `shots/shooter-campaign/cycle-56/`.

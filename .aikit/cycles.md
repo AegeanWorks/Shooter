@@ -1140,3 +1140,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 199 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-55.json`.
+
+## Cycle 56 - Graphics and effects: wall panel texture
+- **Area**: graphics and effects (56th cycle).
+- **Opportunity**: the four boundary walls were flat gray boxes. Cycle 49
+  textured the covers, but the arena shell still read as untextured slabs
+  at spawn and along long sightlines; the baseline test measured
+  `material.wall.texture=None` with no checker scale.
+- **Fix**: deterministic 64x64 grayscale `wall-panel` texture (8 px
+  vertical seams, 16-row horizontal bands, rivets) on the existing
+  `material.wall`, with `checker_scale=0.15`. Material-only: same wall
+  nodes, mesh, draws, colliders and sim. Close-up inspection shows the
+  seams stay level; no new geometry.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-56/`;
+  960x540 seed 1, spawn view facing the north wall. 34,064 changed px
+  (6.57%, bbox 0,236-959,307), mean luma 34.09 -> 32.49; draws 6,
+  triangles 290.
+- **Played runs**: `kite 600` before/after same hash `4fe640c5...`,
+  10 kills, hp 100, score 1950, 39 shots/37 hits, audio 101, peak 8,
+  drops 0.
+- **Gates**: `python -m pytest -q` 201 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-56.json`.
