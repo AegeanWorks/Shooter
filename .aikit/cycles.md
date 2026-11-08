@@ -2536,3 +2536,19 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 436 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-124.json`.
+
+## Cycle 125 - Keystone testbed: Wavefront OBJ loading
+- **Area**: keystone testbed (125th cycle).
+- **Feature / evidence**: `obj_loader` feeds mesh assets but only simple
+  OBJs were exercised through asset tests; fan triangulation, negative
+  indices and error paths were untested.
+- **Fix**: add `tests/test_keystone_obj_loader_mechanics.py` with five
+  inline/file OBJ tests.
+- **Proof**: explicit normals/UVs and generated flat normals parse; quads
+  fan into two triangles and negative indices resolve; homogeneous
+  vertices divide by w while zero w raises; comments/object/group/material
+  directives are ignored; BOM files load and missing files raise; invalid
+  faces, indices, corners and floats raise line-numbered errors.
+- **Gates**: `python -m pytest -q` 441 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-125.json`.

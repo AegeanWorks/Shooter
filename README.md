@@ -98,6 +98,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `scene_diff` | empty/added/removed/changed nodes, sections, validation | `tests/test_keystone_scene_diff_mechanics.py` |
 | `batch` | static/skinned planning, world-space merges, exclusions, invariants | `tests/test_keystone_batch_mechanics.py` |
 | `png`/`texture` | RGBA round trip/flip, corruption, texture sha, checker | `tests/test_keystone_png_texture_mechanics.py` |
+| `obj_loader` | normals/UVs, negative indices, quads, homogeneous vertices, errors | `tests/test_keystone_obj_loader_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -167,6 +168,7 @@ projects/shooter/
 │   ├── test_keystone_scene_diff_mechanics.py <- added/removed/changed nodes, sections, validation
 │   ├── test_keystone_batch_mechanics.py <- static/skinned planning, merges, exclusions
 │   ├── test_keystone_png_texture_mechanics.py <- PNG flip/corruption, texture sha, checker
+│   ├── test_keystone_obj_loader_mechanics.py <- normals/UVs, negative indices, quads, errors
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -285,11 +287,11 @@ projects/shooter/
 │   ├── cycle-24.json  <- improvement-cycle 24 proof: spread-reticle pairs, same-hash runs
 │   ├── cycle-25.json  <- improvement-cycle 25 proof: high-ground melee pair, reach run
 │   ├── cycle-26.json  <- improvement-cycle 26 proof: spawn-marker pair, same-hash run
-│   ├── cycle-27.json  <- improvement-cycle 27 proof: centered status pair, same-hash run
-│   ├── cycle-28.json  <- improvement-cycle 28 proof: per-weapon fire-tint pairs, same-hash run
-│   ├── cycle-29.json  <- improvement-cycle 29 proof: weapon-switch cue pair, same-hash run
-│   ├── cycle-30.json  <- improvement-cycle 30 proof: win-history debrief pair, campaign run
-│   ├── cycle-31.json  <- improvement-cycle 31 proof: kill-marker crosshair pair, same-hash run
+│   ├── cycle-27.json
+│   ├── cycle-28.json
+│   ├── cycle-29.json
+│   ├── cycle-30.json
+│   ├── cycle-31.json
 │   ├── cycle-32.json  <- improvement-cycle 32 proof: slam-radius ring pair, same-hash run
 │   ├── cycle-33.json  <- improvement-cycle 33 proof: pickup edge-tag pair, same-hash run
 │   ├── cycle-34.json  <- improvement-cycle 34 proof: wide-debrief pair, same-hash run
@@ -383,7 +385,8 @@ projects/shooter/
 │   ├── cycle-121.json <- scene snapshot nodes/assets/environment/restore
 │   ├── cycle-122.json <- scene diff nodes/sections/validation
 │   ├── cycle-123.json <- batch planning, world-space merges, exclusions
-│   └── cycle-124.json <- PNG round trips, corruption, texture sha, checker
+│   ├── cycle-124.json <- PNG round trips, corruption, texture sha, checker
+│   └── cycle-125.json <- OBJ normals/UVs, negative indices, quads, errors
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

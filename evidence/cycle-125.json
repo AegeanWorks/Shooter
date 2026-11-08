@@ -1,0 +1,68 @@
+{
+  "area": "keystone testbed: Wavefront OBJ loading",
+  "commands": [
+    "python -m pytest tests/test_keystone_obj_loader_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 125,
+  "feature": "explicit/generated normals, UVs, negative indices, quad fan triangulation, homogeneous vertices, ignored directives, BOM files and malformed-input errors",
+  "fix": "add tests/test_keystone_obj_loader_mechanics.py with five inline/file OBJ tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "441 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "triangle": {
+      "positions": 3,
+      "normals": 3,
+      "uvs": 3,
+      "indices": [0, 1, 2],
+      "triangles": 1,
+      "bounds": [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]],
+      "explicit_normal": [0.0, 0.0, 1.0],
+      "uvs_values": [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]],
+      "generated_flat_normal": [0.0, 0.0, 1.0],
+      "missing_uv_zero": true
+    },
+    "negative_quad": {
+      "positions": 4,
+      "indices": [0, 1, 2, 0, 2, 3],
+      "triangles": 2,
+      "bounds": [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0]],
+      "generated_normals": true
+    },
+    "homogeneous": {
+      "v_2_4_6_2": [1.0, 2.0, 3.0],
+      "bounds": [[0.0, 0.0, 0.0], [1.0, 2.0, 3.0]],
+      "directives_ignored": true,
+      "zero_weight": "ValueError"
+    },
+    "files": {
+      "bom": true,
+      "missing": "FileNotFoundError"
+    },
+    "errors": {
+      "no_faces": "ValueError",
+      "short_face": "ValueError",
+      "zero_index": "ValueError",
+      "outside_index": "ValueError",
+      "bad_corner": "ValueError",
+      "bad_float": "ValueError"
+    }
+  },
+  "tests": {
+    "obj_loader_tests": 5,
+    "suite": "441 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone obj loader",
+    "wavefront obj",
+    "negative indices",
+    "quad triangulation",
+    "homogeneous vertices"
+  ]
+}
