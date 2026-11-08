@@ -1993,3 +1993,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 298 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-95.json`.
+
+## Cycle 96 - Keystone testbed: animation mechanics
+- **Area**: keystone testbed (96th cycle).
+- **Feature / evidence**: The shooter's warden core uses a state machine,
+  but the underlying animation library, track sampling, controller
+  crossfades/events and `apply_pose` were not directly covered.
+- **Fix**: add `tests/test_keystone_animation_mechanics.py` covering
+  the `.kanim` library round trip, linear and step keyframe sampling,
+  event ranges, a 0.4 s crossfade, loop event wrap, scene pose
+  application and `animation_report`.
+- **Proof**: `bob` entry duration 1.0 / 2 tracks; sample 0.25 gives
+  y 0.5 and scale 1.1; step sample 0.9 stays 2.0; the `peak` event
+  fires in (0, 0.5] but not (0, 0.49); a 1.2 s loop refires it; the
+  crossfade ends at y 2.0; `apply_pose` updates `hero` and ignores
+  a missing node; the report names `low` and both clips.
+- **Gates**: `python -m pytest -q` 302 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-96.json`.

@@ -1,0 +1,37 @@
+{
+  "area": "keystone testbed: animation mechanics",
+  "commands": [
+    "python -m pytest tests/test_keystone_animation_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 96,
+  "feature": "AnimationLibrary (.kanim), Track sampling/interpolation, AnimationController crossfades/events/loop, apply_pose, animation_report",
+  "fix": "add tests/test_keystone_animation_mechanics.py covering the animation subsystem used by the warden-core state machine: library round trip, linear and step sampling, event ranges, crossfade blending, loop event wrap, scene pose application and the controller report",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "302 passed"
+  },
+  "mechanics": {
+    "library": {"name": "bob", "duration": 1.0, "track_count": 2, "error": null},
+    "sampling": {"t_0_25_position_y": 0.5, "t_0_25_scale_x": 1.1, "t_0_9_position_y": 0.2, "step_t_0_9_position_y": 2.0},
+    "events": {"in_0_0_5": ["peak"], "in_0_0_49": [], "loop_1_2_refires": true},
+    "crossfade": {"duration": 0.4, "mid_blending": true, "end_blending": false, "end_position_y": 2.0},
+    "apply_pose": {"updated": ["hero"], "missing_ignored": true},
+    "report": {"current": "low", "clips": ["bob", "low"]}
+  },
+  "tests": {
+    "animation_mechanics_tests": 4,
+    "suite": "302 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone animation library",
+    "keyframe sampling",
+    "controller crossfade",
+    "animation events",
+    "apply_pose"
+  ]
+}

@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-95-mechanics",
+    "task_id": "shooter-cycle-96-animation",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794136002.84974,
+    "updated_at": 1794138231.849704,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794136004.754038
+    "completed_at": 1794138232.0561392
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-89-keystone-core-anim",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Keystone core proven: 278 tests, determinism 1800 ok (b25db520), aikit 4/4, 10679 px pair, scale 1.18->1.32, same slam hash 4580b9da; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794130428.96749,
-      "timestamp_str": "2026-11-08 12:33:48",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-89-keystone-core-anim",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-89-keystone-core-anim' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794130429.6872437,
-      "timestamp_str": "2026-11-08 12:33:49",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-90-pad-lifecycle",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: move the launch-pad pulse onto a ComponentRuntime lifecycle component, with a 0-px pair and same-hash platform run",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794130953.8178272,
-      "timestamp_str": "2026-11-08 12:42:33",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The shooter is the Keystone testbed, but the new deterministic component lifecycle had no consumer; the pad pulse was still a hardcoded sine in _sync_scene.",
-        "benefits": "One PadPulseComponent on the pad node now proves start/update/describe in shipped gameplay, with base/amplitude/speed in juice.json.",
-        "risks": "contract: pad presentation only; dependency: none; concurrency: none; state: no sim/hash change, node/material/draws unchanged.",
-        "mitigation": "Two lifecycle tests, a same-view 0-px capture pair, a same-hash platform jump and the full gates."
-      },
-      "plan_digest": "8fd68c219bcfaaef9d11195e650161c6ae79f6890ac8858bb11fe17ada4d59f9"
-    },
     {
       "task_id": "shooter-cycle-90-pad-lifecycle",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794136004.75404,
       "timestamp_str": "2026-11-08 14:06:44",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-96-animation",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover .kanim animation library, track sampling, controller crossfades/events/loop and apply_pose",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794138227.4726946,
+      "timestamp_str": "2026-11-08 14:43:47",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The warden core uses a state machine, but the underlying animation library, sampling, crossfade/event and pose mechanics were only indirectly covered.",
+        "benefits": "Four direct tests pin library round-trip, linear/step sampling, event ranges, crossfade blending, loop wrap and scene pose application.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change.",
+        "mitigation": "Four focused tests, full suite, determinism and project gates."
+      },
+      "plan_digest": "5d52d44569e69af8b49f206f508ad098af16ecd0d62a52c54866a63ac644b0b6"
+    },
+    {
+      "task_id": "shooter-cycle-96-animation",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Animation mechanics covered: 302 tests, determinism 1800 ok (b25db520), aikit 4/4, .kanim round-trip/sampling/events/crossfade/loop/pose green; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794138231.849704,
+      "timestamp_str": "2026-11-08 14:43:51",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-96-animation",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-96-animation' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794138232.056141,
+      "timestamp_str": "2026-11-08 14:43:52",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
