@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-106-engine-loop",
+    "task_id": "shooter-cycle-107-component-codec",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794142797.1024475,
+    "updated_at": 1794143198.7396312,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794142797.3932765
+    "completed_at": 1794143198.9152238
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-100-editor-scene",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Editor scenes covered: 322 tests, determinism 1800 ok (b25db520), aikit 4/4, groups/layers/locks/overrides/nesting green; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794139989.3065224,
-      "timestamp_str": "2026-11-08 15:13:09",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-100-editor-scene",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-100-editor-scene' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794139990.1719265,
-      "timestamp_str": "2026-11-08 15:13:10",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-101-authoring",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover editor undo/redo, play stepping/restore, material authoring, animation keys and scene diff/validation",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794140430.8291273,
-      "timestamp_str": "2026-11-08 15:20:30",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The web editor exposes undo/redo, play mode, material authoring, animation keys and scene diff/validation, but the shooter suite covered none of them.",
-        "benefits": "Five tests pin node-edit history, play snapshot restoration, the material save/assign/delete/trash/restore lifecycle, key set/remove counts and saved-scene diff/validation.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change; temp libraries and a minimal shooter-asset scene.",
-        "mitigation": "Five focused tests, full suite, determinism and project gates."
-      },
-      "plan_digest": "bdecb343561f86680cae2cae154d6d6f8e647702bc0fe057e5577a97d2e3f50b"
-    },
     {
       "task_id": "shooter-cycle-101-authoring",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794142797.3932776,
       "timestamp_str": "2026-11-08 15:59:57",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-107-component-codec",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover typed component codecs/snapshot/prefab/lifecycle and commit a minimal upstream manifest-asset reproducer/report",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794143198.5691688,
+      "timestamp_str": "2026-11-08 16:06:38",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Typed component persistence had no project coverage, and the manifest-asset validation bug had only an xfail with no upstream-facing reproducer.",
+        "benefits": "Five codec tests pin dataclass/custom round trips, node APIs, scene/prefab component reloads and lifecycle serialization; the reproducer/report gives keystone a minimal fix target.",
+        "risks": "contract: tests/tools only; dependency: none; concurrency: none; state: no game/sim/hash change; temp projects only.",
+        "mitigation": "Five focused tests, a standalone reproducer, a written report, full suite, determinism and project gates."
+      },
+      "plan_digest": "5d2f1c3ced9d544e28b1ee9560e97d03af1acb70bdc6f1a2f37c31f2dc8d485e"
+    },
+    {
+      "task_id": "shooter-cycle-107-component-codec",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Component codecs/reproducer done: 354 tests passed + 1 xfailed, determinism 1800 ok (b25db520), aikit 4/4; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794143198.7396312,
+      "timestamp_str": "2026-11-08 16:06:38",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-107-component-codec",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-107-component-codec' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794143198.915225,
+      "timestamp_str": "2026-11-08 16:06:38",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

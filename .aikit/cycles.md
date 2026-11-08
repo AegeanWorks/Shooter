@@ -2228,3 +2228,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 349 passed, 1 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-106.json`.
+
+## Cycle 107 - Keystone testbed: component codecs and upstream reproducer
+- **Area**: keystone testbed (107th cycle).
+- **Feature / evidence**: Typed components persist through scene
+  snapshots/prefabs via `component_codec` but had no project coverage;
+  the manifest-asset bug now has a committed upstream reproducer/report.
+- **Fix**: add `tests/test_keystone_component_codec_mechanics.py`
+  covering dataclass/custom codecs, node attach/remove, snapshot and
+  prefab round trips and a lifecycle component; commit
+  `scripts/keystone_manifest_asset_repro.py` and
+  `evidence/keystone-manifest-asset-repro.md`.
+- **Proof**: Health/Counter round-trip as `{type,data}`; missing/
+  unknown/partial type maps raise; node require/remove behave; scene and
+  prefab component round trips restore values; Ticker starts, ticks
+  twice, stops and serializes ticks=2. The reproducer exits 1 with
+  `ok=false` and `asset 'project:assets/swatch.png' is already
+  registered` on keystone `c31f935`; the report records expected
+  `ok=true`, root cause and fix.
+- **Gates**: `python -m pytest -q` 354 passed, 1 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence files**: `evidence/cycle-107.json` and
+  `evidence/keystone-manifest-asset-repro.md`.

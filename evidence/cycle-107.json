@@ -1,0 +1,52 @@
+{
+  "area": "keystone testbed: component codecs and upstream reproducer",
+  "commands": [
+    "python -m pytest tests/test_keystone_component_codec_mechanics.py -q",
+    "python scripts/keystone_manifest_asset_repro.py",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 107,
+  "feature": "Typed component codecs (dataclass/custom), node component API, scene-snapshot and prefab component round trips, ComponentRuntime lifecycle; minimal upstream manifest-asset reproducer/report",
+  "fix": "add tests/test_keystone_component_codec_mechanics.py and commit scripts/keystone_manifest_asset_repro.py plus evidence/keystone-manifest-asset-repro.md, a standalone reproducer/report for the validate_project manifest-asset duplicate",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "354 passed, 1 xfailed"
+  },
+  "mechanics": {
+    "codec": {
+      "dataclass": {"type": "Health", "data": {"value": 7}},
+      "custom": {"type": "Counter", "data": {"value": 9}},
+      "missing_types": "ValueError",
+      "unknown_type": "ValueError",
+      "invalid_type_map": "TypeError"
+    },
+    "node": {"add": true, "get": true, "require": true, "remove": true, "missing_require": "KeyError", "none_add": "TypeError"},
+    "scene_snapshot": {"components": ["Health", "Counter"], "round_trip": true, "no_types": "ValueError", "partial_types": "ValueError"},
+    "prefab": {"components": ["Health", "Counter"], "round_trip": true, "no_types": "ValueError"},
+    "lifecycle": {"start": 1, "updates": 2, "stop": 1, "codec_ticks": 2},
+    "reproducer": {
+      "script": "scripts/keystone_manifest_asset_repro.py",
+      "report": "evidence/keystone-manifest-asset-repro.md",
+      "keystone_commit": "c31f935",
+      "expected": "ok=true",
+      "actual": "ok=false: asset 'project:assets/swatch.png' is already registered",
+      "exit_code": 1
+    }
+  },
+  "tests": {
+    "component_codec_tests": 5,
+    "suite": "354 passed, 1 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone component codec",
+    "scene snapshot components",
+    "prefab components",
+    "component lifecycle",
+    "manifest asset reproducer",
+    "upstream report"
+  ]
+}
