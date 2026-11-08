@@ -91,6 +91,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `serialization` | binary/JSON atomic writes, backup chain, BOM reads, temp cleanup | `tests/test_keystone_serialization_mechanics.py` |
 | `primitives` | cube/plane/cone/cylinder/sphere counts, bounds, normals, UVs | `tests/test_keystone_primitives_mechanics.py` |
 | `gpu.instancing` | grouping, culling, ordering, savings, skinned exclusion | `tests/test_keystone_instancing_mechanics.py` |
+| `playtest` | canon/signals, policies, transcripts/diffs, reports, fairness verdicts | `tests/test_keystone_playtest_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -153,6 +154,7 @@ projects/shooter/
 │   ├── test_keystone_serialization_mechanics.py <- binary/JSON atomic, backup, BOM, temp cleanup
 │   ├── test_keystone_primitives_mechanics.py <- cube/plane/cone/cylinder/sphere geometry
 │   ├── test_keystone_instancing_mechanics.py <- grouping, culling, ordering, savings
+│   ├── test_keystone_playtest_mechanics.py <- canon, policies, transcripts, reports, fairness
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -303,16 +305,16 @@ projects/shooter/
 │   ├── cycle-56.json  <- improvement-cycle 56 proof: wall-panel pair, same-hash run
 │   ├── cycle-57.json  <- improvement-cycle 57 proof: surge-forfeit cue pair + WAV
 │   ├── cycle-58.json  <- improvement-cycle 58 proof: save-error debrief pair, death drill
-│   ├── cycle-59.json  <- improvement-cycle 59 proof: viewmodel-recoil pair, same-hash run
-│   ├── cycle-60.json  <- improvement-cycle 60 proof: cover-safe summon pair, summon drill
-│   ├── cycle-61.json  <- improvement-cycle 61 proof: four-edge platform rim pair, same-hash run
-│   ├── cycle-62.json  <- improvement-cycle 62 proof: no-reserve HUD pair, dry-fire run
-│   ├── cycle-63.json  <- improvement-cycle 63 proof: pickup-pop pair, same-hash pickup run
-│   ├── cycle-64.json  <- improvement-cycle 64 proof: critical-cue pair, campaign clip count + WAV
-│   ├── cycle-65.json  <- improvement-cycle 65 proof: disabled-profile pair, profile_bad run
-│   ├── cycle-66.json  <- improvement-cycle 66 proof: reload-dip pair, same-hash reload run
-│   ├── cycle-67.json  <- improvement-cycle 67 proof: escort-overlap pair, summon drill + re-recorded reference
-│   ├── cycle-68.json  <- improvement-cycle 68 proof: campaign-seal pair, campaign drill
+│   ├── cycle-59.json
+│   ├── cycle-60.json
+│   ├── cycle-61.json
+│   ├── cycle-62.json
+│   ├── cycle-63.json
+│   ├── cycle-64.json
+│   ├── cycle-65.json
+│   ├── cycle-66.json
+│   ├── cycle-67.json
+│   ├── cycle-68.json
 │   ├── cycle-69.json  <- improvement-cycle 69 proof: post-banner completion pair, campaign run
 │   ├── cycle-70.json  <- improvement-cycle 70 proof: ammo-cache pair, cache-bearing campaign run
 │   ├── cycle-71.json  <- improvement-cycle 71 proof: cache-drop cue pair, campaign clip count + WAV
@@ -362,7 +364,8 @@ projects/shooter/
 │   ├── cycle-114.json <- mesh builder, matrix normals, skin
 │   ├── cycle-115.json <- atomic writes, backups, BOM
 │   ├── cycle-116.json <- primitive counts, bounds, normals, UVs
-│   └── cycle-117.json <- instancing grouping, culling, ordering
+│   ├── cycle-117.json <- instancing grouping, culling, ordering
+│   └── cycle-118.json <- playtest canon/policies/transcripts/fairness
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

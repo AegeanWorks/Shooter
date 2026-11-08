@@ -2419,3 +2419,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 401 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-117.json`.
+
+## Cycle 118 - Keystone testbed: seeded playtests and fairness
+- **Area**: keystone testbed (118th cycle).
+- **Feature / evidence**: `playtest` is the seeded bot/fairness layer but
+  had no direct coverage of canonical hashes, policies, transcript diffs,
+  reports or fairness branches.
+- **Fix**: add `tests/test_keystone_playtest_mechanics.py` with five tests
+  using ShooterGame and small local contract games.
+- **Proof**: canon drops time/rounds floats with a stable hash; signal
+  readers classify outcomes/scores; scripted runs hold the final action,
+  produce stable hashes, replay through CommandLog and diff at frame 0
+  when changed; greedy repeats on score improvement; reports expose
+  coverage/fairness and reject bad inputs; fairness returns fair for a
+  witnessed win, unfair for budget/spawn/no-witness and unknown for
+  missing outcome/reference branches.
+- **Gates**: `python -m pytest -q` 406 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-118.json`.

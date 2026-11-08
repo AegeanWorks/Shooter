@@ -1,0 +1,90 @@
+{
+  "area": "keystone testbed: seeded playtests and fairness verdicts",
+  "commands": [
+    "python -m pytest tests/test_keystone_playtest_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 118,
+  "feature": "canonical snapshot hashes and signal readers, scripted/random/greedy policies, transcript replay/diffs, report envelopes and fair/unfair/unknown fairness branches",
+  "fix": "add tests/test_keystone_playtest_mechanics.py with five tests using ShooterGame and small local contract games",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "406 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "canon": {
+      "drops_time": true,
+      "rounds_floats": true,
+      "hash_ignores_time": true,
+      "non_mapping": "TypeError",
+      "outcomes": {"win": "win", "bogus": "unknown", "absent": "unknown"},
+      "scores": {"3": 3.0, "true": null, "text": null, "absent": null}
+    },
+    "scripted_run": {
+      "schema": 1,
+      "game": "shooter",
+      "steps_used": 4,
+      "holds_final_action": true,
+      "hash_stable": true,
+      "command_log_seed": 7,
+      "command_log_frames": 4,
+      "same_trace_diff": null,
+      "changed_trace_divergence": 0
+    },
+    "greedy": {
+      "repeats_on_score_improvement": true,
+      "params": {"score_guided": true}
+    },
+    "validation": {
+      "press_chance_range": "ValueError",
+      "empty_script": "ValueError",
+      "non_action_script": "TypeError",
+      "negative_frames": "ValueError",
+      "bool_seed": "TypeError",
+      "zero_step": "ValueError",
+      "zero_wall_clock": "ValueError",
+      "missing_policy_methods": "TypeError",
+      "blank_policy_name": "ValueError",
+      "missing_command_log": "TypeError",
+      "bad_command_log_seed": "TypeError"
+    },
+    "report": {
+      "schema": 1,
+      "policy": "scripted",
+      "seed": 1,
+      "frames": 3,
+      "steps_used": 3,
+      "hash_matches": true,
+      "coverage": {"states_visited": 3, "unique_hashes_min": 1},
+      "default_fairness": {"verdict": "unknown", "reasons": ["no_fairness_check"]},
+      "fair_fairness": "copied",
+      "web_compatible": true,
+      "bad_inputs": "ValueError/TypeError"
+    },
+    "fairness": {
+      "fair": ["witnessed_win:random:0:2"],
+      "budget": "budget_infeasible:witnessed_win_in_2_frames_exceeds_limit_1",
+      "spawn_terminal": "spawn_terminal:win",
+      "no_outcome": "no_outcome_signal",
+      "no_reference": "no_reference_solution",
+      "reference_no_win": "no_witnessed_win",
+      "empty_reference": "ValueError"
+    }
+  },
+  "tests": {
+    "playtest_tests": 5,
+    "suite": "406 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone playtest",
+    "canonical snapshots",
+    "bot policies",
+    "transcript diff",
+    "fairness verdict",
+    "playtest report"
+  ]
+}
