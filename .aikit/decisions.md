@@ -378,3 +378,10 @@ Status: accepted
 Context: The profile stores lifetime `runs` and `wins`, but the run-over debrief only showed bests and RECENT entries; `CAMPAIGNS WON` appeared transiently on the clear banner. A player could not see their career totals on the death screen. The baseline test found no RUNS/WINS row.
 Decision: Append `RUNS <profile.runs>  WINS <profile.wins>` to the debrief extras when runs > 0. It sits after RECENT; the cycle-34 width/height calculation already accommodates the row. No schema, save-format or run-record change.
 Consequences: Suite 159/159 green (two new tests); determinism 1800 ok; aikit 4/4. The seeded win/loss death pair at 960×540 seed 1 (profile runs=4, wins=1) changes 8,608 px (1.66%, bbox 290,378-669,405), mean luma 51.42→50.06, draws 6, triangles 278. `death 240` keeps hash `f8cd9e28…`, 1 frame, hp 0, score 1500, audio 2, 0 drops. Evidence: `evidence/cycle-37.json`, images in workspace `shots/shooter-campaign/cycle-37/`.
+
+## ADR-055: Visible wisp bolt (combat feel)
+Date: 2026-11-08
+Status: accepted
+Context: The wisp's ranged attack was an instant hitscan with no visual projectile. The staged hit frame measured hp 94 and `tracers=[]`; only the red damage cue revealed the attack, so the source/line of fire was unreadable.
+Decision: When a wisp attack passes its LOS check, append a 0.12 s tracer from the wisp chest to the player eye tagged `weapon="wisp"`; the game registers `material.tracer_wisp` (violet/blue) and the existing per-weapon tracer material mapping uses it. Damage, LOS, cooldown, RNG and the snapshot are untouched.
+Consequences: Suite 161/161 green (two new tests); determinism 1800 ok; aikit 4/4. The staged hit pair at 960×540 seed 1 changes 2,962 px (0.57%, bbox 714,92-911,539), mean luma 35.92→35.89, draws 7→8, triangles 314→326. `kite 3000` keeps hash `945e3fdd…`, 32 kills / 10135 / hp 82, 3 hurts, 458 audio, peak 8, 0 drops. Evidence: `evidence/cycle-38.json`, images in workspace `shots/shooter-campaign/cycle-38/`.

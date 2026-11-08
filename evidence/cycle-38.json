@@ -1,0 +1,58 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py wisp_bolt <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 38,
+  "fix": "on a wisp hit, append a 0.12 s tracer from the wisp chest to the player eye tagged weapon='wisp'; the game maps it to a violet material",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "161 passed"
+  },
+  "play_runs": {
+    "kite_3000": {
+      "audio": 458,
+      "hash": "945e3fdd634c3f1fa35ab326567de182",
+      "hp": 82,
+      "hurts": 3,
+      "kills": 32,
+      "score": 10135,
+      "wave": 4
+    },
+    "parity": "same hash as the campaign baseline; the bolt is presentation telemetry"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-38/after",
+    "before_dir": "shots/shooter-campaign/cycle-38/before",
+    "route": "scripts/capture.py wisp_bolt; 960x540 seed 1, wisp at (5,0.4,4), first hit frame"
+  },
+  "tests": {
+    "suite": "161 passed",
+    "wisp_bolt_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "wisp attack",
+    "enemy tracer",
+    "incoming-fire readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      714,
+      92,
+      911,
+      539
+    ],
+    "changed_px": 2962,
+    "draws": 8,
+    "fraction": 0.0057,
+    "mean_luma_after": 35.89,
+    "mean_luma_before": 35.92,
+    "triangles": 326
+  }
+}

@@ -783,3 +783,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 159 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-37.json`.
+
+## Cycle 38 - Combat feel: visible wisp bolt
+- **Area**: combat feel (38th cycle).
+- **Defect / evidence**: the wisp's ranged hit was instant and invisible;
+  the staged hit frame had hp 94 and `tracers=[]`, with only the red
+  damage cue showing the attack. Baseline `test_wisp_bolt.py` failed 2/2.
+- **Fix**: on a wisp hit, append a 0.12 s tracer from the wisp chest to
+  the player eye tagged `weapon="wisp"`; the game registers
+  `material.tracer_wisp` (violet) and the existing tracer pool maps it.
+  Damage, LOS, attack cooldown and the snapshot are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-38/`;
+  960x540 seed 1, wisp at (5,0.4,4), first hit frame. Before hp 94 with
+  no bolt; after hp 94 + violet bolt: 2,962 changed px (0.57%, bbox
+  714,92-911,539), mean luma 35.92 -> 35.89; draws 7 -> 8, triangles
+  314 -> 326.
+- **Played runs**: `kite 3000` same hash `945e3fdd...` (32 kills / 10135
+  / hp 82, 3 hurts, 458 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 161 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-38.json`.

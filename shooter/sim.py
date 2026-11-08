@@ -846,6 +846,15 @@ class Sim:
                                 blocked = True
                                 break
                     if not blocked:
+                        # Presentation telemetry: the bolt from the wisp
+                        # chest to the player eye, drawn for 0.12 s.
+                        self.tracers.append({
+                            "x0": float(src.x), "y0": float(src.y), "z0": float(src.z),
+                            "x1": float(eye.x), "y1": float(eye.y), "z1": float(eye.z),
+                            "life": 0.12,
+                            "weapon": "wisp",
+                        })
+                        self.tracers = self.tracers[:16]
                         self.hp -= int(edef["dmg"])
                         e.attack_cd = 1.5
                         events.append("hurt")

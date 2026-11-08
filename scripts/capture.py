@@ -417,6 +417,36 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_wisp_bolt(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """First wisp hit from the right: the enemy-bolt pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [
+            _Enemy(etype="wisp", pos=Vec3(5.0, 0.4, 4.0), hp=20, max_hp=20,
+                   attack_cd=0.0)
+        ]
+        for _ in range(30):
+            before = int(g.sim.hp)
+            g.update(FIXED_STEP, ActionState())
+            if int(g.sim.hp) < before:
+                print(
+                    f"wisp-bolt frame={g.sim.tick} hp={g.sim.hp} "
+                    f"tracers={[t.get('weapon') for t in g.sim.tracers]}"
+                )
+                engine.capture(f"{prefix}_wisp_bolt.png", f"{prefix}_wisp_bolt.json")
+                break
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_spawn_cue(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """A staged wave spawn at the pickup line: the spawn-voice pair."""
     from keystone.app import Engine
@@ -1213,6 +1243,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_wall_depth(prefix, shadows, srgb, post, bloom)
     if which == "spawn_cue":
         route_spawn_cue(prefix, shadows, srgb, post, bloom)
+    if which == "wisp_bolt":
+        route_wisp_bolt(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
