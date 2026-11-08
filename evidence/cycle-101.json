@@ -1,0 +1,55 @@
+{
+  "area": "keystone testbed: editor authoring workflows",
+  "commands": [
+    "python -m pytest tests/test_keystone_authoring_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 101,
+  "feature": "GameSession undo/redo, play_start/play_step/play_stop restoration, material save/assign/delete/restore, animation key set/remove, scene diff/validation",
+  "fix": "add tests/test_keystone_authoring_mechanics.py using a small shooter-asset scene: node edit undo/redo, play snapshot restoration, material lifecycle with a used-material refusal and trash restore, animation key insertion/removal and saved-scene diff/validation",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "327 passed"
+  },
+  "mechanics": {
+    "undo_redo": {"edited": "pad-edit", "undo": "pad", "redo": "pad-edit"},
+    "play": {"start_frames": 0, "step_frames": 3, "game_updates": 3, "pad_x_during": 3.0, "pad_after_stop": [0.0, 1.0, 0.0]},
+    "material": {
+      "saved": "gold",
+      "color": [1.0, 0.8, 0.2],
+      "assigned": "material.gold",
+      "delete_used": "WebProblem",
+      "delete_after_clear": true,
+      "trash": true,
+      "restored": true
+    },
+    "animation": {"clip": "author_test", "set_keys": 1, "removed": 1, "keys_after_remove": 0},
+    "scene": {
+      "saved": "level",
+      "diff_has_changes": true,
+      "changed_node": "pad",
+      "changed_field": "name",
+      "diff_after": "pad-renamed",
+      "validation_ok": true,
+      "errors": 0,
+      "node_count": 2
+    }
+  },
+  "tests": {
+    "authoring_tests": 5,
+    "suite": "327 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone editor",
+    "undo redo",
+    "play mode",
+    "material authoring",
+    "animation keys",
+    "scene diff",
+    "scene validation"
+  ]
+}

@@ -2093,3 +2093,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 322 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-100.json`.
+
+## Cycle 101 - Keystone testbed: editor authoring workflows
+- **Area**: keystone testbed (101st cycle).
+- **Feature / evidence**: The web editor exposes undo/redo, play
+  stepping with snapshot restore, material authoring, animation key
+  editing and scene diff/validation, but the shooter suite covered none
+  of them.
+- **Fix**: add `tests/test_keystone_authoring_mechanics.py` using a
+  small shooter-asset scene: node edit undo/redo, play start/step/stop
+  restoration, material save/assign/delete/restore (including the
+  used-material refusal and trash), animation key set/remove and
+  saved-scene diff/validation.
+- **Proof**: `pad-edit` undoes to `pad` and redoes; play steps 3
+  frames (pad x 0 -> 3) and stops back at `[0, 1, 0]`; `gold`
+  material assigns as `material.gold`, refuses deletion while used,
+  deletes after clearing, lands in trash and restores; the animation
+  key counts 1 -> removed 1 -> 0; the saved-scene diff shows
+  `pad.name` -> `pad-renamed` and validation is ok with 0 errors
+  and 2 nodes.
+- **Gates**: `python -m pytest -q` 327 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-101.json`.

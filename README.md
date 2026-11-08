@@ -75,6 +75,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `CharacterBody`/`CharacterController` + `FixedStepClock` | gravity, grounding, step-up, cover slide, catch-up | `tests/test_keystone_physics_mechanics.py` |
 | `Ray`/`ray_aabb`/`ray_sphere` + `SceneLibrary` | filtered hits, sphere pushout, `.kscene` round trip | `tests/test_keystone_raycast_scene_mechanics.py` |
 | `GameSession` editor actions | scene groups, layer visibility, lock/hide, prefab overrides/nesting | `tests/test_keystone_scene_editor_mechanics.py` |
+| `GameSession` authoring actions | undo/redo, play restore, materials, animation keys, diff/validate | `tests/test_keystone_authoring_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -121,6 +122,7 @@ projects/shooter/
 │   ├── test_keystone_physics_mechanics.py <- gravity/step-up/cover slide/fixed-step clock
 │   ├── test_keystone_raycast_scene_mechanics.py <- rays/sphere pushout/.kscene round trip
 │   ├── test_keystone_scene_editor_mechanics.py <- scene groups/layers/locks/prefab overrides
+│   ├── test_keystone_authoring_mechanics.py <- undo/redo/play/materials/animation keys/diff
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -311,7 +313,8 @@ projects/shooter/
 │   ├── cycle-97.json  <- cycle 97 proof: mixer buses/mixdown, asset deps/hot reload
 │   ├── cycle-98.json  <- cycle 98 proof: character physics and fixed-step clock mechanics
 │   ├── cycle-99.json  <- cycle 99 proof: raycasts, sphere pushout, .kscene round trip
-│   └── cycle-100.json <- cycle 100 proof: editor scene groups/layers/locks/prefab overrides
+│   ├── cycle-100.json <- cycle 100 proof: editor scene groups/layers/locks/prefab overrides
+│   └── cycle-101.json <- cycle 101 proof: undo/redo/play/materials/animation keys/diff
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
