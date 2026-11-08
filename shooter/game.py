@@ -926,6 +926,12 @@ class ShooterGame:
                 )
             else:
                 node.visible = False
+        if self._approach_pad is not None:
+            pulse = 1.0 + 0.08 * math.sin(sim.time * 3.0)
+            self._approach_pad.transform = Transform(
+                position=self._approach_pad.transform.position,
+                scale=Vec3(1.4 * pulse, 0.02, 1.4 * pulse),
+            )
         if self._pickup_beam is not None and self._pickup_orb is not None:
             active = bool(sim.pickup_active)
             self._pickup_beam.visible = active

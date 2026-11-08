@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pad, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, ammo/reload, kill-feed, damage, boss/pickup direction (tag survives boss)
@@ -130,13 +130,14 @@ projects/shooter/
 │   ├── test_recent_five.py <- all five stored runs across RECENT/HISTORY
 │   ├── test_hurt_shake.py  <- hurt_t camera jolt, sim hash unchanged
 │   ├── test_target_dead.py <- target bar hidden on the death screen
+│   ├── test_pad_pulse.py   <- launch pad sine scale pulse
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/pickup/highground/switch
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -190,7 +191,8 @@ projects/shooter/
 │   ├── cycle-50.json  <- improvement-cycle 50 proof: wisp-bolt cue pair, campaign run
 │   ├── cycle-51.json  <- improvement-cycle 51 proof: five-run history pair, same-hash run
 │   ├── cycle-52.json  <- improvement-cycle 52 proof: damage camera-jolt pair, same-hash run
-│   └── cycle-53.json  <- improvement-cycle 53 proof: clean death screen pair, same-hash run
+│   ├── cycle-53.json  <- improvement-cycle 53 proof: clean death screen pair, same-hash run
+│   └── cycle-54.json  <- improvement-cycle 54 proof: platform pulse pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

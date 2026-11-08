@@ -1103,3 +1103,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 195 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-53.json`.
+
+## Cycle 54 - Levels: pulsing launch pad
+- **Area**: levels (54th cycle).
+- **Opportunity**: the cycle-47 launch pad was static and could blend
+  into the floor grid at approach distance; the before frame measured
+  `pad_scale=1.4` with no motion.
+- **Fix**: pulse the existing `_approach_pad` scale with
+  `1 + 0.08*sin(time*3)` in `_sync_scene`; no new nodes, draws or
+  colliders. The jump/landing path is untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-54/`;
+  960x540 seed 1, approach view at time 0.5. Pad 1.4 -> 1.512:
+  1,629 changed px (0.31%, bbox 352,498-607,539), mean luma
+  49.47 -> 49.71; draws 6, triangles 134.
+- **Played runs**: `platform 120` before/after same hash `c1603d79...`,
+  28 frames, hp 100, score 250, landed, audio 1, peak 1, drops 0.
+- **Gates**: `python -m pytest -q` 196 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-54.json`.

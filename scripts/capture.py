@@ -417,6 +417,40 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_platform_pulse(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Approach view at a pulse peak: the launch-pad pulse pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.player_pos = Vec3(-16.0, 0.9002, 9.5)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-16.0, 0.9002, 9.5),
+            half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = 0.0
+        g.sim.kick = 0.0
+        g.sim.time = 0.5
+        g.update(FIXED_STEP, ActionState())
+        pad = g._approach_pad
+        print(
+            f"platform-pulse frame={g.sim.tick} "
+            f"pad_scale={None if pad is None else round(pad.transform.scale.x, 3)}"
+        )
+        engine.capture(f"{prefix}_platform_pulse.png", f"{prefix}_platform_pulse.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_cover_texture(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Spawn view of the near covers: the cover-panel pair."""
     from keystone.app import Engine
@@ -1551,6 +1585,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_boss_pickup(prefix, shadows, srgb, post, bloom)
     if which == "cover_texture":
         route_cover_texture(prefix, shadows, srgb, post, bloom)
+    if which == "platform_pulse":
+        route_platform_pulse(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

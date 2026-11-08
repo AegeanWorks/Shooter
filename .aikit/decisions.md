@@ -490,3 +490,10 @@ Status: accepted
 Context: The cycle-46 crosshair target-health bar was drawn even with `sim.alive=False`. On the death frame a brute under the crosshair put `BRUTE 120/120` over `YOU DIED`; the baseline test measured the label still present after death.
 Decision: Add the `sim.alive` guard to the target-bar condition. The bar remains for live non-warden targets; the warden bar and the death screen are otherwise unchanged. This is draw-only and changes no sim state.
 Consequences: Suite 195/195 green (two new tests); determinism 1800 ok; aikit 4/4. The death-frame pair at 960×540 seed 1 changes 1,548 px (0.30%, bbox 403,200-556,227), mean luma 49.41→49.08, draws 6, triangles 278. `death 240` keeps hash `f8cd9e28…`, 1 frame, hp 0, score 1500, audio 3, peak 3, 0 drops. Evidence: `evidence/cycle-53.json`, images in workspace `shots/shooter-campaign/cycle-53/`.
+
+## ADR-071: Pulsing launch pad (levels)
+Date: 2026-11-08
+Status: accepted
+Context: The cycle-47 launch pad marked the jump spot, but it was static and could blend into the floor grid at approach distance; the before frame measured a constant 1.4 scale with no motion.
+Decision: In `_sync_scene`, pulse the existing `_approach_pad` scale by `1 + 0.08*sin(time*3)`; position and flat height stay fixed. No new nodes, draws, colliders or sim state. The jump path is untouched.
+Consequences: Suite 196/196 green (one new test); determinism 1800 ok; aikit 4/4. The approach pair at 960×540 seed 1 (time 0.5) changes 1,629 px (0.31%, bbox 352,498-607,539), mean luma 49.47→49.71, draws 6, triangles 134. `platform 120` keeps hash `c1603d79…`, 28 frames, hp 100, score 250, landed, audio 1, 0 drops. Evidence: `evidence/cycle-54.json`, images in workspace `shots/shooter-campaign/cycle-54/`.
