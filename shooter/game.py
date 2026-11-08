@@ -408,7 +408,7 @@ class ShooterGame:
         if self.profile_disabled:
             return
         self.profile["wins"] = int(self.profile.get("wins", 0)) + 1
-        self._save_profile()
+        self._record_run("win")
 
     def _record_progress(self) -> None:
         """Persist a new best at wave clear, even if the player later quits."""
@@ -428,7 +428,8 @@ class ShooterGame:
         if changed:
             self._save_profile()
 
-    def _finish_run(self) -> None:
+    def _record_run(self, outcome: str) -> None:
+        """Append one finished run (death or campaign clear) to the profile."""
         if self._run_recorded:
             return
         self._run_recorded = True
@@ -439,7 +440,7 @@ class ShooterGame:
             "wave": int(sim.wave),
             "best_streak": int(sim.best_streak),
             "time_s": int(round(float(sim.time))),
-            "outcome": "lose",
+            "outcome": outcome,
         }
         self.last_run = run
         self.run_new_best = int(run["score"]) > self._run_start_best
@@ -457,6 +458,9 @@ class ShooterGame:
             if int(run[run_key]) > int(self.profile.get(profile_key, 0)):
                 self.profile[profile_key] = int(run[run_key])
         self._save_profile()
+
+    def _finish_run(self) -> None:
+        self._record_run("lose")
 
     def _play_event(self, event: str) -> None:
         """Map one sim event to its audio voice and on-screen caption."""
@@ -829,7 +833,8 @@ class ShooterGame:
             cx = width // 2
             top = int(state.height) // 2 - 8
             history = [
-                str(item.get("score", 0))
+                f"{int(item.get('score', 0))}"
+                f"{'W' if item.get('outcome') == 'win' else 'L'}"
                 for item in list(self.profile.get("history", []))[:3]
             ]
             extras: list[tuple[str, tuple]] = []

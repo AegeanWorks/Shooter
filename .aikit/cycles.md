@@ -622,3 +622,26 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 136 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-29.json`.
+
+## Cycle 30 - Progression and saves: record campaign wins
+- **Area**: progression and saves (30th cycle).
+- **Defect / evidence**: `_record_campaign_clear` only incremented `wins`;
+  `last_run` and `history` were written by `_finish_run` on death alone.
+  The pre-fix 3000-frame campaign run reached wave 4 with `wins=1` but
+  `runs=0` and `history=[]`, and the debrief printed scores without
+  outcomes. Baseline `test_win_history.py` failed 3/4.
+- **Fix**: extract `_record_run(outcome)`; death records `lose`, campaign
+  clear records `win`; `_run_recorded` prevents a later death from
+  duplicating the win. The debrief appends `W`/`L` to RECENT scores.
+  Profile schema stays 3 (outcome was already in the run record).
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-30/`;
+  960x540 seed 1, seeded win 980 + loss 740, staged death 1500. Before
+  `RECENT 1500 / 980 / 740`; after `RECENT 1500L / 980W / 740L`:
+  656 changed px (0.13%, bbox 442,356-619,369), mean luma 51.36 -> 51.40;
+  draws 5, triangles 230.
+- **Played runs**: `kite 3000` before wins=1/runs=0/history=[]; after
+  wins=1/runs=1/history=[win 8935, wave 4, time 39, kills 28, streak 16];
+  same hash `945e3fdd...`, final 32 kills / 10135 / hp 82.
+- **Gates**: `python -m pytest -q` 140 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-30.json`.

@@ -74,4 +74,4 @@ def test_debrief_shows_recent_scores(tmp_path):
     canvas = _Canvas()
     g.draw_ui(canvas, _Hud())
     labels = [str(t[2]) for t in canvas.texts]
-    assert any("RECENT 980 / 740" in label for label in labels), labels
+    assert any("RECENT 980L / 740L" in label for label in labels), labels

@@ -899,7 +899,8 @@ def route_win(prefix: str, shadows: bool = True, srgb: bool = True, post: bool =
         engine.close()
 
 
-def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True,
+                        bloom: bool = True, win_history: bool = False) -> None:
     """Staged run-over frame with a seeded best, against the no-profile build."""
     from keystone.app import Engine
 
@@ -910,10 +911,12 @@ def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, po
                        "best_wave": 4, "best_streak": 6})
         seeded["history"] = [
             {"score": 980, "kills": 8, "wave": 3, "best_streak": 5,
-             "time_s": 41, "outcome": "lose"},
+             "time_s": 41, "outcome": "win" if win_history else "lose"},
             {"score": 740, "kills": 6, "wave": 2, "best_streak": 3,
              "time_s": 30, "outcome": "lose"},
         ]
+        if win_history:
+            seeded["wins"] = 1
         ProfileStore(profile_path).save(seeded)
     try:
         game = ShooterGame(profile_path=profile_path)
@@ -939,12 +942,20 @@ def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, po
         print(
             f"death-profile alive={g.sim.alive} score={g.sim.score} "
             f"best={profile.get('best_score')} runs={profile.get('runs')} "
+            f"wins={profile.get('wins')} "
+            f"history={[r.get('outcome') for r in profile.get('history', [])]} "
             f"last={getattr(g, 'last_run', None)}"
         )
         engine.capture(f"{prefix}_death_profile.png", f"{prefix}_death_profile.json")
         _profiler(engine)
     finally:
         engine.close()
+
+
+def route_win_history(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True,
+                      bloom: bool = True) -> None:
+    """Debrief with a seeded win + loss: the outcome-marker pair."""
+    route_death_profile(prefix, shadows, srgb, post, bloom, win_history=True)
 
 
 def route_death(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
@@ -988,6 +999,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_slam(prefix, shadows, srgb, post, bloom)
     if which == "death_profile":
         route_death_profile(prefix, shadows, srgb, post, bloom)
+    if which == "win_history":
+        route_win_history(prefix, shadows, srgb, post, bloom)
     if which == "win":
         route_win(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":

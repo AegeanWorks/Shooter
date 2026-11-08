@@ -1,0 +1,78 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py win_history <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 30,
+  "fix": "shared _record_run(outcome): campaign clears append a win to last_run/history and set _run_recorded; the debrief marks each recent score W/L",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "140 passed"
+  },
+  "play_runs": {
+    "kite_3000": {
+      "after": {
+        "hash": "945e3fdd634c3f1fa35ab326567de182",
+        "history": [
+          {
+            "best_streak": 16,
+            "kills": 28,
+            "outcome": "win",
+            "score": 8935,
+            "time_s": 39,
+            "wave": 4
+          }
+        ],
+        "runs": 1,
+        "wins": 1
+      },
+      "before": {
+        "hash": "945e3fdd634c3f1fa35ab326567de182",
+        "history": [],
+        "runs": 0,
+        "wins": 1
+      },
+      "final": {
+        "hp": 82,
+        "kills": 32,
+        "score": 10135,
+        "wave": 4
+      }
+    },
+    "parity": "same sim hash; the win record is profile state, not sim state"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-30/after",
+    "before_dir": "shots/shooter-campaign/cycle-30/before",
+    "route": "scripts/capture.py win_history; 960x540 seed 1, seeded win 980 + loss 740, staged death score 1500"
+  },
+  "tests": {
+    "suite": "140 passed",
+    "win_history_tests": 4
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "campaign win",
+    "run history",
+    "outcome marker"
+  ],
+  "visual_diff": {
+    "bbox": [
+      442,
+      356,
+      619,
+      369
+    ],
+    "changed_px": 656,
+    "draws": 5,
+    "fraction": 0.0013,
+    "mean_luma_after": 51.4,
+    "mean_luma_before": 51.36,
+    "triangles": 230
+  }
+}
