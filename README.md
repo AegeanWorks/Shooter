@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts, death silhouettes, brute/wisp cues, crosshair bounty, switch cues, win/career debrief, floor grid/cover panels/trim/pilasters/platform rim/pad, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, switch cues, win/career debrief, floor grid/cover panels/trim/pilasters/platform rim/pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health, kill marker, ammo/reload, kill-feed, damage, boss/pickup direction (tag survives boss)
@@ -126,6 +126,7 @@ projects/shooter/
 │   ├── test_approach_pad.py <- platform launch pad, trim material, position
 │   ├── test_pickup_boss_tag.py <- pickup edge tag survives a boss fight
 │   ├── test_cover_texture.py <- deterministic cover panel, no new draws
+│   ├── test_wisp_cue.py    <- wisp_bolt event, 1200 Hz clip, caption
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -182,7 +183,8 @@ projects/shooter/
 │   ├── cycle-46.json  <- improvement-cycle 46 proof: target-health pair, same-hash run
 │   ├── cycle-47.json  <- improvement-cycle 47 proof: platform launch-pad pair, same-hash run
 │   ├── cycle-48.json  <- improvement-cycle 48 proof: boss-pickup tag pair, campaign run
-│   └── cycle-49.json  <- improvement-cycle 49 proof: cover-panel pair, same-hash run
+│   ├── cycle-49.json  <- improvement-cycle 49 proof: cover-panel pair, same-hash run
+│   └── cycle-50.json  <- improvement-cycle 50 proof: wisp-bolt cue pair, campaign run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

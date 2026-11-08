@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-49-cover-texture",
+    "task_id": "shooter-cycle-50-wisp-cue",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794107160.2278488,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794107600.976125,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794107197.0349908
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-43-brute-slam",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Brute slam cue proven: 172 tests, determinism 1800 ok, aikit 4/4, 3800 px pair, brute drill audio 2, same kite hash 4fe640c5; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794105011.2932222,
-      "timestamp_str": "2026-11-08 05:30:11",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-43-brute-slam",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-43-brute-slam' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794105039.9372454,
-      "timestamp_str": "2026-11-08 05:30:39",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-44-career-bests",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794107197.034993,
       "timestamp_str": "2026-11-08 06:06:37",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-50-wisp-cue",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Audio cycle: wisp-bolt warning, failing-first tests, first-hit pair and 3000-frame campaign run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794107577.4173555,
+      "timestamp_str": "2026-11-08 06:12:57",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The visible wisp bolt was silent until it hit; only the generic hurt clip played.",
+        "benefits": "A distinct high beep and WISP BOLT caption warn of the ranged attack.",
+        "risks": "contract: event/audio/caption only; dependency: none; concurrency: none; state: no sim change.",
+        "mitigation": "Event/voice/caption tests, first-hit pair, 3 natural bolts with same campaign hash."
+      },
+      "plan_digest": "a0cd82db844f79e8627f65f648bf5d2e04e14f816347e048579933a9e16305b1"
+    },
+    {
+      "task_id": "shooter-cycle-50-wisp-cue",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Wisp cue proven: 190 tests, determinism 1800 ok, aikit 4/4, 3488 px pair, audio 458->461, same hash 945e3fdd; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794107600.976125,
+      "timestamp_str": "2026-11-08 06:13:20",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

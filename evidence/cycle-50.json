@@ -1,0 +1,67 @@
+{
+  "area": "audio cues",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py wisp_bolt <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 50,
+  "fix": "wisp attacks emit wisp_bolt; a 0.08 s 1200 Hz sine and a danger WISP BOLT caption sit beside the existing hurt event",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "190 passed"
+  },
+  "play_runs": {
+    "kite_3000": {
+      "after": {
+        "audio": 461,
+        "hash": "945e3fdd634c3f1fa35ab326567de182",
+        "hp": 82,
+        "hurts": 3,
+        "kills": 32,
+        "score": 10135
+      },
+      "before": {
+        "audio": 458,
+        "hash": "945e3fdd634c3f1fa35ab326567de182",
+        "hp": 82,
+        "hurts": 3,
+        "kills": 32,
+        "score": 10135
+      }
+    },
+    "parity": "same campaign hash; 3 natural wisp bolts added, 0 drops"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-50/after",
+    "before_dir": "shots/shooter-campaign/cycle-50/before",
+    "route": "scripts/capture.py wisp_bolt; 960x540 seed 1, wisp at (5,0.4,4), first hit"
+  },
+  "tests": {
+    "suite": "190 passed",
+    "wisp_cue_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "wisp warning",
+    "ranged attack cue",
+    "caption"
+  ],
+  "visual_diff": {
+    "bbox": [
+      414,
+      164,
+      815,
+      459
+    ],
+    "changed_px": 3488,
+    "draws": 8,
+    "fraction": 0.0067,
+    "mean_luma_after": 34.64,
+    "mean_luma_before": 34.78,
+    "triangles": 326
+  }
+}

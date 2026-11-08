@@ -1024,3 +1024,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 188 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-49.json`.
+
+## Cycle 50 - Audio cues: wisp bolt warning
+- **Area**: audio cues (50th cycle).
+- **Defect / evidence**: the wisp bolt is visible (cycle 38) but silent
+  until it hits; the only sound was the generic `hurt` clip. The staged
+  hit measured events `['hurt']`, cue `''`, one voice.
+- **Fix**: emit `wisp_bolt` in the wisp attack branch; add a 0.08 s
+  1200 Hz sine and a danger `WISP BOLT` caption. The bolt, LOS, damage,
+  cooldown and snapshot are unchanged; the hurt clip still plays.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-50/`;
+  960x540 seed 1, wisp at (5,0.4,4), first hit. Before bolt + hurt only;
+  after bolt + `WISP BOLT` + `AUDIO 2 VOX`: 3,488 changed px (0.67%,
+  bbox 414,164-815,459), mean luma 34.78 -> 34.64; draws 8, triangles 326.
+- **Played runs**: `kite 3000` audio 458 -> 461 (3 natural bolts), same
+  hash `945e3fdd...`, 32 kills / 10135 / hp 82, 3 hurts, peak 8,
+  drops 0.
+- **Gates**: `python -m pytest -q` 190 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-50.json`.

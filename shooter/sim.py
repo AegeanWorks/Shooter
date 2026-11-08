@@ -886,6 +886,7 @@ class Sim:
                                 blocked = True
                                 break
                     if not blocked:
+                        events.append("wisp_bolt")
                         # Presentation telemetry: the bolt from the wisp
                         # chest to the player eye, drawn for 0.12 s.
                         self.tracers.append({

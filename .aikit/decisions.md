@@ -462,3 +462,10 @@ Status: accepted
 Context: The six covers were flat brown boxes. The floor had a grid texture and the walls had trim/pilasters, but the covers had no surface detail and read as plain blocks. The before spawn frame showed uniform cover faces.
 Decision: Generate a deterministic 64×64 grayscale `cover-panel` texture (2-px seam border, 16-px horizontal bands) and apply it to the existing `material.cover` with `checker_scale=1.0`; the brown base color still tints it. No new nodes, draw calls, colliders or sim state.
 Consequences: Suite 188/188 green (two new tests); determinism 1800 ok; aikit 4/4. The spawn pair at 960×540 seed 1 changes 25,683 px (4.95%, bbox 0,262-959,442), mean luma 35.24→34.09, draws 6, triangles 290 (unchanged). `kite 600` keeps hash `4fe640c5…`, 10 kills / 1950 / hp 100, 101 audio, peak 8, 0 drops. Evidence: `evidence/cycle-49.json`, images in workspace `shots/shooter-campaign/cycle-49/`.
+
+## ADR-067: Wisp bolt warning (audio cues)
+Date: 2026-11-08
+Status: accepted
+Context: The wisp bolt became visible in cycle 38, but the attack was silent until the hit; the only sound was the generic `hurt` clip. The warden and brute have dedicated attack cues; the ranged wisp had none. The staged hit measured events `['hurt']`, cue `''`, one voice.
+Decision: Emit `wisp_bolt` in the wisp attack branch before the hurt event; add a 0.08 s 1200 Hz sine and a danger `WISP BOLT` caption. The bolt, LOS, damage, cooldown and snapshot are untouched; the hurt clip still plays after it.
+Consequences: Suite 190/190 green (two new tests); determinism 1800 ok; aikit 4/4. The staged hit pair at 960×540 seed 1 changes 3,488 px (0.67%, bbox 414,164-815,459), mean luma 34.78→34.64, draws 8, triangles 326. `kite 3000` goes from 458 to 461 audio (3 natural bolts) with the same hash `945e3fdd…`, 32 kills / 10135 / hp 82, 3 hurts, peak 8, 0 drops. Evidence: `evidence/cycle-50.json`, images in workspace `shots/shooter-campaign/cycle-50/`.
