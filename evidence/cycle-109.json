@@ -1,0 +1,75 @@
+{
+  "area": "keystone testbed: perspective camera and CPU frustum culling",
+  "commands": [
+    "python -m pytest tests/test_keystone_camera_culling_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 109,
+  "feature": "PerspectiveCamera orientation/look_at/clamping/fly movement, projection edges and aspect handling, frustum plane/AABB math, and scene culling through nested transforms, hidden parents, aspect ratios and conservative skinned meshes",
+  "fix": "add tests/test_keystone_camera_culling_mechanics.py with five GPU-free consumer tests against the real keystone APIs",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "361 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "camera_orientation": {
+      "default_forward": [0.0, 0.0, -1.0],
+      "default_right": [1.0, 0.0, 0.0],
+      "look_at_x": {"yaw": "pi/2", "forward_x": 1.0},
+      "pitch_clamp": "MAX_PITCH both directions",
+      "yaw_wrap": "tau - 0.25",
+      "look_at_self": "ValueError: camera cannot look at its own position"
+    },
+    "camera_projection": {
+      "centre_ndc": [0.0, 0.0],
+      "depth_ndc_in_range": true,
+      "right_edge_x": 1.0,
+      "top_edge_y": 1.0,
+      "near_z": -1.0,
+      "far_z": 1.0,
+      "invalid_aspect": "ValueError",
+      "move_after_yaw_90": [2.0, 1.0, 3.0]
+    },
+    "planes_and_bounds": {
+      "plane_count": 6,
+      "deterministic": true,
+      "aabb_touching_plane": true,
+      "aabb_overlap": true,
+      "aabb_outside": false,
+      "degenerate_planes": "ValueError",
+      "translated_cube_bounds_x": [9.0, 11.0],
+      "scaled_cube_bounds_x": [-2.0, 2.0]
+    },
+    "culling": {
+      "front": true,
+      "behind": false,
+      "far_left": false,
+      "default_visible_names": ["front"],
+      "edge_at_100x100": false,
+      "edge_at_1000x100": true,
+      "bad_size": "ValueError",
+      "nested_child_bounds_z": [-5.5, -4.5],
+      "moved_parent_child_visible": false,
+      "invisible_parent_hides_child": true,
+      "disabled_culling_keeps": ["behind", "far-left"],
+      "hidden_node_still_excluded": true,
+      "skinned_far_behind_visible": true
+    }
+  },
+  "tests": {
+    "camera_culling_tests": 5,
+    "suite": "361 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone camera",
+    "look_at",
+    "projection math",
+    "frustum culling",
+    "nested transforms",
+    "skinned visibility"
+  ]
+}

@@ -2268,3 +2268,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 356 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-108.json`.
+
+## Cycle 109 - Keystone testbed: perspective camera and CPU frustum culling
+- **Area**: keystone testbed (109th cycle).
+- **Feature / evidence**: the shooter renders through Keystone's camera
+  and culling, but the suite had no direct consumer coverage for
+  orientation clamping, projection edges, nested world bounds or
+  conservative skinned visibility.
+- **Fix**: add `tests/test_keystone_camera_culling_mechanics.py` with five
+  GPU-free tests over the real camera/culling APIs.
+- **Proof**: default forward/right and `look_at` yaw match; pitch clamps to
+  `MAX_PITCH`, yaw wraps, self-target raises; NDC centre/right/top and
+  near/far edges match; invalid aspect and degenerate planes raise; AABBs
+  touch/overlap/cull and translated/scaled bounds match. Nested children
+  move with parents, invisible parents hide children, disabled culling
+  keeps behind/far-left but not hidden nodes, and a skinned rig at z=50
+  stays visible.
+- **Gates**: `python -m pytest -q` 361 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-109.json`.

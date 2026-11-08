@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-108-project-cli",
+    "task_id": "shooter-cycle-109-camera-culling",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794143707.0924628,
+    "updated_at": 1794144282.1542463,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794143710.4328613
+    "completed_at": 1794144282.350887
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-102-skinning-gltf-sprite",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Skinning/glTF/sprites covered: 332 tests, determinism 1800 ok (b25db520), aikit 4/4, skin/glTF/sprite green; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794140877.1580434,
-      "timestamp_str": "2026-11-08 15:27:57",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-102-skinning-gltf-sprite",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-102-skinning-gltf-sprite' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794140877.5803535,
-      "timestamp_str": "2026-11-08 15:27:57",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-103-input-ui-assets",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover InputMap contexts/rebinding, ActionState pressed/held, PauseMenu/Canvas clipping, PNG/OBJ loading and merge_batches",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794141244.63673,
-      "timestamp_str": "2026-11-08 15:34:04",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Keystone ships context-aware input, UI canvas/menu, PNG/OBJ loading and static batch merging, but the shooter suite had no direct coverage.",
-        "benefits": "Five tests pin gameplay/menu contexts and pressed-vs-held, ActionState round trips, canvas clipping and menu wrapping, PNG/OBJ loading and the merge_batches summary with an excluded node.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change.",
-        "mitigation": "Five focused tests, full suite, determinism and project gates."
-      },
-      "plan_digest": "3f65cbe66e25ec3fb80e0f7a8c485cbf3baf284bcf7014f03dbcffd1dc7c675f"
-    },
     {
       "task_id": "shooter-cycle-103-input-ui-assets",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794143710.4328637,
       "timestamp_str": "2026-11-08 16:15:10",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-109-camera-culling",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover PerspectiveCamera orientation/projection and CPU frustum culling through nested, hidden and skinned scenes",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794143840.3000169,
+      "timestamp_str": "2026-11-08 16:17:20",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter renders through Keystone's camera and culling, but the suite has no direct consumer tests for orientation clamping, projection bounds, nested world bounds or conservative skinned visibility.",
+        "benefits": "Five deterministic GPU-free tests pin look_at/rotate/move math, NDC near/far and aspect behavior, plane/AABB contract, nested culling and hidden/skinned scene rules.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change; temp scenes only.",
+        "mitigation": "Pure CPU math with temp scenes, full suite, determinism and project gates."
+      },
+      "plan_digest": "0aeda215a2e2f086aeb4f08ef300be94cccb9cb6a0d60cedada8ee4975b4bfc1"
+    },
+    {
+      "task_id": "shooter-cycle-109-camera-culling",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Camera/culling covered: 361 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794144282.1542463,
+      "timestamp_str": "2026-11-08 16:24:42",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-109-camera-culling",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-109-camera-culling' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794144282.3508887,
+      "timestamp_str": "2026-11-08 16:24:42",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

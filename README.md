@@ -80,6 +80,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `InputMap`/`ActionState` + UI + `png`/`obj_loader`/`batch` | contexts/pressed-held, canvas clipping, PNG/OBJ, merge_batches | `tests/test_keystone_input_ui_asset_mechanics.py` |
 | `create_server` HTTP console | health/describe/scene/inspector, simulate, editor, 404/405/400 | `tests/test_keystone_http_server_mechanics.py` |
 | `project`/`export` | manifest create/load/validate, CLI validate/export, hashed bundle, launcher | `tests/test_keystone_project_export_mechanics.py` |
+| `PerspectiveCamera` + `culling` | look_at/clamp/move, projection edges, nested/hidden/skinned frustum culling | `tests/test_keystone_camera_culling_mechanics.py` |
 | Engine loop + `HumanOverlay` + CLI | fixed-step run, pause menu/pause, `--expect-hash`/`--replay` | `tests/test_keystone_engine_loop_mechanics.py` |
 | `component_codec` | dataclass/custom codecs, scene/prefab round trips, lifecycle | `tests/test_keystone_component_codec_mechanics.py` |
 
@@ -135,6 +136,7 @@ projects/shooter/
 │   ├── test_keystone_project_export_mechanics.py <- manifests, validation, export bundle/launcher
 │   ├── test_keystone_engine_loop_mechanics.py <- engine loop/clock, pause overlay, CLI gates
 │   ├── test_keystone_component_codec_mechanics.py <- component codecs/scene/prefab/lifecycle
+│   ├── test_keystone_camera_culling_mechanics.py <- camera math + nested/hidden/skinned culling
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -224,7 +226,7 @@ projects/shooter/
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/brute_gap/brute_windup/enemy_spacing/warden_cover/west_gap/boss_death/summon/summon_overlap/pickup/highground/switch/overdrive/overdrive_kill/clutch/forfeit/save_fail/save_retry/profile_bad/profile_corrupt/profile_backup_restart/campaign
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   ├── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/tracer_muzzle/switch_cue/surge_forfeit/save_error/save_retry/profile_disabled/profile_reset/profile_backup/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/overdrive_glow/overdrive_kill/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/brute_gap/brute_windup/enemy_spacing/warden_charge/pad_lifecycle/warden_cover/west_gap/boss_dead/platform_base/clutch/lowhp_pulse/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
+│   ├── capture.py     <- seeded screenshot routes (spawn/combat/pickup/boss/slam/.../death)
 │   └── keystone_manifest_asset_repro.py <- minimal upstream repro: manifest-asset validation duplicate
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
@@ -335,7 +337,8 @@ projects/shooter/
 │   ├── cycle-106.json <- cycle 106 proof: engine loop, pause overlay and CLI gates
 │   ├── keystone-manifest-asset-repro.md <- upstream report: manifest-asset validation duplicate
 │   ├── cycle-107.json <- cycle 107 proof: component codecs + minimal manifest-asset reproducer
-│   └── cycle-108.json <- cycle 108 proof: project CLI commands + self-clearing reproducer
+│   ├── cycle-108.json <- cycle 108 proof: project CLI commands + self-clearing reproducer
+│   └── cycle-109.json <- cycle 109 proof: camera orientation/projection + CPU frustum culling
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
