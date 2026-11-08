@@ -1,0 +1,91 @@
+{
+  "area": "enemies and bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py summon_cover <prefix>",
+    "python scripts/play_run.py summon 60 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 60,
+  "fix": "warden escort placement retries up to 12 ring positions around the boss and skips a blocked one instead of clamping a mite inside an arena cover; the count and event stay bounded",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "211 passed"
+  },
+  "play_runs": {
+    "summon_after": {
+      "audio": 1,
+      "blocked": 0,
+      "count": 2,
+      "drops": 0,
+      "frames": 60,
+      "hash": "4b92812542c570ad3160b7faaaa31e93",
+      "hp": 100,
+      "hurts": 0,
+      "peak_vox": 1,
+      "positions": [
+        [
+          -15.71,
+          9.73
+        ],
+        [
+          -13.86,
+          11.39
+        ]
+      ]
+    },
+    "summon_before": {
+      "audio": 1,
+      "blocked": 2,
+      "count": 2,
+      "drops": 0,
+      "frames": 60,
+      "hash": "12defe01956759bd2d683b20f672ab6f",
+      "hp": 100,
+      "hurts": 0,
+      "peak_vox": 1,
+      "positions": [
+        [
+          -16.09,
+          12.79
+        ],
+        [
+          -17.91,
+          11.62
+        ]
+      ]
+    },
+    "parity": "positions change by design (the state fix); both runs stay alive at hp 100 for 60 frames with 0 hurts and 0 drops"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-60/after",
+    "before_dir": "shots/shooter-campaign/cycle-60/before",
+    "route": "scripts/capture.py summon_cover; 960x540 seed 1, warden at the low platform, forced summon, camera over the platform edge"
+  },
+  "tests": {
+    "suite": "211 passed",
+    "summon_cover_tests": 1
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "warden summons",
+    "cover-safe spawns",
+    "escort placement"
+  ],
+  "visual_diff": {
+    "bbox": [
+      371,
+      141,
+      596,
+      281
+    ],
+    "changed_px": 5248,
+    "draws": 11,
+    "fraction": 0.0101,
+    "mean_luma_after": 71.28,
+    "mean_luma_before": 71.24,
+    "triangles": 1182
+  }
+}

@@ -286,13 +286,19 @@ class Sim:
             return
         made = 0
         positions: list[Vec3] = []
+        mite_radius = float(self.enemy_defs["mite"]["radius"])
         for _ in range(min(int(count), room)):
-            angle = self.rng.uniform(0.0, math.tau)
-            radius = self.rng.uniform(1.2, 2.4)
-            sx = boss.pos.x + math.cos(angle) * radius
-            sz = boss.pos.z + math.sin(angle) * radius
-            mx = max(-19.0, min(19.0, sx))
-            mz = max(-19.0, min(19.0, sz))
+            for _attempt in range(12):
+                angle = self.rng.uniform(0.0, math.tau)
+                radius = self.rng.uniform(1.2, 2.4)
+                sx = boss.pos.x + math.cos(angle) * radius
+                sz = boss.pos.z + math.sin(angle) * radius
+                mx = max(-19.0, min(19.0, sx))
+                mz = max(-19.0, min(19.0, sz))
+                if not self._enemy_blocked_at(mx, mz, mite_radius):
+                    break
+            else:
+                continue  # surrounded by cover: skip rather than bury the mite
             self.enemies.append(
                 _Enemy(
                     etype="mite",

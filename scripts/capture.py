@@ -173,6 +173,52 @@ def route_recoil(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_summon_cover(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Forced warden summon next to the centre cover: the summon-placement pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.reseed(1)
+        g.sim.wave = 3
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.player_pos = Vec3(-16.0, 0.9002, 18.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-16.0, 0.9002, 18.0),
+            half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = 0.0
+        g.sim.pitch = -0.35
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(-16.0, 1.1, 11.0), hp=600,
+                   max_hp=600, summon_cd=0.0)
+        ]
+        g.update(FIXED_STEP, ActionState())
+        radius = float(g.sim.enemy_defs["mite"]["radius"])
+        blocked = sum(
+            1 for p in g.sim.summon_positions
+            if g.sim._enemy_blocked_at(p.x, p.z, radius)
+        )
+        print(
+            f"summon-cover count={len(g.sim.summon_positions)} blocked={blocked} "
+            f"positions={[(round(p.x, 2), round(p.z, 2)) for p in g.sim.summon_positions]}"
+        )
+        # Look over the low platform from the south-east: a summon buried in
+        # the 0.7 m slab shows its cap above the surface.
+        g.scene.camera.position = Vec3(-16.0, 4.2, 18.5)
+        g.scene.camera.look_at(Vec3(-16.0, 0.5, 12.5))
+        engine.capture(f"{prefix}_summon_cover.png", f"{prefix}_summon_cover.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
@@ -1617,6 +1663,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_fireburst(prefix, shadows, srgb, post, bloom)
     if which == "recoil":
         route_recoil(prefix, shadows, srgb, post, bloom)
+    if which == "summon_cover":
+        route_summon_cover(prefix, shadows, srgb, post, bloom)
     if which in ("all", "pickup"):
         route_pickup(prefix, shadows, srgb, post, bloom)
     if which == "hurt":

@@ -1,56 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-59-viewmodel-recoil",
+    "task_id": "shooter-cycle-60-summon-cover",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794112664.2574599,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794113411.6393914,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794112676.4880834
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-53-target-dead",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-53-target-dead' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794109197.6675599,
-      "timestamp_str": "2026-11-08 06:39:57",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-54-pad-pulse",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Levels cycle: pulsing launch pad, failing-first test, approach pair and same-hash platform run",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794109561.883581,
-      "timestamp_str": "2026-11-08 06:46:01",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The static launch pad could blend into the floor grid from the approach.",
-        "benefits": "A sine scale pulse draws the eye to the jump spot with no new draws.",
-        "risks": "contract: existing-node animation only; dependency: none; concurrency: none; state: none.",
-        "mitigation": "Pulse/steady tests, approach pair at time 0.5, same platform hash."
-      },
-      "plan_digest": "4acbde38c9e43e84937e06b3ad9af1a0134c1470147048e2e4d51d9a4006eae5"
-    },
-    {
-      "task_id": "shooter-cycle-54-pad-pulse",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Pad pulse proven: 196 tests, determinism 1800 ok, aikit 4/4, 1629 px pair, same platform hash c1603d79; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794109580.7268705,
-      "timestamp_str": "2026-11-08 06:46:20",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-54-pad-pulse",
       "phase": "completed",
@@ -265,6 +225,46 @@
       "status": "completed",
       "timestamp": 1794112676.4880857,
       "timestamp_str": "2026-11-08 07:37:56",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-60-summon-cover",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Cover-safe summons proven: 211 tests, determinism 1800 ok, aikit 4/4, 5248 px platform pair, blocked 2->0 in summon drill, hp 100/0 hurts; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794113397.336201,
+      "timestamp_str": "2026-11-08 07:49:57",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-60-summon-cover",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Enemies cycle: reject cover-blocked warden escort ring positions, prove with a 20-seed placement test, a platform-edge pair and a summon drill",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794113411.291844,
+      "timestamp_str": "2026-11-08 07:50:11",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Warden escorts could materialize inside a cover box because summon placement clamped only to the arena bounds, leaving mites stuck in geometry.",
+        "benefits": "Summons now stand clear of covers, so escorts can path and threaten the player as intended.",
+        "risks": "contract: summon placement only; dependency: none; concurrency: none; state: deterministic RNG, max_alive and event count retained.",
+        "mitigation": "Failing-first 20-seed test, staged platform capture pair, summon drill comparing blocked positions, and full gates."
+      },
+      "plan_digest": "fc5cd0e0f1785b76bd63e6a4bce2ad5c16b191996a220b581463a91f6be81438"
+    },
+    {
+      "task_id": "shooter-cycle-60-summon-cover",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Cover-safe summons proven: 211 tests, determinism 1800 ok, aikit 4/4, 5248 px platform pair, blocked 2->0 in summon drill, hp 100/0 hurts; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794113411.6393914,
+      "timestamp_str": "2026-11-08 07:50:11",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

@@ -12,6 +12,7 @@ Modes:
   boss     warden-only wave-3 fight with the kite policy (ends on boss death)
   slam     close-range warden windup/slam (audio + caption drill)
   brute    stand in a brute's slam range (brute-slam cue drill)
+  summon   stand on the platform edge while a warden summons by the cover
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
   save_fail staged near-death run with the profile lock held (save-error proof)
@@ -205,6 +206,24 @@ def main(
             ]
             sim.spawn_queue = ["mite"]
             sim.spawn_t = 999.0
+        if mode == "summon":
+            sim = game.sim
+            sim.wave = 3
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            sim.player_pos = Vec3(-16.0, 0.9002, 18.0)
+            sim.body = sim.body.__class__(
+                position=Vec3(-16.0, 0.9002, 18.0),
+                half_extents=sim.body.half_extents,
+                velocity=Vec3(), on_ground=True,
+            )
+            sim.hvel = Vec3()
+            sim.yaw = 0.0
+            sim.pitch = -0.35
+            sim.enemies = [
+                _Enemy(etype="warden", pos=Vec3(-16.0, 1.1, 11.0), hp=600,
+                       max_hp=600, summon_cd=0.0)
+            ]
         if mode == "pickup":
             sim = game.sim
             sim.wave = 2
@@ -344,6 +363,20 @@ def main(
                 "active": bool(getattr(game.sim, "pickup_active", False)),
                 "taken": bool(getattr(game.sim, "pickup_taken", False)),
                 "surge_t": round(float(getattr(game.sim, "surge_t", 0.0)), 3),
+            },
+            "summon": {
+                "count": len(getattr(game.sim, "summon_positions", [])),
+                "blocked": sum(
+                    1
+                    for p in getattr(game.sim, "summon_positions", [])
+                    if game.sim._enemy_blocked_at(
+                        p.x, p.z, float(game.sim.enemy_defs["mite"]["radius"])
+                    )
+                ),
+                "positions": [
+                    [round(float(p.x), 2), round(float(p.z), 2)]
+                    for p in getattr(game.sim, "summon_positions", [])
+                ],
             },
             "profile": {
                 "best_score": int(getattr(game, "profile", {}).get("best_score", 0)),

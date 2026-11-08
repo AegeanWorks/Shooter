@@ -1227,3 +1227,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 210 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-59.json`.
+
+## Cycle 60 - Enemies/bosses: cover-safe warden escorts
+- **Area**: enemies and bosses (60th cycle).
+- **Defect / evidence**: `_summon_mites` picked a random 1.2-2.4 m ring
+  around the warden and clamped only to the arena bounds, so escorts could
+  spawn inside a cover box and stay stuck. The baseline test with the
+  warden at (-16, 1.1, 11) and seed 1 reproduced two blocked positions.
+- **Fix**: reject ring candidates that overlap a cover at the mite radius,
+  retry up to 12 times, and skip a candidate that never clears. Count,
+  `max_alive`, RNG determinism and the summon event are unchanged; no new
+  nodes, draws or save data.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-60/`;
+  960x540 seed 1, forced summon by the low platform, camera over its edge.
+  Before the platform surface cuts through both mites/markers; after they
+  stand clear in front of the warden. 5,248 changed px (1.01%, bbox
+  371,141-596,281), mean luma 71.24 -> 71.28; draws 11, triangles 1182.
+- **Played runs**: `summon 60` before/after same staging: blocked escorts
+  2 -> 0, both hp 100 for 60 frames, 0 hurts, 0 drops; positions move from
+  (-16.09,12.79)/(-17.91,11.62) to (-15.71,9.73)/(-13.86,11.39).
+- **Gates**: `python -m pytest -q` 211 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-60.json`.
