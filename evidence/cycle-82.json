@@ -1,0 +1,67 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py west_gap <prefix>",
+    "python scripts/play_run.py west_gap 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 82,
+  "fix": "move the low platform 0.5 m east (x -16.0 to -15.5), widening the west wall strip from 0.5 m to 1.0 m so the player can walk behind it; height, size and all linked visuals follow the data",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "259 passed"
+  },
+  "play_runs": {
+    "west_gap_after": {
+      "drops": 0,
+      "frames": 240,
+      "hash": "d2c900781dd9e8fd0ff648de5d510316",
+      "hp": 100,
+      "hurts": 0,
+      "wave": 1,
+      "z": 19.1499
+    },
+    "west_gap_before": {
+      "drops": 0,
+      "frames": 240,
+      "hash": "02df188ea18ad84fa0cae030dc7a9bc0",
+      "hp": 100,
+      "hurts": 0,
+      "wave": 1,
+      "z": 11.6499
+    },
+    "parity": "hash changes by design (the platform collider moved); both runs start at x -19, z 9.5 and walk north for 240 frames, but only the after run passes behind the platform"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-82/after",
+    "before_dir": "shots/shooter-campaign/cycle-82/before",
+    "route": "scripts/capture.py west_gap; 960x540 seed 1, west-wall approach at x -19, z 9.5"
+  },
+  "tests": {
+    "suite": "259 passed",
+    "west_gap_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "platform placement",
+    "west-wall path",
+    "player-width clearance"
+  ],
+  "visual_diff": {
+    "bbox": [
+      0,
+      305,
+      494,
+      539
+    ],
+    "changed_px": 19128,
+    "draws": 7,
+    "fraction": 0.0369,
+    "mean_luma_after": 52.36,
+    "mean_luma_before": 53.4,
+    "triangles": 218
+  }
+}

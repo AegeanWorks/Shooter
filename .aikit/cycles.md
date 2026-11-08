@@ -1685,3 +1685,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 257 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-81.json`.
+
+## Cycle 82 - Levels: player-width west platform gap
+- **Area**: levels (82nd cycle).
+- **Defect / evidence**: the low platform's west face sat 0.5 m from
+  the wall, narrower than the 0.7 m player body. The visible rear strip
+  looked walkable but stopped the player at z 11.65; only a full detour
+  around the east/south sides worked.
+- **Fix**: move the platform center 0.5 m east (x -16.0 -> -15.5), widening
+  the west strip to 1.0 m while keeping its 6x6 footprint, 0.7 m height,
+  rim, base frame and launch pad data-driven. No new nodes or collision
+  tuning.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-82/`;
+  960x540 seed 1, west-wall approach at x -19, z 9.5. 19,128 changed px
+  (3.69%, bbox 0,305-494,539), mean luma 53.40 -> 52.36; draws 7,
+  triangles 218.
+- **Played runs**: `west_gap 240` before/after final z 11.65 -> 19.15,
+  both hp 100, 0 hurts, 0 drops; hashes differ by design. The fairness
+  reference still replays a win unchanged.
+- **Gates**: `python -m pytest -q` 259 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-82.json`.

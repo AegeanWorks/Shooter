@@ -686,3 +686,10 @@ Status: accepted
 Context: The warden slam applied its 30-damage hit on distance and vertical reach only. Unlike the brute and wisp branches, it never checked line of sight, so a slam behind the 2 m north cover still damaged the player at 70 HP in the reproduced frame.
 Decision: Add the shared `_enemy_has_los()` gate to the warden slam damage condition. The windup, slam event, ring, 4.5 m range, reach and cooldown are unchanged; open-field slams still hit.
 Consequences: Suite 257/257 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4; the fairness reference still replays a win without re-recording. The covered-slam pair at 960x540 seed 1 changes 123,656 px (23.85%, bbox 0,12-959,539), mean luma 60.76 -> 61.14, draws 8, triangles 302. `warden_cover 10` before/after: hp 70 -> 100, hurts 1 -> 0, audio 2 -> 1, wave 3 in both; hashes differ by design. Evidence: `evidence/cycle-81.json`, images in workspace `shots/shooter-campaign/cycle-81/`.
+
+## ADR-099: Player-width west platform gap (levels)
+Date: 2026-11-08
+Status: accepted
+Context: The low platform's west face sat 0.5 m from the wall, narrower than the 0.7 m player body. The visible rear strip looked walkable but blocked the player at z 11.65; only a full detour around the east/south sides worked.
+Decision: Move the platform center 0.5 m east (x -16.0 to -15.5), widening the west strip to 1.0 m while keeping its 6x6 footprint, 0.7 m height, rim, base frame and launch pad data-driven. No new nodes or collision tuning.
+Consequences: Suite 259/259 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4; the fairness reference still replays a win without re-recording. The west-approach pair at 960x540 seed 1 changes 19,128 px (3.69%, bbox 0,305-494,539), mean luma 53.40 -> 52.36, draws 7, triangles 218. `west_gap 240` before/after: final z 11.65 -> 19.15, both hp 100, 0 hurts, 0 drops; hashes differ by design. Evidence: `evidence/cycle-82.json`, images in workspace `shots/shooter-campaign/cycle-82/`.

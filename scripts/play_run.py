@@ -14,6 +14,7 @@ Modes:
   brute    stand in a brute's slam range (brute-slam cue drill)
   brute_gap stand 2.7 m from a brute (dead-zone close drill)
   warden_cover stand behind the north cover during a warden slam (LOS drill)
+  west_gap walk the west-wall strip past the platform (gap drill)
   summon   stand on the platform edge while a warden summons by the cover
   summon_overlap  idle at spawn while a centre warden summons (overlap drill)
   campaign stage a wave-3 warden kill, then idle through the clear banner
@@ -106,6 +107,8 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
             if int(game.sim.wave) < 4
             else ActionState()
         )
+    if mode == "west_gap":
+        return ActionState(forward=1.0)
     if mode == "denied":
         return ActionState(pressed=frozenset({"overdrive"})) if frame == 0 else ActionState()
     if mode == "dry":
@@ -200,6 +203,20 @@ def main(
                 _Enemy(etype="warden", pos=Vec3(0.0, 1.1, -11.8), hp=600,
                        max_hp=600, windup_t=0.01, summon_cd=999.0)
             ]
+        if mode == "west_gap":
+            sim = game.sim
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            sim.enemies = []
+            sim.player_pos = Vec3(-19.0, 0.9002, 9.5)
+            sim.body = sim.body.__class__(
+                position=Vec3(-19.0, 0.9002, 9.5),
+                half_extents=sim.body.half_extents,
+                velocity=Vec3(), on_ground=True,
+            )
+            sim.hvel = Vec3()
+            sim.yaw = math.pi
+            sim.pitch = 0.0
         if mode in ("death", "save_fail", "profile_bad", "profile_corrupt"):
             sim = game.sim
             sim.wave = 2

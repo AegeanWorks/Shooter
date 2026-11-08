@@ -1990,6 +1990,40 @@ def route_lowhp_pulse(prefix: str, shadows: bool = True, srgb: bool = True, post
         engine.close()
 
 
+def route_west_gap(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Approach along the west wall: the platform-gap pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.player_pos = Vec3(-19.0, 0.9002, 9.5)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-19.0, 0.9002, 9.5), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = 0.0
+        g.update(FIXED_STEP, ActionState())
+        platform = next(
+            c for c in g.sim.levels["arena"]["covers"] if float(c["h"]) < 1.0
+        )
+        gap = 19.5 - (abs(float(platform["x"])) + float(platform["w"]) / 2.0)
+        print(f"west-gap x={float(platform['x']):.1f} gap={gap:.2f} z={g.sim.player_pos.z:.2f}")
+        engine.capture(f"{prefix}_west_gap.png", f"{prefix}_west_gap.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_warden_cover(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """One slam frame with the north cover between: the warden-LOS pair."""
     from keystone.app import Engine
@@ -2286,6 +2320,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_clutch(prefix, shadows, srgb, post, bloom)
     if which == "warden_cover":
         route_warden_cover(prefix, shadows, srgb, post, bloom)
+    if which == "west_gap":
+        route_west_gap(prefix, shadows, srgb, post, bloom)
     if which == "lowhp_pulse":
         route_lowhp_pulse(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":
