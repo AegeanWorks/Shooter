@@ -3,24 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-60-summon-cover",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794113411.6393914,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794113424.7899694
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-54-pad-pulse",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-54-pad-pulse' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794109617.8941066,
-      "timestamp_str": "2026-11-08 06:46:57",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-55-lowammo-count",
       "phase": "in_progress",
@@ -265,6 +256,16 @@
       "status": "in_progress",
       "timestamp": 1794113411.6393914,
       "timestamp_str": "2026-11-08 07:50:11",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-60-summon-cover",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-60-summon-cover' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794113424.7899714,
+      "timestamp_str": "2026-11-08 07:50:24",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
