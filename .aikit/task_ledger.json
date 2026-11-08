@@ -1,67 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-131-warden-armor",
+    "task_id": "shooter-cycle-132-viewmodel-grip",
     "last_phase": "phase 4",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794168622.5521061,
+    "updated_at": 1794169339.4747043,
     "owner": "commandcode:goal",
     "started_by": "commandcode:goal",
     "continuations": [],
-    "completed_at": 1794168627.8113818
+    "completed_at": 1794169346.3410902
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-126-gltf-import",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] glTF import covered: 446 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794152221.1842093,
-      "timestamp_str": "2026-11-08 18:37:01",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-126-gltf-import",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-126-gltf-import' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794152222.029321,
-      "timestamp_str": "2026-11-08 18:37:02",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-127-gltf-loader",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover glTF source/GLB decoding, buffer loading, accessor normalization and document validation",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794152281.9005225,
-      "timestamp_str": "2026-11-08 18:38:01",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "gltf.io parsing and GLB/accessor error paths back every glTF asset but remain untested beyond happy-path imports.",
-        "benefits": "Five tests pin source variants, GLB corruption checks, data/file/GLB buffers, accessor normalization/errors and load_gltf document/registry contracts.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: in-memory bytes/temp files; no game/sim/hash change.",
-        "mitigation": "Minimal GLB/triangle fixtures, full suite, determinism and project gates."
-      },
-      "plan_digest": "0211498990665c36ebf3a3248096341d6ee8063fde1d569cd6f352ad273fd357"
-    },
-    {
-      "task_id": "shooter-cycle-127-gltf-loader",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] glTF loader covered: 451 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794152737.3078978,
-      "timestamp_str": "2026-11-08 18:45:37",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-127-gltf-loader",
       "phase": "completed",
@@ -260,6 +210,56 @@
       "status": "completed",
       "timestamp": 1794168627.8113837,
       "timestamp_str": "2026-11-08 23:10:27",
+      "agent": "commandcode:goal"
+    },
+    {
+      "task_id": "shooter-cycle-132-viewmodel-grip",
+      "phase": "phase 2",
+      "phase_num": 2,
+      "description": "[1/3] Plan: give the viewmodel a grip and a lower-right anchor; 3 capture pairs + matched kite run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794169321.8494887,
+      "timestamp_str": "2026-11-08 23:22:01",
+      "agent": "commandcode:goal",
+      "impact_assessment": {
+        "why": "The two-cube viewmodel has no grip and reads as a bare gray bar floating above the bottom edge in spawn, reload and burst screenshots, so the player never sees a held weapon silhouette.",
+        "benefits": "The gun reads as a held weapon anchored to the lower-right in every frame without touching the sim, damage or matchmaking.",
+        "risks": "contract: testbed scene snapshot pins (nodes, plan draw_calls, triangles, merged saved_calls); dependency: none; concurrency: none; state: game.py, juice.json, tests, cycles, decisions, README, evidence/cycle-132.json",
+        "mitigation": "failing-first grip tests; same capture routes diffed with keystone.analysis; stashed before/after kite run; full suite, determinism and aikit check"
+      },
+      "plan_digest": "a85956adccb4de785812ac457ebb519ab280b6bfb7b55534d59f3d74b107e6ba"
+    },
+    {
+      "task_id": "shooter-cycle-132-viewmodel-grip",
+      "phase": "phase 3",
+      "phase_num": 3,
+      "description": "[2/3] Grip implemented: 3 failing-first tests, 3 capture pairs diffed, matched kite run hash unchanged, scene pins updated, 471 unit tests pass",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794169328.8875892,
+      "timestamp_str": "2026-11-08 23:22:08",
+      "agent": "commandcode:goal"
+    },
+    {
+      "task_id": "shooter-cycle-132-viewmodel-grip",
+      "phase": "phase 4",
+      "phase_num": 4,
+      "description": "[3/3] Viewmodel grip verified: 471 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794169339.4747043,
+      "timestamp_str": "2026-11-08 23:22:19",
+      "agent": "commandcode:goal"
+    },
+    {
+      "task_id": "shooter-cycle-132-viewmodel-grip",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-132-viewmodel-grip' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794169346.3410923,
+      "timestamp_str": "2026-11-08 23:22:26",
       "agent": "commandcode:goal"
     }
   ]

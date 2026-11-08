@@ -68,7 +68,7 @@ def test_get_health_describe_and_scene(base_url):
     assert status == 200
     assert scene["schema"] == 2
     assert scene["game"] == "shooter"
-    assert scene["node_count"] == 112
+    assert scene["node_count"] == 113
     ids = {node["id"] for node in scene["nodes"]}
     assert {"floor", "platform-pad", "pickup:surge-pickup", "warden-core"} <= ids
 
@@ -77,11 +77,11 @@ def test_get_inspector_reports_batches_and_merged(base_url):
     status, _, inspector = _json(base_url, "/api/inspector")
     assert status == 200
     assert inspector["game"] == "shooter"
-    assert inspector["node_count"] == 112
+    assert inspector["node_count"] == 113
     assert inspector["batches"]["groups"] == 8
-    assert inspector["batches"]["draw_calls"] == 34
+    assert inspector["batches"]["draw_calls"] == 35
     assert inspector["merged"]["groups"] == 7
-    assert inspector["merged"]["saved_calls"] == 27
+    assert inspector["merged"]["saved_calls"] == 28
     assert inspector["scene_schema"] == 2
 
 

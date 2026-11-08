@@ -236,6 +236,7 @@ class ShooterGame:
         self._flash: Node | None = None
         self._view_body: Node | None = None
         self._view_barrel: Node | None = None
+        self._view_grip: Node | None = None
         self._pickup: Node | None = None
         self._pickup_beam: Node | None = None
         self._pickup_orb: Node | None = None
@@ -531,8 +532,13 @@ class ShooterGame:
                                mesh=gun_mesh, material=gun_mat)
         self._view_barrel = Node("viewmodel-barrel", id="viewmodel-barrel", visible=True,
                                  mesh=gun_mesh, material=gun_mat)
+        # Grip under the receiver: the silhouette reads as a held weapon
+        # instead of a bar floating above the floor. Presentation only.
+        self._view_grip = Node("viewmodel-grip", id="viewmodel-grip", visible=True,
+                               mesh=gun_mesh, material=gun_mat)
         self.scene.add(self._view_body)
         self.scene.add(self._view_barrel)
+        self.scene.add(self._view_grip)
         pickup_mesh = self.assets.require("mesh.pickup").payload
         pickup_mat = self.assets.require("material.pickup").payload
         self._pickup_spot = self.sim.levels.get("pickup", {"x": 0.0, "y": 0.5, "z": -6.0})
@@ -1211,6 +1217,7 @@ class ShooterGame:
 
             self._view_body.visible = bool(sim.alive)
             self._view_barrel.visible = bool(sim.alive)
+            self._view_grip.visible = bool(sim.alive)
             if sim.alive:
                 self._view_body.transform = Transform(
                     position=gun_pos(
@@ -1238,6 +1245,19 @@ class ShooterGame:
                         float(cfg.get("barrel_length", 0.32)),
                     ),
                 )
+                self._view_grip.transform = Transform(
+                    position=gun_pos(
+                        float(cfg.get("grip_forward", 0.52)) - recoil_back - reload_back,
+                        float(cfg.get("right", 0.18)) + bob_right,
+                        float(cfg.get("grip_down", 0.30)) - recoil_up + reload_drop - bob_up,
+                    ),
+                    rotation=rotation,
+                    scale=Vec3(
+                        float(cfg.get("grip_width", 0.05)),
+                        float(cfg.get("grip_height", 0.11)),
+                        float(cfg.get("grip_length", 0.06)),
+                    ),
+                )
                 gun_id = f"material.gun_{sim.weapon}"
                 if float(getattr(sim, "overdrive_t", 0.0)) > 0.0:
                     gun_id += "_od"
@@ -1247,6 +1267,7 @@ class ShooterGame:
                     gun_mat = self.assets.require("material.gun_pulse").payload
                 self._view_body.material = gun_mat
                 self._view_barrel.material = gun_mat
+                self._view_grip.material = gun_mat
         ring_cfg = dict(self.sim.juice.get("slam_ring", {}))
         ring_w = float(ring_cfg.get("width", 0.20))
         ring_h = float(ring_cfg.get("height", 0.025))

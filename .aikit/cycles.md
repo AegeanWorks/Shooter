@@ -2670,3 +2670,33 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 468 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-131.json`.
+
+## Cycle 132 - Combat feel/graphics: first-person weapon silhouette
+- **FIND**: `before_spawn/reload_dip/burst.png` (seed 1, 960x540) show
+  the two-cube viewmodel as a bare gray bar floating above the bottom
+  edge; the reload dip swings that bar with no held-weapon silhouette.
+  The baseline kite run is healthy (600 frames, 10 kills, hp 100, hash
+  `4fe640c5...`).
+- **ANALYZE**: only `_sync_scene` positions the gun nodes; tests pin
+  existence, tint, hide, bob, recoil and reload dip, not exact offsets.
+  Killed: gun texture (per-weapon materials already exist; the defect is
+  silhouette) and centering (worse occlusion). Survivor: add a grip node
+  under the receiver and tuck the gun lower-right through DATA.
+- **IMPLEMENT**: add `_view_grip` (shared gun mesh/material, tinted with
+  the active weapon, hidden on death), `grip_*` DATA keys, and lower-right
+  forward/right/down/body/barrel tuning. Three failing-first tests cover
+  the grip anchor, tint and death hide.
+- **VISUAL PROOF**: `before_spawn`/`after_spawn`, `before_reload_dip`/
+  `after_reload_dip` and `before_burst`/`after_burst` are the same
+  routes. `diff_images` reports 11,100 px (2.14%), 9,436 px (1.82%) and
+  12,372 px (2.39%) changed in the lower-right gun region (bbox y=92
+  includes the overlay DRAW/TRI counters).
+- **PLAY PROOF**: `play_run.py kite 600` before and after both run 600
+  frames to wave 2 with 10 kills, 1950 score, hp 100 and hash
+  `4fe640c5...`; the change is presentation-only.
+- **SCENE PINS**: the grip adds one node sharing the gun mesh/material
+  (nodes 112->113, plan draw_calls 34->35, triangles 482->494, merged
+  saved_calls 27->28); rendered instanced groups stay 5.
+- **Gates**: `python -m pytest -q` 471 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-132.json`.

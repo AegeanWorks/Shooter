@@ -202,6 +202,7 @@ projects/shooter/
 │   ├── test_spawn_lane.py  <- clear spawn->pickup cover lane
 │   ├── test_boss_hp.py     <- numeric WARDEN HP readout
 │   ├── test_viewmodel.py   <- camera-follow gun, weapon tint, death hide
+│   ├── test_viewmodel_grip.py <- grip anchor, weapon tint, death hide
 │   ├── test_reload_cue.py  <- reload-completion voice/caption + ammo parity
 │   ├── test_history.py     <- schema-3 migration, capped run history, RECENT line
 │   ├── test_reticle.py     <- per-weapon hip-fire reticle gap; pulse reference
@@ -307,10 +308,10 @@ projects/shooter/
 │   ├── cycle-29.json
 │   ├── cycle-30.json
 │   ├── cycle-31.json
-│   ├── cycle-32.json  <- improvement-cycle 32 proof: slam-radius ring pair, same-hash run
-│   ├── cycle-33.json  <- improvement-cycle 33 proof: pickup edge-tag pair, same-hash run
-│   ├── cycle-34.json  <- improvement-cycle 34 proof: wide-debrief pair, same-hash run
-│   ├── cycle-35.json  <- improvement-cycle 35 proof: wall-depth pair, same-hash run
+│   ├── cycle-32.json
+│   ├── cycle-33.json
+│   ├── cycle-34.json
+│   ├── cycle-35.json
 │   ├── cycle-36.json
 │   ├── cycle-37.json
 │   ├── cycle-38.json
@@ -407,7 +408,8 @@ projects/shooter/
 │   ├── cycle-128.json <- exports, schema versions, describe parity, determinism
 │   ├── cycle-129.json <- .kanim enemy idle clips, crossfade, sim parity
 │   ├── cycle-130.json <- .obj cache crate, hot reload report
-│   └── cycle-131.json <- warden armor texture, boss capture pair, boss run
+│   ├── cycle-131.json <- warden armor texture, boss capture pair, boss run
+│   └── cycle-132.json <- viewmodel grip, spawn/reload/burst pairs, kite run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

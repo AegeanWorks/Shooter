@@ -110,10 +110,10 @@ def test_scene_batches_plan_shared_static_groups():
     g.build_scene()
     plan = plan_batches(g.scene)
     assert plan["groups"] == 8, plan["groups"]
-    assert plan["draw_calls"] == 34, plan["draw_calls"]
+    assert plan["draw_calls"] == 35, plan["draw_calls"]
     assert plan["batched_calls"] == 8, plan["batched_calls"]
-    assert plan["saved_calls"] == 26, plan["saved_calls"]
-    assert plan["triangles"] == 482, plan["triangles"]
+    assert plan["saved_calls"] == 27, plan["saved_calls"]
+    assert plan["triangles"] == 494, plan["triangles"]
     assert any("platform-pad" in batch["nodes"] for batch in plan["batches"])
 
 
