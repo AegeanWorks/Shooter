@@ -451,3 +451,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 109 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-21.json`.
+
+## Cycle 22 — Audio cues: reload completion
+- **Area**: audio cues (22nd cycle).
+- **Defect / evidence**: the reload bar disappeared on completion and the
+  sim emitted `reloaded`, but the game ignored it; the completion frame
+  showed 30/90 with no caption and `audio=0`.
+- **Fix**: `reloaded` sine(980 Hz, 0.06 s) + `RELOADED` caption; reload
+  fill/timing/economy unchanged. Audio probe now 15 cues.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-22/`;
+  960x540 seed 1, completion frame. 8,140 changed px (1.57%, bbox
+  420,164-947,459; caption + AUDIO 1 VOX line), mean luma 35.13 -> 35.24.
+- **Played runs**: `reload 60` before/after same hash `d7eb253d…`,
+  ammo 30/reserve 90; before audio=0/cue empty, after audio=1/RELOADED,
+  peak 1, drops 0. Clip 0.06 s peak 0.9994.
+- **Gates**: `python -m pytest -q` 111 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-22.json`.

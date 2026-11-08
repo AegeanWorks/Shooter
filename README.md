@@ -98,6 +98,7 @@ projects/shooter/
 │   ├── test_spawn_lane.py  <- clear spawn->pickup cover lane
 │   ├── test_boss_hp.py     <- numeric WARDEN HP readout
 │   ├── test_viewmodel.py   <- camera-follow gun, weapon tint, death hide
+│   ├── test_reload_cue.py  <- reload-completion voice/caption + ammo parity
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -126,7 +127,8 @@ projects/shooter/
 │   ├── cycle-18.json  <- improvement-cycle 18 proof: cover LOS pair, same-hash runs
 │   ├── cycle-19.json  <- improvement-cycle 19 proof: open spawn lane pair, campaign run
 │   ├── cycle-20.json  <- improvement-cycle 20 proof: numeric boss-HP pair, same-hash run
-│   └── cycle-21.json  <- improvement-cycle 21 proof: first-person gun pair, same-hash runs
+│   ├── cycle-21.json  <- improvement-cycle 21 proof: first-person gun pair, same-hash runs
+│   └── cycle-22.json  <- improvement-cycle 22 proof: reload-cue pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

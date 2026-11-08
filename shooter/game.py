@@ -289,6 +289,7 @@ class ShooterGame:
             "dry_fire": noise(0.04, seed=23, name="dry_fire"),
             "cache": sine(1040.0, 0.08, name="cache"),
             "reload": noise(0.06, seed=21, name="reload"),
+            "reloaded": sine(980.0, 0.06, name="reloaded"),
             "near_miss": sine(1320.0, 0.06, name="near_miss"),
             "streak_break": square(140.0, 0.12, name="streak_break"),
             "death": square(60.0, 0.50, name="death"),
@@ -469,6 +470,9 @@ class ShooterGame:
         elif event == "reload":
             self._play_clip(self._clips["reload"], 0.45)
             self._cue("RELOADING")
+        elif event == "reloaded":
+            self._play_clip(self._clips["reloaded"], 0.45)
+            self._cue("RELOADED")
         elif event == "cache":
             self._play_clip(self._clips["cache"], 0.6)
             self._cue("CACHE AMMO")

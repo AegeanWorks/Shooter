@@ -33,6 +33,7 @@ CUES = (
     "cache",
     "near_miss",
     "reload",
+    "reloaded",
     "streak_break",
     "pickup",
     "death",

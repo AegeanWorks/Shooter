@@ -16,6 +16,7 @@ Modes:
   platform run at the rear low platform, jump onto it, stop on the top
   denied   press overdrive with no pulse reserve (audio/caption drill)
   dry      hold fire with 0 magazine and 0 reserve (dry-fire drill)
+  reload   finish a reload tail (reload-completion cue drill)
 
 Writes a machine-readable report with per-frame health, event frames,
 hurt-source telemetry and the final deterministic snapshot hash.
@@ -96,7 +97,7 @@ def main(
     try:
         if seed != 1:
             game.sim.reseed(seed)
-        if mode in ("ambush", "boss", "slam", "death", "platform", "denied", "dry"):
+        if mode in ("ambush", "boss", "slam", "death", "platform", "denied", "dry", "reload"):
             game.sim.spawn_queue = []
             game.sim.spawn_t = 1e9
         boss = None
@@ -130,6 +131,13 @@ def main(
         if mode == "dry":
             game.sim.ammo["pulse"] = 0
             game.sim.reserve["pulse"] = 0
+            game.sim.enemies = []
+            game.sim.spawn_queue = ["mite"]
+            game.sim.spawn_t = 999.0
+        if mode == "reload":
+            game.sim.ammo["pulse"] = 0
+            game.sim.reserve["pulse"] = 120
+            game.sim.reload_t = 0.01
             game.sim.enemies = []
             game.sim.spawn_queue = ["mite"]
             game.sim.spawn_t = 999.0
@@ -238,6 +246,8 @@ def main(
                 break
             if mode == "dry" and frame >= 10:
                 break
+            if mode == "reload" and frame >= 5:
+                break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break
             if (frame + 1) % CHUNK == 0:
@@ -303,6 +313,13 @@ def main(
                 "shots": int(game.sim.shots),
                 "ammo": int(game.sim.ammo.get("pulse", 0)),
                 "reserve": int(game.sim.reserve.get("pulse", 0)),
+            },
+            "reload": {
+                "cue": getattr(game, "sound_cue", ""),
+                "voices": int(game.mixer.voice_count()),
+                "ammo": int(game.sim.ammo.get("pulse", 0)),
+                "reserve": int(game.sim.reserve.get("pulse", 0)),
+                "reload_t": round(float(game.sim.reload_t), 3),
             },
             "hash": stable_hash(final),
         }

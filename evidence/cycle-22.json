@@ -1,0 +1,102 @@
+{
+  "area": "audio cues",
+  "audio_probe": {
+    "reloaded": {
+      "buses": {},
+      "duration": 0.06,
+      "frames": 1323,
+      "name": "reloaded",
+      "peak": 0.9994,
+      "rms": 0.7071,
+      "sample_rate": 22050,
+      "schema": 1,
+      "voices": 0
+    },
+    "reported_cues": 15,
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-22\\after\\cues_spectrogram.png",
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-22\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py reload <prefix>",
+    "python scripts/play_run.py reload 60 <report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 22,
+  "fix": "reloaded sine(980 Hz, 0.06 s) voice and RELOADED caption on reload completion",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "111 passed"
+  },
+  "play_runs": {
+    "parity": "same hash d7eb253d?, ammo 30/reserve 90/reload_t 0; before audio=0/cue empty, after audio=1/RELOADED",
+    "reload_after": {
+      "audio_count": 1,
+      "dropped_sfx": 0,
+      "frames": 6,
+      "hash": "d7eb253d06b4a75db1c5bd6d360244b1",
+      "hp": 100,
+      "mean_step_ms": 1.6843,
+      "outcome": "ongoing",
+      "peak_voices": 1,
+      "reload": {
+        "ammo": 30,
+        "cue": "RELOADED",
+        "reload_t": 0.0,
+        "reserve": 90,
+        "voices": 1
+      },
+      "wave": 1
+    },
+    "reload_before": {
+      "audio_count": 0,
+      "dropped_sfx": 0,
+      "frames": 6,
+      "hash": "d7eb253d06b4a75db1c5bd6d360244b1",
+      "hp": 100,
+      "mean_step_ms": 0.1893,
+      "outcome": "ongoing",
+      "peak_voices": 0,
+      "reload": {
+        "ammo": 30,
+        "cue": "",
+        "reload_t": 0.0,
+        "reserve": 90,
+        "voices": 0
+      },
+      "wave": 1
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-22/after",
+    "before_dir": "shots/shooter-campaign/cycle-22/before",
+    "route": "scripts/capture.py reload; pulse ammo 0/reserve 120/reload_t 0.01, one step to completion; 960x540 seed 1"
+  },
+  "tests": {
+    "reload_tests": 2,
+    "suite": "111 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "reload completion",
+    "weapon readiness",
+    "audio feedback"
+  ],
+  "visual_diff": {
+    "bbox": [
+      420,
+      164,
+      947,
+      459
+    ],
+    "changed_px": 8140,
+    "draws": 5,
+    "fraction": 0.0157,
+    "mean_luma_after": 35.24,
+    "mean_luma_before": 35.13,
+    "triangles": 242
+  }
+}

@@ -355,6 +355,33 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_reload(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Frame where the reload tail completes; the reload-cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.ammo["pulse"] = 0
+        g.sim.reserve["pulse"] = 120
+        g.sim.reload_t = 0.01
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"reload frame={g.sim.tick} ammo={g.sim.ammo['pulse']} "
+            f"reserve={g.sim.reserve['pulse']} cue={getattr(g, 'sound_cue', '-')!r} "
+            f"voices={g.mixer.voice_count()}"
+        )
+        engine.capture(f"{prefix}_reload.png", f"{prefix}_reload.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_boss_hp(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Half-health warden bar: the numeric-HP HUD pair."""
     from keystone.app import Engine
@@ -779,6 +806,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_los(prefix, shadows, srgb, post, bloom)
     if which == "boss_hp":
         route_boss_hp(prefix, shadows, srgb, post, bloom)
+    if which == "reload":
+        route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 
