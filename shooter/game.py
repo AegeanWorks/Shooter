@@ -25,6 +25,7 @@ from .ui import draw_shooter
 MAX_ENEMIES = 24
 MAX_TRACERS = 16
 MAX_SPAWN_MARKS = 4
+MAX_CACHES = 4
 
 
 def _floor_grid_texture(size: int = 128, cell: int = 16) -> TextureData:
@@ -152,6 +153,7 @@ class ShooterGame:
         self._enemy_nodes: list[Node] = []
         self._tracer_nodes: list[Node] = []
         self._spawn_nodes: list[Node] = []
+        self._cache_nodes: list[Node] = []
         self._slam_ring: list[Node] = []
         self._wall_pilasters: list[Node] = []
         self._platform_rim: list[Node] = []
@@ -265,6 +267,7 @@ class ShooterGame:
                 Material(color=Vec3(*color), emissive=Vec3(*glow)),
             )
         self.assets.register("material.pickup", Material(color=Vec3(0.25, 1.0, 0.45), emissive=Vec3(0.10, 0.55, 0.20)))
+        self.assets.register("material.cache", Material(color=Vec3(1.0, 0.68, 0.22), specular=0.5, shininess=48.0, emissive=Vec3(0.82, 0.38, 0.04)))
         self.assets.register("material.boss_core", Material(color=Vec3(1.0, 0.78, 0.24), specular=0.8, shininess=64.0, emissive=Vec3(1.0, 0.48, 0.08)))
 
         self.scene.background = Vec3(0.035, 0.045, 0.07)
@@ -430,6 +433,17 @@ class ShooterGame:
             mesh=self.assets.require("mesh.beacon_orb").payload, material=pickup_mat,
         )
         self.scene.add(self._pickup_orb)
+        # Ammo-cache pool: shared glowing cubes mark sim-dropped caches.
+        # Presentation only; lifetime, pickup and reward RNG stay in sim.
+        self._cache_nodes = []
+        cache_mat = self.assets.require("material.cache").payload
+        for index in range(MAX_CACHES):
+            node = Node(
+                f"ammo-cache-{index}", id=f"ammo-cache-{index}", visible=False,
+                mesh=pickup_mesh, material=cache_mat,
+            )
+            self.scene.add(node)
+            self._cache_nodes.append(node)
         self._boss_core = Node(
             "warden-core", id="warden-core", visible=False,
             mesh=self.assets.require("mesh.boss_core").payload,
@@ -1057,6 +1071,22 @@ class ShooterGame:
                     ),
                     scale=Vec3(size, size, size),
                 )
+        for i, node in enumerate(self._cache_nodes):
+            if i < len(sim.caches):
+                cache = sim.caches[i]
+                node.visible = True
+                spin = (sim.time * 2.0 + i * 1.7) % math.tau
+                node.transform = Transform(
+                    position=Vec3(
+                        float(cache["x"]),
+                        max(0.2, float(cache.get("y", 0.5)) - 0.2)
+                        + 0.05 * math.sin(sim.time * 3.0 + i),
+                        float(cache["z"]),
+                    ),
+                    rotation=Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), spin),
+                )
+            else:
+                node.visible = False
 
     def snapshot(self) -> dict:
         snap = self.sim.snapshot()

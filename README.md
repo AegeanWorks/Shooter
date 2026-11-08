@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, campaign-complete line, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip, boss core/beacon/slam ring, spawn/summon marks, ammo-cache pool, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, campaign-complete line, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/cover-safe summons/entity clearance/campaign seal/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload/no-reserve, kill-feed, damage, boss/pickup direction (tag survives boss)
@@ -140,6 +140,7 @@ projects/shooter/
 │   ├── test_summon_overlap.py <- escorts stay clear of the warden and each other
 │   ├── test_campaign_seal.py <- cleared campaign stops wave-4 spawns
 │   ├── test_campaign_complete.py <- persistent post-banner completion line
+│   ├── test_cache_visual.py <- dropped ammo caches render from a shared pool
 │   ├── test_wall_texture.py <- deterministic wall panel texture, no new draws
 │   ├── test_surge_forfeit_cue.py <- surge-forfeit voice + caption, switch parity
 │   ├── test_save_error.py <- failed profile write warns, unwritable parent no crash
@@ -151,7 +152,7 @@ projects/shooter/
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/summon/summon_overlap/pickup/highground/switch/forfeit/save_fail/profile_bad/campaign
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/recoil/summon_cover/summon_overlap/pickup_pop/critical/reload_dip/campaign_seal/campaign_complete/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/recoil/summon_cover/summon_overlap/pickup_pop/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -221,7 +222,8 @@ projects/shooter/
 │   ├── cycle-66.json  <- improvement-cycle 66 proof: reload-dip pair, same-hash reload run
 │   ├── cycle-67.json  <- improvement-cycle 67 proof: escort-overlap pair, summon drill + re-recorded reference
 │   ├── cycle-68.json  <- improvement-cycle 68 proof: campaign-seal pair, campaign drill
-│   └── cycle-69.json  <- improvement-cycle 69 proof: post-banner completion pair, campaign run
+│   ├── cycle-69.json  <- improvement-cycle 69 proof: post-banner completion pair, campaign run
+│   └── cycle-70.json  <- improvement-cycle 70 proof: ammo-cache pair, cache-bearing campaign run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

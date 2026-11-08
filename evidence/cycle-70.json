@@ -1,0 +1,81 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py cache_visual <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 70,
+  "fix": "add a pool of four shared glowing amber cubes using mesh.pickup/material.cache and show one node per active sim cache with a small spin/bob; cache lifetime, pickup, reward RNG and colliders are untouched",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "231 passed"
+  },
+  "play_runs": {
+    "kite_3000": {
+      "after": {
+        "audio": 437,
+        "cache_clips": 1,
+        "cache_rewards": 2,
+        "drops": 0,
+        "hash": "54bdc60c3a9b14df12abd74ae2e29034",
+        "hp": 76,
+        "hurts": 4,
+        "kills": 30,
+        "score": 12065
+      },
+      "before": {
+        "audio": 437,
+        "cache_clips": 1,
+        "cache_rewards": 2,
+        "drops": 0,
+        "hash": "54bdc60c3a9b14df12abd74ae2e29034",
+        "hp": 76,
+        "hurts": 4,
+        "kills": 30,
+        "score": 12065
+      }
+    },
+    "parity": "same hash 54bdc60c before/after; scene presentation only. The run dropped 2 caches and collected 1, proving the existing cache system is exercised."
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-70/after",
+    "before_dir": "shots/shooter-campaign/cycle-70/before",
+    "route": "scripts/capture.py cache_visual; 960x540 seed 1, one staged cache at (0, 4)"
+  },
+  "tests": {
+    "cache_visual_tests": 3,
+    "suite": "231 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "ammo cache",
+    "dropped pickup",
+    "shared material pool"
+  ],
+  "visual_diff": {
+    "bbox": [
+      426,
+      92,
+      911,
+      423
+    ],
+    "changed_px": 5406,
+    "draws": 7,
+    "fraction": 0.0104,
+    "mean_luma_after": 33.49,
+    "mean_luma_before": 32.45,
+    "scene_bbox": [
+      426,
+      346,
+      515,
+      423
+    ],
+    "scene_changed_px": 5130,
+    "shadow_calls": 35,
+    "triangles": 302
+  }
+}

@@ -1444,3 +1444,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 228 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-69.json`.
+
+## Cycle 70 - Graphics/effects: visible ammo-cache drops
+- **Area**: graphics and effects (70th cycle).
+- **Defect / evidence**: the sim drops an ammo cache on 3% of kills for
+  eight seconds, but `game.py` had no cache node. The cache was invisible
+  and could only be collected by accident; the only cue was after pickup.
+- **Fix**: add a pool of four hidden nodes sharing `mesh.pickup` and a new
+  amber emissive `material.cache`, and show one per active `sim.caches`
+  entry with a small spin/bob. Pool caps presentation at four; lifetime,
+  pickup volume, reserve amount and reward RNG stay in sim. No colliders,
+  save data or sim fields change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-70/`;
+  960x540 seed 1, one staged cache at (0,4). 5,406 changed px (1.04%,
+  bbox 426,92-911,423; 5,130 px in the 3D scene, bbox 426,346-515,423),
+  mean luma 32.45 -> 33.49; draws 7, triangles 302, shadow calls 35. The
+  frame-budget test still passes.
+- **Played runs**: `kite 3000` before/after same hash `54bdc60c...`,
+  30 kills, hp 76, audio 437, 0 drops, 2 cache rewards and 1 collection.
+- **Gates**: `python -m pytest -q` 231 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-70.json`.

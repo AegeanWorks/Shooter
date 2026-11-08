@@ -1473,6 +1473,32 @@ def route_denied(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_cache_visual(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One live ammo cache ahead of spawn: the cache-visibility pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.caches = [{"x": 0.0, "y": 0.5, "z": 4.0, "ttl": 8.0}]
+        g.update(FIXED_STEP, ActionState())
+        active = [node for node in g._cache_nodes if node.visible] if hasattr(g, "_cache_nodes") else []
+        print(
+            f"cache-visual caches={len(g.sim.caches)} "
+            f"visible={len(active)} "
+            f"pos={[(round(c['x'], 1), round(c['z'], 1)) for c in g.sim.caches]}"
+        )
+        engine.capture(f"{prefix}_cache_visual.png", f"{prefix}_cache_visual.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_critical(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Forced critical kill frame: the critical-cue pair."""
     from keystone.app import Engine
@@ -1963,6 +1989,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_muzzle(prefix, shadows, srgb, post, bloom)
     if which == "critical":
         route_critical(prefix, shadows, srgb, post, bloom)
+    if which == "cache_visual":
+        route_cache_visual(prefix, shadows, srgb, post, bloom)
     if which == "denied":
         route_denied(prefix, shadows, srgb, post, bloom)
     if which == "dry":
