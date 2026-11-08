@@ -2552,3 +2552,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 441 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-125.json`.
+
+## Cycle 126 - Keystone testbed: glTF scene import adapter
+- **Area**: keystone testbed (126th cycle).
+- **Feature / evidence**: `gltf_import` is the manifest/editor asset
+  adapter but direct prefab/registry/texture and validation behavior was
+  untested.
+- **Fix**: add `tests/test_keystone_gltf_import_mechanics.py` with five
+  inline data-URI glTF tests.
+- **Proof**: suffix detection accepts .gltf/.glb case-insensitively;
+  triangle imports save a prefab and register mesh/material ids; textured
+  imports register texture/material/mesh with the material sharing the
+  texture payload; name overrides and re-imports keep one library entry;
+  bad names/suffixes/missing files/wrong argument types raise; the loaded
+  prefab preserves the root mesh and document shape.
+- **Gates**: `python -m pytest -q` 446 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-126.json`.

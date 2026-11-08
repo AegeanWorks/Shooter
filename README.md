@@ -99,6 +99,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `batch` | static/skinned planning, world-space merges, exclusions, invariants | `tests/test_keystone_batch_mechanics.py` |
 | `png`/`texture` | RGBA round trip/flip, corruption, texture sha, checker | `tests/test_keystone_png_texture_mechanics.py` |
 | `obj_loader` | normals/UVs, negative indices, quads, homogeneous vertices, errors | `tests/test_keystone_obj_loader_mechanics.py` |
+| `gltf_import` | suffix detection, prefab/registry saves, textures, re-import, errors | `tests/test_keystone_gltf_import_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -169,6 +170,7 @@ projects/shooter/
 │   ├── test_keystone_batch_mechanics.py <- static/skinned planning, merges, exclusions
 │   ├── test_keystone_png_texture_mechanics.py <- PNG flip/corruption, texture sha, checker
 │   ├── test_keystone_obj_loader_mechanics.py <- normals/UVs, negative indices, quads, errors
+│   ├── test_keystone_gltf_import_mechanics.py <- glTF prefab/registry saves, textures, errors
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -286,7 +288,7 @@ projects/shooter/
 │   ├── cycle-23.json  <- improvement-cycle 23 proof: persisted-history debrief pair, run
 │   ├── cycle-24.json  <- improvement-cycle 24 proof: spread-reticle pairs, same-hash runs
 │   ├── cycle-25.json  <- improvement-cycle 25 proof: high-ground melee pair, reach run
-│   ├── cycle-26.json  <- improvement-cycle 26 proof: spawn-marker pair, same-hash run
+│   ├── cycle-26.json
 │   ├── cycle-27.json
 │   ├── cycle-28.json
 │   ├── cycle-29.json
@@ -296,9 +298,9 @@ projects/shooter/
 │   ├── cycle-33.json  <- improvement-cycle 33 proof: pickup edge-tag pair, same-hash run
 │   ├── cycle-34.json  <- improvement-cycle 34 proof: wide-debrief pair, same-hash run
 │   ├── cycle-35.json  <- improvement-cycle 35 proof: wall-depth pair, same-hash run
-│   ├── cycle-36.json  <- improvement-cycle 36 proof: spawn-voice pair, same-hash run
-│   ├── cycle-37.json  <- improvement-cycle 37 proof: career-debrief pair, same-hash run
-│   ├── cycle-38.json  <- improvement-cycle 38 proof: wisp-bolt pair, campaign run
+│   ├── cycle-36.json
+│   ├── cycle-37.json
+│   ├── cycle-38.json
 │   ├── cycle-39.json
 │   ├── cycle-40.json
 │   ├── cycle-41.json
@@ -386,7 +388,8 @@ projects/shooter/
 │   ├── cycle-122.json <- scene diff nodes/sections/validation
 │   ├── cycle-123.json <- batch planning, world-space merges, exclusions
 │   ├── cycle-124.json <- PNG round trips, corruption, texture sha, checker
-│   └── cycle-125.json <- OBJ normals/UVs, negative indices, quads, errors
+│   ├── cycle-125.json <- OBJ normals/UVs, negative indices, quads, errors
+│   └── cycle-126.json <- glTF prefab/registry saves, textures, re-import
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

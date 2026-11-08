@@ -1,0 +1,76 @@
+{
+  "area": "keystone testbed: glTF scene import adapter",
+  "commands": [
+    "python -m pytest tests/test_keystone_gltf_import_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 126,
+  "feature": "glTF/GLB suffix detection, triangle/textured prefab imports, registry asset registration, library saves, name overrides/re-imports and validation",
+  "fix": "add tests/test_keystone_gltf_import_mechanics.py with five inline data-URI glTF tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "446 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "suffixes": {
+      "gltf": true,
+      "GLB": true,
+      "Glb": true,
+      "obj": false,
+      "no_suffix": false,
+      "non_path": "TypeError"
+    },
+    "triangle_import": {
+      "prefab_name": "tri",
+      "node_count": 1,
+      "roots": 1,
+      "library_entries": ["tri"],
+      "mesh_id": "gltf.tri.mesh.0",
+      "material_id": "gltf.tri.material.0",
+      "mesh_triangles": 1,
+      "material_color": [0.2, 0.4, 0.6]
+    },
+    "texture_import": {
+      "prefab_name": "custom",
+      "texture_id": "gltf.custom.texture.0",
+      "texture_name": "swatch",
+      "material_texture_identity": true,
+      "mesh_id": "gltf.custom.mesh.0"
+    },
+    "name_reimport": {
+      "override": "custom",
+      "entries_after_reimport": ["custom"],
+      "registry_ids": ["gltf.custom.material.0", "gltf.custom.mesh.0"],
+      "blank_name": "ValueError"
+    },
+    "errors": {
+      "non_gltf_suffix": "ValueError",
+      "missing_file": "FileNotFoundError",
+      "bad_registry": "TypeError",
+      "bad_library": "TypeError",
+      "library_without_registry": "ValueError"
+    },
+    "library_contents": {
+      "loaded_node_count": 1,
+      "root_name": "tri",
+      "root_mesh_triangles": 1,
+      "document_name": "tri",
+      "document_roots": 1
+    }
+  },
+  "tests": {
+    "gltf_import_tests": 5,
+    "suite": "446 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone gltf import",
+    "gltf prefab",
+    "asset registry",
+    "texture registration",
+    "glb"
+  ]
+}
