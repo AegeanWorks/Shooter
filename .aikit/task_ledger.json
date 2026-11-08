@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-52-hurt-shake",
+    "task_id": "shooter-cycle-53-target-dead",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794108759.138058,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794109159.701842,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794108791.9432094
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-46-target-health",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Target HP proven: 181 tests, determinism 1800 ok, aikit 4/4, 1744 px target pair, same kite hash 4fe640c5; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794105968.0212357,
-      "timestamp_str": "2026-11-08 05:46:08",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-46-target-health",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-46-target-health' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794105999.9923515,
-      "timestamp_str": "2026-11-08 05:46:39",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-47-launch-pad",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794108791.9432113,
       "timestamp_str": "2026-11-08 06:33:11",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-53-target-dead",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Enemies cycle: target bar yields on death, failing-first test, death pair and same-hash run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794109140.9231105,
+      "timestamp_str": "2026-11-08 06:39:00",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The target-health bar was drawn with sim.alive false and covered YOU DIED.",
+        "benefits": "The death screen is legible; live target bars are unchanged.",
+        "risks": "contract: HUD guard only; dependency: none; concurrency: none; state: none.",
+        "mitigation": "Dead/alive target tests, death pair, same death hash."
+      },
+      "plan_digest": "36db533dd081acddc417ef1ae33ef38e11ff2a48aa19d69feb6a8c728910faa4"
+    },
+    {
+      "task_id": "shooter-cycle-53-target-dead",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Clean death screen proven: 195 tests, determinism 1800 ok, aikit 4/4, 1548 px death pair, same death hash f8cd9e28; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794109159.701842,
+      "timestamp_str": "2026-11-08 06:39:19",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

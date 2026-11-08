@@ -1,0 +1,65 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py death <prefix>",
+    "python scripts/play_run.py death 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 53,
+  "fix": "hide the crosshair target-health bar while sim.alive is false, so it cannot overlap the YOU DIED/debrief screen",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "195 passed"
+  },
+  "play_runs": {
+    "death_240": {
+      "after": {
+        "audio": 3,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      },
+      "before": {
+        "audio": 3,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      }
+    },
+    "parity": "same hash; the target bar is draw-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-53/after",
+    "before_dir": "shots/shooter-campaign/cycle-53/before",
+    "route": "scripts/capture.py death; 960x540 seed 1, brute at 1 m, death frame"
+  },
+  "tests": {
+    "suite": "195 passed",
+    "target_dead_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "death screen",
+    "target bar",
+    "HUD layering"
+  ],
+  "visual_diff": {
+    "bbox": [
+      403,
+      200,
+      556,
+      227
+    ],
+    "changed_px": 1548,
+    "draws": 6,
+    "fraction": 0.003,
+    "mean_luma_after": 49.08,
+    "mean_luma_before": 49.41,
+    "triangles": 278
+  }
+}

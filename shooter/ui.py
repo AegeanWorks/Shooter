@@ -71,7 +71,8 @@ def draw_shooter(canvas, hud, sim) -> None:
     # Target health: the non-boss enemy under the crosshair gets a compact
     # bar and TYPE hp/max label; the warden keeps its dedicated top bar.
     target = getattr(sim, "aim_target", lambda: None)()
-    if target is not None and target.etype != "warden":
+    if (target is not None and target.etype != "warden"
+            and bool(getattr(sim, "alive", True))):
         frac = max(0.0, min(1.0, float(target.hp) / max(1.0, float(target.max_hp))))
         bx, by, bw, bh = cx - 60, cy - 50, 120, 6
         canvas.rect(bx - 2, by - 2, bw + 4, bh + 4, panel_c)

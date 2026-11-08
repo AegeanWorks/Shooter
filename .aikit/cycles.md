@@ -1083,3 +1083,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 193 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-52.json`.
+
+## Cycle 53 - Enemies/bosses: target bar yields on death
+- **Area**: enemies/bosses (53rd cycle).
+- **Defect / evidence**: the cycle-46 crosshair target-health bar was
+  drawn even with `sim.alive=False`; on the death frame a brute under
+  the crosshair put `BRUTE 120/120` over `YOU DIED`. Baseline
+  `test_target_dead.py` measured `['BRUTE 120/120', ..., 'YOU DIED']`.
+- **Fix**: add the `sim.alive` guard to the target-bar condition. The
+  bar remains for live targets; the warden and death screen are
+  unchanged. Presentation only.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-53/`;
+  960x540 seed 1, brute at 1 m, death frame. Before the bar overlapped
+  `YOU DIED`; after only the clean death screen: 1,548 changed px
+  (0.30%, bbox 403,200-556,227), mean luma 49.41 -> 49.08; draws 6,
+  triangles 278.
+- **Played runs**: `death 240` before/after same hash `f8cd9e28...`,
+  1 frame, hp 0, score 1500, audio 3, peak 3, drops 0.
+- **Gates**: `python -m pytest -q` 195 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-53.json`.

@@ -483,3 +483,10 @@ Status: accepted
 Context: Taking damage already had a hurt clip and a directional HUD cue, but the camera stayed exactly at the sim eye; the hit had no physical jolt. The baseline test measured the camera equal to `sim.eye()` while `hurt_t=0.4`.
 Decision: In `_sync_scene`, while `hurt_t > 0`, offset the camera position by a short deterministic shake: `amp = min(1, hurt/0.3) * 0.035`, `x = sin(time*55)*amp`, `y = cos(time*47)*amp*0.6`, z unchanged. The camera yaw/pitch, aim ray, hitscan, viewmodel origin and snapshot are untouched; the HUD is screen-space and stays fixed.
 Consequences: Suite 193/193 green (two new tests); determinism 1800 ok; aikit 4/4. The right-side first-hit pair at 960×540 seed 1 changes 110,566 px (21.33%, bbox 0,235-959,539), mean luma 34.24→34.20, draws 6, triangles 290. `ambush 180` keeps hash `ca6d9711…`, 180 frames, hp 84, 2 hurts, audio 2, peak 2, 0 drops. Evidence: `evidence/cycle-52.json`, images in workspace `shots/shooter-campaign/cycle-52/`.
+
+## ADR-070: Target bar yields to the death screen (enemies/bosses)
+Date: 2026-11-08
+Status: accepted
+Context: The cycle-46 crosshair target-health bar was drawn even with `sim.alive=False`. On the death frame a brute under the crosshair put `BRUTE 120/120` over `YOU DIED`; the baseline test measured the label still present after death.
+Decision: Add the `sim.alive` guard to the target-bar condition. The bar remains for live non-warden targets; the warden bar and the death screen are otherwise unchanged. This is draw-only and changes no sim state.
+Consequences: Suite 195/195 green (two new tests); determinism 1800 ok; aikit 4/4. The death-frame pair at 960×540 seed 1 changes 1,548 px (0.30%, bbox 403,200-556,227), mean luma 49.41→49.08, draws 6, triangles 278. `death 240` keeps hash `f8cd9e28…`, 1 frame, hp 0, score 1500, audio 3, peak 3, 0 drops. Evidence: `evidence/cycle-53.json`, images in workspace `shots/shooter-campaign/cycle-53/`.
