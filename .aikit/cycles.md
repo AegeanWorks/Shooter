@@ -2338,3 +2338,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 376 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-112.json`.
+
+## Cycle 113 - Keystone testbed: asset sources and reload reports
+- **Area**: keystone testbed (113th cycle).
+- **Feature / evidence**: `asset_io` backs registry hot reload but its
+  loaders, suffix inference, fingerprints and report contracts had no
+  direct shooter coverage.
+- **Fix**: add `tests/test_keystone_asset_io_mechanics.py` with five tests
+  over real OBJ/PNG/prefab sources and custom material loaders.
+- **Proof**: default loaders select `load_obj`/`TextureData.from_png`/
+  `Prefab.load`, material and unknown kinds raise, suffix inference is
+  case-insensitive; fingerprints are `(mtime_ns, size)` and track appends;
+  `load_asset` returns the right payload and rejects a wrong loader kind;
+  `AssetSource` validates path/kind/loader/fingerprint/error; `ReloadReport`
+  is JSON-safe and `ok` is false on failures or missing sources.
+- **Gates**: `python -m pytest -q` 381 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-113.json`.

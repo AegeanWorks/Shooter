@@ -1,0 +1,76 @@
+{
+  "area": "keystone testbed: disk-backed asset sources and reload reports",
+  "commands": [
+    "python -m pytest tests/test_keystone_asset_io_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 113,
+  "feature": "default loader selection, suffix-to-kind inference, mtime/size fingerprints, payload kind checks, AssetSource validation and JSON-safe ReloadReport summaries",
+  "fix": "add tests/test_keystone_asset_io_mechanics.py with five tests over real OBJ/PNG/prefab sources and custom material loaders",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "381 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "loaders": {
+      "mesh": "load_obj",
+      "texture": "TextureData.from_png",
+      "prefab": "Prefab.load",
+      "material_default": "ValueError",
+      "unknown_kind": "ValueError",
+      "suffixes": {"OBJ": "mesh", "PNG": "texture", "kprefab": "prefab"},
+      "unknown_suffix": "ValueError"
+    },
+    "fingerprint": {
+      "missing": null,
+      "shape": "(mtime_ns, size)",
+      "size_tracks_append": true,
+      "changes_after_append": true
+    },
+    "load_asset": {
+      "mesh_triangles": 1,
+      "texture_size": [2, 2],
+      "prefab_node_count": 1,
+      "custom_material": true,
+      "wrong_payload": "TypeError",
+      "unknown_kind": "ValueError"
+    },
+    "asset_kind": {
+      "mesh": "mesh",
+      "material": "material",
+      "texture": "texture",
+      "prefab": "prefab",
+      "invalid": "TypeError"
+    },
+    "asset_source": {
+      "valid": true,
+      "non_path": "TypeError",
+      "bad_kind": "ValueError",
+      "non_callable_loader": "TypeError",
+      "bad_fingerprint": "TypeError",
+      "bad_error": "TypeError"
+    },
+    "reload_report": {
+      "empty_ok": true,
+      "clean_ok": true,
+      "failed_or_missing_ok": false,
+      "describe": {"checked": 3, "reloaded": ["a"], "unchanged": ["b"], "failed": [{"id": "c", "error": "boom"}], "missing": ["d"], "ok": false},
+      "json_safe": true
+    }
+  },
+  "tests": {
+    "asset_io_tests": 5,
+    "suite": "381 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone asset_io",
+    "asset loaders",
+    "fingerprints",
+    "asset kinds",
+    "reload report"
+  ]
+}
