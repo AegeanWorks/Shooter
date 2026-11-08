@@ -1,0 +1,44 @@
+{
+  "area": "keystone testbed: character physics and fixed-step clock",
+  "commands": [
+    "python -m pytest tests/test_keystone_physics_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 98,
+  "feature": "CharacterBody/CharacterController gravity, grounding, step-up, tall-step block, cover slide; FixedStepClock whole-step release and catch-up cap",
+  "fix": "add tests/test_keystone_physics_mechanics.py covering the player physics and engine clock paths: a falling body settles grounded, a 0.3 m ledge is climbed, a 0.9 m step blocks, diagonal movement slides along a wide cover without overlap, and the clock releases whole steps while clamping catch-up",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "314 passed"
+  },
+  "mechanics": {
+    "gravity": {"settled_y": 1.4001, "on_ground": true, "vertical_velocity": 0.0},
+    "step_up": {"low_step_rise": 0.3, "climbed_to_y": "~1.7", "tall_step_blocked_x": "<1.15", "blocked_grounded": true},
+    "slide": {"cover_half_x": 5.0, "final_x": 2.0, "final_z": -2.1499, "overlap": false, "grounded": true},
+    "clock": {
+      "release_0_1": [0.1],
+      "release_0_15": [],
+      "release_0_25": [0.1],
+      "backwards_ignored": true,
+      "catch_up_100s": [0.1, 0.1],
+      "catch_up_200s": [0.1, 0.1],
+      "max_frame_s": 0.2
+    },
+    "validation": {"zero_step": true, "small_max_frame": true, "negative_gravity": true, "negative_extents": true, "zero_dt": true}
+  },
+  "tests": {
+    "physics_clock_tests": 6,
+    "suite": "314 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone character controller",
+    "gravity and grounding",
+    "step-up",
+    "cover slide",
+    "fixed-step clock"
+  ]
+}

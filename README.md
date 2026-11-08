@@ -72,6 +72,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `CommandLog`/`verify_log` + `TriggerTracker` + `ParticleSystem` + `plan_batches` + `SpatialGrid` | replay, trigger edges, particle bursts, batch plan, broadphase | `tests/test_keystone_mechanics.py` |
 | `AnimationLibrary` + `Track`/`AnimationController` + `apply_pose` | `.kanim` clips, sampling, crossfade, events, poses | `tests/test_keystone_animation_mechanics.py` |
 | `Mixer` + `AssetRegistry` | bus gain/mixdown/voice cap, dependencies/duplicates/hot reload | `tests/test_keystone_audio_assets.py` |
+| `CharacterBody`/`CharacterController` + `FixedStepClock` | gravity, grounding, step-up, cover slide, catch-up | `tests/test_keystone_physics_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -115,6 +116,7 @@ projects/shooter/
 │   ├── test_keystone_mechanics.py <- replay/triggers/particles/batching/broadphase
 │   ├── test_keystone_animation_mechanics.py <- .kanim/sampling/crossfade/events/apply_pose
 │   ├── test_keystone_audio_assets.py <- mixer buses/mixdown, asset deps/hot reload
+│   ├── test_keystone_physics_mechanics.py <- gravity/step-up/cover slide/fixed-step clock
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -302,7 +304,8 @@ projects/shooter/
 │   ├── cycle-94.json  <- cycle 94 proof: GameSession describe/scene/editor/simulate coverage
 │   ├── cycle-95.json  <- cycle 95 proof: replay/trigger/particle/batch/broadphase mechanics
 │   ├── cycle-96.json  <- cycle 96 proof: animation library, sampling, crossfade, events, poses
-│   └── cycle-97.json  <- cycle 97 proof: mixer buses/mixdown, asset deps/hot reload
+│   ├── cycle-97.json  <- cycle 97 proof: mixer buses/mixdown, asset deps/hot reload
+│   └── cycle-98.json  <- cycle 98 proof: character physics and fixed-step clock mechanics
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

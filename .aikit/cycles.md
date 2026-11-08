@@ -2030,3 +2030,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 308 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-97.json`.
+
+## Cycle 98 - Keystone testbed: character physics and fixed-step clock
+- **Area**: keystone testbed (98th cycle).
+- **Feature / evidence**: The shooter's player path uses
+  CharacterController gravity/collision/step-up and the Engine loop
+  uses FixedStepClock, but neither had direct project coverage.
+- **Fix**: add `tests/test_keystone_physics_mechanics.py` covering a
+  falling body settling grounded, a 0.3 m ledge climbed, a 0.9 m step
+  blocked, diagonal cover sliding without overlap, whole-step clock
+  release, backwards-time ignore, catch-up clamping and configuration
+  errors.
+- **Proof**: the body settles at y 1.4001 with on_ground true and zero
+  vertical velocity; the low step reaches y ~1.7, the tall step stops
+  before x 1.15; the wide-cover slide ends at x 2.0 / z -2.1499 with no
+  AABB overlap; the 0.1 s clock releases one step at 0.1/0.25, none at
+  0.15, ignores backwards time and caps 100 s/200 s frames at two
+  steps each (max_frame 0.2).
+- **Gates**: `python -m pytest -q` 314 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-98.json`.
