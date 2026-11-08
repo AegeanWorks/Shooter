@@ -1,0 +1,91 @@
+{
+  "area": "audio cues",
+  "audio_probe": {
+    "cache_drop": {
+      "duration": 0.05,
+      "frames": 1102,
+      "name": "cache_drop",
+      "peak": 1.0,
+      "rms": 0.707,
+      "sample_rate": 22050
+    },
+    "reported_cues": 18,
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-71\\after\\cues_spectrogram.png",
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-71\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py cache_drop_cue <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 71,
+  "fix": "map the existing cache_drop event to a 0.05 s 1320 Hz voice and an AMMO CACHE DROP caption; collection and kill cues are unchanged and cache lifetime/rewards are untouched",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "234 passed"
+  },
+  "play_runs": {
+    "kite_after": {
+      "audio": 439,
+      "cache_drop_clips": 2,
+      "cache_drop_frames": [
+        570,
+        1455
+      ],
+      "cache_rewards": 2,
+      "collected": 1,
+      "drops": 0,
+      "hash": "54bdc60c3a9b14df12abd74ae2e29034",
+      "hp": 76,
+      "hurts": 4,
+      "kills": 30,
+      "score": 12065
+    },
+    "kite_before": {
+      "audio": 437,
+      "cache_drop_clips": 0,
+      "cache_rewards": 2,
+      "collected": 1,
+      "drops": 0,
+      "hash": "54bdc60c3a9b14df12abd74ae2e29034",
+      "hp": 76,
+      "hurts": 4,
+      "kills": 30,
+      "score": 12065
+    },
+    "parity": "same campaign hash 54bdc60c; exactly 2 cache drops add 2 clips (437 -> 439), while 1 cache is collected with the existing cache voice, 0 drops"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-71/after",
+    "before_dir": "shots/shooter-campaign/cycle-71/before",
+    "route": "scripts/capture.py cache_drop_cue; 960x540 seed 1, forced cache drop on a 1 hp mite"
+  },
+  "tests": {
+    "cache_drop_cue_tests": 3,
+    "suite": "234 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "ammo cache drop",
+    "drop cue",
+    "caption"
+  ],
+  "visual_diff": {
+    "bbox": [
+      378,
+      164,
+      827,
+      459
+    ],
+    "changed_px": 5388,
+    "draws": 11,
+    "fraction": 0.0104,
+    "mean_luma_after": 35.71,
+    "mean_luma_before": 35.78,
+    "triangles": 710
+  }
+}

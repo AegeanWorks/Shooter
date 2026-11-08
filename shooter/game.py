@@ -507,6 +507,7 @@ class ShooterGame:
             "overdrive_denied": square(90.0, 0.14, name="overdrive_denied"),
             "dry_fire": noise(0.04, seed=23, name="dry_fire"),
             "cache": sine(1040.0, 0.08, name="cache"),
+            "cache_drop": sine(1320.0, 0.05, name="cache_drop"),
             "reload": noise(0.06, seed=21, name="reload"),
             "reloaded": sine(980.0, 0.06, name="reloaded"),
             "switch_pulse": square(300.0, 0.05, name="switch_pulse"),
@@ -773,6 +774,9 @@ class ShooterGame:
         elif event == "cache":
             self._play_clip(self._clips["cache"], 0.6)
             self._cue("CACHE AMMO")
+        elif event == "cache_drop":
+            self._play_clip(self._clips["cache_drop"], 0.5)
+            self._cue("AMMO CACHE DROP")
         elif event == "near_miss_bonus":
             self._play_clip(self._clips["near_miss"], 0.5)
             self._cue("NEAR MISS +6")

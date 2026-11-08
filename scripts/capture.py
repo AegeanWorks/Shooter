@@ -1473,6 +1473,33 @@ def route_denied(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_cache_drop_cue(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Forced cache drop frame: the drop-cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.engagement["reward"] = {
+            "standard_p": 0.0, "critical_p": 0.0, "critical_mult": 2.0,
+            "cache_p": 1.0, "cache_reserve": 12, "cache_expire_s": 8.0,
+        }
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=1, max_hp=30)]
+        g.update(FIXED_STEP, ActionState(held=frozenset({"fire"})))
+        print(
+            f"cache-drop caches={len(g.sim.caches)} cue={getattr(g, 'sound_cue', '')!r} "
+            f"voices={g.mixer.voice_count()}"
+        )
+        engine.capture(f"{prefix}_cache_drop.png", f"{prefix}_cache_drop.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_cache_visual(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """One live ammo cache ahead of spawn: the cache-visibility pair."""
     from keystone.app import Engine
@@ -1991,6 +2018,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_critical(prefix, shadows, srgb, post, bloom)
     if which == "cache_visual":
         route_cache_visual(prefix, shadows, srgb, post, bloom)
+    if which == "cache_drop_cue":
+        route_cache_drop_cue(prefix, shadows, srgb, post, bloom)
     if which == "denied":
         route_denied(prefix, shadows, srgb, post, bloom)
     if which == "dry":

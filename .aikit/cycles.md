@@ -1465,3 +1465,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 231 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-70.json`.
+
+## Cycle 71 - Audio cues: ammo-cache drop cue
+- **Area**: audio cues (71st cycle).
+- **Defect / evidence**: cycle 70 made dropped ammo caches visible, but
+  `cache_drop` stayed unmapped. The cache appeared silently; only its later
+  collection had a voice/caption, so a player looking away from the kill
+  could miss the drop entirely.
+- **Fix**: map `cache_drop` to a distinct 0.05 s 1320 Hz sine at 0.5 gain
+  and an accent `AMMO CACHE DROP` caption. Collection and kill cues remain;
+  cache lifetime, reserve, reward RNG and sim state are untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-71/`;
+  960x540 seed 1, forced cache drop on a 1 hp mite. 5,388 changed px
+  (1.04%, bbox 378,164-827,459), mean luma 35.78 -> 35.71; draws 11,
+  triangles 710; voices 3 -> 4. WAV/spectrogram: 0.05 s voice, peak 1.0.
+- **Played runs**: `kite 3000` before/after same hash `54bdc60c...`,
+  exactly 2 cache_drop clips at frames 570/1455, audio 437 -> 439, 1 cache
+  collected, 30 kills, hp 76, 4 hurts, 0 drops.
+- **Gates**: `python -m pytest -q` 234 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-71.json`.
