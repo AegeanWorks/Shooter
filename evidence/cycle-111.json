@@ -1,0 +1,86 @@
+{
+  "area": "keystone testbed: headless frame analysis and pixel diffs",
+  "commands": [
+    "python -m pytest tests/test_keystone_analysis_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 111,
+  "feature": "analyze_frame stats/RGBA/PNG hashes and node/material/camera metadata, compare_reports node/UI/fx/legacy deltas, diff_images threshold PNG output, and write_report atomic JSON without backup",
+  "fix": "add tests/test_keystone_analysis_mechanics.py with five deterministic tests over 2x2-3x2 RGBA frames and real scene/material objects",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "371 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "stats": {
+      "schema": 11,
+      "mean_rgb": [83.25, 19.5, 19.5],
+      "mean_luma": 33.05,
+      "content_pixels": 1,
+      "content_ratio": 0.25,
+      "content_bbox": [0, 1, 0, 1],
+      "dominant_colors": 2,
+      "grid_luma": "8x8",
+      "rgba_sha256": "sha256(pixels)",
+      "png_sha256": "sha256(file) when image_path is set",
+      "short_pixels": "ValueError"
+    },
+    "node_metadata": {
+      "node_count": 2,
+      "root_id": "root",
+      "cube_id": "node-1",
+      "parent": "",
+      "parent_id": "root",
+      "tags": ["enemy"],
+      "layer": "gameplay",
+      "world": [0.0, 0.0, -5.0],
+      "screen": [1.0, 1.0],
+      "bbox": [0.81, 0.81, 1.19, 1.19],
+      "triangles": 12,
+      "material": "color/specular/shininess/metallic/roughness/emissive + texture sha",
+      "settings": "shadows/color/post/bloom/sprites/culling enabled",
+      "fx_default": {"alive": 0, "drawn": 0, "enabled": true}
+    },
+    "compare": {
+      "same_report": true,
+      "moved_node": ["cube-1"],
+      "added_node": ["extra-1"],
+      "removed_node": ["extra-1"],
+      "ui_moved_labels": ["HP 3"],
+      "ui_added_labels": ["WAVE 2"],
+      "ui_added_buttons": ["quit"],
+      "ui_changed_buttons": ["resume"],
+      "fx_changed": true,
+      "legacy_missing_ui_fx_same": true,
+      "bad_schema": "ValueError"
+    },
+    "diff_images": {
+      "changed_pixels": 2,
+      "changed_ratio": 0.3333,
+      "mean_delta": 10.833,
+      "max_delta": 40,
+      "bbox": [1, 0, 1, 1],
+      "changed_color": [255, 0, 0, 255],
+      "unchanged_gray": [33, 33, 33, 255],
+      "size_mismatch": "ValueError",
+      "report_round_trip": true,
+      "report_backup": false
+    }
+  },
+  "tests": {
+    "analysis_tests": 5,
+    "suite": "371 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone analysis",
+    "frame report stats",
+    "node material metadata",
+    "report comparison",
+    "pixel diff",
+    "atomic report write"
+  ]
+}

@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-110-library-trash",
+    "task_id": "shooter-cycle-111-analysis",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794144719.8112543,
+    "updated_at": 1794145054.6737604,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794144720.0239933
+    "completed_at": 1794145055.849182
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-104-http-server",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] HTTP server covered: 341 tests, determinism 1800 ok (b25db520), aikit 4/4, routes/editor/statuses green; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794141657.0757978,
-      "timestamp_str": "2026-11-08 15:40:57",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-104-http-server",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-104-http-server' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794141657.4521508,
-      "timestamp_str": "2026-11-08 15:40:57",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-105-project-export",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover project create/load/validation and export bundle contents/hashes/launcher, with a strict xfail for the manifest-asset re-import defect",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794142235.2619123,
-      "timestamp_str": "2026-11-08 15:50:35",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Keystone scaffolds projects, validates assets/scenes/prefabs and exports hashed runnable bundles, but the shooter suite covered none of it.",
-        "benefits": "Four passing tests pin create/load/scaffold, validation and broken scenes, export files/BUILD hashes/launcher and failure paths; a strict xfail records a real manifest-asset export bug.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change; temp projects only.",
-        "mitigation": "Temp projects under TemporaryDirectory, full suite, determinism and project gates; strict xfail self-clears when keystone fixes the bug."
-      },
-      "plan_digest": "7969618a56cdd6cb2094b82e29d72f69fde51456bea3b1ae0bec1c15087311f1"
-    },
     {
       "task_id": "shooter-cycle-105-project-export",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794144720.023995,
       "timestamp_str": "2026-11-08 16:32:00",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-111-analysis",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover headless frame-report stats, node/material metadata, report comparison and pixel-diff PNGs",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794144792.093314,
+      "timestamp_str": "2026-11-08 16:33:12",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Keystone's analysis helpers back AI/regression checks but have no direct shooter testbed coverage for stats, metadata, UI/fx deltas or diff PNG output.",
+        "benefits": "Five tests pin RGBA/PNG hashes, content bbox/dominant colors, node/material/camera metadata, node and UI/fx comparison, legacy defaults, diff thresholds and atomic report writes.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp PNG/JSON only; no game/sim/hash change.",
+        "mitigation": "Small deterministic 2x2-3x2 images, temp paths, full suite, determinism and project gates."
+      },
+      "plan_digest": "40fa8320edd1dafae2cb1df78354af4315386c6858b30f2c0286a6defc9b0a42"
+    },
+    {
+      "task_id": "shooter-cycle-111-analysis",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Frame analysis/diff covered: 371 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794145054.6737604,
+      "timestamp_str": "2026-11-08 16:37:34",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-111-analysis",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-111-analysis' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794145055.8491855,
+      "timestamp_str": "2026-11-08 16:37:35",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

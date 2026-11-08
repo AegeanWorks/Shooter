@@ -84,6 +84,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | Engine loop + `HumanOverlay` + CLI | fixed-step run, pause menu/pause, `--expect-hash`/`--replay` | `tests/test_keystone_engine_loop_mechanics.py` |
 | `component_codec` | dataclass/custom codecs, scene/prefab round trips, lifecycle | `tests/test_keystone_component_codec_mechanics.py` |
 | `library_trash` | scene/prefab delete, unique/sorted trash, suffix isolation, restore refusals | `tests/test_keystone_library_trash_mechanics.py` |
+| `analysis` | frame stats/hashes, node/material metadata, report diff, pixel-diff PNG | `tests/test_keystone_analysis_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -139,6 +140,7 @@ projects/shooter/
 │   ├── test_keystone_component_codec_mechanics.py <- component codecs/scene/prefab/lifecycle
 │   ├── test_keystone_camera_culling_mechanics.py <- camera math + nested/hidden/skinned culling
 │   ├── test_keystone_library_trash_mechanics.py <- scene/prefab trash, uniqueness, restore safety
+│   ├── test_keystone_analysis_mechanics.py <- frame stats/hashes, report diff, pixel diff
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -226,7 +228,7 @@ projects/shooter/
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
-│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/brute_gap/brute_windup/enemy_spacing/warden_cover/west_gap/boss_death/summon/summon_overlap/pickup/highground/switch/overdrive/overdrive_kill/clutch/forfeit/save_fail/save_retry/profile_bad/profile_corrupt/profile_backup_restart/campaign
+│   ├── play_run.py    <- played-run routes (idle/kite/strafe/ambush/boss/slam/.../campaign)
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
 │   ├── capture.py     <- seeded screenshot routes (spawn/combat/pickup/boss/slam/.../death)
 │   └── keystone_manifest_asset_repro.py <- minimal upstream repro: manifest-asset validation duplicate
@@ -341,7 +343,8 @@ projects/shooter/
 │   ├── cycle-107.json <- cycle 107 proof: component codecs + minimal manifest-asset reproducer
 │   ├── cycle-108.json <- cycle 108 proof: project CLI commands + self-clearing reproducer
 │   ├── cycle-109.json <- cycle 109 proof: camera orientation/projection + CPU frustum culling
-│   └── cycle-110.json <- cycle 110 proof: scene/prefab trash uniqueness and restore safety
+│   ├── cycle-110.json <- cycle 110 proof: scene/prefab trash uniqueness and restore safety
+│   └── cycle-111.json <- cycle 111 proof: frame stats/metadata, report diff, pixel-diff PNG
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

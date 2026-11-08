@@ -2303,3 +2303,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 366 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-110.json`.
+
+## Cycle 111 - Keystone testbed: frame analysis and pixel diffs
+- **Area**: keystone testbed (111th cycle).
+- **Feature / evidence**: analysis helpers back AI/regression checks but had
+  no direct shooter coverage for stats, node/material metadata, UI/fx
+  deltas or visual diff output.
+- **Fix**: add `tests/test_keystone_analysis_mechanics.py` with five
+  deterministic tests over 2x2-3x2 RGBA frames.
+- **Proof**: RGBA/PNG hashes match; content bbox/dominant colors/grid luma
+  are pinned; cube metadata includes id/parent/tags/layer/screen/bbox,
+  12 triangles and texture sha; comparisons flag moved/added/removed nodes,
+  UI label/button changes and fx deltas while legacy reports default clean;
+  `diff_images` marks only above-threshold pixels red and writes the PNG;
+  `write_report` round-trips JSON without a `.bak`.
+- **Gates**: `python -m pytest -q` 371 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-111.json`.
