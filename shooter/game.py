@@ -7,13 +7,14 @@ shooter/data/*.json, never hardcoded one-offs.
 from __future__ import annotations
 
 import math
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from keystone.animation import apply_pose
 from keystone.assets import AssetRegistry
 from keystone.audio import Mixer, noise, sine, square
 from keystone.geometry import Material, MeshData
+from keystone.lifecycle import ComponentRuntime
 from keystone.math3d import Quat, Vec3
 from keystone.primitives import cone, cube, plane, sphere
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
@@ -29,6 +30,27 @@ MAX_ENEMIES = 24
 MAX_TRACERS = 16
 MAX_SPAWN_MARKS = 4
 MAX_CACHES = 4
+
+
+@dataclass
+class PadPulseComponent:
+    """Keystone lifecycle component: pulse the launch pad deterministically."""
+
+    base: float = 1.4
+    amplitude: float = 0.08
+    speed: float = 3.0
+    elapsed: float = 0.0
+    ticks: int = 0
+
+    def update(self, context) -> None:
+        self.elapsed += float(context.dt)
+        self.ticks += 1
+        pulse = 1.0 + self.amplitude * math.sin(self.elapsed * self.speed)
+        node = context.node
+        node.transform = Transform(
+            position=node.transform.position,
+            scale=Vec3(self.base * pulse, 0.02, self.base * pulse),
+        )
 
 
 def _floor_grid_texture(size: int = 128, cell: int = 16) -> TextureData:
@@ -188,6 +210,8 @@ class ShooterGame:
         self._boss_core: Node | None = None
         self._boss_anim = None
         self._boss_pose: dict = {}
+        self._pad_pulse: PadPulseComponent | None = None
+        self._lifecycle: ComponentRuntime | None = None
         self._built = False
 
     # ---- five-operation contract --------------------------------------
@@ -375,16 +399,24 @@ class ShooterGame:
             )
             self.scene.add(node)
             self._platform_rim.append(node)
+            pad_cfg = dict(self.sim.juice.get("pad_pulse", {}))
+            pad_base = float(pad_cfg.get("base", 1.4))
             pad = Node(
                 "platform-pad", id="platform-pad",
                 transform=Transform(
                     position=Vec3(px, 0.02, pz - pd / 2.0 - 0.8),
-                    scale=Vec3(1.4, 0.02, 1.4),
+                    scale=Vec3(pad_base, 0.02, pad_base),
                 ),
                 mesh=wall_mesh, material=trim_mat,
             )
             self.scene.add(pad)
             self._approach_pad = pad
+            self._pad_pulse = PadPulseComponent(
+                base=pad_base,
+                amplitude=float(pad_cfg.get("amplitude", 0.08)),
+                speed=float(pad_cfg.get("speed", 3.0)),
+            )
+            pad.add_component(self._pad_pulse)
 
         # Wall pilasters: shared vertical strips that give the four flat
         # boundary walls depth. Decoration only (no colliders, no sim).
@@ -564,6 +596,11 @@ class ShooterGame:
         except (KeyError, OSError, ValueError):
             self._boss_anim = None
         self._boss_pose = {}
+        # Keystone runtime feature: deterministic component lifecycle. The
+        # pad pulse is one component on the pad node, started once and
+        # updated by the fixed-step game loop.
+        self._lifecycle = ComponentRuntime(self.scene)
+        self._lifecycle.start()
         self._built = True
         self._sync_scene()
         return self.scene
@@ -625,6 +662,8 @@ class ShooterGame:
         # only (post-update invariant stays voice_count <= 8)
         if self.mixer.voice_count() > 8:
             self.mixer.clear()
+        if self._lifecycle is not None:
+            self._lifecycle.update(float(dt))
         self._sync_scene(float(dt))
 
     def _cue(self, text: str, danger: bool = False) -> None:
@@ -1133,12 +1172,6 @@ class ShooterGame:
                 )
             else:
                 node.visible = False
-        if self._approach_pad is not None:
-            pulse = 1.0 + 0.08 * math.sin(sim.time * 3.0)
-            self._approach_pad.transform = Transform(
-                position=self._approach_pad.transform.position,
-                scale=Vec3(1.4 * pulse, 0.02, 1.4 * pulse),
-            )
         if self._pickup_beam is not None and self._pickup_orb is not None:
             active = bool(sim.pickup_active)
             fx_t = float(getattr(self, "_pickup_fx_t", 0.0))

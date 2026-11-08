@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-89-keystone-core-anim",
+    "task_id": "shooter-cycle-90-pad-lifecycle",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794130428.96749,
+    "updated_at": 1794130963.0078135,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794130429.6872418
+    "completed_at": 1794130964.1466348
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-83-boss-dead-ui",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Boss bar death guard proven: 261 tests, determinism 1800 ok, aikit 4/4, 4864 px death pair, same hash f1c79051, boss alive/last_run; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794123912.5195525,
-      "timestamp_str": "2026-11-08 10:45:12",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-83-boss-dead-ui",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-83-boss-dead-ui' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794123931.1825051,
-      "timestamp_str": "2026-11-08 10:45:31",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-84-tracer-muzzle",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Graphics cycle: start player tracers at the viewmodel muzzle while keeping hitscan at the eye, with a fire-frame pair and strafe parity",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794124010.7518094,
-      "timestamp_str": "2026-11-08 10:46:50",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Player tracers start at the camera eye, so beams emanate from the crosshair while the visible gun sits lower-right; the gun looks detached from its shots.",
-        "benefits": "Beams now connect the barrel to the impact, using the existing tracer nodes and juice viewmodel geometry; hitscan and damage are unchanged.",
-        "risks": "contract: tracer presentation telemetry only; dependency: none; concurrency: none; state: no aim, hit, damage, hash or save change.",
-        "mitigation": "Failing-first tracer-origin test, a clean fire-frame pair at 960x540, strafe-drill hash parity and the full gates."
-      },
-      "plan_digest": "d966d6868e84633d35d585b8dc1198b5958bc689eb2c3870d5fdb4552eba97e9"
-    },
     {
       "task_id": "shooter-cycle-84-tracer-muzzle",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794130429.6872437,
       "timestamp_str": "2026-11-08 12:33:49",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-90-pad-lifecycle",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: move the launch-pad pulse onto a ComponentRuntime lifecycle component, with a 0-px pair and same-hash platform run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794130953.8178272,
+      "timestamp_str": "2026-11-08 12:42:33",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter is the Keystone testbed, but the new deterministic component lifecycle had no consumer; the pad pulse was still a hardcoded sine in _sync_scene.",
+        "benefits": "One PadPulseComponent on the pad node now proves start/update/describe in shipped gameplay, with base/amplitude/speed in juice.json.",
+        "risks": "contract: pad presentation only; dependency: none; concurrency: none; state: no sim/hash change, node/material/draws unchanged.",
+        "mitigation": "Two lifecycle tests, a same-view 0-px capture pair, a same-hash platform jump and the full gates."
+      },
+      "plan_digest": "8fd68c219bcfaaef9d11195e650161c6ae79f6890ac8858bb11fe17ada4d59f9"
+    },
+    {
+      "task_id": "shooter-cycle-90-pad-lifecycle",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Pad lifecycle proven: 279 tests, determinism 1800 ok (b25db520), aikit 4/4, 0-px pair at scale 1.512, same platform hash c1603d79; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794130963.0078135,
+      "timestamp_str": "2026-11-08 12:42:43",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-90-pad-lifecycle",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-90-pad-lifecycle' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794130964.1466372,
+      "timestamp_str": "2026-11-08 12:42:44",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

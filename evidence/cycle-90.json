@@ -1,0 +1,76 @@
+{
+  "area": "keystone testbed: component lifecycle",
+  "commands": [
+    "python -m pytest tests/test_pad_pulse.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py pad_lifecycle <prefix>",
+    "python scripts/play_run.py platform 120 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 90,
+  "feature": "keystone ComponentRuntime deterministic start/update lifecycle",
+  "fix": "move the launch pad's hardcoded sine pulse out of _sync_scene into a PadPulseComponent attached to the pad node; ShooterGame starts one ComponentRuntime with the scene and updates it in the fixed-step update, with base/amplitude/speed in juice.json pad_pulse",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "279 passed"
+  },
+  "keystone": {
+    "component": "PadPulseComponent",
+    "hooks": ["update"],
+    "node": "platform-pad",
+    "runtime": ["ComponentRuntime.start", "ComponentRuntime.update", "ComponentRuntime.describe"],
+    "started": 1,
+    "ticks": 32
+  },
+  "play_runs": {
+    "platform_after": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 28,
+      "hash": "c1603d797193787331a17b9ebb62c55d",
+      "hp": 100,
+      "hurts": 0,
+      "score": 250
+    },
+    "platform_before": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 28,
+      "hash": "c1603d797193787331a17b9ebb62c55d",
+      "hp": 100,
+      "hurts": 0,
+      "score": 250
+    },
+    "parity": "same 28-frame platform jump hash c1603d79, score 250, hp 100, 0 hurts; the component is presentation-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-90/after_pad_lifecycle.*",
+    "before_dir": "shots/shooter-campaign/cycle-90/before_pad_lifecycle.*",
+    "route": "scripts/capture.py pad_lifecycle; 960x540 seed 1, player z 5.5, 31 updates (pulse peak)"
+  },
+  "tests": {
+    "lifecycle_tests": 2,
+    "suite": "279 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone lifecycle",
+    "component runtime",
+    "launch pad"
+  ],
+  "visual_diff": {
+    "bbox": null,
+    "changed_px": 0,
+    "draws": 7,
+    "fraction": 0.0,
+    "mean_luma_after": 41.05,
+    "mean_luma_before": 41.05,
+    "triangles": 218
+  },
+  "visual_state": {
+    "after": {"elapsed": 0.517, "scale": 1.512},
+    "before": {"elapsed": 0.0, "scale": 1.512}
+  }
+}

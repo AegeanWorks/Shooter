@@ -35,6 +35,11 @@
     "width": 0.20,
     "height": 0.025
   },
+  "pad_pulse": {
+    "base": 1.4,
+    "amplitude": 0.08,
+    "speed": 3.0
+  },
   "hit_flinch_s": 0.25,
   "hit_flinch_scale": 0.28,
   "hit_flinch_push": 0.12,

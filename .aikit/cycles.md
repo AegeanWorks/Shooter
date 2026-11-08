@@ -1863,3 +1863,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 278 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-89.json`.
+
+## Cycle 90 - Keystone testbed: launch-pad lifecycle component
+- **Area**: keystone testbed (90th cycle).
+- **Feature / evidence**: Keystone added deterministic component
+  lifecycle hooks (`ComponentRuntime`). The shooter had no consumer;
+  the launch pad's pulse was a hardcoded sine in `_sync_scene`.
+- **Fix**: add `PadPulseComponent` (update hook) on the existing
+  `platform-pad` node, start one `ComponentRuntime` with the scene
+  and update it in the fixed step. Base/amplitude/speed moved to
+  `juice.json:pad_pulse`; the old sine block was removed. The node,
+  material, draws and collision are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-90/`;
+  960x540 seed 1, player z 5.5, 31 updates (pulse peak). Exactly 0
+  changed px (bbox null), mean luma 41.05 -> 41.05; draws 7, triangles
+  218. Before scale 1.512 via sim.time; after 1.512 via the component
+  at elapsed 0.517.
+- **Played runs**: `platform 120` before/after share hash
+  `c1603d79...`, 28 frames, score 250, hp 100, 0 hurts, 0 drops;
+  presentation-only.
+- **Gates**: `python -m pytest -q` 279 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-90.json`.

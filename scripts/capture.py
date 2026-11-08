@@ -1982,6 +1982,42 @@ def route_killfeed(prefix: str, shadows: bool = True, srgb: bool = True, post: b
         engine.close()
 
 
+def route_pad_lifecycle(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Launch pad at the pulse peak: hardcoded sine vs lifecycle component."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.player_pos = Vec3(-15.5, 0.9002, 5.5)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-15.5, 0.9002, 5.5), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = -0.18
+        for _ in range(31):
+            g.update(FIXED_STEP, ActionState())
+        pad = g._approach_pad
+        print(
+            f"pad-lifecycle frame={g.sim.tick} "
+            f"scale={float(pad.transform.scale.x):.4f} "
+            f"elapsed={getattr(getattr(g, '_pad_pulse', None), 'elapsed', 0.0):.3f}"
+        )
+        engine.capture(f"{prefix}_pad_lifecycle.png", f"{prefix}_pad_lifecycle.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_platform(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Spawn view turned toward the rear low platform (before/after pair)."""
     import math
@@ -2645,6 +2681,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_enemy_spacing(prefix, shadows, srgb, post, bloom)
     if which == "warden_charge":
         route_warden_charge(prefix, shadows, srgb, post, bloom)
+    if which == "pad_lifecycle":
+        route_pad_lifecycle(prefix, shadows, srgb, post, bloom)
     if which == "score_pop":
         route_score_pop(prefix, shadows, srgb, post, bloom)
     if which == "target_hp":
