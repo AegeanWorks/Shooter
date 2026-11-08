@@ -922,3 +922,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 174 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-44.json`.
+
+## Cycle 45 - Combat feel: kill bounty at the crosshair
+- **Area**: combat feel (45th cycle).
+- **Opportunity**: the kill reward (e.g. `MITE +110`) appeared only in the
+  top-left feed; the crosshair killmark confirmed the kill but not the
+  bounty, so the reward was away from the aim point. Baseline
+  `test_score_pop.py` failed 3/3.
+- **Fix**: on `kill:<type>:<total>`, set `score_pop` (`+N`, 0.6 s from
+  `juice.score_pop_s`), decrement it in `update`, and draw it at
+  `cx + 22, cy + 16` in the accent color. Presentation only; no sim or
+  snapshot change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-45/`;
+  960x540 seed 1, two frames after the first kill. Before no pop at the
+  crosshair; after `+110`: 192 changed px (0.04%, bbox 502,286-547,299),
+  mean luma 38.64 -> 38.67; draws 10, triangles 698.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950
+  / hp 100, 39 shots / 37 hits, 101 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 177 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-45.json`.

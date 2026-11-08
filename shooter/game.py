@@ -61,6 +61,7 @@ class ShooterGame:
         self.sound_cue_t = 0.0
         self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
         self.kill_feed: list[dict] = []
+        self.score_pop: dict | None = None
         self._clip_hook = None
         self._clips: dict = {}
         self.profile_store = (
@@ -458,6 +459,10 @@ class ShooterGame:
         for entry in self.kill_feed:
             entry["t"] = float(entry.get("t", 0.0)) - float(dt)
         self.kill_feed = [entry for entry in self.kill_feed if entry["t"] > 0.0][:4]
+        if self.score_pop is not None:
+            self.score_pop["t"] = float(self.score_pop.get("t", 0.0)) - float(dt)
+            if self.score_pop["t"] <= 0.0:
+                self.score_pop = None
         for mark in self.spawn_marks:
             mark["t"] = float(mark.get("t", 0.0)) - float(dt)
         self.spawn_marks = [mark for mark in self.spawn_marks if mark["t"] > 0.0]
@@ -564,6 +569,10 @@ class ShooterGame:
                     },
                 )
                 self.kill_feed = self.kill_feed[:4]
+                self.score_pop = {
+                    "text": f"+{parts[2]}",
+                    "t": float(self.sim.juice.get("score_pop_s", 0.6)),
+                }
             return
         if event.startswith("switch:"):
             wid = event.split(":", 1)[1]
@@ -923,6 +932,12 @@ class ShooterGame:
             alpha = min(1.0, float(entry["t"]) / 0.6)
             color = (1.0, 0.35, 0.30, alpha) if entry.get("danger") else (0.95, 0.90, 0.80, alpha)
             canvas.text(16, 104 + index * 18, str(entry["text"]), color, 2)
+        if self.score_pop is not None:
+            alpha = min(1.0, max(0.0, float(self.score_pop["t"]) / 0.6))
+            canvas.text(
+                int(state.width) // 2 + 22, int(state.height) // 2 + 16,
+                str(self.score_pop["text"]), (1.0, 0.62, 0.20, alpha), 2,
+            )
         best = int(self.profile.get("best_score", 0))
         if best > 0:
             label = f"BEST {best}"

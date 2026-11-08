@@ -417,6 +417,38 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_score_pop(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Two frames after the first kill: the bounty-pop pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0),
+                                hp=12, max_hp=30)]
+        fire = ActionState(held=frozenset({"fire"}))
+        for _ in range(20):
+            before = int(g.sim.kills)
+            g.update(FIXED_STEP, fire)
+            if int(g.sim.kills) > before:
+                for _ in range(2):
+                    g.update(FIXED_STEP, ActionState())
+                pop = getattr(g, "score_pop", None)
+                print(
+                    f"score-pop frame={g.sim.tick} kills={g.sim.kills} "
+                    f"pop={None if pop is None else pop['text']}"
+                )
+                engine.capture(f"{prefix}_score_pop.png", f"{prefix}_score_pop.json")
+                break
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_brute_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First brute hit at close range: the brute-slam cue pair."""
     from keystone.app import Engine
@@ -1401,6 +1433,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_death_fx(prefix, shadows, srgb, post, bloom)
     if which == "brute_slam":
         route_brute_slam(prefix, shadows, srgb, post, bloom)
+    if which == "score_pop":
+        route_score_pop(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

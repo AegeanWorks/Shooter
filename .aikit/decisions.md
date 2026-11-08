@@ -427,3 +427,10 @@ Status: accepted
 Context: The profile persists `best_kills`, `best_wave` and `best_streak`, but the run-over debrief showed the current run's streak/time, the recent history and runs/wins; the top BEST line exposed only the score. Career bests were invisible on the screen where progress matters most.
 Decision: Append `BEST KILLS <best_kills>  WAVE <best_wave>  STREAK <best_streak>` to the debrief extras when any value is non-zero. The cycle-34 width/height calculation already accommodates the row. No schema, save or run-record change.
 Consequences: Suite 174/174 green (two new tests); determinism 1800 ok; aikit 4/4. The seeded bests 12/4/6 pair at 960×540 seed 1 changes 21,392 px (4.13%, bbox 275,262-684,427), mean luma 50.07→48.15, draws 6, triangles 278. `death 240` keeps hash `f8cd9e28…`, 1 frame, hp 0, score 1500, audio 3, 0 drops. Evidence: `evidence/cycle-44.json`, images in workspace `shots/shooter-campaign/cycle-44/`.
+
+## ADR-062: Kill bounty at the crosshair (combat feel)
+Date: 2026-11-08
+Status: accepted
+Context: The kill reward was visible only in the top-left kill feed. The crosshair killmark confirmed the kill, but the bounty value was far from the aim point, so the moment's reward read separately from the shot.
+Decision: On `kill:<type>:<total>`, set `score_pop` with the text `+N` and a 0.6 s lifetime (`juice.score_pop_s`). `update` decrements it; `draw_ui` draws it at `cx + 22, cy + 16` in the accent color. The top-left feed remains. Presentation only; the sim and snapshot are untouched.
+Consequences: Suite 177/177 green (three new tests); determinism 1800 ok; aikit 4/4. Two frames after the first kill at 960×540 seed 1 the pair changes 192 px (0.04%, bbox 502,286-547,299), mean luma 38.64→38.67, draws 10, triangles 698. `kite 600` keeps hash `4fe640c5…`, 10 kills / 1950 / hp 100, 101 audio, peak 8, 0 drops. Evidence: `evidence/cycle-45.json`, images in workspace `shots/shooter-campaign/cycle-45/`.
