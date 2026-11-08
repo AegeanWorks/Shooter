@@ -778,3 +778,10 @@ Context: The shooter exercised keystone's replay runner, TriggerTracker, Particl
 o_witnessed_win on this loaded machine even though the reference replay still won (77 s for the test alone).
 Decision: Add 	ests/test_keystone_mechanics.py with a full 3000-frame un_log campaign replay (win/hash pinned), a 300-frame erify_log prefix, TriggerTracker enter/held/exit edges, the one-shot surge pickup, a deterministic 12-particle impact burst, the static batch plan (8 groups / 34 draw calls / 26 saved / 482 triangles) and the 12-proxy spatial grid. Raise the three fairness max_wall_seconds values from 30.0 to 120.0; the air verdict and witnessed-win assertions are unchanged.
 Consequences: Suite 298/298 green (six new mechanics tests); determinism 1800 ok (hash b25db520); aikit 4/4. The campaign replay wins wave 4 with 30 kills / 11560 / hp 38 and hash b425a57...; the pickup fires exactly once; the particle burst is deterministic; the trim batch includes platform-pad; the grid holds 12 proxies matching the colliders. Evidence: evidence/cycle-95.json.
+
+## ADR-112: Animate enemies from committed .kanim clips (gameplay)
+Date: 2026-11-08
+Status: accepted
+Context: Keystone's AnimationLibrary, Track sampling and AnimationController crossfade were proven by the shooter testbed but had no game consumer; enemy idle motion was ad-hoc sine math inside _sync_scene.
+Decision: Add shooter/anim.py, which loads four committed idle clips (mite_idle, brute_idle, wisp_idle, warden_idle) through AnimationLibrary, binds one AnimationController per enemy node slot, crossfades for 0.15 s when a slot's type changes, and returns the sampled "subject" Transform. ShooterGame layers that rotation and its uniform breathe scale onto the sim-driven position and existing combat squash; a missing clip set falls back to the previous static look.
+Consequences: Suite 461/461 green plus 2 xfailed (five animation tests); determinism 1800 ok (hash b25db520); aikit 4/4. Animation is presentation-only: a thirty-frame game run matches a plain Sim snapshot, and the flinch squash invariant still holds. Evidence: evidence/cycle-129.json.

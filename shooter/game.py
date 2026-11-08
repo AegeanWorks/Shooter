@@ -26,6 +26,7 @@ from keystone.state_machine_library import StateMachineLibrary
 from keystone.texture import TextureData
 from keystone.ui.font import text_width
 
+from .anim import EnemyAnimations
 from .profile import ProfileStore, default_profile
 from .sim import Sim
 from .ui import draw_shooter
@@ -214,6 +215,7 @@ class ShooterGame:
         self._boss_core: Node | None = None
         self._boss_anim = None
         self._boss_pose: dict = {}
+        self._enemy_anim: EnemyAnimations | None = None
         self._pad_pulse: PadPulseComponent | None = None
         self._lifecycle: ComponentRuntime | None = None
         self._built = False
@@ -634,6 +636,12 @@ class ShooterGame:
         except (KeyError, OSError, ValueError):
             self._boss_anim = None
         self._boss_pose = {}
+        # Keystone animation library: each enemy type's idle motion is a
+        # committed .kanim clip; a missing clip set keeps the static look.
+        try:
+            self._enemy_anim = EnemyAnimations()
+        except (KeyError, OSError, ValueError):
+            self._enemy_anim = None
         # Keystone runtime feature: deterministic component lifecycle. The
         # pad pulse is one component on the pad node, started once and
         # updated by the fixed-step game loop.
@@ -1020,9 +1028,24 @@ class ShooterGame:
                 dz = e.pos.z - sim.player_pos.z
                 length = math.hypot(dx, dz)
                 ux, uz = (dx / length, dz / length) if length > 1e-6 else (0.0, 0.0)
+                # Keystone .kanim idle: rotation and a uniform breathe scale
+                # layer on top of the sim position and combat squash. Only
+                # presentation reads it, so the sim hash is untouched.
+                idle = (
+                    self._enemy_anim.offset(i, e.etype, dt)
+                    if self._enemy_anim is not None
+                    else None
+                )
+                rotation = idle.rotation if idle is not None else Quat()
+                breathe = idle.scale.x if idle is not None else 1.0
                 node.transform = Transform(
                     position=Vec3(e.pos.x + ux * push, e.pos.y, e.pos.z + uz * push),
-                    scale=Vec3(s * (1.0 + flinch), s * (1.0 - flinch), s * (1.0 + flinch)),
+                    rotation=rotation,
+                    scale=Vec3(
+                        s * (1.0 + flinch) * breathe,
+                        s * (1.0 - flinch) * breathe,
+                        s * (1.0 + flinch) * breathe,
+                    ),
                 )
             else:
                 node.visible = False

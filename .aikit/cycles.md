@@ -2604,3 +2604,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 456 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-128.json`.
+
+## Cycle 129 - Gameplay: file-backed enemy idle animation
+- **Area**: gameplay integration (129th cycle).
+- **Feature / evidence**: Keystone ships `AnimationLibrary`, `Track`
+  sampling and `AnimationController` crossfade, and the testbed proves
+  them, but the game loaded no `.kanim` clip and animated enemies with
+  ad-hoc sine math.
+- **Fix**: add `shooter/anim.py` (one controller per enemy slot), four
+  `shooter/data/anim/*.kanim` idle clips and layer the sampled rotation
+  plus uniform breathe scale onto the sim-driven enemy transform.
+- **Proof**: all four clips load and target `subject`; sampling is
+  deterministic and keeps a uniform scale; a live wisp rotates while its
+  position is untouched; the mite flinch squash invariant survives; and a
+  thirty-frame game run matches a plain `Sim` snapshot exactly.
+- **Gates**: `python -m pytest -q` 461 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-129.json`.

@@ -1,0 +1,50 @@
+{
+  "area": "gameplay: file-backed enemy idle animation",
+  "commands": [
+    "python -m pytest tests/test_enemy_animation.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 129,
+  "feature": "The testbed proved AnimationLibrary, Track sampling and AnimationController crossfade, but the game never loaded a .kanim clip; enemy idle motion was ad-hoc sine math in _sync_scene.",
+  "fix": "add shooter/anim.py (one AnimationController per enemy node slot), four shooter/data/anim/*.kanim idle clips, and layer the sampled rotation plus uniform breathe scale onto the sim-driven enemy transform",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "461 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "library": {
+      "clips": ["mite_idle", "brute_idle", "wisp_idle", "warden_idle"],
+      "target": "subject",
+      "durations": {"mite_idle": 1.0, "brute_idle": 1.6, "wisp_idle": 1.2, "warden_idle": 2.0}
+    },
+    "controller": {
+      "per_slot": true,
+      "crossfade_seconds": 0.15,
+      "loop": true,
+      "deterministic_sampling": true
+    },
+    "game": {
+      "rotation_layer": true,
+      "uniform_breathe_scale": true,
+      "sim_position_unchanged": true,
+      "flinch_squash_preserved": true,
+      "missing_clips_fall_back_to_static": true,
+      "sim_snapshot_parity": true
+    }
+  },
+  "tests": {
+    "enemy_animation_tests": 5,
+    "suite": "461 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "enemy animation",
+    "kanim clips",
+    "animation controller",
+    "crossfade",
+    "presentation parity"
+  ]
+}

@@ -102,6 +102,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `gltf_import` | suffix detection, prefab/registry saves, textures, re-import, errors | `tests/test_keystone_gltf_import_mechanics.py` |
 | `gltf` loader | sources/GLB, buffers, accessors, validation, registry | `tests/test_keystone_gltf_loader_mechanics.py` |
 | `schema`/public API | exports/version agreement, editor actions, describe parity, CubeDemo determinism | `tests/test_keystone_api_contract_mechanics.py` |
+| `AnimationLibrary` + `AnimationController` | enemy idle `.kanim` clips, sampling, crossfade, sim parity | `tests/test_enemy_animation.py` |
 
 ```powershell
 python play.py --describe
@@ -121,6 +122,7 @@ projects/shooter/
 │   ├── ui.py            <- single-source HUD: crosshair/status/streak/target/kill-feed/boss-pickup arrows
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, W/L history, debrief, quarantine recovery flags)
 │   └── data/
+│       ├── anim/           <- enemy idle .kanim clips (mite/brute/wisp/warden)
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss + melee reach
 │       ├── levels.json     <- arena + low jump platform + open spawn lane + 5 waves (wave 3 warden) + win_wave 4
@@ -175,6 +177,7 @@ projects/shooter/
 │   ├── test_keystone_gltf_import_mechanics.py <- glTF prefab/registry saves, textures, errors
 │   ├── test_keystone_gltf_loader_mechanics.py <- GLB/source, buffers, accessors, validation
 │   ├── test_keystone_api_contract_mechanics.py <- exports, schema versions, describe parity, determinism
+│   ├── test_enemy_animation.py <- .kanim idle clips, crossfade, uniform scale, sim parity
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -267,26 +270,26 @@ projects/shooter/
 │   ├── capture.py     <- seeded screenshot routes (spawn/combat/pickup/boss/slam/.../death)
 │   └── keystone_manifest_asset_repro.py <- minimal upstream repro: manifest-asset validation duplicate
 ├── evidence/
-│   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
-│   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
-│   ├── cycle-03.json  <- improvement-cycle 3 proof: beacon pair, pickup run, gates
-│   ├── cycle-04.json  <- improvement-cycle 4 proof: HUD pair, crosshair, runs, gates
-│   ├── cycle-05.json  <- improvement-cycle 5 proof: arena pair, luma, budget, runs
-│   ├── cycle-06.json  <- improvement-cycle 6 proof: audio events, captions, WAV, gates
-│   ├── cycle-07.json  <- improvement-cycle 7 proof: profile save, debrief pair, runs
-│   ├── cycle-08.json  <- improvement-cycle 8 proof: campaign-clear pair, fairness run
-│   ├── cycle-09.json  <- improvement-cycle 9 proof: low-ammo/reload HUD pair, runs
-│   ├── cycle-10.json  <- improvement-cycle 10 proof: hit-flinch pair, same-hash runs
-│   ├── cycle-11.json  <- improvement-cycle 11 proof: cover-slide pair, fairness run
-│   ├── cycle-12.json  <- improvement-cycle 12 proof: jump-platform pair, landing run
-│   ├── cycle-13.json  <- improvement-cycle 13 proof: kill-feed pair, same-hash runs
-│   ├── cycle-14.json  <- improvement-cycle 14 proof: muzzle-flash pair, same-hash runs
-│   ├── cycle-15.json  <- improvement-cycle 15 proof: denied-overdrive cue pair, WAV
-│   ├── cycle-16.json  <- improvement-cycle 16 proof: persisted-wins banner pair, runs
-│   ├── cycle-17.json  <- improvement-cycle 17 proof: dry-fire cue pair, same-hash run
-│   ├── cycle-18.json  <- improvement-cycle 18 proof: cover LOS pair, same-hash runs
-│   ├── cycle-19.json  <- improvement-cycle 19 proof: open spawn lane pair, campaign run
-│   ├── cycle-20.json  <- improvement-cycle 20 proof: numeric boss-HP pair, same-hash run
+│   ├── cycle-01.json
+│   ├── cycle-02.json
+│   ├── cycle-03.json
+│   ├── cycle-04.json
+│   ├── cycle-05.json
+│   ├── cycle-06.json
+│   ├── cycle-07.json
+│   ├── cycle-08.json
+│   ├── cycle-09.json
+│   ├── cycle-10.json
+│   ├── cycle-11.json
+│   ├── cycle-12.json
+│   ├── cycle-13.json
+│   ├── cycle-14.json
+│   ├── cycle-15.json
+│   ├── cycle-16.json
+│   ├── cycle-17.json
+│   ├── cycle-18.json
+│   ├── cycle-19.json
+│   ├── cycle-20.json
 │   ├── cycle-21.json
 │   ├── cycle-22.json
 │   ├── cycle-23.json
@@ -395,7 +398,8 @@ projects/shooter/
 │   ├── cycle-125.json <- OBJ normals/UVs, negative indices, quads, errors
 │   ├── cycle-126.json <- glTF prefab/registry saves, textures, re-import
 │   ├── cycle-127.json <- GLB/source, buffers, accessors, validation
-│   └── cycle-128.json <- exports, schema versions, describe parity, determinism
+│   ├── cycle-128.json <- exports, schema versions, describe parity, determinism
+│   └── cycle-129.json <- .kanim enemy idle clips, crossfade, sim parity
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
