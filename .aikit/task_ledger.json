@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-51-full-history",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794108397.4868412,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794108432.2376804
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-45-score-pop",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Combat cycle: kill bounty at the crosshair, failing-first tests, two-frame pair and same-hash run",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794105615.6140096,
-      "timestamp_str": "2026-11-08 05:40:15",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The kill reward lived only in the top-left feed, away from the aim point.",
-        "benefits": "The reward lands where the shot lands, alongside the killmark.",
-        "risks": "contract: game-state pop only; dependency: none; concurrency: none; state: juice score_pop_s.",
-        "mitigation": "Event/draw/expiry tests, two-frame pair, same kite hash."
-      },
-      "plan_digest": "d6712a6b602941b79d1a3796830c7989be0899a984d2cab3a77083a2e02d792b"
-    },
     {
       "task_id": "shooter-cycle-45-score-pop",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794108397.4868412,
       "timestamp_str": "2026-11-08 06:26:37",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-51-full-history",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-51-full-history' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794108432.2376823,
+      "timestamp_str": "2026-11-08 06:27:12",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
