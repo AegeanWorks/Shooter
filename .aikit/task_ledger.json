@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-67-summon-overlap",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794117285.4306023,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794117297.7413719
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-61-platform-perimeter",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Levels cycle: complete the platform landing perimeter with one four-strip frame mesh, replacing two long-edge rim nodes and updating the rim proof",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794114287.2365637,
-      "timestamp_str": "2026-11-08 08:04:47",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The cycle-40 rim doc promises four strips but only two long edges are lit, so the east/west platform edge is an unlit seam and the landing perimeter is inconsistent.",
-        "benefits": "All four top edges read as one lit landing frame; one node and one shadow draw replace two nodes, with one extra batched draw still far under the 40-draw gate.",
-        "risks": "contract: decoration only; dependency: none; concurrency: none; state: no collider, sim, save or camera change.",
-        "mitigation": "Failing-first rim frame tests, a platform approach pair at 960x540, platform-drill hash parity and the full gates."
-      },
-      "plan_digest": "fd73437d776f81d773fc6983441f36405d9c143b74dd920429082ad0b1eb8787"
-    },
     {
       "task_id": "shooter-cycle-61-platform-perimeter",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794117285.4306023,
       "timestamp_str": "2026-11-08 08:54:45",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-67-summon-overlap",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-67-summon-overlap' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794117297.7413738,
+      "timestamp_str": "2026-11-08 08:54:57",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
