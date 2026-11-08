@@ -380,6 +380,26 @@ class Sim:
         center = Vec3(e.pos.x, e.pos.y + 0.3, e.pos.z)
         return AABB(center, Vec3(r, hy, r))
 
+    def aim_target(self) -> _Enemy | None:
+        """Nearest live enemy under the forward crosshair, behind no wall."""
+        origin = self.eye()
+        direction = self.forward()
+        wall = float("inf")
+        for box in self.colliders:
+            distance = ray_aabb(Ray(origin, direction), box)
+            if distance is not None and distance < wall:
+                wall = distance
+        best: _Enemy | None = None
+        best_d = float("inf")
+        for e in self.enemies:
+            if not e.alive:
+                continue
+            distance = ray_aabb(Ray(origin, direction), self._enemy_box(e))
+            if distance is not None and distance < best_d and distance <= wall:
+                best = e
+                best_d = distance
+        return best
+
     # ---- main step -----------------------------------------------------
     def step(self, dt: float, actions) -> list[str]:
         events: list[str] = []

@@ -1,0 +1,56 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py target_hp <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 46,
+  "fix": "read-only Sim.aim_target() ray plus a crosshair target bar and TYPE hp/max label for non-boss enemies; the warden keeps its top bar",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "181 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 101,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "kills": 10,
+      "score": 1950
+    },
+    "parity": "same hash as the cycle-45 baseline; aim_target is read-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-46/after",
+    "before_dir": "shots/shooter-campaign/cycle-46/before",
+    "route": "scripts/capture.py target_hp; 960x540 seed 1, mite at 6 m with 18/30 hp"
+  },
+  "tests": {
+    "suite": "181 passed",
+    "target_hp_tests": 4
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "target health",
+    "crosshair bar",
+    "enemy readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      418,
+      200,
+      541,
+      227
+    ],
+    "changed_px": 1744,
+    "draws": 7,
+    "fraction": 0.0034,
+    "mean_luma_after": 35.84,
+    "mean_luma_before": 35.48,
+    "triangles": 610
+  }
+}

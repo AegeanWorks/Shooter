@@ -417,6 +417,32 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_target_hp(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """A damaged mite under the crosshair: the target-health pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0),
+                                hp=18, max_hp=30)]
+        g.update(FIXED_STEP, ActionState())
+        target = getattr(g.sim, "aim_target", lambda: None)()
+        print(
+            f"target-hp frame={g.sim.tick} "
+            f"target={None if target is None else target.etype} "
+            f"hp={None if target is None else target.hp}"
+        )
+        engine.capture(f"{prefix}_target_hp.png", f"{prefix}_target_hp.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_score_pop(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Two frames after the first kill: the bounty-pop pair."""
     from keystone.app import Engine
@@ -1435,6 +1461,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_brute_slam(prefix, shadows, srgb, post, bloom)
     if which == "score_pop":
         route_score_pop(prefix, shadows, srgb, post, bloom)
+    if which == "target_hp":
+        route_target_hp(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

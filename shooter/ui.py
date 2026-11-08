@@ -68,6 +68,17 @@ def draw_shooter(canvas, hud, sim) -> None:
         for dx, dy in ((-kr, -kr), (kr, -kr), (-kr, kr), (kr, kr)):
             canvas.rect(cx + dx - 2, cy + dy - 2, 5, 5, (1.0, 0.22, 0.18, 0.95))
 
+    # Target health: the non-boss enemy under the crosshair gets a compact
+    # bar and TYPE hp/max label; the warden keeps its dedicated top bar.
+    target = getattr(sim, "aim_target", lambda: None)()
+    if target is not None and target.etype != "warden":
+        frac = max(0.0, min(1.0, float(target.hp) / max(1.0, float(target.max_hp))))
+        bx, by, bw, bh = cx - 60, cy - 50, 120, 6
+        canvas.rect(bx - 2, by - 2, bw + 4, bh + 4, panel_c)
+        canvas.rect(bx, by, max(1, int(bw * frac)), bh, (1.0, 0.62, 0.20, 0.95))
+        _center(canvas, cx, cy - 70,
+                f"{target.etype.upper()} {int(target.hp)}/{int(target.max_hp)}", white)
+
     # Ammo feedback: reload progress near the crosshair, then a low-magazine
     # warning. Exact counts stay in the engine status panel; this is the
     # glanceable layer.

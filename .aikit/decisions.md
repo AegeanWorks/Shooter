@@ -434,3 +434,10 @@ Status: accepted
 Context: The kill reward was visible only in the top-left kill feed. The crosshair killmark confirmed the kill, but the bounty value was far from the aim point, so the moment's reward read separately from the shot.
 Decision: On `kill:<type>:<total>`, set `score_pop` with the text `+N` and a 0.6 s lifetime (`juice.score_pop_s`). `update` decrements it; `draw_ui` draws it at `cx + 22, cy + 16` in the accent color. The top-left feed remains. Presentation only; the sim and snapshot are untouched.
 Consequences: Suite 177/177 green (three new tests); determinism 1800 ok; aikit 4/4. Two frames after the first kill at 960×540 seed 1 the pair changes 192 px (0.04%, bbox 502,286-547,299), mean luma 38.64→38.67, draws 10, triangles 698. `kite 600` keeps hash `4fe640c5…`, 10 kills / 1950 / hp 100, 101 audio, peak 8, 0 drops. Evidence: `evidence/cycle-45.json`, images in workspace `shots/shooter-campaign/cycle-45/`.
+
+## ADR-063: Crosshair target health (enemies/bosses)
+Date: 2026-11-08
+Status: accepted
+Context: Only the warden had a health bar. Mites, brutes and wisps showed hit flinch and a death silhouette, but their remaining health was invisible, so the player could not tell whether one more shot would finish a target. The staged crosshair-on-mite frame measured `target=None`.
+Decision: Add read-only `Sim.aim_target()`: cast the eye-forward ray, find the nearest live enemy hitbox, and reject targets behind a wall. `draw_shooter` renders a 120×6 bar plus `TYPE hp/max` above the crosshair for non-warden targets; the warden keeps its dedicated top bar. No damage, AI, RNG or snapshot change.
+Consequences: Suite 181/181 green (four new tests); determinism 1800 ok; aikit 4/4. The damaged-mite pair at 960×540 seed 1 changes 1,744 px (0.34%, bbox 418,200-541,227), mean luma 35.48→35.84, draws 7, triangles 610. `kite 600` keeps hash `4fe640c5…`, 10 kills / 1950 / hp 100, 101 audio, peak 8, 0 drops. Evidence: `evidence/cycle-46.json`, images in workspace `shots/shooter-campaign/cycle-46/`.

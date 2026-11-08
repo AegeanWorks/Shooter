@@ -942,3 +942,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 177 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-45.json`.
+
+## Cycle 46 - Enemies/bosses: crosshair target health
+- **Area**: enemies/bosses (46th cycle).
+- **Opportunity**: only the warden had a health bar; mites, brutes and
+  wisps showed hit flinch and death, but not remaining health, so the
+  player could not tell when one more shot would finish a target. The
+  staged crosshair-on-mite frame had `target=None`.
+- **Fix**: add read-only `Sim.aim_target()` (nearest live enemy under the
+  forward ray, behind no wall) and draw a compact bar plus
+  `TYPE hp/max` above the crosshair for non-warden targets. The warden
+  keeps its dedicated top bar. No sim behavior or snapshot change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-46/`;
+  960x540 seed 1, mite at 6 m with 18/30 hp. Before no target UI; after
+  `MITE 18/30` and an orange fill: 1,744 changed px (0.34%, bbox
+  418,200-541,227), mean luma 35.48 -> 35.84; draws 7, triangles 610.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950
+  / hp 100, 101 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 181 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-46.json`.
