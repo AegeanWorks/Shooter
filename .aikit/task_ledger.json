@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-66-reload-dip",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794116700.5312304,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794116712.6881685
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-60-summon-cover",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Enemies cycle: reject cover-blocked warden escort ring positions, prove with a 20-seed placement test, a platform-edge pair and a summon drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794113411.291844,
-      "timestamp_str": "2026-11-08 07:50:11",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Warden escorts could materialize inside a cover box because summon placement clamped only to the arena bounds, leaving mites stuck in geometry.",
-        "benefits": "Summons now stand clear of covers, so escorts can path and threaten the player as intended.",
-        "risks": "contract: summon placement only; dependency: none; concurrency: none; state: deterministic RNG, max_alive and event count retained.",
-        "mitigation": "Failing-first 20-seed test, staged platform capture pair, summon drill comparing blocked positions, and full gates."
-      },
-      "plan_digest": "fc5cd0e0f1785b76bd63e6a4bce2ad5c16b191996a220b581463a91f6be81438"
-    },
     {
       "task_id": "shooter-cycle-60-summon-cover",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794116700.5312304,
       "timestamp_str": "2026-11-08 08:45:00",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-66-reload-dip",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-66-reload-dip' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794116712.6881704,
+      "timestamp_str": "2026-11-08 08:45:12",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
