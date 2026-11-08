@@ -1990,6 +1990,32 @@ def route_lowhp_pulse(prefix: str, shadows: bool = True, srgb: bool = True, post
         engine.close()
 
 
+def route_tracer_muzzle(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One clean shot at the north wall: the tracer-origin pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.update(FIXED_STEP, ActionState(held=frozenset({"fire"})))
+        tracer = g.sim.tracers[-1] if g.sim.tracers else {}
+        eye = g.sim.eye()
+        print(
+            f"tracer-muzzle start=({tracer.get('x0', 0):.2f},"
+            f"{tracer.get('y0', 0):.2f},{tracer.get('z0', 0):.2f}) "
+            f"eye=({eye.x:.2f},{eye.y:.2f},{eye.z:.2f})"
+        )
+        engine.capture(f"{prefix}_tracer_muzzle.png", f"{prefix}_tracer_muzzle.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_boss_dead(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Death frame with a live warden: the boss-bar death pair."""
     from keystone.app import Engine
@@ -2352,6 +2378,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_west_gap(prefix, shadows, srgb, post, bloom)
     if which == "boss_dead":
         route_boss_dead(prefix, shadows, srgb, post, bloom)
+    if which == "tracer_muzzle":
+        route_tracer_muzzle(prefix, shadows, srgb, post, bloom)
     if which == "lowhp_pulse":
         route_lowhp_pulse(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":

@@ -700,3 +700,10 @@ Status: accepted
 Context: Cycle 53 hid the crosshair target bar on death, but the warden bar was still drawn whenever an alive warden existed. A boss-fight death showed `WARDEN 600/600` over `YOU DIED` and the run debrief.
 Decision: Gate the warden bar block with `sim.alive`, matching the target bar. The live boss bar, boss core, damage, AI and save state are unchanged.
 Consequences: Suite 261/261 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The death-frame pair at 960x540 seed 1 changes 4,864 px (0.94%, bbox 338,98-621,127), mean luma 33.15 -> 32.55, draws 7, triangles 470. `boss_death 10` before/after same hash `f1c79051...`, hp 0, boss alive, last_run recorded, audio 3, 0 drops. Evidence: `evidence/cycle-83.json`, images in workspace `shots/shooter-campaign/cycle-83/`.
+
+## ADR-101: Tracers start at the gun muzzle (graphics/effects)
+Date: 2026-11-08
+Status: accepted
+Context: Player tracer beams began at the camera eye, so they appeared to leave the crosshair while the viewmodel sat lower-right. The gun looked detached from its shots even though the muzzle flash was aligned.
+Decision: Add `Sim.muzzle_position()` using the DATA viewmodel barrel forward/right/down values plus half the barrel length, and use that point for the tracer `x0/y0/z0`. The hitscan ray, damage origin, spread, wisp tracers and all sim state stay unchanged; only the drawn beam start moves.
+Consequences: Suite 263/263 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The clean-shot pair at 960x540 seed 1 changes 5,583 px (1.08%, bbox 350,268-559,539), mean luma 34.19 -> 34.34, draws 9, triangles 322; the start moves from eye (0.00,1.62,8.00) to muzzle (0.21,1.43,7.03). `strafe 300` keeps hash `14a48660...`, 30 shots, hp 92, 1 hurt, audio 36, peak 8, 0 drops. Evidence: `evidence/cycle-84.json`, images in workspace `shots/shooter-campaign/cycle-84/`.

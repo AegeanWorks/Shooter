@@ -1,0 +1,67 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py tracer_muzzle <prefix>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 84,
+  "fix": "start player tracer beams at the viewmodel barrel tip via sim.muzzle_position() while keeping the hitscan ray and damage origin at the eye; wisp tracers and all sim/aim state are unchanged",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "263 passed"
+  },
+  "play_runs": {
+    "strafe_after": {
+      "audio": 36,
+      "drops": 0,
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "hurts": 1,
+      "peak_vox": 8,
+      "shots": 30
+    },
+    "strafe_before": {
+      "audio": 36,
+      "drops": 0,
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "hurts": 1,
+      "peak_vox": 8,
+      "shots": 30
+    },
+    "parity": "same hash 14a48660 before/after; tracer start is presentation telemetry only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-84/after",
+    "before_dir": "shots/shooter-campaign/cycle-84/before",
+    "route": "scripts/capture.py tracer_muzzle; 960x540 seed 1, one clean pulse shot at the north wall"
+  },
+  "tests": {
+    "suite": "263 passed",
+    "tracer_muzzle_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "tracer origin",
+    "viewmodel muzzle",
+    "first-person feedback"
+  ],
+  "visual_diff": {
+    "bbox": [
+      350,
+      268,
+      559,
+      539
+    ],
+    "changed_px": 5583,
+    "draws": 9,
+    "fraction": 0.0108,
+    "mean_luma_after": 34.34,
+    "mean_luma_before": 34.19,
+    "triangles": 322
+  }
+}

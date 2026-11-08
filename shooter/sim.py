@@ -401,6 +401,23 @@ class Sim:
         cp = math.cos(self.pitch)
         return Vec3(math.sin(self.yaw) * cp, math.sin(self.pitch), -math.cos(self.yaw) * cp)
 
+    def muzzle_position(self) -> Vec3:
+        """World point at the viewmodel barrel tip (presentation only)."""
+        cfg = dict((getattr(self, "juice", {}) or {}).get("viewmodel", {}))
+        eye = self.eye()
+        forward = self.forward()
+        right = Vec3(math.cos(self.yaw), 0.0, math.sin(self.yaw))
+        up = right.cross(forward)
+        forward_d = (float(cfg.get("barrel_forward", 0.84))
+                     + float(cfg.get("barrel_length", 0.26)) / 2.0)
+        right_d = float(cfg.get("right", 0.21))
+        down_d = float(cfg.get("barrel_down", 0.19))
+        return Vec3(
+            eye.x + forward.x * forward_d + right.x * right_d - up.x * down_d,
+            eye.y + forward.y * forward_d + right.y * right_d - up.y * down_d,
+            eye.z + forward.z * forward_d + right.z * right_d - up.z * down_d,
+        )
+
     def _enemy_box(self, e: _Enemy) -> AABB:
         # Generous hitbox (aim assist): tall enough that hip-fire from eye
         # level hits grounded enemies without pixel-perfect pitch.
@@ -698,6 +715,7 @@ class Sim:
         events.append("shoot")
         origin = self.eye()
         fwd = self.forward()
+        muzzle = self.muzzle_position()
         rx, _, rz = math.cos(self.yaw), 0.0, math.sin(self.yaw)
         spread = math.radians(float(w.get("spread_hip_deg", 1.0)))
         pellets = int(w.get("pellets", 1))
@@ -814,7 +832,7 @@ class Sim:
                     self.particles.burst("impact", 4, hit_pos)
             self.tracers.append(
                 {
-                    "x0": origin.x, "y0": origin.y, "z0": origin.z,
+                    "x0": muzzle.x, "y0": muzzle.y, "z0": muzzle.z,
                     "x1": origin.x + direction.x * end_dist,
                     "y1": origin.y + direction.y * end_dist,
                     "z1": origin.z + direction.z * end_dist,

@@ -1722,3 +1722,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 261 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-83.json`.
+
+## Cycle 84 - Graphics/effects: tracers start at the gun muzzle
+- **Area**: graphics and effects (84th cycle).
+- **Defect / evidence**: player tracers began at the camera eye, so beams
+  appeared from the crosshair while the gun sat lower-right; the weapon
+  looked detached from its shots.
+- **Fix**: add `Sim.muzzle_position()` from the DATA viewmodel barrel
+  forward/right/down values plus half the barrel length, and use it for the
+  tracer start. Hitscan, damage, spread, wisp tracers and sim state are
+  unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-84/`;
+  960x540 seed 1, one clean pulse shot at the north wall. 5,583 changed px
+  (1.08%, bbox 350,268-559,539), mean luma 34.19 -> 34.34; draws 9,
+  triangles 322. Start moves from eye (0.00,1.62,8.00) to muzzle
+  (0.21,1.43,7.03).
+- **Played runs**: `strafe 300` before/after same hash `14a48660...`,
+  30 shots, hp 92, 1 hurt, audio 36, peak 8, 0 drops.
+- **Gates**: `python -m pytest -q` 263 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-84.json`.
