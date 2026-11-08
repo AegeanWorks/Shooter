@@ -1,0 +1,65 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py hurt <prefix>",
+    "python scripts/play_run.py ambush 180 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 52,
+  "fix": "deterministic camera-position jolt while hurt_t > 0; the aim ray, hitscan and snapshot are untouched",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "193 passed"
+  },
+  "play_runs": {
+    "ambush_180": {
+      "after": {
+        "audio": 2,
+        "frames": 180,
+        "hash": "ca6d97115f099e10c67efadf9f5b2c86",
+        "hp": 84,
+        "hurts": 2
+      },
+      "before": {
+        "audio": 2,
+        "frames": 180,
+        "hash": "ca6d97115f099e10c67efadf9f5b2c86",
+        "hp": 84,
+        "hurts": 2
+      }
+    },
+    "parity": "same hash; camera motion is game-side only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-52/after",
+    "before_dir": "shots/shooter-campaign/cycle-52/before",
+    "route": "scripts/capture.py hurt; 960x540 seed 1, right-side first hit at frame 12"
+  },
+  "tests": {
+    "hurt_shake_tests": 2,
+    "suite": "193 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "damage jolt",
+    "camera shake",
+    "combat impact"
+  ],
+  "visual_diff": {
+    "bbox": [
+      0,
+      235,
+      959,
+      539
+    ],
+    "changed_px": 110566,
+    "draws": 6,
+    "fraction": 0.2133,
+    "mean_luma_after": 34.2,
+    "mean_luma_before": 34.24,
+    "triangles": 290
+  }
+}

@@ -702,7 +702,18 @@ class ShooterGame:
         sim = self.sim
         cam = self.scene.camera
         eye = sim.eye()
-        cam.position = eye
+        hurt = float(getattr(sim, "hurt_t", 0.0))
+        if hurt > 0.0:
+            # Short deterministic jolt while the damage cue is live; the
+            # aim ray still starts at the sim eye, so this is presentation.
+            amp = min(1.0, hurt / 0.3) * 0.035
+            cam.position = Vec3(
+                eye.x + math.sin(sim.time * 55.0) * amp,
+                eye.y + math.cos(sim.time * 47.0) * amp * 0.6,
+                eye.z,
+            )
+        else:
+            cam.position = eye
         cam.yaw = sim.yaw
         cam.pitch = max(-1.55, min(1.55, sim.pitch + sim.kick))
         if self.scene.point_light is not None:

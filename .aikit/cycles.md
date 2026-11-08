@@ -1062,3 +1062,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 191 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-51.json`.
+
+## Cycle 52 - Combat feel: damage camera jolt
+- **Area**: combat feel (52nd cycle).
+- **Defect / evidence**: taking damage had a sound and a directional cue,
+  but the camera stayed exactly at the eye; the hit had no physical
+  jolt. The baseline test measured the camera equal to `sim.eye()` with
+  `hurt_t=0.4`.
+- **Fix**: while `hurt_t > 0`, offset the camera position by a short
+  deterministic shake (`amp = min(1, hurt/0.3) * 0.035`;
+  `x = sin(time*55)*amp`, `y = cos(time*47)*amp*0.6`). The aim ray,
+  hitscan, viewmodel origin and snapshot are untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-52/`;
+  960x540 seed 1, right-side first hit at frame 12. Before the steady
+  eye view; after the jolted scene while the HUD stays fixed:
+  110,566 changed px (21.33%, bbox 0,235-959,539), mean luma
+  34.24 -> 34.20; draws 6, triangles 290.
+- **Played runs**: `ambush 180` before/after same hash `ca6d9711...`,
+  180 frames, hp 84, 2 hurts, audio 2, peak 2, drops 0.
+- **Gates**: `python -m pytest -q` 193 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-52.json`.
