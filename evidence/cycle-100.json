@@ -1,0 +1,65 @@
+{
+  "area": "keystone testbed: editor scene operations and prefab instances",
+  "commands": [
+    "python -m pytest tests/test_keystone_scene_editor_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 100,
+  "feature": "GameSession editor actions: add_scene/save_scene_group/unload_scene, set_layer_visible, set_nodes_locked/toggle_selection_visible, insert_prefab/transform/revert_prefab_override, nested prefab create/reparent/save/insert",
+  "fix": "add tests/test_keystone_scene_editor_mechanics.py covering additive scene groups, layer visibility, node lock/hide, a prefab override round trip and a nested prefab instance whose links rebase under outer.inner",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "322 passed"
+  },
+  "mechanics": {
+    "scene_group": {
+      "added": "level",
+      "node_count": 2,
+      "roots": ["cache"],
+      "saved": true,
+      "count_after_unload": 0
+    },
+    "layer_lock_hide": {
+      "layer": "props",
+      "hidden": ["props"],
+      "shown": [],
+      "locked_count": 1,
+      "locked_transform": "WebProblem",
+      "unlocked_count": 0,
+      "visibility_toggle": [false, true]
+    },
+    "prefab_override": {
+      "instance": "test",
+      "prefab": "pickup_beacon",
+      "instance_count": 1,
+      "override_count_after_transform": 1,
+      "field": "transform.position",
+      "field_after": [1.0, 0.5, -6.0],
+      "override_count_after_revert": 0,
+      "position_after_revert": [0.0, 0.5, -6.0]
+    },
+    "nested_prefab": {
+      "outer": "crate_prefab",
+      "links": [["crate_prefab", "outer"], ["pickup_beacon", "outer.inner"]],
+      "instance_count": 2,
+      "ids": ["outer:crate", "outer.inner:surge-pickup", "outer.inner:surge-beam", "outer.inner:surge-orb"],
+      "override_count": 0
+    }
+  },
+  "tests": {
+    "editor_scene_tests": 4,
+    "suite": "322 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone editor",
+    "scene groups",
+    "layer visibility",
+    "node locking",
+    "prefab overrides",
+    "nested prefabs"
+  ]
+}

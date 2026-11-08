@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-99-raycast-scene",
+    "task_id": "shooter-cycle-100-editor-scene",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794139200.1856372,
+    "updated_at": 1794139989.3065224,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794139200.535524
+    "completed_at": 1794139990.171924
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-93-cache-material",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Cache material library proven: 288 tests, determinism 1800 ok (b25db520), aikit 4/4, 0-px pair, same kite 3000 hash bb425a57; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794132979.4104834,
-      "timestamp_str": "2026-11-08 13:16:19",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-93-cache-material",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-93-cache-material' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794132979.8747635,
-      "timestamp_str": "2026-11-08 13:16:19",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-94-web-session",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover GameSession describe/scene/editor/simulate with tests and document the full testbed matrix",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794133331.2542493,
-      "timestamp_str": "2026-11-08 13:22:11",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The shooter is the Keystone testbed, but the web/editor JSON API behind GameSession had no direct shooter coverage.",
-        "benefits": "Four fast tests now pin the shooter contract, 112-node scene (incl. prefab ids), editor select and the CLI-matching simulate hash; README maps every adopted feature.",
-        "risks": "contract: test/docs only; dependency: none; concurrency: none; state: no game/sim/hash change.",
-        "mitigation": "Session-level tests, CLI/web smoke outputs, full suite and the project gates."
-      },
-      "plan_digest": "e03b7ae7b1c0b02b5f450d4bb0293e7553aea421c44835b7865dcd3cf3d77b58"
-    },
     {
       "task_id": "shooter-cycle-94-web-session",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794139200.5355258,
       "timestamp_str": "2026-11-08 15:00:00",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-100-editor-scene",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover editor scene groups, layer visibility, node lock/hide and prefab override/nested-instance actions",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794139987.4708025,
+      "timestamp_str": "2026-11-08 15:13:07",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The web editor exposes scene groups, layer visibility, locking/hiding and prefab override/nested actions, but the shooter suite covered none of them.",
+        "benefits": "Four GameSession tests pin add/save/unload scene groups, hide/show layers, locked-node refusal and visibility toggles, a pickup override/revert and a nested crate prefab with rebased outer.inner links.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change; temp libraries only.",
+        "mitigation": "Four focused tests, full suite, determinism and project gates."
+      },
+      "plan_digest": "ff2af5b16730f87f44a18368b6bc92b7508c823bae3bbb753556c709f260086b"
+    },
+    {
+      "task_id": "shooter-cycle-100-editor-scene",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Editor scenes covered: 322 tests, determinism 1800 ok (b25db520), aikit 4/4, groups/layers/locks/overrides/nesting green; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794139989.3065224,
+      "timestamp_str": "2026-11-08 15:13:09",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-100-editor-scene",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-100-editor-scene' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794139990.1719265,
+      "timestamp_str": "2026-11-08 15:13:10",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

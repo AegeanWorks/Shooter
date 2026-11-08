@@ -2070,3 +2070,26 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 318 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-99.json`.
+
+## Cycle 100 - Keystone testbed: editor scene operations and prefabs
+- **Area**: keystone testbed (100th cycle).
+- **Feature / evidence**: The web editor exposes additive scene
+  groups, layer visibility, node locking/hiding and prefab
+  override/nested-instance actions, but the shooter suite covered none
+  of them.
+- **Fix**: add `tests/test_keystone_scene_editor_mechanics.py`
+  driving `GameSession` for add/save/unload scene groups, layer
+  hide/show, node lock refusal and visibility toggling, a pickup
+  prefab transform override/revert, and a nested crate prefab whose
+  `outer.inner` links rebase and report no overrides.
+- **Proof**: the level group adds 2 nodes and unloads to 0; hiding
+  `props` reports `["props"]` and showing clears it; the locked
+  transform raises `WebProblem` and unlocking restores 0; visibility
+  toggles false/true; the pickup override counts 1 with
+  `[1.0, 0.5, -6.0]` and reverts to 0 / `[0.0, 0.5, -6.0]`; the
+  nested instance reports `crate_prefab/outer` +
+  `pickup_beacon/outer.inner` with two links, the four rebased IDs and
+  0 overrides.
+- **Gates**: `python -m pytest -q` 322 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-100.json`.
