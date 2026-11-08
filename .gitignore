@@ -9,3 +9,4 @@ saves/
 .aikit/*.corrupt_*
 .aikit/*.log
 node_modules/
+shots/
