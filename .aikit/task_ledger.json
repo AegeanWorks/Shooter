@@ -3,24 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-61-platform-perimeter",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794114429.5309691,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794114449.5158875
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-55-lowammo-count",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-55-lowammo-count' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794110039.308089,
-      "timestamp_str": "2026-11-08 06:53:59",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-56-wall-texture",
       "phase": "in_progress",
@@ -265,6 +256,16 @@
       "status": "in_progress",
       "timestamp": 1794114429.5309691,
       "timestamp_str": "2026-11-08 08:07:09",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-61-platform-perimeter",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-61-platform-perimeter' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794114449.5158896,
+      "timestamp_str": "2026-11-08 08:07:29",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
