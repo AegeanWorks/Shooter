@@ -2159,3 +2159,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 337 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-103.json`.
+
+## Cycle 104 - Keystone testbed: HTTP web server routes
+- **Area**: keystone testbed (104th cycle).
+- **Feature / evidence**: The threaded web console serves the shooter
+  through `create_server`/`ConsoleHandler`, but only manual smoke
+  checks covered its GET/POST/editor routes and problem statuses.
+- **Fix**: add `tests/test_keystone_http_server_mechanics.py` starting
+  the server on port 0 with the shooter GameSession and exercising
+  health/describe/scene/inspector, simulate, editor select/transform and
+  404/405/400 paths over real loopback HTTP.
+- **Proof**: health has CORS `*` and game `shooter`; describe
+  exposes web api 1; the scene has 112 nodes including the prefab
+  pickup; the inspector reports 8 batch groups / 34 draw calls and 7
+  merged groups / 27 saved; simulate 120 matches hash `7e4b602e...`
+  (ongoing wave 1 hp 100) and infers 2 frames from actions; editor
+  selects and moves `platform-pad` to `[1,2,3]`; missing nodes and
+  `/api/nope` are 404, wrong methods are 405, and bad actions/frames/
+  JSON are 400.
+- **Gates**: `python -m pytest -q` 341 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-104.json`.

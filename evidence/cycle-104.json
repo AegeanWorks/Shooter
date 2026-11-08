@@ -1,0 +1,42 @@
+{
+  "area": "keystone testbed: HTTP web server routes",
+  "commands": [
+    "python -m pytest tests/test_keystone_http_server_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 104,
+  "feature": "Threaded keystone web server against the shooter GameSession: GET health/describe/scene/inspector, POST simulate and editor actions, 404/405/400 paths",
+  "fix": "add tests/test_keystone_http_server_mechanics.py starting create_server(ShooterGame(), port=0) on a daemon thread and driving real loopback requests for the JSON API, editor selection/transform, CLI-matching simulate hash and problem statuses",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "341 passed"
+  },
+  "mechanics": {
+    "health": {"status": 200, "cors": "*", "ok": true, "game": "shooter", "scene_schema": 2},
+    "describe": {"game": "shooter", "web_api": 1, "buttons": ["fire", "overdrive"]},
+    "scene": {"schema": 2, "node_count": 112, "ids": ["floor", "platform-pad", "pickup:surge-pickup", "warden-core"]},
+    "inspector": {"node_count": 112, "batches": {"groups": 8, "draw_calls": 34}, "merged": {"groups": 7, "saved_calls": 27}},
+    "simulate": {"frames": 120, "hash": "7e4b602e029d12d68672790318d119cd", "outcome": "ongoing", "wave": 1, "hp": 100, "inferred_frames": 2},
+    "editor": {"selected": "platform-pad", "position_after": [1.0, 2.0, 3.0]},
+    "errors": {
+      "404": ["select missing", "/api/nope"],
+      "405": ["POST /api/scene", "GET /api/simulate"],
+      "400": ["explode action", "frames -1", "invalid JSON"]
+    }
+  },
+  "tests": {
+    "http_server_tests": 4,
+    "suite": "341 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone web server",
+    "http routes",
+    "json api",
+    "editor api",
+    "problem statuses"
+  ]
+}

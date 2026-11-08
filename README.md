@@ -78,6 +78,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `GameSession` authoring actions | undo/redo, play restore, materials, animation keys, diff/validate | `tests/test_keystone_authoring_mechanics.py` |
 | `skin`/`gltf`/`gpu.sprites` | skin points/meshes, glTF import, sprite scale/alpha/billboard | `tests/test_keystone_skinning_gltf_sprite_mechanics.py` |
 | `InputMap`/`ActionState` + UI + `png`/`obj_loader`/`batch` | contexts/pressed-held, canvas clipping, PNG/OBJ, merge_batches | `tests/test_keystone_input_ui_asset_mechanics.py` |
+| `create_server` HTTP console | health/describe/scene/inspector, simulate, editor, 404/405/400 | `tests/test_keystone_http_server_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -127,6 +128,7 @@ projects/shooter/
 │   ├── test_keystone_authoring_mechanics.py <- undo/redo/play/materials/animation keys/diff
 │   ├── test_keystone_skinning_gltf_sprite_mechanics.py <- skinning/glTF import/sprite math
 │   ├── test_keystone_input_ui_asset_mechanics.py <- input/UI/PNG-OBJ/merge_batches
+│   ├── test_keystone_http_server_mechanics.py <- real GET/POST/editor routes and statuses
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -320,7 +322,8 @@ projects/shooter/
 │   ├── cycle-100.json <- cycle 100 proof: editor scene groups/layers/locks/prefab overrides
 │   ├── cycle-101.json <- cycle 101 proof: undo/redo/play/materials/animation keys/diff
 │   ├── cycle-102.json <- cycle 102 proof: skinning, glTF import and sprite math
-│   └── cycle-103.json <- cycle 103 proof: input/UI/assets/merge_batches
+│   ├── cycle-103.json <- cycle 103 proof: input/UI/assets/merge_batches
+│   └── cycle-104.json <- cycle 104 proof: HTTP web server routes and statuses
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
