@@ -116,7 +116,7 @@ projects/shooter/
 │   ├── test_career_debrief.py <- RUNS/WINS career row, hidden without runs
 │   ├── test_wisp_bolt.py   <- wisp chest->eye tracer and violet material
 │   ├── test_summon_mark.py <- warden escort positions, spawn marks
-│   ├── test_platform_rim.py <- jump-platform lit edge, shared trim
+│   ├── test_platform_rim.py <- jump-platform four-edge lit frame, shared trim
 │   ├── test_streak_bonus.py <- 10%/kill cap 50%, shown as STREAK +P%
 │   ├── test_death_fx.py    <- death timer, shrinking white silhouette
 │   ├── test_brute_slam.py  <- brute_slam event, clip, caption
@@ -204,7 +204,8 @@ projects/shooter/
 │   ├── cycle-57.json  <- improvement-cycle 57 proof: surge-forfeit cue pair + WAV
 │   ├── cycle-58.json  <- improvement-cycle 58 proof: save-error debrief pair, death drill
 │   ├── cycle-59.json  <- improvement-cycle 59 proof: viewmodel-recoil pair, same-hash run
-│   └── cycle-60.json  <- improvement-cycle 60 proof: cover-safe summon pair, summon drill
+│   ├── cycle-60.json  <- improvement-cycle 60 proof: cover-safe summon pair, summon drill
+│   └── cycle-61.json  <- improvement-cycle 61 proof: four-edge platform rim pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

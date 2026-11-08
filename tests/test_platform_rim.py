@@ -1,8 +1,10 @@
 """Levels proof: the jumpable platform has a readable lit rim.
 
 Cycle 12 added the 0.7 m platform, but cycle 05 skipped its lit cap because
-the top is walkable. Four shared trim strips mark the edge without adding
-colliders; the jump/landing behavior is unchanged.
+the top is walkable. Cycle 40 marked only the two long edges even though its
+proof names four strips. One shared frame mesh now draws all four edges and
+replaces two separate rim nodes, so the landing perimeter reads from every
+approach without adding shadow calls.
 """
 
 from shooter.game import ShooterGame
@@ -14,16 +16,18 @@ def _game() -> ShooterGame:
     return g
 
 
-def test_platform_rim_has_two_shared_trim_nodes():
+def test_platform_rim_is_one_four_strip_frame():
     g = _game()
     nodes = list(g._platform_rim)
-    assert len(nodes) == 2, len(nodes)
+    assert len(nodes) == 1, len(nodes)
     trim = g.assets.require("material.trim").payload
-    assert all(node.visible for node in nodes)
-    assert all(node.material is trim for node in nodes)
+    assert nodes[0].visible
+    assert nodes[0].material is trim
+    assert len(nodes[0].mesh.positions) == 96  # four cubes of 24 vertices
+    assert len(nodes[0].mesh.indices) == 144
 
 
-def test_platform_rim_sits_on_the_low_platform_edges():
+def test_platform_rim_frame_reaches_all_four_edges():
     g = _game()
     platform = next(
         c for c in g.sim.levels["arena"]["covers"] if float(c["h"]) < 1.0
@@ -31,7 +35,11 @@ def test_platform_rim_sits_on_the_low_platform_edges():
     px, pz = float(platform["x"]), float(platform["z"])
     half_w = float(platform["w"]) / 2.0
     half_d = float(platform["d"]) / 2.0
-    for node in g._platform_rim:
-        assert abs(node.transform.position.x - px) <= half_w + 0.1
-        assert abs(node.transform.position.z - pz) <= half_d + 0.1
-        assert node.transform.scale.y <= 0.12
+    node = g._platform_rim[0]
+    assert abs(node.transform.position.x - px) < 1e-6
+    assert abs(node.transform.position.z - pz) < 1e-6
+    assert node.transform.position.y > float(platform["h"])
+    xs = [p[0] for p in node.mesh.positions]
+    zs = [p[2] for p in node.mesh.positions]
+    assert abs(max(xs) - half_w) <= 0.11 and abs(min(xs) + half_w) <= 0.11
+    assert abs(max(zs) - half_d) <= 0.11 and abs(min(zs) + half_d) <= 0.11

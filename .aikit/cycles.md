@@ -1249,3 +1249,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 211 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-60.json`.
+
+## Cycle 61 - Levels: full platform landing perimeter
+- **Area**: levels (61st cycle).
+- **Defect / evidence**: the cycle-40 rim proof names four shared
+  strips, but the code emitted only the two long edges. From the east or
+  west the platform edge was an unlit dark seam against the side face, so
+  the landing perimeter was inconsistent.
+- **Fix**: build `_platform_frame_mesh()` as four thin cubes merged into
+  one `MeshData` and replace the two long-edge nodes with one
+  `platform-rim` node. It shares `material.trim`, adds no colliders or sim
+  state, keeps one node and one shadow draw; the custom mesh costs one
+  extra batched draw (7 vs 6), still far under the 40-draw gate.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-61/`;
+  960x540 seed 1, approach view from the south. The side edges gain the
+  lit frame: 5,403 changed px (1.04%, bbox 51,92-908,399; 5,111 px in the
+  3D scene, bbox 51,305-908,399), mean luma 44.04 -> 44.40; draws 7,
+  triangles 158, shadow calls 34 (one fewer).
+- **Played runs**: `platform 120` before/after same hash `c1603d79...`,
+  28 frames, landed at y 1.6, hp 100, score 250, audio 1, 0 drops.
+- **Gates**: `python -m pytest -q` 211 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-61.json`.

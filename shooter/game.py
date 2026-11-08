@@ -11,7 +11,7 @@ from dataclasses import replace
 
 from keystone.assets import AssetRegistry
 from keystone.audio import Mixer, noise, sine, square
-from keystone.geometry import Material
+from keystone.geometry import Material, MeshData
 from keystone.math3d import Quat, Vec3
 from keystone.primitives import cone, cube, plane, sphere
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
@@ -89,6 +89,30 @@ def _wall_panel_texture(size: int = 64) -> TextureData:
             offset = (y * size + x) * 4
             pixels[offset : offset + 4] = bytes((value, value, value, 255))
     return TextureData(size, size, bytes(pixels), name="wall-panel")
+
+
+def _platform_frame_mesh(width: float, depth: float, thickness: float, height: float) -> MeshData:
+    """One mesh holding four thin top-edge strips for the low platform."""
+    base = cube(1.0)
+    strips = (
+        (0.0, depth / 2.0 - thickness / 2.0, width, thickness),
+        (0.0, -depth / 2.0 + thickness / 2.0, width, thickness),
+        (-width / 2.0 + thickness / 2.0, 0.0, thickness, depth),
+        (width / 2.0 - thickness / 2.0, 0.0, thickness, depth),
+    )
+    positions: list[tuple[float, float, float]] = []
+    normals: list[tuple[float, float, float]] = []
+    uvs: list[tuple[float, float]] = []
+    indices: list[int] = []
+    offset = 0
+    for cx, cz, sx, sz in strips:
+        for p, n, uv in zip(base.positions, base.normals, base.uvs):
+            positions.append((p[0] * sx + cx, p[1] * height, p[2] * sz + cz))
+            normals.append(n)
+            uvs.append(uv)
+        indices.extend(index + offset for index in base.indices)
+        offset += len(base.positions)
+    return MeshData(tuple(positions), tuple(normals), tuple(uvs), tuple(indices))
 
 
 class ShooterGame:
@@ -291,8 +315,9 @@ class ShooterGame:
                 float(c["w"]) + 0.08, 0.08, float(c["d"]) + 0.08, mat=trim_mat,
             )
 
-        # Jump-platform rim: two lit strips on the long top edges of the
-        # 0.7 m platform. Decoration only, no colliders, no sim.
+        # Jump-platform rim: one shared frame mesh with four thin strips on
+        # the top edges. Decoration only, no colliders, no sim; one node and
+        # one shadow draw keep the level affordance budget-safe.
         self._platform_rim = []
         platform = next(
             (c for c in self.sim.levels["arena"]["covers"] if float(c["h"]) < 1.0),
@@ -303,17 +328,15 @@ class ShooterGame:
             pw, pd, ph = (float(platform["w"]), float(platform["d"]),
                           float(platform["h"]))
             trim_mat = self.assets.require("material.trim").payload
-            for index, z in enumerate((pz - pd / 2.0 + 0.05, pz + pd / 2.0 - 0.05)):
-                node = Node(
-                    f"platform-rim-{index}", id=f"platform-rim-{index}",
-                    transform=Transform(
-                        position=Vec3(px, ph + 0.04, z),
-                        scale=Vec3(pw + 0.10, 0.08, 0.10),
-                    ),
-                    mesh=wall_mesh, material=trim_mat,
-                )
-                self.scene.add(node)
-                self._platform_rim.append(node)
+            frame = _platform_frame_mesh(pw, pd, 0.10, 0.08)
+            self.assets.register("mesh.platform_frame", frame)
+            node = Node(
+                "platform-rim", id="platform-rim",
+                transform=Transform(position=Vec3(px, ph + 0.04, pz)),
+                mesh=frame, material=trim_mat,
+            )
+            self.scene.add(node)
+            self._platform_rim.append(node)
             pad = Node(
                 "platform-pad", id="platform-pad",
                 transform=Transform(
