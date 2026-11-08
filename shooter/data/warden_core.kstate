@@ -1,0 +1,113 @@
+{
+  "current": "calm",
+  "parameters": {
+    "windup": 0.0
+  },
+  "schema": 1,
+  "states": [
+    {
+      "clip": {
+        "events": [],
+        "name": "core_calm",
+        "position": {},
+        "rotation": {},
+        "scale": {
+          "warden-core": {
+            "interpolation": "linear",
+            "keys": [
+              {
+                "t": 0.0,
+                "v": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "t": 0.6,
+                "v": [
+                  1.06,
+                  1.06,
+                  1.06
+                ]
+              },
+              {
+                "t": 1.2,
+                "v": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              }
+            ]
+          }
+        },
+        "schema": 1
+      },
+      "loop": true,
+      "name": "calm",
+      "speed": 1.0
+    },
+    {
+      "clip": {
+        "events": [],
+        "name": "core_charge",
+        "position": {},
+        "rotation": {},
+        "scale": {
+          "warden-core": {
+            "interpolation": "linear",
+            "keys": [
+              {
+                "t": 0.0,
+                "v": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              },
+              {
+                "t": 0.25,
+                "v": [
+                  1.32,
+                  1.32,
+                  1.32
+                ]
+              },
+              {
+                "t": 0.5,
+                "v": [
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+              }
+            ]
+          }
+        },
+        "schema": 1
+      },
+      "loop": true,
+      "name": "charge",
+      "speed": 1.0
+    }
+  ],
+  "transitions": [
+    {
+      "duration": 0.08,
+      "operator": "greater",
+      "parameter": "windup",
+      "source": "calm",
+      "target": "charge",
+      "value": 0.5
+    },
+    {
+      "duration": 0.12,
+      "operator": "less",
+      "parameter": "windup",
+      "source": "charge",
+      "target": "calm",
+      "value": 0.5
+    }
+  ]
+}

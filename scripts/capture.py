@@ -870,6 +870,44 @@ def route_brute_gap(prefix: str, shadows: bool = True, srgb: bool = True, post: 
         engine.close()
 
 
+def route_warden_charge(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Warden core at the keystone state-machine charge peak."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.wave = 3
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, 0.9002, 8.0), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = 0.0
+        g.sim.pitch = 0.0
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 4.0), hp=600,
+                   max_hp=600, windup_t=0.7, attack_cd=999.0, summon_cd=999.0)
+        ]
+        for _ in range(15):
+            g.update(FIXED_STEP, ActionState())
+        machine = getattr(g, "_boss_anim", None)
+        print(
+            f"warden-charge frame={g.sim.tick} "
+            f"scale={float(g._boss_core.transform.scale.x):.2f} "
+            f"state={machine.current if machine is not None else 'none'}"
+        )
+        engine.capture(f"{prefix}_warden_charge.png", f"{prefix}_warden_charge.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_brute_windup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First brute tell at close range: windup swell + BRUTE WINDUP caption."""
     from keystone.app import Engine
@@ -2605,6 +2643,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_brute_windup(prefix, shadows, srgb, post, bloom)
     if which == "enemy_spacing":
         route_enemy_spacing(prefix, shadows, srgb, post, bloom)
+    if which == "warden_charge":
+        route_warden_charge(prefix, shadows, srgb, post, bloom)
     if which == "score_pop":
         route_score_pop(prefix, shadows, srgb, post, bloom)
     if which == "target_hp":

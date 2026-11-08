@@ -1,0 +1,86 @@
+{
+  "area": "keystone testbed: animation state machine",
+  "commands": [
+    "python -m pytest tests/test_boss_anim_state.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py warden_charge <prefix>",
+    "python scripts/play_run.py slam 60 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 89,
+  "feature": "keystone AnimationStateMachine + StateMachineLibrary (.kstate) + apply_pose",
+  "fix": "author shooter/data/warden_core.kstate through the new file-backed state-machine library, load it in ShooterGame.build_scene, and drive the warden core's calm breathe / charge pulse from the machine's scale tracks; the sim windup flag is the only parameter and the sim/hash never read it",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "278 passed"
+  },
+  "keystone": {
+    "library_entry": {
+      "current": "calm",
+      "states": 2,
+      "transitions": 2
+    },
+    "node": "warden-core",
+    "parameters": ["windup"],
+    "runtime_calls": ["StateMachineLibrary.load", "AnimationStateMachine.set_parameter", "AnimationStateMachine.advance", "apply_pose"],
+    "states": ["calm", "charge"],
+    "tracks": "scale only (1.0-1.06 calm, 1.0-1.32 charge)"
+  },
+  "play_runs": {
+    "slam_after": {
+      "audio": 3,
+      "drops": 0,
+      "events": [
+        {"events": ["boss_windup"], "frame": 1},
+        {"events": ["boss_slam", "hurt"], "frame": 43}
+      ],
+      "frames": 43,
+      "hash": "4580b9daedea28aa1897b0b08b12c25b",
+      "hp": 70,
+      "hurts": 1
+    },
+    "slam_before": {
+      "audio": 3,
+      "drops": 0,
+      "events": [
+        {"events": ["boss_windup"], "frame": 1},
+        {"events": ["boss_slam", "hurt"], "frame": 43}
+      ],
+      "frames": 43,
+      "hash": "4580b9daedea28aa1897b0b08b12c25b",
+      "hp": 70,
+      "hurts": 1
+    },
+    "parity": "same 43-frame hash 4580b9da, hp 70, 1 hurt and the same windup/slam frames prove the state machine is presentation-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-89/after_warden_charge.*",
+    "before_dir": "shots/shooter-campaign/cycle-89/before_warden_charge.*",
+    "route": "scripts/capture.py warden_charge; 960x540 seed 1, warden z 4.0, player z 8.0, 15 updates (charge peak)"
+  },
+  "tests": {
+    "boss_anim_state_tests": 5,
+    "suite": "278 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone state machine",
+    "state machine library",
+    "warden core"
+  ],
+  "visual_diff": {
+    "bbox": [366, 230, 541, 477],
+    "changed_px": 10679,
+    "draws": 9,
+    "fraction": 0.0206,
+    "mean_luma_after": 37.21,
+    "mean_luma_before": 36.57,
+    "triangles": 650
+  },
+  "visual_state": {
+    "after": {"scale": 1.32, "state": "charge"},
+    "before": {"scale": 1.18, "state": "none"}
+  }
+}

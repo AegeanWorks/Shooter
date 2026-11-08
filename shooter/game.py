@@ -8,13 +8,16 @@ from __future__ import annotations
 
 import math
 from dataclasses import replace
+from pathlib import Path
 
+from keystone.animation import apply_pose
 from keystone.assets import AssetRegistry
 from keystone.audio import Mixer, noise, sine, square
 from keystone.geometry import Material, MeshData
 from keystone.math3d import Quat, Vec3
 from keystone.primitives import cone, cube, plane, sphere
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
+from keystone.state_machine_library import StateMachineLibrary
 from keystone.texture import TextureData
 from keystone.ui.font import text_width
 
@@ -183,6 +186,8 @@ class ShooterGame:
         self._pickup_beam: Node | None = None
         self._pickup_orb: Node | None = None
         self._boss_core: Node | None = None
+        self._boss_anim = None
+        self._boss_pose: dict = {}
         self._built = False
 
     # ---- five-operation contract --------------------------------------
@@ -549,6 +554,16 @@ class ShooterGame:
             "streak_break": square(140.0, 0.12, name="streak_break"),
             "death": square(60.0, 0.50, name="death"),
         }
+        # Keystone runtime feature: a file-backed animation state machine
+        # drives the warden core's calm/charge pulse. Presentation only; the
+        # sim, damage and deterministic hash never read it.
+        try:
+            self._boss_anim = StateMachineLibrary(
+                Path(__file__).parent / "data"
+            ).load("warden_core")
+        except (KeyError, OSError, ValueError):
+            self._boss_anim = None
+        self._boss_pose = {}
         self._built = True
         self._sync_scene()
         return self.scene
@@ -610,7 +625,7 @@ class ShooterGame:
         # only (post-update invariant stays voice_count <= 8)
         if self.mixer.voice_count() > 8:
             self.mixer.clear()
-        self._sync_scene()
+        self._sync_scene(float(dt))
 
     def _cue(self, text: str, danger: bool = False) -> None:
         self.sound_cue = text
@@ -851,8 +866,17 @@ class ShooterGame:
         elif event == "died":
             self._play_clip(self._clips["death"], 0.9)
 
-    def _sync_scene(self) -> None:
+    def _sync_scene(self, dt: float = 0.0) -> None:
         sim = self.sim
+        warden = next(
+            (e for e in sim.enemies if e.alive and e.etype == "warden"), None
+        )
+        # Keystone state machine: advance one frame and keep the sampled pose
+        # for the warden core. The parameter is the existing sim windup flag.
+        if self._boss_anim is not None:
+            charging = warden is not None and warden.windup_t > 0.0
+            self._boss_anim.set_parameter("windup", 1.0 if charging else 0.0)
+            self._boss_pose = self._boss_anim.advance(float(dt))
         cam = self.scene.camera
         eye = sim.eye()
         hurt = float(getattr(sim, "hurt_t", 0.0))
@@ -966,22 +990,28 @@ class ShooterGame:
             else:
                 self._flash.visible = False
         if self._boss_core is not None:
-            boss = next(
-                (e for e in sim.enemies if e.alive and e.etype == "warden"),
-                None,
-            )
+            boss = warden
             self._boss_core.visible = boss is not None
             if boss is not None:
                 # Glowing core on the face turned toward the player. Purely
-                # visual: it follows the boss and swells during the windup.
+                # visual: it follows the boss and its scale comes from the
+                # keystone state-machine pose (calm breathe / charge pulse).
                 dx = sim.player_pos.x - boss.pos.x
                 dz = sim.player_pos.z - boss.pos.z
                 length = math.hypot(dx, dz)
                 ux, uz = (dx / length, dz / length) if length > 1e-6 else (0.0, -1.0)
-                pulse = 1.0 + (0.18 if boss.windup_t > 0.0 else 0.0)
+                if self._boss_anim is not None and "warden-core" in self._boss_pose:
+                    apply_pose(self.scene, self._boss_pose)
+                    core_rot = self._boss_core.transform.rotation
+                    core_scale = self._boss_core.transform.scale
+                else:
+                    pulse = 1.0 + (0.18 if boss.windup_t > 0.0 else 0.0)
+                    core_rot = Quat()
+                    core_scale = Vec3(pulse, pulse, pulse)
                 self._boss_core.transform = Transform(
                     position=Vec3(boss.pos.x + ux * 1.25, boss.pos.y + 0.35, boss.pos.z + uz * 1.25),
-                    scale=Vec3(pulse, pulse, pulse),
+                    rotation=core_rot,
+                    scale=core_scale,
                 )
         if self._pickup is not None:
             self._pickup.visible = bool(sim.pickup_active)

@@ -1837,3 +1837,29 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 273 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-88.json`.
+
+## Cycle 89 - Keystone testbed: warden core state machine
+- **Area**: keystone testbed (89th cycle).
+- **Feature / evidence**: Keystone added deterministic animation
+  state machines, a file-backed `.kstate` library and
+  `apply_pose`. The shooter still hand-rolled the warden core's
+  binary windup swell (1.18) and had no consumer for the new
+  functions.
+- **Fix**: author `shooter/data/warden_core.kstate` through
+  `StateMachineLibrary.save` with calm breathe (1.0-1.06) and
+  charge pulse (1.0-1.32) scale clips plus two `windup` parameter
+  transitions. `ShooterGame` loads it via `StateMachineLibrary`,
+  advances it in `_sync_scene(dt)` and calls `apply_pose` before
+  re-anchoring the core to the sim position. A missing asset falls
+  back to the old static pulse; the sim and hash never read it.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-89/`;
+  960x540 seed 1, warden z 4.0, player z 8.0, 15 updates (charge
+  peak). 10,679 changed px (2.06%, bbox 366,230-541,477), mean luma
+  36.57 -> 37.21; draws 9, triangles 650. Before: scale 1.18, no
+  machine; after: 1.32 in `charge`.
+- **Played runs**: `slam 60` before/after share hash
+  `4580b9da...`, 43 frames, hp 70, one hurt, identical windup/slam
+  frames; presentation-only.
+- **Gates**: `python -m pytest -q` 278 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-89.json`.
