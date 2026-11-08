@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-84-tracer-muzzle",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794124323.6018581,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794124339.5193303
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-78-clutch-cue",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Audio cycle: map the clutch wave-clear event to a distinct voice and CLUTCH CLEAR caption, with a low-HP pair, WAV and clutch drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794121382.4294329,
-      "timestamp_str": "2026-11-08 10:03:02",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The sim emits clutch on a wave clear at 30 HP or less, but the game ignores it; only the generic wave cue plays, so a notable survival moment is unannounced.",
-        "benefits": "A distinct chime and CLUTCH CLEAR caption mark the low-health clear while the wave completion voice still plays.",
-        "risks": "contract: event/audio/caption only; dependency: none; concurrency: none; state: no sim, score, HP or save change.",
-        "mitigation": "Failing-first clutch/normal-clear tests, a low-HP caption pair, a clutch drill and a WAV/spectrogram probe."
-      },
-      "plan_digest": "1915043a56940f201e2da4aa6fd36733ff495a9d0ca52d84ae7a6dfd552f39e7"
-    },
     {
       "task_id": "shooter-cycle-78-clutch-cue",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794124323.6018581,
       "timestamp_str": "2026-11-08 10:52:03",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-84-tracer-muzzle",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-84-tracer-muzzle' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794124339.5193326,
+      "timestamp_str": "2026-11-08 10:52:19",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
