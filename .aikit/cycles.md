@@ -2250,3 +2250,21 @@ rotation completes.
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence files**: `evidence/cycle-107.json` and
   `evidence/keystone-manifest-asset-repro.md`.
+
+## Cycle 108 - Keystone testbed: project CLI and self-clearing reproducer
+- **Area**: keystone testbed (108th cycle).
+- **Feature / evidence**: `--validate-project`/`--export` were still
+  covered only through library calls; the manifest-asset xfail was strict,
+  so an upstream fix would have turned the suite red instead of green.
+- **Fix**: add CLI tests for clean/broken validation and bundle build,
+  non-empty refusal and `--force`; replace the strict xfail with a
+  conditional `pytest.xfail` and add the same self-clearing export check;
+  extend the upstream report with issue text and the `replace=True` patch.
+- **Proof**: valid project validates with exit 0/ok, broken prefab gives
+  exit 1/ok=false; export writes `run.py`/`BUILD.json`, refuses a non-empty
+  target with Why/Fix and re-exports with `--force`. Manifest-asset
+  validation and export still xfail with `already registered`, and both
+  pass automatically once keystone stops re-importing attached assets.
+- **Gates**: `python -m pytest -q` 356 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-108.json`.

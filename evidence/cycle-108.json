@@ -1,0 +1,68 @@
+{
+  "area": "keystone testbed: project CLI and self-clearing manifest-asset reproducer",
+  "commands": [
+    "python -m pytest tests/test_keystone_project_export_mechanics.py -q",
+    "python scripts/keystone_manifest_asset_repro.py",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 108,
+  "feature": "CLI --validate-project/--export coverage (valid, broken prefab, non-empty target, --force); strict manifest-asset xfail replaced by conditional pytest.xfail so both the validation and export tests pass automatically after an upstream fix; upstream report now carries an issue draft and exact patch",
+  "fix": "add test_cli_validate_project_reports_clean_and_broken_content and test_cli_export_builds_bundle_and_refuses_non_empty_target; make test_manifest_asset_validation_after_load_game_duplicates and test_cli_export_with_manifest_asset_self_clears self-clearing; extend evidence/keystone-manifest-asset-repro.md with the upstream issue text and replace=True patch",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "356 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "cli_validate": {
+      "valid_exit": 0,
+      "valid_ok": true,
+      "manifest_name": true,
+      "asset_count_min": 1,
+      "prefab_errors_none": true,
+      "broken_prefab_exit": 1,
+      "broken_prefab_ok": false,
+      "broken_prefab_error": true
+    },
+    "cli_export": {
+      "valid_exit": 0,
+      "bundle_run_py": true,
+      "bundle_build_json": true,
+      "printed_name": true,
+      "run_hint": true,
+      "non_empty_exit": 1,
+      "non_empty_why_fix": true,
+      "force_exit": 0
+    },
+    "self_clearing": {
+      "validation_while_buggy": "xfail: asset already registered",
+      "validation_after_fix": "passes with ok=true and no errors",
+      "export_while_buggy": "xfail: asset already registered; target not created",
+      "export_after_fix": "passes with run.py and BUILD.json"
+    },
+    "reproducer": {
+      "script": "scripts/keystone_manifest_asset_repro.py",
+      "report": "evidence/keystone-manifest-asset-repro.md",
+      "keystone_commit": "c31f935",
+      "expected": "ok=true",
+      "actual": "ok=false: asset 'project:assets/swatch.png' is already registered",
+      "exit_code": 1,
+      "upstream_patch": "import_project_assets registers with replace=True, or skips existing IDs"
+    }
+  },
+  "tests": {
+    "project_export_file": "6 passed, 2 xfailed",
+    "suite": "356 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone project CLI",
+    "--validate-project",
+    "--export",
+    "self-clearing xfail",
+    "manifest asset reproducer",
+    "upstream patch"
+  ]
+}

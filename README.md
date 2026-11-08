@@ -79,7 +79,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `skin`/`gltf`/`gpu.sprites` | skin points/meshes, glTF import, sprite scale/alpha/billboard | `tests/test_keystone_skinning_gltf_sprite_mechanics.py` |
 | `InputMap`/`ActionState` + UI + `png`/`obj_loader`/`batch` | contexts/pressed-held, canvas clipping, PNG/OBJ, merge_batches | `tests/test_keystone_input_ui_asset_mechanics.py` |
 | `create_server` HTTP console | health/describe/scene/inspector, simulate, editor, 404/405/400 | `tests/test_keystone_http_server_mechanics.py` |
-| `project`/`export` | manifest create/load/validate, hashed export bundle, launcher | `tests/test_keystone_project_export_mechanics.py` |
+| `project`/`export` | manifest create/load/validate, CLI validate/export, hashed bundle, launcher | `tests/test_keystone_project_export_mechanics.py` |
 | Engine loop + `HumanOverlay` + CLI | fixed-step run, pause menu/pause, `--expect-hash`/`--replay` | `tests/test_keystone_engine_loop_mechanics.py` |
 | `component_codec` | dataclass/custom codecs, scene/prefab round trips, lifecycle | `tests/test_keystone_component_codec_mechanics.py` |
 
@@ -334,7 +334,8 @@ projects/shooter/
 │   ├── cycle-105.json <- cycle 105 proof: project manifests and export bundles
 │   ├── cycle-106.json <- cycle 106 proof: engine loop, pause overlay and CLI gates
 │   ├── keystone-manifest-asset-repro.md <- upstream report: manifest-asset validation duplicate
-│   └── cycle-107.json <- cycle 107 proof: component codecs + minimal manifest-asset reproducer
+│   ├── cycle-107.json <- cycle 107 proof: component codecs + minimal manifest-asset reproducer
+│   └── cycle-108.json <- cycle 108 proof: project CLI commands + self-clearing reproducer
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

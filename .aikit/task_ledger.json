@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-107-component-codec",
+    "task_id": "shooter-cycle-108-project-cli",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794143198.7396312,
+    "updated_at": 1794143707.0924628,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794143198.9152238
+    "completed_at": 1794143710.4328613
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-101-authoring",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Authoring covered: 327 tests, determinism 1800 ok (b25db520), aikit 4/4, undo/play/materials/animation/diff green; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794140431.3844502,
-      "timestamp_str": "2026-11-08 15:20:31",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-101-authoring",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-101-authoring' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794140431.953568,
-      "timestamp_str": "2026-11-08 15:20:31",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-102-skinning-gltf-sprite",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover CPU skinning, skinned/plain glTF import and deterministic sprite math, with five direct tests",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794140876.7485437,
-      "timestamp_str": "2026-11-08 15:27:56",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Keystone ships skinning, glTF import and sprite math, but the shooter suite covered none of them.",
-        "benefits": "Five tests pin rigid/blended skin points, skin-mesh layout and bone palettes, a skinned glTF import with deformation, a triangle glTF material/registry, and sprite attenuation/alpha/billboard formulas.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change.",
-        "mitigation": "Five focused tests, full suite, determinism and project gates."
-      },
-      "plan_digest": "20d24a87571aa57d8c84857bfe55020d156e394223004c4d7f154342b3ac1549"
-    },
     {
       "task_id": "shooter-cycle-102-skinning-gltf-sprite",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794143198.915225,
       "timestamp_str": "2026-11-08 16:06:38",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-108-project-cli",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover project CLI validation/export and make the manifest-asset reproducer self-clearing",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794143629.8866754,
+      "timestamp_str": "2026-11-08 16:13:49",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "CLI --validate-project/--export had only library-level coverage, and the strict xfail would fail the suite after an upstream fix.",
+        "benefits": "Four CLI/self-clearing tests pin exit codes, reports, bundle files, non-empty refusal, --force and automatic green after the keystone fix; the upstream report now includes an issue draft and patch.",
+        "risks": "contract: tests/evidence only; dependency: none; concurrency: none; state: no game/sim/hash change; temp projects only.",
+        "mitigation": "Temp projects under TemporaryDirectory, conditional xfail only on the known duplicate-asset error, full suite, determinism and project gates."
+      },
+      "plan_digest": "1b5376cf33f2ba6131a5e401583a3327b977daef59420af71b4d0665d71622df"
+    },
+    {
+      "task_id": "shooter-cycle-108-project-cli",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Project CLI + self-clearing reproducer done: 356 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794143707.0924628,
+      "timestamp_str": "2026-11-08 16:15:07",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-108-project-cli",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-108-project-cli' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794143710.4328637,
+      "timestamp_str": "2026-11-08 16:15:10",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

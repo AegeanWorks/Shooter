@@ -6,7 +6,9 @@ verifies export_project output contents, hashes, refusal paths and the
 bundled launcher.
 """
 
+import contextlib
 import hashlib
+import io
 import json
 import subprocess
 import sys
@@ -202,15 +204,102 @@ def test_export_rejects_missing_and_broken_projects():
         assert not target.exists()
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "keystone validate_project re-imports manifest assets after "
-        "load_project_game has already attached them"
-    ),
-)
+def _main(argv):
+    from keystone.__main__ import main
+
+    out, err = io.StringIO(), io.StringIO()
+    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        code = main(argv)
+    return code, out.getvalue(), err.getvalue()
+
+
+def test_cli_validate_project_reports_clean_and_broken_content():
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory) / "project"
+        name = _name()
+        create_project(root, name=name)
+
+        code, out, _ = _main(["--project", str(root), "--validate-project"])
+        assert code == 0
+        report = json.loads(out)
+        assert report["ok"] is True, report["errors"]
+        assert report["project"]["manifest"]["name"] == name
+        assert report["assets"]["count"] >= 1
+        assert all(entry["error"] is None for entry in report["prefabs"])
+
+        (root / "prefabs" / "broken.kprefab").write_text("{}", encoding="utf-8")
+        code, out, _ = _main(["--project", str(root), "--validate-project"])
+        assert code == 1
+        report = json.loads(out)
+        assert report["ok"] is False
+        broken = next(
+            entry for entry in report["prefabs"] if entry["name"] == "broken"
+        )
+        assert broken["error"], report
+
+
+def test_cli_export_builds_bundle_and_refuses_non_empty_target():
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory) / "project"
+        name = _name()
+        create_project(root, name=name)
+        target = Path(directory) / "build"
+
+        code, out, err = _main(
+            ["--project", str(root), "--export", str(target)]
+        )
+        assert code == 0, err
+        assert f"Exported {name!r}" in out
+        assert "Run: python" in out
+        assert (target / "run.py").is_file()
+        assert (target / EXPORT_MANIFEST).is_file()
+
+        code, _, err = _main(
+            ["--project", str(root), "--export", str(target)]
+        )
+        assert code == 1
+        assert "could not export" in err
+        assert "Why:" in err and "Fix:" in err
+
+        code, out, err = _main(
+            ["--project", str(root), "--export", str(target), "--force"]
+        )
+        assert code == 0, err
+        assert json.loads(
+            (target / EXPORT_MANIFEST).read_text(encoding="utf-8")
+        )["project"]["name"] == name
+
+
 def test_manifest_asset_validation_after_load_game_duplicates():
     with tempfile.TemporaryDirectory() as directory:
         context = _project_with_png(Path(directory) / "project", _name())
         report = validate_project(context, load_project_game(context))
-        assert report["ok"] is True, report["errors"]
+        if not report["ok"]:
+            messages = [item["message"] for item in report["errors"]]
+            assert any("already registered" in message for message in messages), report
+            pytest.xfail(
+                "keystone validate_project re-imports manifest assets after "
+                "load_project_game has already attached them"
+            )
+        assert report["errors"] == []
+        assert report["assets"]["count"] >= 1
+
+
+def test_cli_export_with_manifest_asset_self_clears():
+    with tempfile.TemporaryDirectory() as directory:
+        root = Path(directory) / "project"
+        _project_with_png(root, _name())
+        target = Path(directory) / "build"
+        code, _, err = _main(
+            ["--project", str(root), "--export", str(target)]
+        )
+        if code == 1:
+            assert "already registered" in err, err
+            assert not target.exists()
+            pytest.xfail(
+                "export_project validates load_project_game assets twice, so "
+                "manifest assets block every export"
+            )
+        assert code == 0, err
+        assert (target / "run.py").is_file()
+        assert (target / EXPORT_MANIFEST).is_file()
