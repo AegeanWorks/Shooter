@@ -981,3 +981,27 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 183 passed; determinism 1800 ok; aikit
   `check shooter` 4/4; frame budget green.
 - **Evidence file**: `evidence/cycle-47.json`.
+
+## Cycle 48 - UI readability: pickup tag during boss fights
+- **Area**: UI readability (48th cycle).
+- **Defect / evidence**: the pickup top label and edge tag shared one
+  `boss is None` guard. With a live warden and the pickup still active
+  (wave 3 if not taken), both vanished; the staged frame labels were
+  `['WARDEN','600/600',...]` with no direction. Baseline
+  `test_pickup_boss_tag.py` failed the boss case.
+- **Fix**: split the cues. The top `SURGE PICKUP READY` label stays
+  suppressed while a boss bar occupies that space; the off-screen
+  `SURGE` edge chip now shows whenever the pickup is active, within
+  18 m and off-screen, regardless of the boss. Presentation-only.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-48/`;
+  960x540 seed 1, live warden + active pickup, facing away. Before boss
+  bar only; after boss bar + bottom-edge `SURGE`: 1,768 changed px
+  (0.34%, bbox 446,377-513,402), mean luma 34.71 -> 34.77; draws 6,
+  triangles 98.
+- **Played runs**: `kite 3000` same campaign hash `945e3fdd...` (32
+  kills / 10135 / hp 82, 3 hurts, 458 audio, peak 8, drops 0); the run
+  takes the pickup in wave 2, so the boss-pickup tag itself is a staged
+  UI proof.
+- **Gates**: `python -m pytest -q` 186 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-48.json`.

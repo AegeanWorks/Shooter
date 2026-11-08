@@ -417,6 +417,47 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_boss_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Live warden + active pickup, player facing away: the boss-pickup pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.wave = 3
+        g.sim.pickup_active = True
+        g.sim.pickup_taken = False
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 2.0), hp=600, max_hp=600,
+                   attack_cd=10.0, summon_cd=999.0)
+        ]
+        g.sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, 0.9002, 8.0),
+            half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = 0.0
+        g.sim.kick = 0.0
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"boss-pickup frame={g.sim.tick} boss={g.sim.enemies[0].etype} "
+            f"pickup={g.sim.pickup_active} yaw={g.sim.yaw:.2f}"
+        )
+        engine.capture(f"{prefix}_boss_pickup.png", f"{prefix}_boss_pickup.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_target_hp(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """A damaged mite under the crosshair: the target-health pair."""
     from keystone.app import Engine
@@ -1463,6 +1504,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_score_pop(prefix, shadows, srgb, post, bloom)
     if which == "target_hp":
         route_target_hp(prefix, shadows, srgb, post, bloom)
+    if which == "boss_pickup":
+        route_boss_pickup(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

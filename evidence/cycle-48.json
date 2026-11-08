@@ -1,0 +1,58 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py boss_pickup <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 48,
+  "fix": "split the pickup cues: the top label yields to the warden bar, while the off-screen SURGE edge tag stays visible during a boss fight",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "186 passed"
+  },
+  "play_runs": {
+    "kite_3000": {
+      "audio": 458,
+      "hash": "945e3fdd634c3f1fa35ab326567de182",
+      "hp": 82,
+      "hurts": 3,
+      "kills": 32,
+      "score": 10135,
+      "wave": 4
+    },
+    "parity": "same campaign hash; the pickup was taken in wave 2, so the boss-pickup tag is a staged UI proof"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-48/after",
+    "before_dir": "shots/shooter-campaign/cycle-48/before",
+    "route": "scripts/capture.py boss_pickup; 960x540 seed 1, live warden + active pickup, player facing away"
+  },
+  "tests": {
+    "pickup_boss_tag_tests": 3,
+    "suite": "186 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "pickup direction",
+    "boss HUD",
+    "edge tag"
+  ],
+  "visual_diff": {
+    "bbox": [
+      446,
+      377,
+      513,
+      402
+    ],
+    "changed_px": 1768,
+    "draws": 6,
+    "fraction": 0.0034,
+    "mean_luma_after": 34.77,
+    "mean_luma_before": 34.71,
+    "triangles": 98
+  }
+}

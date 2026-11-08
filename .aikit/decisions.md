@@ -448,3 +448,10 @@ Status: accepted
 Context: The cycle-40 rim marks the platform top, but the floor spot to jump from was unmarked; from the approach the player saw the edge with no launch cue. The before frame showed only the rim.
 Decision: Add one flat lit trim pad (1.4 × 0.02 × 1.4) at `(-16, 0.02, 11.2)`, 0.8 m before the south platform edge, sharing `material.trim`. It is decoration only: no collider or sim state. One node keeps the frame-budget plan at 40 (shadow calls 34→35).
 Consequences: Suite 183/183 green (two new tests); determinism 1800 ok; aikit 4/4; frame budget green. The approach pair at 960×540 seed 1 changes 7,994 px (1.54%, bbox 361,92-899,539), mean luma 48.24→49.47, draws 6, triangles 122→134. `platform 120` keeps hash `c1603d79…`, 28 frames, hp 100, score 250, landed, audio 1, 0 drops. Evidence: `evidence/cycle-47.json`, images in workspace `shots/shooter-campaign/cycle-47/`.
+
+## ADR-065: Pickup edge tag during boss fights (UI readability)
+Date: 2026-11-08
+Status: accepted
+Context: The pickup top label and edge tag shared one `boss is None` guard. With a live warden and the pickup still active (wave 3 if not taken), both disappeared; the staged frame showed only the warden bar, so the boss fight erased the pickup direction. The top label must stay suppressed because the boss bar occupies that space.
+Decision: Split the cues. The `SURGE PICKUP READY` top label remains gated on no boss; the off-screen `SURGE` edge chip shows whenever the pickup is active, within 18 m and outside the forward view, regardless of the boss. The beacon, trigger and sim state are untouched.
+Consequences: Suite 186/186 green (three new tests); determinism 1800 ok; aikit 4/4. The boss + pickup pair at 960×540 seed 1 changes 1,768 px (0.34%, bbox 446,377-513,402), mean luma 34.71→34.77, draws 6, triangles 98. `kite 3000` keeps hash `945e3fdd…`, 32 kills / 10135 / hp 82, 458 audio, peak 8, 0 drops; that run takes the pickup in wave 2, so the tag itself is a staged UI proof. Evidence: `evidence/cycle-48.json`, images in workspace `shots/shooter-campaign/cycle-48/`.

@@ -145,13 +145,15 @@ def draw_shooter(canvas, hud, sim) -> None:
         canvas.text(bx + bw - text_width(hp_label, 2), by - 18, hp_label, white, 2)
         canvas.rect(bx - 2, by - 2, bw + 4, bh + 4, panel_c)
         canvas.rect(bx, by, max(1, int(bw * frac)), bh, (0.92, 0.20, 0.14, 0.95))
-    if boss is None and bool(getattr(sim, "pickup_active", False)):
-        # The beacon is the pointer; this label tells a new player what it is.
+    if bool(getattr(sim, "pickup_active", False)):
+        # The top label yields to the warden bar; the edge tag does not, so
+        # the active pickup stays findable during the boss fight.
         spot = getattr(sim, "levels", {}).get("pickup", {"x": 0.0, "z": -6.0})
         dx = float(spot.get("x", 0.0)) - float(sim.player_pos.x)
         dz = float(spot.get("z", -6.0)) - float(sim.player_pos.z)
         if math.hypot(dx, dz) <= 18.0:
-            _center(canvas, cx, 100, "SURGE PICKUP READY", (0.40, 1.0, 0.52, 1.0))
+            if boss is None:
+                _center(canvas, cx, 100, "SURGE PICKUP READY", (0.40, 1.0, 0.52, 1.0))
             # Directional edge tag when the beacon is outside the forward
             # view: a green SURGE chip at the bearing.
             yaw = float(getattr(sim, "yaw", 0.0))
