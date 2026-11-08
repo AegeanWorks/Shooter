@@ -23,8 +23,8 @@ def test_platform_rim_is_one_four_strip_frame():
     trim = g.assets.require("material.trim").payload
     assert nodes[0].visible
     assert nodes[0].material is trim
-    assert len(nodes[0].mesh.positions) == 96  # four cubes of 24 vertices
-    assert len(nodes[0].mesh.indices) == 144
+    assert len(nodes[0].mesh.positions) == 192  # eight cubes of 24 vertices
+    assert len(nodes[0].mesh.indices) == 288
 
 
 def test_platform_rim_frame_reaches_all_four_edges():

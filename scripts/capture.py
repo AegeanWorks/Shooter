@@ -908,6 +908,38 @@ def route_streak_bonus(prefix: str, shadows: bool = True, srgb: bool = True, pos
         engine.close()
 
 
+def route_platform_base(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Farther approach to the platform: the base/top frame pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.player_pos = Vec3(-16.0, 0.9002, 4.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(-16.0, 0.9002, 4.0),
+            half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = math.pi
+        g.sim.pitch = -0.12
+        g.sim.kick = 0.0
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"platform-base frame={g.sim.tick} rims={len(getattr(g, '_platform_rim', []))} "
+            f"tris={len(g._platform_rim[0].mesh.indices) // 3 if g._platform_rim else 0}"
+        )
+        engine.capture(f"{prefix}_platform_base.png", f"{prefix}_platform_base.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_platform_rim(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Approach view of the jump platform: the lit-rim pair."""
     import math
@@ -2168,6 +2200,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_summon_mark(prefix, shadows, srgb, post, bloom)
     if which == "platform_rim":
         route_platform_rim(prefix, shadows, srgb, post, bloom)
+    if which == "platform_base":
+        route_platform_base(prefix, shadows, srgb, post, bloom)
     if which == "streak_bonus":
         route_streak_bonus(prefix, shadows, srgb, post, bloom)
     if which == "death_fx":

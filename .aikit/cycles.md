@@ -1549,3 +1549,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 242 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-74.json`.
+
+## Cycle 75 - Levels: platform base frame
+- **Area**: levels (75th cycle).
+- **Opportunity**: the low platform's dark side face merged into the floor
+  from the approach. The top rim marked the landing edge but not the 0.7 m
+  step, so its height was ambiguous from the ground. A first attempt put
+  base strips on the inside footprint and they were fully occluded.
+- **Fix**: extend `_platform_frame_mesh` with a `bottom_y` level and outset
+  the base strips by their thickness so they sit just outside the platform
+  footprint at y 0.00-0.08. Top and base now share one 8-strip mesh, one
+  node and one shadow draw; material, colliders and sim are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-75/`;
+  960x540 seed 1, farther approach from z 4. 1,178 changed px (0.23%,
+  bbox 344,92-899,298; 1,038 px in the 3D scene, bbox 344,293-615,298),
+  mean luma 39.44 -> 39.57; draws 7, triangles 218.
+- **Played runs**: `platform 120` before/after same hash `c1603d79...`,
+  28 frames, landed at y 1.6, hp 100, score 250, audio 1, drops 0.
+- **Gates**: `python -m pytest -q` 244 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-75.json`.

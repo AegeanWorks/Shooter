@@ -92,27 +92,37 @@ def _wall_panel_texture(size: int = 64) -> TextureData:
     return TextureData(size, size, bytes(pixels), name="wall-panel")
 
 
-def _platform_frame_mesh(width: float, depth: float, thickness: float, height: float) -> MeshData:
-    """One mesh holding four thin top-edge strips for the low platform."""
+def _platform_frame_mesh(
+    width: float, depth: float, thickness: float, height: float,
+    bottom_y: float | None = None,
+) -> MeshData:
+    """Four thin top-edge strips, plus a matching base frame when requested."""
     base = cube(1.0)
-    strips = (
-        (0.0, depth / 2.0 - thickness / 2.0, width, thickness),
-        (0.0, -depth / 2.0 + thickness / 2.0, width, thickness),
-        (-width / 2.0 + thickness / 2.0, 0.0, thickness, depth),
-        (width / 2.0 - thickness / 2.0, 0.0, thickness, depth),
-    )
+    levels = (0.0,) if bottom_y is None else (0.0, bottom_y)
     positions: list[tuple[float, float, float]] = []
     normals: list[tuple[float, float, float]] = []
     uvs: list[tuple[float, float]] = []
     indices: list[int] = []
     offset = 0
-    for cx, cz, sx, sz in strips:
-        for p, n, uv in zip(base.positions, base.normals, base.uvs):
-            positions.append((p[0] * sx + cx, p[1] * height, p[2] * sz + cz))
-            normals.append(n)
-            uvs.append(uv)
-        indices.extend(index + offset for index in base.indices)
-        offset += len(base.positions)
+    for level in levels:
+        extra = 0.0 if level == 0.0 else 2.0 * thickness
+        w = width + extra
+        d = depth + extra
+        strips = (
+            (0.0, d / 2.0 - thickness / 2.0, w, thickness),
+            (0.0, -d / 2.0 + thickness / 2.0, w, thickness),
+            (-w / 2.0 + thickness / 2.0, 0.0, thickness, d),
+            (w / 2.0 - thickness / 2.0, 0.0, thickness, d),
+        )
+        for cx, cz, sx, sz in strips:
+            for p, n, uv in zip(base.positions, base.normals, base.uvs):
+                positions.append(
+                    (p[0] * sx + cx, p[1] * height + level, p[2] * sz + cz)
+                )
+                normals.append(n)
+                uvs.append(uv)
+            indices.extend(index + offset for index in base.indices)
+            offset += len(base.positions)
     return MeshData(tuple(positions), tuple(normals), tuple(uvs), tuple(indices))
 
 
@@ -337,7 +347,7 @@ class ShooterGame:
             pw, pd, ph = (float(platform["w"]), float(platform["d"]),
                           float(platform["h"]))
             trim_mat = self.assets.require("material.trim").payload
-            frame = _platform_frame_mesh(pw, pd, 0.10, 0.08)
+            frame = _platform_frame_mesh(pw, pd, 0.10, 0.08, bottom_y=-ph)
             self.assets.register("mesh.platform_frame", frame)
             node = Node(
                 "platform-rim", id="platform-rim",

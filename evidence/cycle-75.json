@@ -1,0 +1,78 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py platform_base <prefix>",
+    "python scripts/play_run.py platform 120 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 75,
+  "fix": "add an outset base perimeter to the existing platform frame mesh (eight strips in the same node), so the 0.7 m step is framed against the floor; no new node, draw, collider or sim change",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "244 passed"
+  },
+  "play_runs": {
+    "parity": "same hash c1603d79 before/after; rim presentation only",
+    "platform_after": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 28,
+      "hash": "c1603d797193787331a17b9ebb62c55d",
+      "hp": 100,
+      "landed": true,
+      "score": 250,
+      "y": 1.6,
+      "z": 12.379
+    },
+    "platform_before": {
+      "audio": 1,
+      "drops": 0,
+      "frames": 28,
+      "hash": "c1603d797193787331a17b9ebb62c55d",
+      "hp": 100,
+      "landed": true,
+      "score": 250,
+      "y": 1.6,
+      "z": 12.379
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-75/after",
+    "before_dir": "shots/shooter-campaign/cycle-75/before",
+    "route": "scripts/capture.py platform_base; 960x540 seed 1, approach from z 4"
+  },
+  "tests": {
+    "platform_base_tests": 2,
+    "suite": "244 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "platform base",
+    "jump height readability",
+    "single-mesh trim"
+  ],
+  "visual_diff": {
+    "bbox": [
+      344,
+      92,
+      899,
+      298
+    ],
+    "changed_px": 1178,
+    "draws": 7,
+    "fraction": 0.0023,
+    "mean_luma_after": 39.57,
+    "mean_luma_before": 39.44,
+    "scene_bbox": [
+      344,
+      293,
+      615,
+      298
+    ],
+    "scene_changed_px": 1038,
+    "triangles": 218
+  }
+}
