@@ -151,6 +151,7 @@ class ShooterGame:
         )
         self.profile_disabled = False
         self.profile_save_errors = 0
+        self.profile_save_failed = False
         try:
             self.profile = self.profile_store.load()
         except ValueError:
@@ -625,6 +626,9 @@ class ShooterGame:
             saved = False
         if not saved:
             self.profile_save_errors += 1
+            self.profile_save_failed = True
+        else:
+            self.profile_save_failed = False
 
     def _record_campaign_clear(self) -> None:
         if self.profile_disabled:
@@ -1234,7 +1238,7 @@ class ShooterGame:
                 color = ((1.0, 0.62, 0.20, 1.0) if self.profile_recovered_from_backup
                          else (1.0, 0.30, 0.30, 1.0))
                 extras.append((label, color))
-            elif self.profile_save_errors > 0:
+            elif self.profile_save_failed:
                 extras.append(("PROFILE NOT SAVED", (1.0, 0.30, 0.30, 1.0)))
             if self.campaign_cleared:
                 extras.append(("CAMPAIGN CLEARED", (1.0, 0.62, 0.20, 1.0)))

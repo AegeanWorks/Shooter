@@ -19,6 +19,7 @@ Modes:
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
   save_fail staged near-death run with the profile lock held (save-error proof)
+  save_retry failed wave save, then lock released and a death save (retry proof)
   profile_bad staged near-death run with an unsupported schema (disabled proof)
   profile_corrupt staged near-death run with an unrecoverable corrupt profile (reset proof)
   platform run at the rear low platform, jump onto it, stop on the top
@@ -120,10 +121,11 @@ def main(
     report: str = "",
 ) -> dict:
     profile_path = Path(tempfile.mkdtemp(prefix="shooter-play-")) / "profile.json"
+    lock_path = profile_path.with_name(profile_path.name + ".lock")
     if mode == "save_fail":
-        profile_path.with_name(profile_path.name + ".lock").write_text(
-            "locked", encoding="utf-8"
-        )
+        lock_path.write_text("locked", encoding="utf-8")
+    if mode == "save_retry":
+        lock_path.write_text("locked", encoding="utf-8")
     if mode == "profile_bad":
         profile_path.write_text('{"schema": 99, "best_score": 1}', encoding="utf-8")
     if mode == "profile_corrupt":
@@ -235,6 +237,10 @@ def main(
             game.sim.spawn_t = 999.0
             game.sim.enemies = []
             game.sim.hp = 30
+        if mode == "save_retry":
+            game.sim.spawn_queue = []
+            game.sim.spawn_t = 999.0
+            game.sim.enemies = []
         if mode == "highground":
             sim = game.sim
             sim.player_pos = Vec3(-16.0, 1.6002, 17.5)
@@ -389,6 +395,14 @@ def main(
             ran = frame + 1
             if mode == "ambush":
                 _stage_ambush(game, frame)
+            if mode == "save_retry" and frame == 1:
+                lock_path.unlink(missing_ok=True)
+                game.sim.spawn_queue = []
+                game.sim.enemies = [
+                    _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120,
+                           max_hp=120)
+                ]
+                game.sim.hp = 5
             tick = time.perf_counter()
             game.update(FIXED_STEP, _action(mode, game, frame, strafe))
             elapsed = time.perf_counter() - tick
@@ -412,6 +426,8 @@ def main(
             if mode == "death" and not game.sim.alive:
                 break
             if mode in ("save_fail", "profile_bad", "profile_corrupt") and not game.sim.alive:
+                break
+            if mode == "save_retry" and not game.sim.alive:
                 break
             if mode == "platform" and game.sim.player_pos.y > 1.3 and game.sim.body.on_ground:
                 break
@@ -494,6 +510,7 @@ def main(
                 "last_run": getattr(game, "last_run", None),
                 "disabled": bool(getattr(game, "profile_disabled", False)),
                 "save_errors": int(getattr(game, "profile_save_errors", 0)),
+                "save_failed": bool(getattr(game, "profile_save_failed", False)),
                 "recovered": bool(getattr(game, "profile_recovered", False)),
                 "recovered_from_backup": bool(
                     getattr(game, "profile_recovered_from_backup", False)

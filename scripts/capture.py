@@ -1280,6 +1280,42 @@ def route_surge_forfeit(prefix: str, shadows: bool = True, srgb: bool = True, po
         engine.close()
 
 
+def route_save_retry(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Failed wave save, then a successful death save: the stale-warning pair."""
+    from keystone.app import Engine
+
+    profile_dir = Path(tempfile.mkdtemp(prefix="shooter-retry-"))
+    profile_path = profile_dir / "profile.json"
+    lock = profile_path.with_name(profile_path.name + ".lock")
+    lock.write_text("locked", encoding="utf-8")
+    game = ShooterGame(profile_path=profile_path)
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.enemies = []
+        g.sim.spawn_t = 999.0
+        g.update(FIXED_STEP, ActionState())  # locked wave-clear save fails
+        lock.unlink()
+        g.sim.hp = 5
+        g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
+        for _ in range(120):
+            g.update(FIXED_STEP, ActionState())
+            if not g.sim.alive:
+                break
+        print(
+            f"save-retry errors={g.profile_save_errors} "
+            f"failed={getattr(g, 'profile_save_failed', None)} "
+            f"last_run={g.last_run is not None} "
+            f"saved={profile_path.is_file()}"
+        )
+        engine.capture(f"{prefix}_save_retry.png", f"{prefix}_save_retry.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_profile_reset(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Death debrief after an unrecoverable corrupt profile: the reset pair."""
     from keystone.app import Engine
@@ -2235,6 +2271,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_profile_disabled(prefix, shadows, srgb, post, bloom)
     if which == "profile_reset":
         route_profile_reset(prefix, shadows, srgb, post, bloom)
+    if which == "save_retry":
+        route_save_retry(prefix, shadows, srgb, post, bloom)
     if which == "killmark":
         route_killmark(prefix, shadows, srgb, post, bloom)
     if which == "slam_ring":

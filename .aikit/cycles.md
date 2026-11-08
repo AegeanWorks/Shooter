@@ -1627,3 +1627,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 251 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-78.json`.
+
+## Cycle 79 - Progression/saves: clear the stale save warning
+- **Area**: progression and saves (79th cycle).
+- **Defect / evidence**: cycle 58 made failed writes visible via the
+  lifetime `profile_save_errors` counter. One transient locked write left
+  `PROFILE NOT SAVED` on every later debrief, even after a later save
+  succeeded, falsely implying current progress was unsafe.
+- **Fix**: track `profile_save_failed` as the latest write outcome (set on
+  failure, cleared on success) and base the debrief warning on it;
+  `profile_save_errors` remains the lifetime telemetry counter. Atomic
+  writes and schema policy unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-79/`;
+  960x540 seed 1, locked wave save then successful death save. 13,360
+  changed px (2.58%, bbox 281,334-678,449), mean luma 45.91 -> 47.28;
+  draws 9, triangles 422. Warning before, clean after, both at errors 1.
+- **Played runs**: `save_retry 120` before/after same hash `99f337e7...`,
+  2 frames, wave 2, hp 0, audio 4, last_run recorded, runs 1, save_errors
+  1, save_failed false, 0 drops.
+- **Gates**: `python -m pytest -q` 253 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-79.json`.

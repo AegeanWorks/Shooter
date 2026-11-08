@@ -1,0 +1,61 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py save_retry <prefix>",
+    "python scripts/play_run.py save_retry 120 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 79,
+  "fix": "track profile_save_failed as the latest write outcome (set on failure, cleared on success) and base the debrief warning on it; profile_save_errors remains a lifetime telemetry counter",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "253 passed"
+  },
+  "play_runs": {
+    "save_retry": {
+      "audio": 4,
+      "drops": 0,
+      "frames": 2,
+      "hash": "99f337e7657df03301f567ec7a044da1",
+      "hp": 0,
+      "last_run": true,
+      "runs": 1,
+      "save_errors": 1,
+      "save_failed": false,
+      "wave": 2
+    },
+    "parity": "the same two-frame drill in both builds: the first wave save fails (errors 1), the lock is released, the death save succeeds; hash 99f337e7 in both. Only the debrief warning differs."
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-79/after",
+    "before_dir": "shots/shooter-campaign/cycle-79/before",
+    "route": "scripts/capture.py save_retry; 960x540 seed 1, locked wave save then successful death save"
+  },
+  "tests": {
+    "save_retry_tests": 2,
+    "suite": "253 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "stale save warning",
+    "retry success",
+    "profile telemetry"
+  ],
+  "visual_diff": {
+    "bbox": [
+      281,
+      334,
+      678,
+      449
+    ],
+    "changed_px": 13360,
+    "draws": 9,
+    "fraction": 0.0258,
+    "mean_luma_after": 47.28,
+    "mean_luma_before": 45.91,
+    "triangles": 422
+  }
+}

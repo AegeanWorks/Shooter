@@ -150,6 +150,7 @@ projects/shooter/
 │   ├── test_wall_texture.py <- deterministic wall panel texture, no new draws
 │   ├── test_surge_forfeit_cue.py <- surge-forfeit voice + caption, switch parity
 │   ├── test_save_error.py <- failed profile write warns, unwritable parent no crash
+│   ├── test_save_retry.py <- later successful save clears the stale warning
 │   ├── test_viewmodel_recoil.py <- kick-driven gun back/up offset and settle
 │   ├── test_viewmodel_bob.py <- speed-driven sway, rest and DATA checks
 │   ├── test_brute_gap.py <- brute closes its 2.5-3.0 m dead zone
@@ -158,9 +159,9 @@ projects/shooter/
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
-│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/brute_gap/summon/summon_overlap/pickup/highground/switch/overdrive/clutch/forfeit/save_fail/profile_bad/profile_corrupt/campaign
+│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/brute_gap/summon/summon_overlap/pickup/highground/switch/overdrive/clutch/forfeit/save_fail/save_retry/profile_bad/profile_corrupt/campaign
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/profile_reset/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/overdrive_glow/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/brute_gap/platform_base/clutch/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/save_retry/profile_disabled/profile_reset/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/overdrive_glow/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/brute_gap/platform_base/clutch/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -239,7 +240,8 @@ projects/shooter/
 │   ├── cycle-75.json  <- improvement-cycle 75 proof: platform-base pair, same-hash platform run
 │   ├── cycle-76.json  <- improvement-cycle 76 proof: CRIT feed pair, same-hash kite run
 │   ├── cycle-77.json  <- improvement-cycle 77 proof: overdrive-glow pair, same-hash overdrive run
-│   └── cycle-78.json  <- improvement-cycle 78 proof: clutch-cue pair, clutch drill + WAV
+│   ├── cycle-78.json  <- improvement-cycle 78 proof: clutch-cue pair, clutch drill + WAV
+│   └── cycle-79.json  <- improvement-cycle 79 proof: save-retry pair, same-hash drill
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
