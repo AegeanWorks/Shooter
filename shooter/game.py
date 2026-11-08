@@ -966,6 +966,14 @@ class ShooterGame:
             wins = int(self.profile.get("wins", 0))
             if runs > 0:
                 extras.append((f"RUNS {runs}  WINS {wins}", (0.55, 0.60, 0.68, 1.0)))
+            best_kills = int(self.profile.get("best_kills", 0))
+            best_wave = int(self.profile.get("best_wave", 0))
+            best_streak = int(self.profile.get("best_streak", 0))
+            if best_kills or best_wave or best_streak:
+                extras.append((
+                    f"BEST KILLS {best_kills}  WAVE {best_wave}  STREAK {best_streak}",
+                    (0.55, 0.60, 0.68, 1.0),
+                ))
             widest = max([text_width(label, 2) for label, _color in extras] + [340])
             panel_width = max(380, widest + 40)
             panel_left = cx - panel_width // 2

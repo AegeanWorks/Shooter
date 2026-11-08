@@ -903,3 +903,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 172 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-43.json`.
+
+## Cycle 44 - Progression and saves: career bests in the debrief
+- **Area**: progression and saves (44th cycle).
+- **Opportunity**: the profile tracks `best_kills`, `best_wave` and
+  `best_streak`; the top BEST line exposed only the score, while the
+  debrief showed the current run's numbers. Career bests were never
+  visible. Baseline `test_best_row.py` found no row.
+- **Fix**: append `BEST KILLS <n>  WAVE <n>  STREAK <n>` to the debrief
+  extras when any best is non-zero; the cycle-34 dynamic width/height
+  contain it. No schema or save-format change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-44/`;
+  960x540 seed 1, seeded bests 12/4/6, staged death. Before no row;
+  after the row and a taller/wider panel: 21,392 changed px (4.13%, bbox
+  275,262-684,427), mean luma 50.07 -> 48.15; draws 6, triangles 278.
+- **Played runs**: `death 240` before/after same hash `f8cd9e28...`,
+  1 frame, hp 0, score 1500, audio 3, peak 3, drops 0.
+- **Gates**: `python -m pytest -q` 174 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-44.json`.

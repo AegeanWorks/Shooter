@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts, death silhouettes, brute/wisp cues, switch cues, win history, career debrief, floor grid/trim/pilasters/platform rim, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts, death silhouettes, brute/wisp cues, switch cues, win/career debrief, floor grid/trim/pilasters/platform rim, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, kill marker, ammo/reload, kill-feed, damage, boss/pickup direction
@@ -120,6 +120,7 @@ projects/shooter/
 │   ├── test_streak_bonus.py <- 10%/kill cap 50%, shown as STREAK +P%
 │   ├── test_death_fx.py    <- death timer, shrinking white silhouette
 │   ├── test_brute_slam.py  <- brute_slam event, clip, caption
+│   ├── test_best_row.py    <- career bests row, hidden at zero
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -170,7 +171,8 @@ projects/shooter/
 │   ├── cycle-40.json  <- improvement-cycle 40 proof: platform-rim pair, same-hash platform run
 │   ├── cycle-41.json  <- improvement-cycle 41 proof: streak-bonus pair, same-hash run
 │   ├── cycle-42.json  <- improvement-cycle 42 proof: death-silhouette pair, same-hash run
-│   └── cycle-43.json  <- improvement-cycle 43 proof: brute-slam cue pair, brute drill
+│   ├── cycle-43.json  <- improvement-cycle 43 proof: brute-slam cue pair, brute drill
+│   └── cycle-44.json  <- improvement-cycle 44 proof: career-bests debrief pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
