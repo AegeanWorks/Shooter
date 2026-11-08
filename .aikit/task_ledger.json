@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-81-warden-los",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794123140.4770737,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794123158.8504508
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-75-platform-base",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Levels cycle: add a base perimeter to the platform rim mesh, keeping one node/draw, with an approach pair and platform-drill parity",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794120116.1947675,
-      "timestamp_str": "2026-11-08 09:41:56",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The platform's dark side merges into the floor; the top rim marks the landing edge but the 0.7 m base height is unreadable from the approach.",
-        "benefits": "A lit base line frames the jumpable step from the floor, completing the platform's readable silhouette without a new node or shadow draw.",
-        "risks": "contract: decoration mesh only; dependency: none; concurrency: none; state: no collider, sim, camera or save change.",
-        "mitigation": "Failing-first base-strip test, an approach capture pair at 960x540, platform-drill hash parity and the frame-budget gate."
-      },
-      "plan_digest": "b9ca563a2e1986ebe0febe381dbca6212ce9c8cb6eb05162b81f4340195795bd"
-    },
     {
       "task_id": "shooter-cycle-75-platform-base",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794123140.4770737,
       "timestamp_str": "2026-11-08 10:32:20",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-81-warden-los",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-81-warden-los' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794123158.8504524,
+      "timestamp_str": "2026-11-08 10:32:38",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
