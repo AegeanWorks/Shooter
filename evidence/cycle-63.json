@@ -8,7 +8,7 @@
     "python aikit.py check shooter (from AIKit root)"
   ],
   "cycle": 63,
-  "fix": "keep the existing pickup orb visible for 0.30 s after collection, expanding to 1.5x and rising 0.9 m while the beam hides; tuning lives in juice pickup_fx_s/scale/rise",
+  "fix": "keep the existing pickup orb visible for 0.30 s after collection, growing by a 1.5x factor (to 2.5x at the end) and rising 0.9 m while the beam hides; tuning lives in juice pickup_fx_s/scale/rise",
   "gates": {
     "aikit_check": "4/4 gates passed",
     "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",

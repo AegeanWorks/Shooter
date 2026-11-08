@@ -1298,7 +1298,8 @@ rotation completes.
   frame; the only feedback was the `SURGE ACQUIRED` caption, so a major
   power-up had no world-space payoff.
 - **Fix**: keep the existing pickup orb visible for 0.30 s after
-  collection, expanding to 1.5x and rising 0.9 m while the beam hides.
+  collection, growing by a 1.5x factor (to 2.5x at the end) and rising
+  0.9 m while the beam hides.
   Tuning lives in `juice.pickup_fx_s/scale/rise`; the timer and transform
   are presentation-only. No new nodes, meshes, materials or sim changes.
 - **Screenshot proof**: workspace `shots/shooter-campaign/cycle-63/`;
