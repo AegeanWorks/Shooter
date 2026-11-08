@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-120-history",
+    "task_id": "shooter-cycle-121-scene-snapshot",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794149832.7159913,
+    "updated_at": 1794150304.5973415,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794149832.993412
+    "completed_at": 1794150304.9723926
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-114-mesh-builder",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] MeshBuilder covered: 386 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794146368.395352,
-      "timestamp_str": "2026-11-08 16:59:28",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-114-mesh-builder",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-114-mesh-builder' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794146368.8961875,
-      "timestamp_str": "2026-11-08 16:59:28",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-115-serialization",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover atomic byte/JSON writes, backups, BOM reads and failure cleanup",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794146413.1350288,
-      "timestamp_str": "2026-11-08 17:00:13",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "serialization is the crash-resilience layer behind saves/reports but the shooter testbed has no direct coverage of binary writes, backup chaining or temp cleanup on replace failure.",
-        "benefits": "Five tests pin binary atomic replacement, JSON backup/default-off behavior, non-finite rejection, BOM reads and temp cleanup when the target is a directory.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp files only; no game/sim/hash change.",
-        "mitigation": "Temp paths per test, no monkeypatching, full suite, determinism and project gates."
-      },
-      "plan_digest": "f91f50136607ad916cb9d16e8f7b87989dda8713368f37c4245174770e31a16d"
-    },
     {
       "task_id": "shooter-cycle-115-serialization",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794149832.9934144,
       "timestamp_str": "2026-11-08 17:57:12",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-121-scene-snapshot",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover versioned scene snapshots, assets, environment settings, validation and in-place restore",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794149891.3469045,
+      "timestamp_str": "2026-11-08 17:58:11",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "scene_snapshot persists editor/runtime scenes but the testbed covers it only through component-codec and editor paths, leaving environment/assets/validation and restore semantics untested.",
+        "benefits": "Five tests pin node/transform/tag/parent round trips, camera/light/settings, registry asset wiring, malformed snapshots and in-place restore replacement.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: in-memory scenes/registries; no game/sim/hash change.",
+        "mitigation": "Small scenes and explicit ids, full suite, determinism and project gates."
+      },
+      "plan_digest": "5691d3e90ef92acc2ffd4cea442fcb51d2c06aea1c868242d382e0d4f775b814"
+    },
+    {
+      "task_id": "shooter-cycle-121-scene-snapshot",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Scene snapshots covered: 421 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794150304.5973415,
+      "timestamp_str": "2026-11-08 18:05:04",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-121-scene-snapshot",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-121-scene-snapshot' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794150304.9723957,
+      "timestamp_str": "2026-11-08 18:05:04",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

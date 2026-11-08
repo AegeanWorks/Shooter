@@ -1,0 +1,95 @@
+{
+  "area": "keystone testbed: versioned scene snapshots",
+  "commands": [
+    "python -m pytest tests/test_keystone_scene_snapshot_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 121,
+  "feature": "node/transform/tag/parent round trips, camera/light/environment settings, registry-backed assets, malformed snapshot validation and in-place restore replacement",
+  "fix": "add tests/test_keystone_scene_snapshot_mechanics.py with five direct snapshot tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "421 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "nodes": {
+      "schema": 6,
+      "json_safe": true,
+      "nodes": 2,
+      "parent_id": null,
+      "child_parent_id": "parent",
+      "tags": [["a"], ["b"]],
+      "layer": "gameplay",
+      "visible": [true, false],
+      "transform_arrays": ["position", "rotation", "scale"],
+      "round_trip_exact": true,
+      "next_id_preserved": true
+    },
+    "camera_environment": {
+      "camera": {"position": [1.0, 2.0, 3.0], "fov_y": 55.0, "near": 0.2, "far": 500.0},
+      "ambient_background_sky": true,
+      "fog_density": 0.05,
+      "directional_light": true,
+      "point_light": true,
+      "settings_disabled": ["shadow", "color", "post", "bloom", "sprite", "culling"],
+      "pitch_clamped": 1.5533430342749532,
+      "invalid_fog": "ValueError",
+      "invalid_vector": "ValueError",
+      "non_finite_camera": "ValueError",
+      "non_mapping_shadow": "TypeError"
+    },
+    "assets": {
+      "mesh_id": "mesh.cube",
+      "material_id": "mat.gold",
+      "restored_identity": true,
+      "no_registry": null,
+      "missing_asset": null,
+      "wrong_kind": "ValueError"
+    },
+    "validation": {
+      "non_mapping": "TypeError",
+      "unsupported_schema": "ValueError",
+      "missing_nodes": "ValueError",
+      "nodes_not_list": "TypeError",
+      "duplicate_ids": "ValueError",
+      "missing_id": "TypeError",
+      "blank_id": "ValueError",
+      "unknown_parent": "ValueError",
+      "self_parent": "ValueError",
+      "non_string_parent": "TypeError",
+      "bad_transform": "ValueError",
+      "bad_tags": "TypeError",
+      "bad_visible": "TypeError",
+      "bad_layer": "ValueError",
+      "bad_next_id": "ValueError",
+      "bad_root": "TypeError"
+    },
+    "restore": {
+      "same_target": true,
+      "root_identity_kept": true,
+      "old_detached": true,
+      "new_nodes": ["", "parent", "child"],
+      "camera_copied": true,
+      "culling_copied": false,
+      "root_visible_copied": false,
+      "next_id_advances": true,
+      "source_unchanged": true,
+      "non_scene_target": "TypeError"
+    }
+  },
+  "tests": {
+    "scene_snapshot_tests": 5,
+    "suite": "421 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone scene snapshot",
+    "scene serialization",
+    "camera environment round trip",
+    "asset references",
+    "in-place restore"
+  ]
+}

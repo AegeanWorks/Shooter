@@ -2470,3 +2470,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 416 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-120.json`.
+
+## Cycle 121 - Keystone testbed: versioned scene snapshots
+- **Area**: keystone testbed (121st cycle).
+- **Feature / evidence**: `scene_snapshot` persists editor/runtime scenes
+  but was covered only through component-codec and editor paths, leaving
+  environment, assets, validation and restore semantics untested.
+- **Fix**: add `tests/test_keystone_scene_snapshot_mechanics.py` with five
+  direct snapshot tests.
+- **Proof**: node ids/parents/tags/layers/visibility and transform arrays
+  round-trip exactly; camera/lights/environment/settings copy and pitch
+  clamps; registry assets restore by identity while missing/plain/wrong
+  kinds behave; malformed snapshots raise specific errors; in-place restore
+  keeps the target root, detaches old children, copies settings and
+  advances the id counter.
+- **Gates**: `python -m pytest -q` 421 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-121.json`.

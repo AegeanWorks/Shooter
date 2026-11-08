@@ -94,6 +94,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `playtest` | canon/signals, policies, transcripts/diffs, reports, fairness verdicts | `tests/test_keystone_playtest_mechanics.py` |
 | `Scene` graph | queries, IDs, parenting, traversal, visibility | `tests/test_keystone_scene_graph_mechanics.py` |
 | `History` | push/undo/redo, copy isolation, branch discard, capacity, clear | `tests/test_keystone_history_mechanics.py` |
+| `scene_snapshot` | nodes/transforms, camera/environment, assets, validation, restore | `tests/test_keystone_scene_snapshot_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -159,6 +160,7 @@ projects/shooter/
 │   ├── test_keystone_playtest_mechanics.py <- canon, policies, transcripts, reports, fairness
 │   ├── test_keystone_scene_graph_mechanics.py <- queries, IDs, parenting, traversal, visibility
 │   ├── test_keystone_history_mechanics.py <- undo/redo, copy isolation, capacity
+│   ├── test_keystone_scene_snapshot_mechanics.py <- nodes, camera/environment, assets, restore
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -305,9 +307,9 @@ projects/shooter/
 │   ├── cycle-52.json
 │   ├── cycle-53.json
 │   ├── cycle-54.json
-│   ├── cycle-55.json  <- improvement-cycle 55 proof: low-ammo count pair, same-hash run
-│   ├── cycle-56.json  <- improvement-cycle 56 proof: wall-panel pair, same-hash run
-│   ├── cycle-57.json  <- improvement-cycle 57 proof: surge-forfeit cue pair + WAV
+│   ├── cycle-55.json
+│   ├── cycle-56.json
+│   ├── cycle-57.json
 │   ├── cycle-58.json  <- improvement-cycle 58 proof: save-error debrief pair, death drill
 │   ├── cycle-59.json
 │   ├── cycle-60.json
@@ -371,7 +373,8 @@ projects/shooter/
 │   ├── cycle-117.json <- instancing grouping, culling, ordering
 │   ├── cycle-118.json <- playtest canon/policies/transcripts/fairness
 │   ├── cycle-119.json <- scene queries, IDs, parenting, traversal, visibility
-│   └── cycle-120.json <- history undo/redo, copy isolation, capacity
+│   ├── cycle-120.json <- history undo/redo, copy isolation, capacity
+│   └── cycle-121.json <- scene snapshot nodes/assets/environment/restore
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
