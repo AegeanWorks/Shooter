@@ -1,0 +1,61 @@
+{
+  "area": "keystone testbed: atomic byte/JSON persistence",
+  "commands": [
+    "python -m pytest tests/test_keystone_serialization_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 115,
+  "feature": "binary atomic writes with nested directories, JSON backup chaining and opt-out, non-finite/unserializable rejection with the target intact, BOM reads, and temp cleanup when replace fails",
+  "fix": "add tests/test_keystone_serialization_mechanics.py with five temp-file tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "391 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "bytes_atomic": {
+      "round_trip": true,
+      "nested_parent_created": true,
+      "replacement": true,
+      "temp_files_left": 0,
+      "backup_created": false
+    },
+    "json_backup": {
+      "round_trip": true,
+      "first_write_backup": false,
+      "second_write_backup": {"a": 1, "b": 2},
+      "backup_false_keeps_old_backup": true,
+      "backup_false_updates_target": true
+    },
+    "rejections": {
+      "nan": "ValueError",
+      "infinity": "ValueError",
+      "unserializable": "TypeError",
+      "target_unchanged": true,
+      "no_backup": true
+    },
+    "read_json": {
+      "bom": true,
+      "missing": "FileNotFoundError",
+      "invalid": "ValueError"
+    },
+    "replace_failure": {
+      "target_directory_kept": true,
+      "temp_files_left": 0
+    }
+  },
+  "tests": {
+    "serialization_tests": 5,
+    "suite": "391 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone serialization",
+    "atomic writes",
+    "JSON backup",
+    "BOM reads",
+    "crash resilience"
+  ]
+}

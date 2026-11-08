@@ -88,6 +88,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `agents` | action clamps/wrappers, observe hash, report summary, audit tamper chain | `tests/test_keystone_agent_mechanics.py` |
 | `asset_io` | loaders/suffixes, fingerprints, kinds, ReloadReport | `tests/test_keystone_asset_io_mechanics.py` |
 | `mesh_builder` | quad/box counts, mesh merge, matrix normals, skinned concat/mode | `tests/test_keystone_mesh_builder_mechanics.py` |
+| `serialization` | binary/JSON atomic writes, backup chain, BOM reads, temp cleanup | `tests/test_keystone_serialization_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -147,6 +148,7 @@ projects/shooter/
 │   ├── test_keystone_agent_mechanics.py <- action clamps, observe hash, audit chain
 │   ├── test_keystone_asset_io_mechanics.py <- loaders, fingerprints, kinds, reload report
 │   ├── test_keystone_mesh_builder_mechanics.py <- quad/box, merge, matrix normals, skin concat
+│   ├── test_keystone_serialization_mechanics.py <- binary/JSON atomic, backup, BOM, temp cleanup
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -327,18 +329,18 @@ projects/shooter/
 │   ├── cycle-86.json <- backup pair/drill
 │   ├── cycle-87.json <- brute pair/slam
 │   ├── cycle-88.json <- spacing pair/crowd
-│   ├── cycle-89.json  <- cycle 89 proof: keystone .kstate core pair, same-hash slam run
-│   ├── cycle-90.json  <- cycle 90 proof: keystone lifecycle pad, 0-px same-hash pair
-│   ├── cycle-91.json  <- cycle 91 proof: keystone material graph core, same-hash slam run
-│   ├── cycle-92.json  <- cycle 92 proof: keystone prefab pickup, 0-px same-hash walk
-│   ├── cycle-93.json  <- cycle 93 proof: keystone cache material, 0-px same-hash campaign
-│   ├── cycle-94.json  <- cycle 94 proof: GameSession describe/scene/editor/simulate coverage
-│   ├── cycle-95.json  <- cycle 95 proof: replay/trigger/particle/batch/broadphase mechanics
-│   ├── cycle-96.json  <- cycle 96 proof: animation library, sampling, crossfade, events, poses
-│   ├── cycle-97.json  <- cycle 97 proof: mixer buses/mixdown, asset deps/hot reload
-│   ├── cycle-98.json  <- cycle 98 proof: character physics and fixed-step clock mechanics
-│   ├── cycle-99.json  <- cycle 99 proof: raycasts, sphere pushout, .kscene round trip
-│   ├── cycle-100.json <- cycle 100 proof: editor scene groups/layers/locks/prefab overrides
+│   ├── cycle-89.json  <- .kstate core pair, slam run
+│   ├── cycle-90.json  <- lifecycle pad pair
+│   ├── cycle-91.json  <- material graph core pair
+│   ├── cycle-92.json  <- prefab pickup pair
+│   ├── cycle-93.json  <- cache material pair
+│   ├── cycle-94.json  <- GameSession describe/editor
+│   ├── cycle-95.json  <- replay/trigger/particles/broadphase
+│   ├── cycle-96.json  <- animation sampling/crossfade/poses
+│   ├── cycle-97.json  <- mixer buses, asset hot reload
+│   ├── cycle-98.json  <- character physics/fixed clock
+│   ├── cycle-99.json  <- raycasts, sphere pushout, scene round trip
+│   ├── cycle-100.json <- editor groups/layers/locks/overrides
 │   ├── cycle-101.json <- cycle 101 proof: undo/redo/play/materials/animation keys/diff
 │   ├── cycle-102.json <- cycle 102 proof: skinning, glTF import and sprite math
 │   ├── cycle-103.json <- cycle 103 proof: input/UI/assets/merge_batches
@@ -353,7 +355,8 @@ projects/shooter/
 │   ├── cycle-111.json <- cycle 111 proof: frame stats/metadata, report diff, pixel-diff PNG
 │   ├── cycle-112.json <- cycle 112 proof: action parsing, observe hash, audit tamper chain
 │   ├── cycle-113.json <- cycle 113 proof: asset loaders, fingerprints, kind checks, reload report
-│   └── cycle-114.json <- cycle 114 proof: mesh builder quad/box, matrix normals, skin concat
+│   ├── cycle-114.json <- cycle 114 proof: mesh builder quad/box, matrix normals, skin concat
+│   └── cycle-115.json <- cycle 115 proof: atomic binary/JSON writes, backups, BOM, temp cleanup
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

@@ -2370,3 +2370,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 386 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-114.json`.
+
+## Cycle 115 - Keystone testbed: atomic byte/JSON persistence
+- **Area**: keystone testbed (115th cycle).
+- **Feature / evidence**: `serialization` is the crash-resilience layer behind
+  saves/reports but had no direct shooter coverage for binary writes,
+  backup chaining or temp cleanup on failure.
+- **Fix**: add `tests/test_keystone_serialization_mechanics.py` with five
+  temp-file tests.
+- **Proof**: binary writes round-trip, create parents and replace without
+  temp leftovers; the second JSON write backs up the first and
+  `backup=False` keeps that backup while updating the target; NaN/infinity
+  and unserializable payloads leave the target intact; BOM files read,
+  missing files raise FileNotFoundError; a failing replace onto a directory
+  cleans the temp file and leaves the target in place.
+- **Gates**: `python -m pytest -q` 391 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-115.json`.
