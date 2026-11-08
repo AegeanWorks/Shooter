@@ -1,0 +1,94 @@
+{
+  "area": "audio cues",
+  "audio_probe": {
+    "reported_cues": 16,
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-57\\after\\cues_spectrogram.png",
+    "surge_forfeit": {
+      "duration": 0.22,
+      "frames": 4851,
+      "name": "surge_forfeit",
+      "peak": 1.0,
+      "rms": 1.0,
+      "sample_rate": 22050
+    },
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-57\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py surge_forfeit <prefix>",
+    "python scripts/play_run.py forfeit 6 <report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 57,
+  "fix": "map the existing surge_forfeit event to a 0.22 s 120 Hz voice and a danger SURGE FORFEIT caption; the switch click still plays and the forfeit caption wins over the weapon name",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "204 passed"
+  },
+  "play_runs": {
+    "forfeit_after": {
+      "audio": 2,
+      "clips": [
+        "surge_forfeit",
+        "switch_pulse"
+      ],
+      "cue": "SURGE FORFEIT",
+      "drops": 0,
+      "frames": 6,
+      "hash": "3fe96786cb04b0c4ff8cb5a5bbb8783e",
+      "hp": 100,
+      "kills": 0,
+      "peak_vox": 2,
+      "score": 0,
+      "wave": 1
+    },
+    "forfeit_before": {
+      "audio": 1,
+      "clips": [
+        "switch_pulse"
+      ],
+      "cue": "PULSE",
+      "drops": 0,
+      "frames": 6,
+      "hash": "3fe96786cb04b0c4ff8cb5a5bbb8783e",
+      "hp": 100,
+      "kills": 0,
+      "peak_vox": 1,
+      "score": 0,
+      "wave": 1
+    },
+    "parity": "same hash 3fe96786 before/after; audio-only change, surge_t=0 and weapon=pulse in both"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-57/after",
+    "before_dir": "shots/shooter-campaign/cycle-57/before",
+    "route": "scripts/capture.py surge_forfeit; 960x540 seed 1, surge armed then slot1 on frame 1"
+  },
+  "tests": {
+    "suite": "204 passed",
+    "surge_forfeit_cue_tests": 3
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "surge forfeit",
+    "penalty cue",
+    "caption"
+  ],
+  "visual_diff": {
+    "bbox": [
+      390,
+      164,
+      815,
+      459
+    ],
+    "changed_px": 3060,
+    "draws": 6,
+    "fraction": 0.0059,
+    "mean_luma_after": 32.53,
+    "mean_luma_before": 32.59,
+    "triangles": 290
+  }
+}

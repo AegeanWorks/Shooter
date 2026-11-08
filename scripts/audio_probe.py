@@ -34,6 +34,7 @@ CUES = (
     "near_miss",
     "reload",
     "reloaded",
+    "surge_forfeit",
     "streak_break",
     "pickup",
     "death",
@@ -45,6 +46,7 @@ VISUAL_CUES = (
     "overdrive",
     "cache",
     "pickup",
+    "surge_forfeit",
     "death",
 )
 

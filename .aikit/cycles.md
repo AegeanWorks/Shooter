@@ -1162,3 +1162,26 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 201 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-56.json`.
+
+## Cycle 57 - Audio cues: surge-forfeit warning
+- **Area**: audio cues (57th cycle).
+- **Defect / evidence**: switching from the surge pickup to slot 1-3
+  forfeits the remaining surge timer and its stranded ammo. The sim emits
+  `surge_forfeit`, but `_play_event` had no branch, so the baseline run
+  logged only `switch_pulse` with the caption `PULSE` and one voice; the
+  loss looked like an ordinary weapon change.
+- **Fix**: map the event to a distinct 0.22 s 120 Hz voice and a danger
+  `SURGE FORFEIT` caption. The switch click still plays; a one-frame
+  pending flag keeps the forfeit caption from being overwritten by the
+  weapon name. Sim, ammo, timer and input paths are untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-57/`;
+  960x540 seed 1, surge armed then slot1. Before `PULSE`; after
+  `SURGE FORFEIT`: 3,060 changed px (0.59%, bbox 390,164-815,459), mean
+  luma 32.59 -> 32.53; draws 6, triangles 290. New voice inspected in
+  `cues.wav` and `cues_spectrogram.png` (0.22 s, 120 Hz, peak 1.0).
+- **Played runs**: `forfeit 6` before/after same hash `3fe96786...`,
+  audio 1 -> 2, clips `switch_pulse` -> `surge_forfeit` + `switch_pulse`,
+  hp 100, 0 drops.
+- **Gates**: `python -m pytest -q` 204 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-57.json`.

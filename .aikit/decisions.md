@@ -511,3 +511,10 @@ Status: accepted
 Context: The four boundary walls were flat gray boxes. Cycle 49 gave the covers a panel texture, but the arena shell still read as untextured slabs at spawn and along sightlines; the baseline test measured `material.wall.texture=None` and `checker_scale=0`.
 Decision: Add `_wall_panel_texture()` (deterministic 64x64 grayscale: 8 px vertical seams, 16-row horizontal bands and rivets) and bind it to `material.wall` with `checker_scale=0.15`. Material-only: same wall nodes, mesh, draw calls, colliders and sim. The gray-blue color still tints the grayscale detail.
 Consequences: Suite 201/201 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The spawn pair at 960x540 seed 1 changes 34,064 px (6.57%, bbox 0,236-959,307), mean luma 34.09 -> 32.49, draws 6, triangles 290. `kite 600` keeps hash `4fe640c5...`, 10 kills, hp 100, score 1950, 39 shots/37 hits, audio 101, peak 8, 0 drops. Evidence: `evidence/cycle-56.json`, images in workspace `shots/shooter-campaign/cycle-56/`.
+
+## ADR-074: Surge-forfeit cue (audio cues)
+Date: 2026-11-08
+Status: accepted
+Context: Switching from the surge pickup to slot 1-3 forfeits the remaining surge timer and its stranded ammo. The sim emits `surge_forfeit`, but `_play_event` had no branch, so the player heard only the ordinary switch click and read the new weapon name; the loss looked like a free weapon change.
+Decision: Map the existing event to a distinct 0.22 s 120 Hz voice and a danger `SURGE FORFEIT` caption. The switch click still plays; a one-frame pending flag lets the forfeit caption win over the weapon name. Sim, ammo, timer and input paths are untouched.
+Consequences: Suite 204/204 green (three new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The forfeit pair at 960x540 seed 1 changes 3,060 px (0.59%, bbox 390,164-815,459), draws 6, triangles 290. `forfeit 6` before/after same hash `3fe96786...`, audio 1 -> 2, clips `switch_pulse` -> `surge_forfeit` + `switch_pulse`, cue PULSE -> SURGE FORFEIT, hp 100, 0 drops. Evidence: `evidence/cycle-57.json`, WAV/spectrogram and images in workspace `shots/shooter-campaign/cycle-57/`.

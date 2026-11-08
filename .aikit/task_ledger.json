@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-56-wall-texture",
+    "task_id": "shooter-cycle-57-surge-forfeit-cue",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794110719.6483054,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794111150.6484087,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794110731.4292724
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-50-wisp-cue",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Wisp cue proven: 190 tests, determinism 1800 ok, aikit 4/4, 3488 px pair, audio 458->461, same hash 945e3fdd; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794107600.976125,
-      "timestamp_str": "2026-11-08 06:13:20",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-50-wisp-cue",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-50-wisp-cue' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794107646.7498147,
-      "timestamp_str": "2026-11-08 06:14:06",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-51-full-history",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794110731.429275,
       "timestamp_str": "2026-11-08 07:05:31",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-57-surge-forfeit-cue",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Audio cycle: map the existing surge_forfeit event to a distinct voice and danger caption, prove with the forfeit drill, caption pair and WAV probe",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794111150.3453486,
+      "timestamp_str": "2026-11-08 07:12:30",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Switching away from surge silently forfeits the remaining timer and ammo; only the ordinary switch click plays, so the penalty looks like a free weapon change.",
+        "benefits": "A distinct 120 Hz voice and red SURGE FORFEIT caption make the lost surge time and ammo audible and visible without touching the sim.",
+        "risks": "contract: event/audio/caption only; dependency: none; concurrency: none; state: no sim, ammo or save change.",
+        "mitigation": "Failing-first cue tests, a seeded forfeit capture pair, a same-hash played drill and a WAV/spectrogram probe; normal switch caption stays covered by a guard test."
+      },
+      "plan_digest": "fc86ff58e08aec13b002038fc8a9a0d2ccdf3b8407b9133069490ca68922d8a7"
+    },
+    {
+      "task_id": "shooter-cycle-57-surge-forfeit-cue",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Surge-forfeit cue proven: 204 tests, determinism 1800 ok, aikit 4/4, 3060 px caption pair, same forfeit hash 3fe96786, audio 1->2; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794111150.6484087,
+      "timestamp_str": "2026-11-08 07:12:30",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

@@ -17,6 +17,7 @@ Modes:
   platform run at the rear low platform, jump onto it, stop on the top
   highground stand on the platform edge with a mite at its base (reach drill)
   switch   press slot2 -> slot3 -> slot1 (weapon-switch cue drill)
+  forfeit  arm surge, then press slot1 (surge-forfeit cue drill)
   denied   press overdrive with no pulse reserve (audio/caption drill)
   dry      hold fire with 0 magazine and 0 reserve (dry-fire drill)
   reload   finish a reload tail (reload-completion cue drill)
@@ -84,6 +85,8 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         if frame == 20:
             return ActionState(pressed=frozenset({"slot1"}))
         return ActionState()
+    if mode == "forfeit":
+        return ActionState(pressed=frozenset({"slot1"})) if frame == 2 else ActionState()
     if mode == "denied":
         return ActionState(pressed=frozenset({"overdrive"})) if frame == 0 else ActionState()
     if mode == "dry":
@@ -172,6 +175,14 @@ def main(
             game.sim.spawn_queue = ["mite"]
             game.sim.spawn_t = 999.0
             game.sim.enemies = []
+        if mode == "forfeit":
+            sim = game.sim
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            sim.enemies = []
+            sim.weapon = "surge"
+            sim.surge_t = 5.0
+            sim.ammo["surge"] = 20
         if mode == "highground":
             sim = game.sim
             sim.player_pos = Vec3(-16.0, 1.6002, 17.5)
@@ -286,6 +297,8 @@ def main(
             if mode == "dry" and frame >= 10:
                 break
             if mode == "reload" and frame >= 5:
+                break
+            if mode == "forfeit" and frame >= 5:
                 break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break

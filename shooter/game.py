@@ -103,6 +103,7 @@ class ShooterGame:
         self.sound_cue = ""
         self.sound_cue_t = 0.0
         self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
+        self._forfeit_cue_pending = False
         self.kill_feed: list[dict] = []
         self.score_pop: dict | None = None
         self._clip_hook = None
@@ -164,6 +165,7 @@ class ShooterGame:
         self.dropped_sfx = 0
         self.sound_cue = ""
         self.sound_cue_t = 0.0
+        self._forfeit_cue_pending = False
         self.run_new_best = False
         self.last_run = None
         self.campaign_cleared = False
@@ -470,6 +472,7 @@ class ShooterGame:
             "switch_pulse": square(300.0, 0.05, name="switch_pulse"),
             "switch_scatter": square(220.0, 0.06, name="switch_scatter"),
             "switch_lance": square(420.0, 0.05, name="switch_lance"),
+            "surge_forfeit": square(120.0, 0.22, name="surge_forfeit"),
             "near_miss": sine(1320.0, 0.06, name="near_miss"),
             "streak_break": square(140.0, 0.12, name="streak_break"),
             "death": square(60.0, 0.50, name="death"),
@@ -500,6 +503,7 @@ class ShooterGame:
         if not self._built:
             self.build_scene()
         events = self.sim.step(float(dt), actions)
+        self._forfeit_cue_pending = False
         for e in events:
             self._play_event(e)
         if "died" in events:
@@ -633,12 +637,20 @@ class ShooterGame:
                     "t": float(self.sim.juice.get("score_pop_s", 0.6)),
                 }
             return
+        if event == "surge_forfeit":
+            self._play_clip(self._clips["surge_forfeit"], 0.6)
+            self._cue("SURGE FORFEIT", danger=True)
+            self._forfeit_cue_pending = True
+            return
         if event.startswith("switch:"):
             wid = event.split(":", 1)[1]
             clip = self._clips.get(f"switch_{wid}", self._clips.get("switch_pulse"))
             if clip is not None:
                 self._play_clip(clip, 0.35)
-            self._cue(wid.upper())
+            if self._forfeit_cue_pending:
+                self._forfeit_cue_pending = False
+            else:
+                self._cue(wid.upper())
             return
         if event == "spawn":
             cfg = dict(self.sim.juice.get("spawn_mark", {}))

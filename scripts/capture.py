@@ -948,6 +948,35 @@ def route_switch_cue(prefix: str, shadows: bool = True, srgb: bool = True, post:
         engine.close()
 
 
+def route_surge_forfeit(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One frame after switching away from surge: the forfeit-cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.weapon = "surge"
+        g.sim.surge_t = 5.0
+        g.sim.ammo["surge"] = 20
+        clips: list[str] = []
+        g.set_clip_hook(lambda clip, gain: clips.append(clip.name))
+        g.update(FIXED_STEP, ActionState(pressed=frozenset({"slot1"})))
+        print(
+            f"surge-forfeit frame={g.sim.tick} weapon={g.sim.weapon} "
+            f"surge_t={float(getattr(g.sim, 'surge_t', 0.0)):.3f} "
+            f"cue={getattr(g, 'sound_cue', '')!r} clips={clips}"
+        )
+        engine.capture(f"{prefix}_surge_forfeit.png", f"{prefix}_surge_forfeit.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_tracer_tint(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """One first-shot frame per weapon: the tracer/flash tint pair.
 
@@ -1581,6 +1610,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_tracer_tint(prefix, shadows, srgb, post, bloom)
     if which == "switch_cue":
         route_switch_cue(prefix, shadows, srgb, post, bloom)
+    if which == "surge_forfeit":
+        route_surge_forfeit(prefix, shadows, srgb, post, bloom)
     if which == "killmark":
         route_killmark(prefix, shadows, srgb, post, bloom)
     if which == "slam_ring":
