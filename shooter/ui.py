@@ -62,6 +62,11 @@ def draw_shooter(canvas, hud, sim) -> None:
     ):
         canvas.rect(x - 2, y - 2, rw + 4, rh + 4, ink)
         canvas.rect(x, y, rw, rh, col)
+    if float(getattr(sim, "killmark_t", 0.0)) > 0.0:
+        # Kill-only corner ticks: the final hit at the aim point.
+        kr = gap + 6
+        for dx, dy in ((-kr, -kr), (kr, -kr), (-kr, kr), (kr, kr)):
+            canvas.rect(cx + dx - 2, cy + dy - 2, 5, 5, (1.0, 0.22, 0.18, 0.95))
 
     # Ammo feedback: reload progress near the crosshair, then a low-magazine
     # warning. Exact counts stay in the engine status panel; this is the

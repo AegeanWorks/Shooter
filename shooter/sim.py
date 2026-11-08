@@ -187,6 +187,7 @@ class Sim:
         self.kick = 0.0
         self.hitstop = 0
         self.hitmark_t = 0.0
+        self.killmark_t = 0.0
         self.flash_t = 0.0
         self.flash_pos = Vec3()
         # Last damage source, presentation-only: HUD points at the threat for
@@ -461,6 +462,7 @@ class Sim:
         if abs(self.kick) < 1e-6:
             self.kick = 0.0
         self.hitmark_t = max(0.0, self.hitmark_t - dt)
+        self.killmark_t = max(0.0, float(getattr(self, "killmark_t", 0.0)) - dt)
         self.flash_t = max(0.0, self.flash_t - dt)
         self.hurt_t = max(0.0, float(getattr(self, "hurt_t", 0.0)) - dt)
         self.dry_t = max(0.0, float(getattr(self, "dry_t", 0.0)) - dt)
@@ -728,6 +730,7 @@ class Sim:
                         events.append("cache_drop")
                     self.particles.burst("kill", int(self.juice.get("kill_burst", 20)), e.pos)
                     self.hitstop = int(self.juice.get("hitstop_ticks", 2))
+                    self.killmark_t = float(self.juice.get("killmark_s", 0.18))
                     events.append("kill")
                     events.append(f"kill:{e.etype}:{int(total)}")
                     if e.etype == "warden":

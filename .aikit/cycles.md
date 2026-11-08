@@ -645,3 +645,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 140 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-30.json`.
+
+## Cycle 31 - Combat feel: kill-only crosshair marker
+- **Area**: combat feel (31st cycle).
+- **Defect / evidence**: a kill used the same crosshair hitmark as a
+  non-lethal body hit; the only kill-specific cues were sound, feed,
+  particles and hitstop, none at the aim point. Baseline
+  `tests/test_killmark.py` failed 4/4 (no `killmark_t`, no red ticks).
+- **Fix**: add `juice.killmark_s` 0.18; set `killmark_t` on a kill and
+  decrement it, never in the snapshot; draw four red 5x5 corner ticks at
+  `gap + 6` while it runs. No damage/RNG/AI change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-31/`;
+  960x540 seed 1, first-kill frame after 7 idle steps. 100 changed px
+  (0.02%, bbox 460,250-500,290, exactly four ticks), mean luma
+  37.00 -> 36.99; draws 7, triangles 318; kill feed/streak/audio identical.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950 /
+  hp 100, 39 shots / 37 hits, 90 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 144 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-31.json`.

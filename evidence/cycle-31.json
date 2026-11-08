@@ -1,0 +1,58 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py killmark <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 31,
+  "fix": "kill-only crosshair marker: killmark_t (0.18 s, juice DATA) set on a kill, four red corner ticks drawn around the crosshair",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "144 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 90,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "hits": 37,
+      "kills": 10,
+      "score": 1950,
+      "shots": 39
+    },
+    "parity": "same hash as the cycle-30 baseline; killmark_t is not in the snapshot"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-31/after",
+    "before_dir": "shots/shooter-campaign/cycle-31/before",
+    "route": "scripts/capture.py killmark; 960x540 seed 1, first-kill frame after 7 idle steps"
+  },
+  "tests": {
+    "killmark_tests": 4,
+    "suite": "144 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "kill confirmation",
+    "crosshair",
+    "combat readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      460,
+      250,
+      500,
+      290
+    ],
+    "changed_px": 100,
+    "draws": 7,
+    "fraction": 0.0002,
+    "mean_luma_after": 36.99,
+    "mean_luma_before": 37.0,
+    "triangles": 318
+  }
+}

@@ -417,6 +417,38 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_killmark(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """First-kill frame after the flash clears: the kill-marker pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0),
+                                hp=12, max_hp=30)]
+        fire = ActionState(held=frozenset({"fire"}))
+        for _ in range(20):
+            before = int(g.sim.kills)
+            g.update(FIXED_STEP, fire)
+            if int(g.sim.kills) > before:
+                for _ in range(7):
+                    g.update(FIXED_STEP, ActionState())
+                print(
+                    f"killmark frame={g.sim.tick} kills={g.sim.kills} "
+                    f"killmark_t={float(getattr(g.sim, 'killmark_t', 0.0)):.3f} "
+                    f"hitmark_t={float(getattr(g.sim, 'hitmark_t', 0.0)):.3f}"
+                )
+                engine.capture(f"{prefix}_killmark.png", f"{prefix}_killmark.json")
+                break
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_switch_cue(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """One clean frame after pressing slot 2: the weapon-switch cue pair."""
     from keystone.app import Engine
@@ -1035,6 +1067,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_tracer_tint(prefix, shadows, srgb, post, bloom)
     if which == "switch_cue":
         route_switch_cue(prefix, shadows, srgb, post, bloom)
+    if which == "killmark":
+        route_killmark(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
