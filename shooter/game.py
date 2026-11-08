@@ -48,6 +48,23 @@ def _floor_grid_texture(size: int = 128, cell: int = 16) -> TextureData:
     return TextureData(size, size, bytes(pixels), name="floor-grid")
 
 
+def _cover_panel_texture(size: int = 64) -> TextureData:
+    """Deterministic grayscale panel detail for the arena covers."""
+    base, seam, band = 230, 120, 190
+    pixels = bytearray(size * size * 4)
+    for y in range(size):
+        for x in range(size):
+            if x < 2 or y < 2 or x >= size - 2 or y >= size - 2:
+                value = seam
+            elif y % 16 < 2:
+                value = band
+            else:
+                value = base
+            offset = (y * size + x) * 4
+            pixels[offset : offset + 4] = bytes((value, value, value, 255))
+    return TextureData(size, size, bytes(pixels), name="cover-panel")
+
+
 class ShooterGame:
     name = "shooter"
 
@@ -146,7 +163,9 @@ class ShooterGame:
         self.assets.register("texture.floor", grid)
         self.assets.register("material.floor", Material(color=Vec3(1, 1, 1), specular=0.08, shininess=8.0, texture=grid, checker_scale=0.5))
         self.assets.register("material.wall", Material(color=Vec3(0.40, 0.43, 0.50), specular=0.25, shininess=24.0))
-        self.assets.register("material.cover", Material(color=Vec3(0.64, 0.50, 0.32), specular=0.15, shininess=18.0))
+        cover_panel = _cover_panel_texture()
+        self.assets.register("texture.cover", cover_panel)
+        self.assets.register("material.cover", Material(color=Vec3(0.64, 0.50, 0.32), specular=0.15, shininess=18.0, texture=cover_panel, checker_scale=1.0))
         self.assets.register("material.platform", Material(color=Vec3(0.38, 0.50, 0.58), specular=0.2, shininess=24.0))
         self.assets.register("material.trim", Material(color=Vec3(0.18, 0.62, 0.72), specular=0.5, shininess=48.0, emissive=Vec3(0.05, 0.34, 0.42)))
         self.assets.register("material.mite", Material(color=Vec3(0.95, 0.45, 0.15), specular=0.4, shininess=48.0, emissive=Vec3(0.55, 0.18, 0.02)))

@@ -1005,3 +1005,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 186 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-48.json`.
+
+## Cycle 49 - Graphics and effects: arena cover panels
+- **Area**: graphics and effects (49th cycle).
+- **Opportunity**: the six covers were flat brown boxes; the floor has a
+  grid and the walls have trim/pilasters, but the covers had no surface
+  detail. The before frame showed plain blocks.
+- **Fix**: generate a deterministic 64x64 grayscale `cover-panel`
+  texture (seam border, 16-px bands) and apply it to the existing
+  `material.cover` with `checker_scale=1.0`; the brown color still tints
+  it. No new nodes, draw calls or colliders.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-49/`;
+  960x540 seed 1, spawn view. 25,683 changed px (4.95%, bbox
+  0,262-959,442), mean luma 35.24 -> 34.09; draws 6, triangles 290
+  (unchanged).
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950
+  / hp 100, 101 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 188 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-49.json`.

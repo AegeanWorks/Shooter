@@ -1,0 +1,56 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py cover_texture <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 49,
+  "fix": "deterministic 64x64 grayscale cover-panel texture on the existing material.cover; no new nodes, draw calls or colliders",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "188 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 101,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "kills": 10,
+      "score": 1950
+    },
+    "parity": "same hash as the cycle-48 baseline; texture-only change"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-49/after",
+    "before_dir": "shots/shooter-campaign/cycle-49/before",
+    "route": "scripts/capture.py cover_texture; 960x540 seed 1, spawn view"
+  },
+  "tests": {
+    "cover_texture_tests": 2,
+    "suite": "188 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "cover detail",
+    "panel texture",
+    "material-only change"
+  ],
+  "visual_diff": {
+    "bbox": [
+      0,
+      262,
+      959,
+      442
+    ],
+    "changed_px": 25683,
+    "draws": 6,
+    "fraction": 0.0495,
+    "mean_luma_after": 34.09,
+    "mean_luma_before": 35.24,
+    "triangles": 290
+  }
+}

@@ -455,3 +455,10 @@ Status: accepted
 Context: The pickup top label and edge tag shared one `boss is None` guard. With a live warden and the pickup still active (wave 3 if not taken), both disappeared; the staged frame showed only the warden bar, so the boss fight erased the pickup direction. The top label must stay suppressed because the boss bar occupies that space.
 Decision: Split the cues. The `SURGE PICKUP READY` top label remains gated on no boss; the off-screen `SURGE` edge chip shows whenever the pickup is active, within 18 m and outside the forward view, regardless of the boss. The beacon, trigger and sim state are untouched.
 Consequences: Suite 186/186 green (three new tests); determinism 1800 ok; aikit 4/4. The boss + pickup pair at 960×540 seed 1 changes 1,768 px (0.34%, bbox 446,377-513,402), mean luma 34.71→34.77, draws 6, triangles 98. `kite 3000` keeps hash `945e3fdd…`, 32 kills / 10135 / hp 82, 458 audio, peak 8, 0 drops; that run takes the pickup in wave 2, so the tag itself is a staged UI proof. Evidence: `evidence/cycle-48.json`, images in workspace `shots/shooter-campaign/cycle-48/`.
+
+## ADR-066: Arena cover panel texture (graphics/effects)
+Date: 2026-11-08
+Status: accepted
+Context: The six covers were flat brown boxes. The floor had a grid texture and the walls had trim/pilasters, but the covers had no surface detail and read as plain blocks. The before spawn frame showed uniform cover faces.
+Decision: Generate a deterministic 64×64 grayscale `cover-panel` texture (2-px seam border, 16-px horizontal bands) and apply it to the existing `material.cover` with `checker_scale=1.0`; the brown base color still tints it. No new nodes, draw calls, colliders or sim state.
+Consequences: Suite 188/188 green (two new tests); determinism 1800 ok; aikit 4/4. The spawn pair at 960×540 seed 1 changes 25,683 px (4.95%, bbox 0,262-959,442), mean luma 35.24→34.09, draws 6, triangles 290 (unchanged). `kite 600` keeps hash `4fe640c5…`, 10 kills / 1950 / hp 100, 101 audio, peak 8, 0 drops. Evidence: `evidence/cycle-49.json`, images in workspace `shots/shooter-campaign/cycle-49/`.

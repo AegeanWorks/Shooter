@@ -417,6 +417,30 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_cover_texture(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Spawn view of the near covers: the cover-panel pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.update(FIXED_STEP, ActionState())
+        tex = g.assets.require("material.cover").payload.texture
+        print(
+            f"cover-texture frame={g.sim.tick} "
+            f"texture={None if tex is None else tex.name}"
+        )
+        engine.capture(f"{prefix}_cover_texture.png", f"{prefix}_cover_texture.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_boss_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Live warden + active pickup, player facing away: the boss-pickup pair."""
     import math
@@ -1506,6 +1530,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_target_hp(prefix, shadows, srgb, post, bloom)
     if which == "boss_pickup":
         route_boss_pickup(prefix, shadows, srgb, post, bloom)
+    if which == "cover_texture":
+        route_cover_texture(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
