@@ -2355,3 +2355,18 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 381 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-113.json`.
+
+## Cycle 114 - Keystone testbed: MeshBuilder composition and skin merging
+- **Area**: keystone testbed (114th cycle).
+- **Feature / evidence**: `MeshBuilder` composes primitives and merged
+  geometry but had no direct shooter coverage for mode rules, UVs/colors,
+  matrix normals or skin concatenation.
+- **Fix**: add `tests/test_keystone_mesh_builder_mechanics.py` with five
+  in-memory composition tests.
+- **Proof**: quad/box counts, UVs, colors and bounds match; `add_mesh`
+  scales/translates and multiplies colors; matrix merges keep unit
+  perpendicular normals via the inverse transpose; skinned members must
+  share joint names and inverse binds; plain and skin modes cannot mix.
+- **Gates**: `python -m pytest -q` 386 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-114.json`.

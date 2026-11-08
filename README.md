@@ -87,6 +87,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `analysis` | frame stats/hashes, node/material metadata, report diff, pixel-diff PNG | `tests/test_keystone_analysis_mechanics.py` |
 | `agents` | action clamps/wrappers, observe hash, report summary, audit tamper chain | `tests/test_keystone_agent_mechanics.py` |
 | `asset_io` | loaders/suffixes, fingerprints, kinds, ReloadReport | `tests/test_keystone_asset_io_mechanics.py` |
+| `mesh_builder` | quad/box counts, mesh merge, matrix normals, skinned concat/mode | `tests/test_keystone_mesh_builder_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -145,6 +146,7 @@ projects/shooter/
 │   ├── test_keystone_analysis_mechanics.py <- frame stats, report/pixel diff
 │   ├── test_keystone_agent_mechanics.py <- action clamps, observe hash, audit chain
 │   ├── test_keystone_asset_io_mechanics.py <- loaders, fingerprints, kinds, reload report
+│   ├── test_keystone_mesh_builder_mechanics.py <- quad/box, merge, matrix normals, skin concat
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -318,13 +320,13 @@ projects/shooter/
 │   ├── cycle-79.json  <- improvement-cycle 79 proof: save-retry pair, same-hash drill
 │   ├── cycle-80.json  <- improvement-cycle 80 proof: low-health pulse pair, clutch run
 │   ├── cycle-81.json  <- improvement-cycle 81 proof: warden-cover pair, LOS drill
-│   ├── cycle-82.json  <- improvement-cycle 82 proof: west-gap pair, walk-through drill
-│   ├── cycle-83.json  <- improvement-cycle 83 proof: boss-death bar pair, death drill
-│   ├── cycle-84.json  <- improvement-cycle 84 proof: tracer-muzzle pair, same-hash strafe run
-│   ├── cycle-85.json  <- improvement-cycle 85 proof: overdrive-kill cue pair + WAV
-│   ├── cycle-86.json  <- improvement-cycle 86 proof: backup-restart pair, recovery drill
-│   ├── cycle-87.json  <- improvement-cycle 87 proof: brute-windup pair, delayed-slam drill
-│   ├── cycle-88.json  <- improvement-cycle 88 proof: enemy-spacing pair, crowd drill + re-recorded reference
+│   ├── cycle-82.json <- west-gap pair/drill
+│   ├── cycle-83.json <- boss-death pair/drill
+│   ├── cycle-84.json <- tracer pair/strafe
+│   ├── cycle-85.json <- overdrive pair/WAV
+│   ├── cycle-86.json <- backup pair/drill
+│   ├── cycle-87.json <- brute pair/slam
+│   ├── cycle-88.json <- spacing pair/crowd
 │   ├── cycle-89.json  <- cycle 89 proof: keystone .kstate core pair, same-hash slam run
 │   ├── cycle-90.json  <- cycle 90 proof: keystone lifecycle pad, 0-px same-hash pair
 │   ├── cycle-91.json  <- cycle 91 proof: keystone material graph core, same-hash slam run
@@ -350,7 +352,8 @@ projects/shooter/
 │   ├── cycle-110.json <- cycle 110 proof: scene/prefab trash uniqueness and restore safety
 │   ├── cycle-111.json <- cycle 111 proof: frame stats/metadata, report diff, pixel-diff PNG
 │   ├── cycle-112.json <- cycle 112 proof: action parsing, observe hash, audit tamper chain
-│   └── cycle-113.json <- cycle 113 proof: asset loaders, fingerprints, kind checks, reload report
+│   ├── cycle-113.json <- cycle 113 proof: asset loaders, fingerprints, kind checks, reload report
+│   └── cycle-114.json <- cycle 114 proof: mesh builder quad/box, matrix normals, skin concat
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

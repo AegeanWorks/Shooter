@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-113-asset-io",
+    "task_id": "shooter-cycle-114-mesh-builder",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794145837.1544576,
+    "updated_at": 1794146368.395352,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794145837.5793629
+    "completed_at": 1794146368.8961856
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-107-component-codec",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Component codecs/reproducer done: 354 tests passed + 1 xfailed, determinism 1800 ok (b25db520), aikit 4/4; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794143198.7396312,
-      "timestamp_str": "2026-11-08 16:06:38",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-107-component-codec",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-107-component-codec' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794143198.915225,
-      "timestamp_str": "2026-11-08 16:06:38",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-108-project-cli",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover project CLI validation/export and make the manifest-asset reproducer self-clearing",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794143629.8866754,
-      "timestamp_str": "2026-11-08 16:13:49",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "CLI --validate-project/--export had only library-level coverage, and the strict xfail would fail the suite after an upstream fix.",
-        "benefits": "Four CLI/self-clearing tests pin exit codes, reports, bundle files, non-empty refusal, --force and automatic green after the keystone fix; the upstream report now includes an issue draft and patch.",
-        "risks": "contract: tests/evidence only; dependency: none; concurrency: none; state: no game/sim/hash change; temp projects only.",
-        "mitigation": "Temp projects under TemporaryDirectory, conditional xfail only on the known duplicate-asset error, full suite, determinism and project gates."
-      },
-      "plan_digest": "1b5376cf33f2ba6131a5e401583a3327b977daef59420af71b4d0665d71622df"
-    },
     {
       "task_id": "shooter-cycle-108-project-cli",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794145837.5793672,
       "timestamp_str": "2026-11-08 16:50:37",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-114-mesh-builder",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover MeshBuilder quad/box composition, mesh merging, matrix normals and skinned concatenation",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794145934.232344,
+      "timestamp_str": "2026-11-08 16:52:14",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "MeshBuilder composes primitives and merged geometry but the shooter testbed has no direct coverage of its mode rules, UV/color/normal handling or skin concatenation.",
+        "benefits": "Five tests pin quad/box counts and bounds, add_mesh scaling/color products, inverse-transpose normals, skinned joint/inverse-bind agreement and plain-vs-skin mode errors.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp meshes only; no game/sim/hash change.",
+        "mitigation": "Small in-memory meshes, full suite, determinism and project gates."
+      },
+      "plan_digest": "0090757f1319693475ed1730319435ff9c5564d1fc5abe0ef957bb7ad20abb8c"
+    },
+    {
+      "task_id": "shooter-cycle-114-mesh-builder",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] MeshBuilder covered: 386 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794146368.395352,
+      "timestamp_str": "2026-11-08 16:59:28",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-114-mesh-builder",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-114-mesh-builder' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794146368.8961875,
+      "timestamp_str": "2026-11-08 16:59:28",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

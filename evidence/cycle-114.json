@@ -1,0 +1,80 @@
+{
+  "area": "keystone testbed: MeshBuilder composition and skinned merging",
+  "commands": [
+    "python -m pytest tests/test_keystone_mesh_builder_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 114,
+  "feature": "quad/box geometry counts, UVs/colors/normals and bounds, add_mesh scale/translate/color products, inverse-transpose matrix normals, skinned concatenation agreement and plain-vs-skin mode isolation",
+  "fix": "add tests/test_keystone_mesh_builder_mechanics.py with five in-memory composition tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "386 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "quad_box": {
+      "empty_build": "ValueError",
+      "quad_vertices": 4,
+      "quad_indices": 6,
+      "quad_triangles": 2,
+      "quad_normal": [0.0, 0.0, 1.0],
+      "quad_uvs": [[0.0, 1.0], [1.0, 1.0], [1.0, 0.0], [0.0, 0.0]],
+      "box_vertices": 24,
+      "box_indices": 36,
+      "box_triangles": 12,
+      "box_bounds": [[-1.0, -2.0, -3.0], [1.0, 2.0, 3.0]],
+      "collinear": "ValueError",
+      "bad_box_dimension": "ValueError"
+    },
+    "add_mesh": {
+      "vertices": 24,
+      "indices": 36,
+      "bounds": [[8.0, -2.0, -2.0], [12.0, 2.0, 2.0]],
+      "color": [0.5, 0.25, 1.0],
+      "unit_normals": true,
+      "zero_scale": "ValueError"
+    },
+    "matrix_merge": {
+      "vertices": 4,
+      "bounds": [[1.0, -1.0, 0.0], [5.0, 1.0, 0.0]],
+      "normal": [0.0, 0.0, 1.0],
+      "normal_unit": true,
+      "normal_perpendicular": true,
+      "color": [1.0, 2.0, 3.0],
+      "non_mat4": "TypeError"
+    },
+    "skinned": {
+      "vertices": 8,
+      "indices": 12,
+      "triangles": 4,
+      "skin_joints": ["j0"],
+      "bounds": [[0.0, 0.0, 0.0], [3.0, 1.0, 0.0]],
+      "joint_name_mismatch": "ValueError",
+      "inverse_bind_mismatch": "ValueError",
+      "non_skinned": "ValueError"
+    },
+    "modes": {
+      "plain_vertices": 52,
+      "plain_indices": 78,
+      "plain_triangles": 26,
+      "plain_then_skin": "ValueError",
+      "skin_then_plain": "ValueError"
+    }
+  },
+  "tests": {
+    "mesh_builder_tests": 5,
+    "suite": "386 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone mesh builder",
+    "quad and box geometry",
+    "mesh merge",
+    "inverse transpose normals",
+    "skinned concatenation",
+    "geometry mode isolation"
+  ]
+}
