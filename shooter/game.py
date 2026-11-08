@@ -958,6 +958,13 @@ class ShooterGame:
                     reload_curve = math.sin(math.pi * phase)
             reload_drop = float(cfg.get("reload_drop", 0.0)) * reload_curve
             reload_back = float(cfg.get("reload_back", 0.0)) * reload_curve
+            speed = math.hypot(float(sim.hvel.x), float(sim.hvel.z))
+            bob = min(1.0, speed / max(1e-6, float(cfg.get("bob_speed", 6.4))))
+            if not sim.body.on_ground:
+                bob = 0.0
+            phase = sim.time * float(cfg.get("bob_hz", 8.0))
+            bob_right = float(cfg.get("bob_right", 0.0)) * bob * math.sin(phase)
+            bob_up = float(cfg.get("bob_up", 0.0)) * bob * math.cos(phase)
             rotation = (
                 Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), sim.yaw)
                 * Quat.from_axis_angle(Vec3(1.0, 0.0, 0.0), sim.pitch)
@@ -976,8 +983,8 @@ class ShooterGame:
                 self._view_body.transform = Transform(
                     position=gun_pos(
                         float(cfg.get("forward", 0.40)) - recoil_back - reload_back,
-                        float(cfg.get("right", 0.18)),
-                        float(cfg.get("down", 0.16)) - recoil_up + reload_drop,
+                        float(cfg.get("right", 0.18)) + bob_right,
+                        float(cfg.get("down", 0.16)) - recoil_up + reload_drop - bob_up,
                     ),
                     rotation=rotation,
                     scale=Vec3(
@@ -989,8 +996,8 @@ class ShooterGame:
                 self._view_barrel.transform = Transform(
                     position=gun_pos(
                         float(cfg.get("barrel_forward", 0.62)) - recoil_back - reload_back,
-                        float(cfg.get("right", 0.18)),
-                        float(cfg.get("barrel_down", 0.20)) - recoil_up + reload_drop,
+                        float(cfg.get("right", 0.18)) + bob_right,
+                        float(cfg.get("barrel_down", 0.20)) - recoil_up + reload_drop - bob_up,
                     ),
                     rotation=rotation,
                     scale=Vec3(

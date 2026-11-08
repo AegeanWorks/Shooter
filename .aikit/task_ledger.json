@@ -1,46 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-72-profile-reset",
+    "task_id": "shooter-cycle-73-viewmodel-bob",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794119246.8223298,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794119613.666678,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794119262.4829412
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-67-summon-overlap",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Enemies cycle: reject warden escort positions that overlap the boss or an existing escort, re-record the fairness reference and prove with a centre-summon pair and drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794117278.0696352,
-      "timestamp_str": "2026-11-08 08:54:38",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Cover-safe summon placement still allowed escorts inside the warden (ring starts at 1.2 m vs boss 1.0 m + mite 0.5 m) and overlapping each other.",
-        "benefits": "Escorts now spawn with real clearance around the boss and each other, so they can path and attack instead of clipping.",
-        "risks": "contract: summon placement and fairness fixture; dependency: none; concurrency: none; state: deterministic RNG order, count and max_alive retained.",
-        "mitigation": "40-seed overlap test, seed-12 capture pair, summon_overlap drill with spawn telemetry, and a re-recorded winning reference replayed by the fairness test."
-      },
-      "plan_digest": "79d11a6462a485660893d794422b1bd057b7b2472e6bb263d28363d3f8312028"
-    },
-    {
-      "task_id": "shooter-cycle-67-summon-overlap",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Entity-safe escorts proven: 224 tests, determinism 1800 ok, aikit 4/4, 5488 px boss-overlap pair, summon drill 1->0, re-recorded 3000-frame win; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794117285.4306023,
-      "timestamp_str": "2026-11-08 08:54:45",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-67-summon-overlap",
       "phase": "completed",
@@ -272,6 +242,35 @@
       "status": "completed",
       "timestamp": 1794119262.4829435,
       "timestamp_str": "2026-11-08 09:27:42",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-73-viewmodel-bob",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Combat-feel cycle: add a deterministic speed-driven viewmodel bob, with a moving-frame pair and strafe-drill parity",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794119308.3855333,
+      "timestamp_str": "2026-11-08 09:28:28",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The first-person gun stays rigidly locked to the camera while walking or sprinting; only recoil and reload move it, so movement feels floaty.",
+        "benefits": "A small DATA-driven figure-eight sway follows horizontal speed and returns to rest, using the existing gun nodes and no new draws.",
+        "risks": "contract: viewmodel presentation only; dependency: none; concurrency: none; state: no sim, movement, aim or save change.",
+        "mitigation": "Failing-first speed/rest tests, a moving capture pair at 960x540, strafe-drill hash parity and the full gates."
+      },
+      "plan_digest": "9da479f5edf3739aa984a98f78885756deeb84f975c241f84bc322ebf9be0fa1"
+    },
+    {
+      "task_id": "shooter-cycle-73-viewmodel-bob",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Movement bob proven: 241 tests, determinism 1800 ok, aikit 4/4, 3043 px gun-only pair, same strafe hash 14a48660, body x 0.210->0.232; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794119613.666678,
+      "timestamp_str": "2026-11-08 09:33:33",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

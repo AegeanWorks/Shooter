@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip, boss core/beacon/slam ring, spawn/summon marks, ammo-cache pool, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, campaign-complete line, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip/bob, boss core/beacon/slam ring, spawn/summon marks, ammo-cache pool, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, campaign-complete line, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/cover-safe summons/entity clearance/campaign seal/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload/no-reserve, kill-feed, damage, boss/pickup direction (tag survives boss)
@@ -147,6 +147,7 @@ projects/shooter/
 │   ├── test_surge_forfeit_cue.py <- surge-forfeit voice + caption, switch parity
 │   ├── test_save_error.py <- failed profile write warns, unwritable parent no crash
 │   ├── test_viewmodel_recoil.py <- kick-driven gun back/up offset and settle
+│   ├── test_viewmodel_bob.py <- speed-driven sway, rest and DATA checks
 │   ├── test_summon_cover.py <- warden escorts never spawn inside covers
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
@@ -154,7 +155,7 @@ projects/shooter/
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/summon/summon_overlap/pickup/highground/switch/forfeit/save_fail/profile_bad/profile_corrupt/campaign
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/profile_reset/recoil/summon_cover/summon_overlap/pickup_pop/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/profile_reset/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -227,7 +228,8 @@ projects/shooter/
 │   ├── cycle-69.json  <- improvement-cycle 69 proof: post-banner completion pair, campaign run
 │   ├── cycle-70.json  <- improvement-cycle 70 proof: ammo-cache pair, cache-bearing campaign run
 │   ├── cycle-71.json  <- improvement-cycle 71 proof: cache-drop cue pair, campaign clip count + WAV
-│   └── cycle-72.json  <- improvement-cycle 72 proof: profile-reset pair, corrupt-profile run
+│   ├── cycle-72.json  <- improvement-cycle 72 proof: profile-reset pair, corrupt-profile run
+│   └── cycle-73.json  <- improvement-cycle 73 proof: viewmodel-bob pair, same-hash strafe run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

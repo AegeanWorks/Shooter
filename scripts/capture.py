@@ -148,6 +148,35 @@ def route_fireburst(prefix: str, shadows: bool = True, srgb: bool = True, post: 
         engine.close()
 
 
+def route_viewmodel_bob(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Twelve sprint frames: the moving viewmodel-sway pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        for _ in range(12):
+            g.update(FIXED_STEP, ActionState(forward=1.0, held=frozenset({"sprint"})))
+        print(
+            f"viewmodel-bob time={g.sim.time:.2f} "
+            f"speed={math.hypot(g.sim.hvel.x, g.sim.hvel.z):.2f} "
+            f"body=({g._view_body.transform.position.x:.3f},"
+            f"{g._view_body.transform.position.y:.3f},"
+            f"{g._view_body.transform.position.z:.3f})"
+        )
+        engine.capture(f"{prefix}_viewmodel_bob.png", f"{prefix}_viewmodel_bob.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_recoil(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """One scatter shot frame: the viewmodel recoil pair."""
     from keystone.app import Engine
@@ -2005,6 +2034,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_fireburst(prefix, shadows, srgb, post, bloom)
     if which == "recoil":
         route_recoil(prefix, shadows, srgb, post, bloom)
+    if which == "viewmodel_bob":
+        route_viewmodel_bob(prefix, shadows, srgb, post, bloom)
     if which == "summon_cover":
         route_summon_cover(prefix, shadows, srgb, post, bloom)
     if which == "summon_overlap":

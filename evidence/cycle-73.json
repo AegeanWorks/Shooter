@@ -1,0 +1,67 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py viewmodel_bob <prefix>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 73,
+  "fix": "add a deterministic speed-driven figure-eight viewmodel bob (0.022 m right, 0.016 m up at 8 Hz, full at 6.4 m/s) applied to the two gun nodes while grounded; no sim or input change",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "241 passed"
+  },
+  "play_runs": {
+    "parity": "same hash 14a48660 before/after; viewmodel presentation only",
+    "strafe_after": {
+      "audio": 36,
+      "drops": 0,
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "hurts": 1,
+      "peak_vox": 8,
+      "shots": 30
+    },
+    "strafe_before": {
+      "audio": 36,
+      "drops": 0,
+      "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+      "hp": 92,
+      "hurts": 1,
+      "peak_vox": 8,
+      "shots": 30
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-73/after",
+    "before_dir": "shots/shooter-campaign/cycle-73/before",
+    "route": "scripts/capture.py viewmodel_bob; 960x540 seed 1, twelve sprint frames at time 0.20"
+  },
+  "tests": {
+    "suite": "241 passed",
+    "viewmodel_bob_tests": 3
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "viewmodel bob",
+    "movement feel",
+    "DATA-driven presentation"
+  ],
+  "visual_diff": {
+    "bbox": [
+      551,
+      333,
+      665,
+      411
+    ],
+    "changed_px": 3043,
+    "draws": 6,
+    "fraction": 0.0059,
+    "mean_luma_after": 30.68,
+    "mean_luma_before": 30.73,
+    "triangles": 242
+  }
+}

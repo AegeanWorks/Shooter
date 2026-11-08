@@ -1509,3 +1509,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 238 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-72.json`.
+
+## Cycle 73 - Combat feel: movement viewmodel bob
+- **Area**: combat feel (73rd cycle).
+- **Opportunity**: the first-person gun stayed rigidly locked to the
+  camera while walking or sprinting; only recoil and reload moved it, so
+  movement read as a floating camera rather than a carried weapon.
+- **Fix**: add a deterministic figure-eight bob to the existing viewmodel
+  nodes while grounded: 0.022 m right / 0.016 m up at 8 Hz, scaled by
+  horizontal speed up to 6.4 m/s, zero at rest and in the air. Amounts live
+  in `juice.viewmodel`; no sim, movement, aim, draw or save change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-73/`;
+  960x540 seed 1, twelve sprint frames at time 0.20. 3,043 changed px
+  (0.59%, bbox 551,333-665,411), mean luma 30.73 -> 30.68; draws 6,
+  triangles 242; gun body x 0.210 -> 0.232 at that phase.
+- **Played runs**: `strafe 300` before/after same hash `14a48660...`,
+  30 shots, hp 92, 1 hurt, audio 36, peak 8, drops 0.
+- **Gates**: `python -m pytest -q` 241 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-73.json`.
