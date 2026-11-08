@@ -1,0 +1,83 @@
+{
+  "area": "audio cues",
+  "audio_probe": {
+    "clutch": {
+      "duration": 0.12,
+      "frames": 2646,
+      "name": "clutch",
+      "peak": 1.0,
+      "rms": 1.0,
+      "sample_rate": 22050
+    },
+    "reported_cues": 19,
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-78\\after\\cues_spectrogram.png",
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-78\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py clutch <prefix>",
+    "python scripts/play_run.py clutch 1 <report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 78,
+  "fix": "map the existing clutch event to a 0.12 s 520 Hz square voice and a CLUTCH CLEAR caption that survives the following wave-clear cue; the wave voice still plays and normal clears are unchanged",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "251 passed"
+  },
+  "play_runs": {
+    "clutch_after": {
+      "audio": 2,
+      "count": 1,
+      "cue": "CLUTCH CLEAR",
+      "drops": 0,
+      "frames": 1,
+      "hash": "ae293bcdb236b68e524c4e117bed4611",
+      "hp": 30,
+      "wave": 2
+    },
+    "clutch_before": {
+      "audio": 1,
+      "count": 1,
+      "cue": "WAVE CLEAR",
+      "drops": 0,
+      "frames": 1,
+      "hash": "ae293bcdb236b68e524c4e117bed4611",
+      "hp": 30,
+      "wave": 2
+    },
+    "parity": "same hash ae293bcd before/after; audio/caption only, with the same wave-2 clear at hp 30"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-78/after",
+    "before_dir": "shots/shooter-campaign/cycle-78/before",
+    "route": "scripts/capture.py clutch; 960x540 seed 1, empty arena at hp 30, one clear frame"
+  },
+  "tests": {
+    "clutch_cue_tests": 3,
+    "suite": "251 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "clutch clear",
+    "low-health reward",
+    "caption priority"
+  ],
+  "visual_diff": {
+    "bbox": [
+      396,
+      164,
+      827,
+      459
+    ],
+    "changed_px": 1260,
+    "draws": 9,
+    "fraction": 0.0024,
+    "mean_luma_after": 33.99,
+    "mean_luma_before": 34.0,
+    "triangles": 434
+  }
+}

@@ -25,6 +25,7 @@ Modes:
   highground stand on the platform edge with a mite at its base (reach drill)
   switch   press slot2 -> slot3 -> slot1 (weapon-switch cue drill)
   overdrive press overdrive on an empty arena (state/material drill)
+  clutch   clear a wave at 30 HP (clutch cue drill)
   forfeit  arm surge, then press slot1 (surge-forfeit cue drill)
   denied   press overdrive with no pulse reserve (audio/caption drill)
   dry      hold fire with 0 magazine and 0 reserve (dry-fire drill)
@@ -229,6 +230,11 @@ def main(
             game.sim.spawn_queue = ["mite"]
             game.sim.spawn_t = 999.0
             game.sim.enemies = []
+        if mode == "clutch":
+            game.sim.spawn_queue = []
+            game.sim.spawn_t = 999.0
+            game.sim.enemies = []
+            game.sim.hp = 30
         if mode == "highground":
             sim = game.sim
             sim.player_pos = Vec3(-16.0, 1.6002, 17.5)
@@ -518,6 +524,12 @@ def main(
                 "t": round(float(game.sim.overdrive_t), 2),
                 "voices": int(game.mixer.voice_count()),
                 "reserve": int(game.sim.reserve.get("pulse", 0)),
+            },
+            "clutch": {
+                "cue": getattr(game, "sound_cue", ""),
+                "count": int(getattr(game.sim, "clutch", 0)),
+                "voices": int(game.mixer.voice_count()),
+                "wave": int(game.sim.wave),
             },
             "dry": {
                 "cue": getattr(game, "sound_cue", ""),

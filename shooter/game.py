@@ -139,6 +139,7 @@ class ShooterGame:
         self.sound_cue_t = 0.0
         self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
         self._forfeit_cue_pending = False
+        self._clutch_cue_pending = False
         self._critical_kill_pending = False
         self._pickup_fx_t = 0.0
         self.kill_feed: list[dict] = []
@@ -208,6 +209,7 @@ class ShooterGame:
         self.sound_cue = ""
         self.sound_cue_t = 0.0
         self._forfeit_cue_pending = False
+        self._clutch_cue_pending = False
         self._critical_kill_pending = False
         self._pickup_fx_t = 0.0
         self.run_new_best = False
@@ -518,6 +520,7 @@ class ShooterGame:
             "pickup": sine(880.0, 0.12, name="pickup"),
             "hurt": square(110.0, 0.15, name="hurt"),
             "wave": sine(660.0, 0.20, name="wave"),
+            "clutch": square(520.0, 0.12, name="clutch"),
             # Boss / engagement cues: each event gets a distinct voice; the
             # matching caption makes the cue visible as well as audible.
             "boss_windup": square(70.0, 0.35, name="boss_windup"),
@@ -570,6 +573,7 @@ class ShooterGame:
             self.build_scene()
         events = self.sim.step(float(dt), actions)
         self._forfeit_cue_pending = False
+        self._clutch_cue_pending = False
         self._critical_kill_pending = False
         for e in events:
             self._play_event(e)
@@ -789,9 +793,16 @@ class ShooterGame:
                     "t": float(cfg.get("life_s", 0.7)),
                 })
             self.spawn_marks = self.spawn_marks[:MAX_SPAWN_MARKS]
+        elif event == "clutch":
+            self._play_clip(self._clips["clutch"], 0.6)
+            self._cue("CLUTCH CLEAR")
+            self._clutch_cue_pending = True
         elif event in ("pickup", "wave"):
             self._play_clip(self._clips["pickup" if event == "pickup" else "wave"], 0.7)
-            self._cue("SURGE ACQUIRED" if event == "pickup" else "WAVE CLEAR")
+            if event == "wave" and self._clutch_cue_pending:
+                self._clutch_cue_pending = False
+            else:
+                self._cue("SURGE ACQUIRED" if event == "pickup" else "WAVE CLEAR")
             if event == "pickup":
                 self._pickup_fx_t = float(self.sim.juice.get("pickup_fx_s", 0.30))
         elif event == "hurt":

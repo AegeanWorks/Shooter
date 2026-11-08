@@ -1930,6 +1930,30 @@ def route_campaign_seal(prefix: str, shadows: bool = True, srgb: bool = True, po
         engine.close()
 
 
+def route_clutch(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """A wave clear at 30 HP: the clutch-cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = []
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.hp = 30
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"clutch hp={g.sim.hp} clutch={g.sim.clutch} wave={g.sim.wave} "
+            f"cue={getattr(g, 'sound_cue', '')!r} voices={g.mixer.voice_count()}"
+        )
+        engine.capture(f"{prefix}_clutch.png", f"{prefix}_clutch.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_campaign_complete(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Five seconds after the clear, banner gone: the completion-line pair."""
     from keystone.app import Engine
@@ -2163,6 +2187,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_campaign_seal(prefix, shadows, srgb, post, bloom)
     if which == "campaign_complete":
         route_campaign_complete(prefix, shadows, srgb, post, bloom)
+    if which == "clutch":
+        route_clutch(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":
         route_hud_ammo(prefix, shadows, srgb, post, bloom)
     if which == "flinch":

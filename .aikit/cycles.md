@@ -1607,3 +1607,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 248 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-77.json`.
+
+## Cycle 78 - Audio cues: clutch wave-clear cue
+- **Area**: audio cues (78th cycle).
+- **Defect / evidence**: the sim emits `clutch` on a wave clear at
+  30 HP or less, but the game ignored it; only the generic wave
+  voice/caption played, so a notable survival moment was unannounced.
+- **Fix**: map `clutch` to a 0.12 s 520 Hz square voice and a
+  `CLUTCH CLEAR` caption. A one-frame pending flag keeps the clutch caption
+  through the following wave event while the wave voice still plays; normal
+  clears keep WAVE CLEAR. No sim, HP, score or save change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-78/`;
+  960x540 seed 1, empty arena at hp 30, one clear frame. 1,260 changed px
+  (0.24%, bbox 396,164-827,459), mean luma 34.00 -> 33.99; draws 9,
+  triangles 434; voices 1 -> 2. WAV: 0.12 s, peak 1.0.
+- **Played runs**: `clutch 1` before/after same hash `ae293bcd...`,
+  wave 2, hp 30, count 1, cue WAVE CLEAR -> CLUTCH CLEAR, audio 1 -> 2,
+  0 drops.
+- **Gates**: `python -m pytest -q` 251 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-78.json`.

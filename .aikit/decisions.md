@@ -658,3 +658,10 @@ Status: accepted
 Context: Overdrive is a prominent eight-second x2 state, but only the HUD timer line changed. The held weapon kept its normal material, so the power-up had no first-person visual state.
 Decision: Register a brighter per-weapon `material.gun_<weapon>_od` variant and select it for both viewmodel nodes while `overdrive_t > 0`; fall back to the normal material when the timer ends. Variants brighten color, specular, shininess and emissive; no new nodes, draws, colliders, sim state or timer changes.
 Consequences: Suite 248/248 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The staged pair at 960x540 seed 1 changes 5,338 px (1.03%, bbox 546,326-655,411), mean luma 32.74 -> 33.19, draws 6, triangles 290. `overdrive 10` before/after same hash `7c1080ce...`, 10 frames, t 7.83, reserve 90, cue OVERDRIVE, hp 100, audio 1, 0 drops. Evidence: `evidence/cycle-77.json`, images in workspace `shots/shooter-campaign/cycle-77/`.
+
+## ADR-095: Clutch wave-clear cue (audio cues)
+Date: 2026-11-08
+Status: accepted
+Context: The sim emitted `clutch` when a wave cleared at 30 HP or less, but the game ignored it; only the generic wave voice/caption played. A notable survival moment vanished into an ordinary WAVE CLEAR.
+Decision: Map `clutch` to a 0.12 s 520 Hz square voice and a `CLUTCH CLEAR` caption. Because the wave-clear event follows in the same update, a one-frame pending flag keeps the clutch caption while still playing the wave voice; normal clears keep WAVE CLEAR. No sim, HP, score or save change.
+Consequences: Suite 251/251 green (three new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The low-HP clear pair at 960x540 seed 1 changes 1,260 px (0.24%, bbox 396,164-827,459), mean luma 34.00 -> 33.99, draws 9, triangles 434; voices 1 -> 2. `clutch 1` before/after same hash `ae293bcd...`, wave 2, hp 30, count 1, cue WAVE CLEAR -> CLUTCH CLEAR, audio 1 -> 2, 0 drops. WAV/spectrogram report a 0.12 s voice at peak 1.0. Evidence: `evidence/cycle-78.json`, audio in workspace `shots/shooter-campaign/cycle-78/`.
