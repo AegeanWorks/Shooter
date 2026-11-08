@@ -1,0 +1,70 @@
+{
+  "area": "keystone testbed: scene/prefab library soft delete and restore",
+  "commands": [
+    "python -m pytest tests/test_keystone_library_trash_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 110,
+  "feature": "SceneLibrary and PrefabLibrary delete-to-trash, unique and sorted trash entries, dotted entry names, restore round trips, suffix isolation between scene/prefab trash, and refusal paths (blank/path names, missing entry, wrong suffix, live collision)",
+  "fix": "add tests/test_keystone_library_trash_mechanics.py with five tests using the real scene and prefab libraries",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "366 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "scene_trash": {
+      "delete_removes_live_file": true,
+      "entries_after_delete": 0,
+      "load_after_delete": "KeyError",
+      "trash_name": "arena.<uuid>.kscene",
+      "restore_name": "arena",
+      "restored_nodes": ["", "pad"],
+      "trash_empty_after_restore": true,
+      "delete_missing": "KeyError"
+    },
+    "prefab_trash": {
+      "delete_removes_live_file": true,
+      "trash_name_suffix": ".kprefab",
+      "restore_name": "pickup",
+      "loaded_node_count": 1,
+      "trash_empty_after_restore": true,
+      "delete_missing": "KeyError"
+    },
+    "trash_entries": {
+      "unique_names_for_repeated_delete": true,
+      "dotted_name_preserved": "level.v2",
+      "sorted_by_trash_name": true,
+      "missing_directory": []
+    },
+    "restore_refusals": {
+      "blank_name": "ValueError",
+      "path_name": "ValueError",
+      "missing_entry": "KeyError",
+      "wrong_suffix": "ValueError",
+      "live_collision": "FileExistsError",
+      "live_content_intact": ["", "new"],
+      "trash_kept_after_failed_restore": true
+    },
+    "suffix_isolation": {
+      "scene_trash": ["arena"],
+      "prefab_trash": ["pickup"],
+      "both_restore": true
+    }
+  },
+  "tests": {
+    "library_trash_tests": 5,
+    "suite": "366 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone library trash",
+    "scene library",
+    "prefab library",
+    "soft delete",
+    "restore collision",
+    "suffix isolation"
+  ]
+}

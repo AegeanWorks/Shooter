@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-109-camera-culling",
+    "task_id": "shooter-cycle-110-library-trash",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794144282.1542463,
+    "updated_at": 1794144719.8112543,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794144282.350887
+    "completed_at": 1794144720.0239933
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-103-input-ui-assets",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Input/UI/assets covered: 337 tests, determinism 1800 ok (b25db520), aikit 4/4, input/UI/PNG/OBJ/merge green; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794141245.1707327,
-      "timestamp_str": "2026-11-08 15:34:05",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-103-input-ui-assets",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-103-input-ui-assets' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794141245.7491872,
-      "timestamp_str": "2026-11-08 15:34:05",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-104-http-server",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: drive the real web server routes against the shooter GameSession, including editor actions and 404/405/400 paths",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794141656.6125283,
-      "timestamp_str": "2026-11-08 15:40:56",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The web server was only manually smoke-tested; no project test covered its GET/POST/editor routes or problem statuses.",
-        "benefits": "Four tests pin health/describe/scene/inspector, the CLI-matching simulate hash, editor select/transform, and 404/405/400 handling over real loopback HTTP.",
-        "risks": "contract: tests only; dependency: none; concurrency: server on a daemon thread/port 0; state: no game/sim/hash change.",
-        "mitigation": "A module-scoped threaded server with cleanup, real HTTP requests, full suite, determinism and project gates."
-      },
-      "plan_digest": "57fcbb51309747572df962b5d95c0ae44966341a04734318c4db5c2936620669"
-    },
     {
       "task_id": "shooter-cycle-104-http-server",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794144282.3508887,
       "timestamp_str": "2026-11-08 16:24:42",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-110-library-trash",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover scene/prefab library soft delete, unique trash entries, suffix isolation and restore safety",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794144360.6301265,
+      "timestamp_str": "2026-11-08 16:26:00",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "library_trash backs scene/prefab/material deletion but has no direct project coverage; only material restore is exercised through GameSession.",
+        "benefits": "Tests pin delete/trash/restore round trips, dotted names, unique trash filenames, suffix isolation, path/suffix/collision refusals and intact content after a rejected restore.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp library directories only; no game/sim/hash change.",
+        "mitigation": "Temp directories per test, real SceneLibrary/PrefabLibrary APIs, full suite, determinism and project gates."
+      },
+      "plan_digest": "ae8b992886b42c7c3af79ab32caaa62b162efdf12a93083134a2232adedaf405"
+    },
+    {
+      "task_id": "shooter-cycle-110-library-trash",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Library trash covered: 366 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794144719.8112543,
+      "timestamp_str": "2026-11-08 16:31:59",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-110-library-trash",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-110-library-trash' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794144720.023995,
+      "timestamp_str": "2026-11-08 16:32:00",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

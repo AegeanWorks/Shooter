@@ -2287,3 +2287,19 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 361 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-109.json`.
+
+## Cycle 110 - Keystone testbed: scene/prefab library soft delete and restore
+- **Area**: keystone testbed (110th cycle).
+- **Feature / evidence**: `library_trash` backs scene, prefab and material
+  deletion, but only material restore was covered through GameSession; no
+  project test exercised the scene/prefab paths or the restore refusals.
+- **Fix**: add `tests/test_keystone_library_trash_mechanics.py` with five
+  tests over the real SceneLibrary/PrefabLibrary APIs.
+- **Proof**: delete removes the live file and load/delete raise KeyError;
+  trash names are unique and keep dotted names (`level.v2`), sorted for
+  stable listings; blank/path/missing/wrong-suffix restores raise, a live
+  collision raises FileExistsError and leaves content plus trash intact;
+  scene and prefab trash are isolated by suffix and both restore cleanly.
+- **Gates**: `python -m pytest -q` 366 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-110.json`.

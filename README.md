@@ -83,6 +83,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `PerspectiveCamera` + `culling` | look_at/clamp/move, projection edges, nested/hidden/skinned frustum culling | `tests/test_keystone_camera_culling_mechanics.py` |
 | Engine loop + `HumanOverlay` + CLI | fixed-step run, pause menu/pause, `--expect-hash`/`--replay` | `tests/test_keystone_engine_loop_mechanics.py` |
 | `component_codec` | dataclass/custom codecs, scene/prefab round trips, lifecycle | `tests/test_keystone_component_codec_mechanics.py` |
+| `library_trash` | scene/prefab delete, unique/sorted trash, suffix isolation, restore refusals | `tests/test_keystone_library_trash_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -137,6 +138,7 @@ projects/shooter/
 │   ├── test_keystone_engine_loop_mechanics.py <- engine loop/clock, pause overlay, CLI gates
 │   ├── test_keystone_component_codec_mechanics.py <- component codecs/scene/prefab/lifecycle
 │   ├── test_keystone_camera_culling_mechanics.py <- camera math + nested/hidden/skinned culling
+│   ├── test_keystone_library_trash_mechanics.py <- scene/prefab trash, uniqueness, restore safety
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -338,7 +340,8 @@ projects/shooter/
 │   ├── keystone-manifest-asset-repro.md <- upstream report: manifest-asset validation duplicate
 │   ├── cycle-107.json <- cycle 107 proof: component codecs + minimal manifest-asset reproducer
 │   ├── cycle-108.json <- cycle 108 proof: project CLI commands + self-clearing reproducer
-│   └── cycle-109.json <- cycle 109 proof: camera orientation/projection + CPU frustum culling
+│   ├── cycle-109.json <- cycle 109 proof: camera orientation/projection + CPU frustum culling
+│   └── cycle-110.json <- cycle 110 proof: scene/prefab trash uniqueness and restore safety
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
