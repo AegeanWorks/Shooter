@@ -1,0 +1,75 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py save_error <prefix>",
+    "python scripts/play_run.py save_fail 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 58,
+  "fix": "count an OSError from the profile write as a failed save instead of crashing the finish, and show a red PROFILE NOT SAVED line first in the death debrief extras",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "207 passed"
+  },
+  "play_runs": {
+    "parity": "same death hash f8cd9e28 before/after; draw/handling only, profile schema and sim untouched",
+    "save_fail_after": {
+      "drops": 0,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "last_run": true,
+      "peak_vox": 3,
+      "profile_runs": 1,
+      "save_errors": 1,
+      "score": 1500,
+      "wave": 2
+    },
+    "save_fail_before": {
+      "drops": 0,
+      "frames": 1,
+      "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+      "hp": 0,
+      "kills": 9,
+      "last_run": true,
+      "peak_vox": 3,
+      "profile_runs": 1,
+      "save_errors": 1,
+      "score": 1500,
+      "wave": 2
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-58/after",
+    "before_dir": "shots/shooter-campaign/cycle-58/before",
+    "route": "scripts/capture.py save_error; 960x540 seed 1, profile lock held, staged brute death"
+  },
+  "tests": {
+    "save_error_tests": 3,
+    "suite": "207 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "profile save failure",
+    "debrief warning",
+    "crash-free finish"
+  ],
+  "visual_diff": {
+    "bbox": [
+      281,
+      334,
+      678,
+      449
+    ],
+    "changed_px": 13320,
+    "draws": 6,
+    "fraction": 0.0257,
+    "mean_luma_after": 45.72,
+    "mean_luma_before": 47.08,
+    "triangles": 278
+  }
+}

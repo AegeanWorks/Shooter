@@ -977,6 +977,39 @@ def route_surge_forfeit(prefix: str, shadows: bool = True, srgb: bool = True, po
         engine.close()
 
 
+def route_save_error(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Death debrief with the profile write locked: the save-error pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        lock = g.profile_store.path.with_name(g.profile_store.path.name + ".lock")
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.write_text("locked", encoding="utf-8")
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.hp = 10
+        g.sim.score = 1500
+        g.sim.kills = 9
+        g.sim.best_streak = 4
+        g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
+        for _ in range(240):
+            g.update(FIXED_STEP, ActionState())
+            if not g.sim.alive:
+                break
+        print(
+            f"save-error alive={g.sim.alive} errors={g.profile_save_errors} "
+            f"saved={g.profile_store.path.exists()} last_run={g.last_run is not None}"
+        )
+        engine.capture(f"{prefix}_save_error.png", f"{prefix}_save_error.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_tracer_tint(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """One first-shot frame per weapon: the tracer/flash tint pair.
 
@@ -1612,6 +1645,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_switch_cue(prefix, shadows, srgb, post, bloom)
     if which == "surge_forfeit":
         route_surge_forfeit(prefix, shadows, srgb, post, bloom)
+    if which == "save_error":
+        route_save_error(prefix, shadows, srgb, post, bloom)
     if which == "killmark":
         route_killmark(prefix, shadows, srgb, post, bloom)
     if which == "slam_ring":

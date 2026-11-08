@@ -1185,3 +1185,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 204 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-57.json`.
+
+## Cycle 58 - Progression and saves: visible save failure
+- **Area**: progression and saves (58th cycle).
+- **Defect / evidence**: a failed profile write only incremented
+  `profile_save_errors`; the death debrief looked normal while the run was
+  lost. A profile parent that could not be created raised `FileExistsError`
+  out of the finish. The baseline test showed a normal debrief with no
+  warning for both cases.
+- **Fix**: catch `OSError` from the store save and count it as a failed
+  save, then show a red `PROFILE NOT SAVED` line first in the debrief
+  extras. Profile schema, save format, lock policy and sim are untouched.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-58/`;
+  960x540 seed 1, profile lock held, staged brute death. 13,320 changed px
+  (2.57%, bbox 281,334-678,449), mean luma 47.08 -> 45.72; draws 6,
+  triangles 278.
+- **Played runs**: `save_fail 240` before/after same death hash
+  `f8cd9e28...`, profile runs 1, save_errors 1, last_run recorded, hp 0,
+  peak 3, 0 drops.
+- **Gates**: `python -m pytest -q` 207 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-58.json`.

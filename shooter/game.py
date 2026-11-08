@@ -544,7 +544,13 @@ class ShooterGame:
     def _save_profile(self) -> None:
         if self.profile_disabled:
             return
-        if not self.profile_store.save(self.profile):
+        try:
+            saved = self.profile_store.save(self.profile)
+        except OSError:
+            # A path that cannot even create its parent must lose the run,
+            # not crash the finish; the debrief carries the warning.
+            saved = False
+        if not saved:
             self.profile_save_errors += 1
 
     def _record_campaign_clear(self) -> None:
@@ -1062,6 +1068,8 @@ class ShooterGame:
                 for item in list(self.profile.get("history", []))[:5]
             ]
             extras: list[tuple[str, tuple]] = []
+            if self.profile_save_errors > 0:
+                extras.append(("PROFILE NOT SAVED", (1.0, 0.30, 0.30, 1.0)))
             if self.campaign_cleared:
                 extras.append(("CAMPAIGN CLEARED", (1.0, 0.62, 0.20, 1.0)))
             if self.run_new_best:
