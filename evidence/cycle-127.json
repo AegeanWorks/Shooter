@@ -1,0 +1,87 @@
+{
+  "area": "keystone testbed: glTF source, GLB and accessor decoding",
+  "commands": [
+    "python -m pytest tests/test_keystone_gltf_loader_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 127,
+  "feature": "glTF source variants, GLB container validation, data/file/binary buffers, accessor normalization/error paths and top-level document checks with registry side effects",
+  "fix": "add tests/test_keystone_gltf_loader_mechanics.py with five byte/file-level tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "451 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "sources": {
+      "mapping": true,
+      "json_text": true,
+      "json_bytes": true,
+      "file_path": true,
+      "string_path": true,
+      "glb_bytes": true,
+      "invalid_type": "TypeError",
+      "missing_path": "FileNotFoundError"
+    },
+    "glb_validation": {
+      "truncated_header": "ValueError",
+      "bad_magic": "ValueError",
+      "bad_version": "ValueError",
+      "bad_declared_length": "ValueError",
+      "truncated_chunk": "ValueError",
+      "chunk_past_container": "ValueError",
+      "missing_json": "ValueError",
+      "duplicate_json": "ValueError"
+    },
+    "buffers": {
+      "data_uri": true,
+      "file_uri": true,
+      "glb_binary_slice": true,
+      "missing_file": "FileNotFoundError",
+      "missing_uri_no_binary": "ValueError",
+      "second_binary_buffer": "ValueError",
+      "binary_length_exceeds": "ValueError",
+      "buffers_not_list": "TypeError",
+      "non_base64_uri": "ValueError"
+    },
+    "accessors": {
+      "vec3_floats": true,
+      "missing_view_zeros": true,
+      "normalized_uint16": true,
+      "sparse": "ValueError",
+      "bad_component_type": "ValueError",
+      "bad_accessor_type": "ValueError",
+      "float_normalized": "ValueError",
+      "unknown_buffer_view": "ValueError",
+      "non_mapping_view": "TypeError",
+      "unknown_buffer": "ValueError",
+      "stride_too_small": "ValueError",
+      "reads_outside": "ValueError"
+    },
+    "document": {
+      "invalid_json": "ValueError",
+      "non_object": "TypeError",
+      "bad_version": "ValueError",
+      "buffer_views_not_list": "TypeError",
+      "invalid_source": "TypeError",
+      "missing_file": "FileNotFoundError",
+      "registry_mesh_id": "gltf.mesh.0",
+      "registry_material_id": "gltf.material.0",
+      "glb_end_to_end": true
+    }
+  },
+  "tests": {
+    "gltf_loader_tests": 5,
+    "suite": "451 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone gltf loader",
+    "glb container",
+    "gltf buffers",
+    "accessor normalization",
+    "gltf validation"
+  ]
+}

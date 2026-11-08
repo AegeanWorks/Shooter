@@ -2569,3 +2569,18 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 446 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-126.json`.
+
+## Cycle 127 - Keystone testbed: glTF source and accessor decoding
+- **Area**: keystone testbed (127th cycle).
+- **Feature / evidence**: `gltf.io` parsing and GLB/accessor error paths
+  back every glTF asset but were only exercised on happy paths.
+- **Fix**: add `tests/test_keystone_gltf_loader_mechanics.py` with five
+  byte/file-level tests.
+- **Proof**: mapping/text/bytes/file/GLB sources resolve; malformed GLB
+  headers/chunks/JSON duplicates raise; data/file/GLB buffers load and
+  validate; accessors decode VEC3/zero-fill/normalized values and reject
+  sparse/type/stride/range errors; `load_gltf` validates documents,
+  registers gltf.mesh/material ids and loads a GLB end to end.
+- **Gates**: `python -m pytest -q` 451 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-127.json`.

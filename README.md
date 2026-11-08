@@ -100,6 +100,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `png`/`texture` | RGBA round trip/flip, corruption, texture sha, checker | `tests/test_keystone_png_texture_mechanics.py` |
 | `obj_loader` | normals/UVs, negative indices, quads, homogeneous vertices, errors | `tests/test_keystone_obj_loader_mechanics.py` |
 | `gltf_import` | suffix detection, prefab/registry saves, textures, re-import, errors | `tests/test_keystone_gltf_import_mechanics.py` |
+| `gltf` loader | sources/GLB, buffers, accessors, validation, registry | `tests/test_keystone_gltf_loader_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -171,6 +172,7 @@ projects/shooter/
 │   ├── test_keystone_png_texture_mechanics.py <- PNG flip/corruption, texture sha, checker
 │   ├── test_keystone_obj_loader_mechanics.py <- normals/UVs, negative indices, quads, errors
 │   ├── test_keystone_gltf_import_mechanics.py <- glTF prefab/registry saves, textures, errors
+│   ├── test_keystone_gltf_loader_mechanics.py <- GLB/source, buffers, accessors, validation
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -283,11 +285,11 @@ projects/shooter/
 │   ├── cycle-18.json  <- improvement-cycle 18 proof: cover LOS pair, same-hash runs
 │   ├── cycle-19.json  <- improvement-cycle 19 proof: open spawn lane pair, campaign run
 │   ├── cycle-20.json  <- improvement-cycle 20 proof: numeric boss-HP pair, same-hash run
-│   ├── cycle-21.json  <- improvement-cycle 21 proof: first-person gun pair, same-hash runs
-│   ├── cycle-22.json  <- improvement-cycle 22 proof: reload-cue pair, same-hash run
-│   ├── cycle-23.json  <- improvement-cycle 23 proof: persisted-history debrief pair, run
-│   ├── cycle-24.json  <- improvement-cycle 24 proof: spread-reticle pairs, same-hash runs
-│   ├── cycle-25.json  <- improvement-cycle 25 proof: high-ground melee pair, reach run
+│   ├── cycle-21.json
+│   ├── cycle-22.json
+│   ├── cycle-23.json
+│   ├── cycle-24.json
+│   ├── cycle-25.json
 │   ├── cycle-26.json
 │   ├── cycle-27.json
 │   ├── cycle-28.json
@@ -389,7 +391,8 @@ projects/shooter/
 │   ├── cycle-123.json <- batch planning, world-space merges, exclusions
 │   ├── cycle-124.json <- PNG round trips, corruption, texture sha, checker
 │   ├── cycle-125.json <- OBJ normals/UVs, negative indices, quads, errors
-│   └── cycle-126.json <- glTF prefab/registry saves, textures, re-import
+│   ├── cycle-126.json <- glTF prefab/registry saves, textures, re-import
+│   └── cycle-127.json <- GLB/source, buffers, accessors, validation
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
