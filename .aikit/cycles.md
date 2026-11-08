@@ -1742,3 +1742,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 263 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-84.json`.
+
+## Cycle 85 - Audio cues: overdrive-kill reward
+- **Area**: audio cues (85th cycle).
+- **Defect / evidence**: kills during the eight-second x2 overdrive emitted
+  `overdrive_hit`, but the game ignored it; only the normal kill voice and
+  doubled score pop acknowledged the payoff.
+- **Fix**: map `overdrive_hit` to a distinct 0.07 s 760 Hz square voice and
+  an `OVERDRIVE KILL` caption (or `OVERDRIVE CRIT` when a critical is
+  pending). Reward math, kill voice and sim state are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-85/`;
+  960x540 seed 1, overdrive_t=3, 1 hp mite. 5,076 changed px (0.98%, bbox
+  384,164-827,459), mean luma 36.72 -> 36.64; draws 10, triangles 698;
+  voices 3 -> 4. WAV: 0.07 s, peak 1.0.
+- **Played runs**: `overdrive_kill 1` before/after same hash `00065237...`,
+  1 kill, score 220, t 2.98, cue '' -> OVERDRIVE KILL, audio 3 -> 4,
+  0 drops.
+- **Gates**: `python -m pytest -q` 266 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-85.json`.

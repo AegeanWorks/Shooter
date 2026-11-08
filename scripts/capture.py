@@ -291,6 +291,30 @@ def route_summon_cover(prefix: str, shadows: bool = True, srgb: bool = True, pos
         engine.close()
 
 
+def route_overdrive_kill(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Forced overdrive kill: the reward-cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=1, max_hp=30)]
+        g.sim.overdrive_t = 3.0
+        g.update(FIXED_STEP, ActionState(held=frozenset({"fire"})))
+        print(
+            f"overdrive-kill kills={g.sim.kills} score={g.sim.score} "
+            f"cue={getattr(g, 'sound_cue', '')!r} voices={g.mixer.voice_count()}"
+        )
+        engine.capture(f"{prefix}_overdrive_kill.png", f"{prefix}_overdrive_kill.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_overdrive_glow(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Three seconds of overdrive left: the held-gun state pair."""
     from keystone.app import Engine
@@ -2347,6 +2371,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_pickup_pop(prefix, shadows, srgb, post, bloom)
     if which == "overdrive_glow":
         route_overdrive_glow(prefix, shadows, srgb, post, bloom)
+    if which == "overdrive_kill":
+        route_overdrive_kill(prefix, shadows, srgb, post, bloom)
     if which == "hurt":
         for side in ("left", "right", "behind"):
             route_hurt(prefix, side, shadows, srgb, post, bloom)

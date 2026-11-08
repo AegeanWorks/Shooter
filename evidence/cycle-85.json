@@ -1,0 +1,85 @@
+{
+  "area": "audio cues",
+  "audio_probe": {
+    "overdrive_hit": {
+      "duration": 0.07,
+      "frames": 1543,
+      "name": "overdrive_hit",
+      "peak": 1.0,
+      "rms": 1.0,
+      "sample_rate": 22050
+    },
+    "reported_cues": 20,
+    "spectrogram": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-85\\after\\cues_spectrogram.png",
+    "wav": "C:\\Users\\Yunus-Emre\\Desktop\\portable_agent_kit\\shots\\shooter-campaign\\cycle-85\\after\\cues.wav"
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py overdrive_kill <prefix>",
+    "python scripts/play_run.py overdrive_kill 1 <report>",
+    "python scripts/audio_probe.py <out-dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 85,
+  "fix": "map the existing overdrive_hit event to a 0.07 s 760 Hz square voice and an OVERDRIVE KILL caption (OVERDRIVE CRIT when a critical is pending); the normal kill voice and reward math are unchanged",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "266 passed"
+  },
+  "play_runs": {
+    "overdrive_kill_after": {
+      "audio": 4,
+      "cue": "OVERDRIVE KILL",
+      "drops": 0,
+      "frames": 1,
+      "hash": "000652379584e82020896bfe102b7ce6",
+      "hp": 100,
+      "kills": 1,
+      "score": 220,
+      "t": 2.98
+    },
+    "overdrive_kill_before": {
+      "audio": 3,
+      "cue": "",
+      "drops": 0,
+      "frames": 1,
+      "hash": "000652379584e82020896bfe102b7ce6",
+      "hp": 100,
+      "kills": 1,
+      "score": 220,
+      "t": 2.98
+    },
+    "parity": "same hash 00065237 before/after; audio/caption only, with the same overdrive kill and score 220"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-85/after",
+    "before_dir": "shots/shooter-campaign/cycle-85/before",
+    "route": "scripts/capture.py overdrive_kill; 960x540 seed 1, overdrive_t=3, 1 hp mite"
+  },
+  "tests": {
+    "overdrive_kill_cue_tests": 3,
+    "suite": "266 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "overdrive kill",
+    "reward cue",
+    "caption"
+  ],
+  "visual_diff": {
+    "bbox": [
+      384,
+      164,
+      827,
+      459
+    ],
+    "changed_px": 5076,
+    "draws": 10,
+    "fraction": 0.0098,
+    "mean_luma_after": 36.64,
+    "mean_luma_before": 36.72,
+    "triangles": 698
+  }
+}

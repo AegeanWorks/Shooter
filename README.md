@@ -156,6 +156,7 @@ projects/shooter/
 │   ├── test_west_gap.py <- player-width west platform strip and walk-through
 │   ├── test_boss_dead_ui.py <- warden bar hidden on death, shown live
 │   ├── test_tracer_muzzle.py <- player tracer starts at the viewmodel muzzle
+│   ├── test_overdrive_kill_cue.py <- overdrive kill voice/caption, normal parity
 │   ├── test_viewmodel_recoil.py <- kick-driven gun back/up offset and settle
 │   ├── test_viewmodel_bob.py <- speed-driven sway, rest and DATA checks
 │   ├── test_brute_gap.py <- brute closes its 2.5-3.0 m dead zone
@@ -164,9 +165,9 @@ projects/shooter/
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
-│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/brute_gap/warden_cover/west_gap/boss_death/summon/summon_overlap/pickup/highground/switch/overdrive/clutch/forfeit/save_fail/save_retry/profile_bad/profile_corrupt/campaign
+│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/brute_gap/warden_cover/west_gap/boss_death/summon/summon_overlap/pickup/highground/switch/overdrive/overdrive_kill/clutch/forfeit/save_fail/save_retry/profile_bad/profile_corrupt/campaign
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/tracer_muzzle/switch_cue/surge_forfeit/save_error/save_retry/profile_disabled/profile_reset/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/overdrive_glow/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/brute_gap/warden_cover/west_gap/boss_dead/platform_base/clutch/lowhp_pulse/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/tracer_muzzle/switch_cue/surge_forfeit/save_error/save_retry/profile_disabled/profile_reset/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/overdrive_glow/overdrive_kill/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/brute_gap/warden_cover/west_gap/boss_dead/platform_base/clutch/lowhp_pulse/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -251,7 +252,8 @@ projects/shooter/
 │   ├── cycle-81.json  <- improvement-cycle 81 proof: warden-cover pair, LOS drill
 │   ├── cycle-82.json  <- improvement-cycle 82 proof: west-gap pair, walk-through drill
 │   ├── cycle-83.json  <- improvement-cycle 83 proof: boss-death bar pair, death drill
-│   └── cycle-84.json  <- improvement-cycle 84 proof: tracer-muzzle pair, same-hash strafe run
+│   ├── cycle-84.json  <- improvement-cycle 84 proof: tracer-muzzle pair, same-hash strafe run
+│   └── cycle-85.json  <- improvement-cycle 85 proof: overdrive-kill cue pair + WAV
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

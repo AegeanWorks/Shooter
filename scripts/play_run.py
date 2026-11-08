@@ -29,6 +29,7 @@ Modes:
   highground stand on the platform edge with a mite at its base (reach drill)
   switch   press slot2 -> slot3 -> slot1 (weapon-switch cue drill)
   overdrive press overdrive on an empty arena (state/material drill)
+  overdrive_kill  force a kill during overdrive (reward-cue drill)
   clutch   clear a wave at 30 HP (clutch cue drill)
   forfeit  arm surge, then press slot1 (surge-forfeit cue drill)
   denied   press overdrive with no pulse reserve (audio/caption drill)
@@ -102,6 +103,8 @@ def _action(mode: str, game: ShooterGame, frame: int, strafe: list[ActionState])
         return ActionState(pressed=frozenset({"slot1"})) if frame == 2 else ActionState()
     if mode == "overdrive":
         return ActionState(pressed=frozenset({"overdrive"})) if frame == 0 else ActionState()
+    if mode == "overdrive_kill":
+        return ActionState(held=frozenset({"fire"})) if frame == 0 else ActionState()
     if mode == "campaign":
         return (
             ActionState(held=frozenset({"fire"}))
@@ -279,6 +282,13 @@ def main(
             game.sim.spawn_queue = ["mite"]
             game.sim.spawn_t = 999.0
             game.sim.enemies = []
+        if mode == "overdrive_kill":
+            game.sim.spawn_queue = ["mite"]
+            game.sim.spawn_t = 999.0
+            game.sim.enemies = [
+                _Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=1, max_hp=30)
+            ]
+            game.sim.overdrive_t = 3.0
         if mode == "clutch":
             game.sim.spawn_queue = []
             game.sim.spawn_t = 999.0

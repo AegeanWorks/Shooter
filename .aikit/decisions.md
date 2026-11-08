@@ -707,3 +707,10 @@ Status: accepted
 Context: Player tracer beams began at the camera eye, so they appeared to leave the crosshair while the viewmodel sat lower-right. The gun looked detached from its shots even though the muzzle flash was aligned.
 Decision: Add `Sim.muzzle_position()` using the DATA viewmodel barrel forward/right/down values plus half the barrel length, and use that point for the tracer `x0/y0/z0`. The hitscan ray, damage origin, spread, wisp tracers and all sim state stay unchanged; only the drawn beam start moves.
 Consequences: Suite 263/263 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The clean-shot pair at 960x540 seed 1 changes 5,583 px (1.08%, bbox 350,268-559,539), mean luma 34.19 -> 34.34, draws 9, triangles 322; the start moves from eye (0.00,1.62,8.00) to muzzle (0.21,1.43,7.03). `strafe 300` keeps hash `14a48660...`, 30 shots, hp 92, 1 hurt, audio 36, peak 8, 0 drops. Evidence: `evidence/cycle-84.json`, images in workspace `shots/shooter-campaign/cycle-84/`.
+
+## ADR-102: Overdrive-kill reward cue (audio cues)
+Date: 2026-11-08
+Status: accepted
+Context: Kills during the eight-second x2 overdrive emitted `overdrive_hit`, but the game ignored it; only the normal kill voice and doubled score pop acknowledged the payoff.
+Decision: Map `overdrive_hit` to a distinct 0.07 s 760 Hz square voice at 0.55 gain and an `OVERDRIVE KILL` caption; when a critical is already pending, the caption reads `OVERDRIVE CRIT` while the kill feed still gets its CRIT tag. Reward math, kill voice and sim state are unchanged.
+Consequences: Suite 266/266 green (three new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The forced-kill pair at 960x540 seed 1 changes 5,076 px (0.98%, bbox 384,164-827,459), mean luma 36.72 -> 36.64, draws 10, triangles 698; audio voices 3 -> 4. `overdrive_kill 1` before/after same hash `00065237...`, 1 kill, score 220, t 2.98, cue '' -> OVERDRIVE KILL, audio 3 -> 4, 0 drops. WAV/spectrogram report a 0.07 s voice at peak 1.0. Evidence: `evidence/cycle-85.json`, audio in workspace `shots/shooter-campaign/cycle-85/`.
