@@ -1990,6 +1990,34 @@ def route_lowhp_pulse(prefix: str, shadows: bool = True, srgb: bool = True, post
         engine.close()
 
 
+def route_boss_dead(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Death frame with a live warden: the boss-bar death pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 2.0), hp=600,
+                   max_hp=600, summon_cd=999.0)
+        ]
+        g.sim.hp = 0
+        g.sim.alive = False
+        g.last_run = {"score": 1500, "kills": 9, "wave": 2,
+                      "best_streak": 4, "time_s": 30, "outcome": "lose"}
+        g._sync_scene()
+        print(
+            f"boss-dead alive={g.sim.alive} boss_alive={g.sim.enemies[0].alive} "
+            f"last_run={g.last_run is not None}"
+        )
+        engine.capture(f"{prefix}_boss_dead.png", f"{prefix}_boss_dead.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_west_gap(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Approach along the west wall: the platform-gap pair."""
     import math
@@ -2322,6 +2350,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_warden_cover(prefix, shadows, srgb, post, bloom)
     if which == "west_gap":
         route_west_gap(prefix, shadows, srgb, post, bloom)
+    if which == "boss_dead":
+        route_boss_dead(prefix, shadows, srgb, post, bloom)
     if which == "lowhp_pulse":
         route_lowhp_pulse(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":

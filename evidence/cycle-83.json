@@ -1,0 +1,71 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py boss_dead <prefix>",
+    "python scripts/play_run.py boss_death 10 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 83,
+  "fix": "guard the warden bar with sim.alive so it hides on the death screen; the live boss bar, boss core and all combat/save state are unchanged",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "261 passed"
+  },
+  "play_runs": {
+    "boss_death_after": {
+      "alive": false,
+      "audio": 3,
+      "boss_alive": true,
+      "drops": 0,
+      "frames": 1,
+      "hash": "f1c79051d0e1e94356dee8f37c976ef3",
+      "hp": 0,
+      "last_run": true,
+      "wave": 3
+    },
+    "boss_death_before": {
+      "alive": false,
+      "audio": 3,
+      "boss_alive": true,
+      "drops": 0,
+      "frames": 1,
+      "hash": "f1c79051d0e1e94356dee8f37c976ef3",
+      "hp": 0,
+      "last_run": true,
+      "wave": 3
+    },
+    "parity": "same hash f1c79051 before/after; HUD-only change on the death frame"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-83/after",
+    "before_dir": "shots/shooter-campaign/cycle-83/before",
+    "route": "scripts/capture.py boss_dead; 960x540 seed 1, dead player with a live warden"
+  },
+  "tests": {
+    "boss_dead_ui_tests": 2,
+    "suite": "261 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "boss bar",
+    "death screen",
+    "HUD guard"
+  ],
+  "visual_diff": {
+    "bbox": [
+      338,
+      98,
+      621,
+      127
+    ],
+    "changed_px": 4864,
+    "draws": 7,
+    "fraction": 0.0094,
+    "mean_luma_after": 32.55,
+    "mean_luma_before": 33.15,
+    "triangles": 470
+  }
+}

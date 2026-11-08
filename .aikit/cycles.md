@@ -1706,3 +1706,19 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 259 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-82.json`.
+
+## Cycle 83 - UI readability: warden bar yields on death
+- **Area**: UI readability (83rd cycle).
+- **Defect / evidence**: cycle 53 hid the crosshair target bar on death, but
+  the warden bar was still drawn whenever an alive warden existed. A
+  boss-fight death showed `WARDEN 600/600` over `YOU DIED` and the debrief.
+- **Fix**: gate the warden bar block with `sim.alive`, matching the target
+  bar. The live boss bar, boss core, damage, AI and save state are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-83/`;
+  960x540 seed 1, dead player with a live warden. 4,864 changed px (0.94%,
+  bbox 338,98-621,127), mean luma 33.15 -> 32.55; draws 7, triangles 470.
+- **Played runs**: `boss_death 10` before/after same hash `f1c79051...`,
+  hp 0, boss alive, last_run recorded, audio 3, 0 drops.
+- **Gates**: `python -m pytest -q` 261 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-83.json`.

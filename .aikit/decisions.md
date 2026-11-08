@@ -693,3 +693,10 @@ Status: accepted
 Context: The low platform's west face sat 0.5 m from the wall, narrower than the 0.7 m player body. The visible rear strip looked walkable but blocked the player at z 11.65; only a full detour around the east/south sides worked.
 Decision: Move the platform center 0.5 m east (x -16.0 to -15.5), widening the west strip to 1.0 m while keeping its 6x6 footprint, 0.7 m height, rim, base frame and launch pad data-driven. No new nodes or collision tuning.
 Consequences: Suite 259/259 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4; the fairness reference still replays a win without re-recording. The west-approach pair at 960x540 seed 1 changes 19,128 px (3.69%, bbox 0,305-494,539), mean luma 53.40 -> 52.36, draws 7, triangles 218. `west_gap 240` before/after: final z 11.65 -> 19.15, both hp 100, 0 hurts, 0 drops; hashes differ by design. Evidence: `evidence/cycle-82.json`, images in workspace `shots/shooter-campaign/cycle-82/`.
+
+## ADR-100: Warden bar yields on death (UI readability)
+Date: 2026-11-08
+Status: accepted
+Context: Cycle 53 hid the crosshair target bar on death, but the warden bar was still drawn whenever an alive warden existed. A boss-fight death showed `WARDEN 600/600` over `YOU DIED` and the run debrief.
+Decision: Gate the warden bar block with `sim.alive`, matching the target bar. The live boss bar, boss core, damage, AI and save state are unchanged.
+Consequences: Suite 261/261 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The death-frame pair at 960x540 seed 1 changes 4,864 px (0.94%, bbox 338,98-621,127), mean luma 33.15 -> 32.55, draws 7, triangles 470. `boss_death 10` before/after same hash `f1c79051...`, hp 0, boss alive, last_run recorded, audio 3, 0 drops. Evidence: `evidence/cycle-83.json`, images in workspace `shots/shooter-campaign/cycle-83/`.

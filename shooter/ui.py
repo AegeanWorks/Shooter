@@ -144,7 +144,7 @@ def draw_shooter(canvas, hud, sim) -> None:
         (e for e in getattr(sim, "enemies", ()) if getattr(e, "alive", False) and e.etype == "warden"),
         None,
     )
-    if boss is not None:
+    if boss is not None and bool(getattr(sim, "alive", True)):
         frac = max(0.0, min(1.0, float(boss.hp) / max(1.0, float(boss.max_hp))))
         bx, by, bw, bh = cx - 140, 116, 280, 10
         canvas.text(bx, by - 18, "WARDEN", danger, 2)

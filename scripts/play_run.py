@@ -15,6 +15,7 @@ Modes:
   brute_gap stand 2.7 m from a brute (dead-zone close drill)
   warden_cover stand behind the north cover during a warden slam (LOS drill)
   west_gap walk the west-wall strip past the platform (gap drill)
+  boss_death stand in a warden slam at 5 HP (death-screen UI drill)
   summon   stand on the platform edge while a warden summons by the cover
   summon_overlap  idle at spawn while a centre warden summons (overlap drill)
   campaign stage a wave-3 warden kill, then idle through the clear banner
@@ -217,6 +218,16 @@ def main(
             sim.hvel = Vec3()
             sim.yaw = math.pi
             sim.pitch = 0.0
+        if mode == "boss_death":
+            sim = game.sim
+            sim.wave = 3
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            sim.hp = 5
+            sim.enemies = [
+                _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 6.0), hp=600,
+                       max_hp=600, windup_t=0.01, summon_cd=999.0)
+            ]
         if mode in ("death", "save_fail", "profile_bad", "profile_corrupt"):
             sim = game.sim
             sim.wave = 2
@@ -465,6 +476,8 @@ def main(
                 break
             if mode == "save_retry" and not game.sim.alive:
                 break
+            if mode == "boss_death" and not game.sim.alive:
+                break
             if mode == "platform" and game.sim.player_pos.y > 1.3 and game.sim.body.on_ground:
                 break
             if mode == "denied" and frame >= 10:
@@ -583,6 +596,13 @@ def main(
                 "count": int(getattr(game.sim, "clutch", 0)),
                 "voices": int(game.mixer.voice_count()),
                 "wave": int(game.sim.wave),
+            },
+            "boss_death": {
+                "alive": bool(game.sim.alive),
+                "boss_alive": any(
+                    e.alive and e.etype == "warden" for e in game.sim.enemies
+                ),
+                "last_run": getattr(game, "last_run", None) is not None,
             },
             "dry": {
                 "cue": getattr(game, "sound_cue", ""),
