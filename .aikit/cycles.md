@@ -1951,3 +1951,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 288 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-93.json`.
+
+## Cycle 94 - Keystone testbed: web session and editor API
+- **Area**: keystone testbed (94th cycle).
+- **Feature / evidence**: Keystone's web console is backed by
+  `GameSession` (describe/scene/editor/simulate) and the JSON API.
+  The shooter had no direct coverage of that surface.
+- **Fix**: add `tests/test_keystone_web_api.py` driving
+  `GameSession(ShooterGame())` for the describe contract, the
+  112-node scene (including arena and prefab ids), editor select and
+  the 120-frame simulate transcript; document the full testbed matrix
+  in README.
+- **Proof**: describe = shooter / 9 buttons / 32 capabilities;
+  scene = 112 nodes with `floor`, `platform-pad`,
+  `pickup:surge-pickup` and `warden-core`; editor selects
+  `platform-pad` (selection_count 1); simulate hash
+  `7e4b602e...` matches the CLI, ongoing wave 1 hp 100. Live web
+  smoke: `/api/health` ok, game shooter, editor_schema 57,
+  scene_schema 2; `/api/simulate` same hash; `--replay
+  bot_campaign.json` wins wave 4 with 30 kills / 11560 / hp 38.
+- **Gates**: `python -m pytest -q` 292 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-94.json`.

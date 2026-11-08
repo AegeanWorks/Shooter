@@ -57,6 +57,25 @@ python -m keystone --game shooter.game:ShooterGame --headless --frames 1 --size 
 python play.py --replay bot_campaign.json
 ```
 
+## Keystone Testbed
+
+The shooter is the living consumer for Keystone's runtime additions:
+
+| Keystone feature | Shooter consumer | Test |
+|---|---|---|
+| `AnimationStateMachine` + `StateMachineLibrary` (`.kstate`) + `apply_pose` | warden core calm/charge pulse | `tests/test_boss_anim_state.py` |
+| `ComponentRuntime` lifecycle | launch-pad pulse component | `tests/test_pad_pulse.py` |
+| `MaterialGraph` | warden core checker material | `tests/test_core_material_graph.py` |
+| `Prefab` + `PrefabLibrary` (`.kprefab`) | 3-root pickup beacon | `tests/test_pickup_prefab.py` |
+| `MaterialLibrary` (`.kmaterial`) | ammo-cache material | `tests/test_cache_material_library.py` |
+| `GameSession` web/editor/JSON API | describe/scene/editor/simulate | `tests/test_keystone_web_api.py` |
+
+```powershell
+python play.py --describe
+python play.py --simulate --frames 120
+python play.py --serve --port 8901   # GET /api/health, /api/scene; POST /api/simulate
+```
+
 ## What's Inside
 
 ```text
@@ -89,6 +108,7 @@ projects/shooter/
 │   ├── test_core_material_graph.py <- keystone material graph drives the core
 │   ├── test_pickup_prefab.py <- keystone .kprefab instantiation, ids/payloads
 │   ├── test_cache_material_library.py <- keystone .kmaterial cache material
+│   ├── test_keystone_web_api.py <- GameSession describe/scene/editor/simulate
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget

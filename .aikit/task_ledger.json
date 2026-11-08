@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-93-cache-material",
+    "task_id": "shooter-cycle-94-web-session",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794132979.4104834,
+    "updated_at": 1794133337.261069,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794132979.8747616
+    "completed_at": 1794133337.7207427
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-87-brute-windup",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Brute windup proven: 271 tests, determinism 1800 ok, aikit 4/4, 34916 px pair, hurt frame 1->23 at same hp 80, gap/brute drills intact; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794126062.4074855,
-      "timestamp_str": "2026-11-08 11:21:02",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-87-brute-windup",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-87-brute-windup' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794126074.918496,
-      "timestamp_str": "2026-11-08 11:21:14",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-88-enemy-spacing",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Enemies cycle: deterministic enemy separation so melee crowds keep their DATA radii, with a spacing test, capture pair and spacing drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794126265.0056682,
-      "timestamp_str": "2026-11-08 11:24:25",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Four mites converge onto the exact same coordinate (min pair gap 0.000) because movement has no enemy separation; the crowd reads as one blob and every bite comes from one point.",
-        "benefits": "A deterministic soft-spacing pass keeps alive enemies at least their combined radii apart, so silhouettes, hit targets and damage sources stay distinct.",
-        "risks": "contract: enemy movement/determinism; dependency: none; concurrency: none; state: new DATA clearance, no RNG, fairness may shift.",
-        "mitigation": "Failing-first spacing test, a staged capture pair, a spacing drill with min-gap telemetry, and the campaign fairness suite."
-      },
-      "plan_digest": "e95c695e4e1066ffa17a721070095a8ecfcead0d948c2a1ef425a12a1d08a8df"
-    },
     {
       "task_id": "shooter-cycle-88-enemy-spacing",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794132979.8747635,
       "timestamp_str": "2026-11-08 13:16:19",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-94-web-session",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover GameSession describe/scene/editor/simulate with tests and document the full testbed matrix",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794133331.2542493,
+      "timestamp_str": "2026-11-08 13:22:11",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter is the Keystone testbed, but the web/editor JSON API behind GameSession had no direct shooter coverage.",
+        "benefits": "Four fast tests now pin the shooter contract, 112-node scene (incl. prefab ids), editor select and the CLI-matching simulate hash; README maps every adopted feature.",
+        "risks": "contract: test/docs only; dependency: none; concurrency: none; state: no game/sim/hash change.",
+        "mitigation": "Session-level tests, CLI/web smoke outputs, full suite and the project gates."
+      },
+      "plan_digest": "e03b7ae7b1c0b02b5f450d4bb0293e7553aea421c44835b7865dcd3cf3d77b58"
+    },
+    {
+      "task_id": "shooter-cycle-94-web-session",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Web session covered: 292 tests, determinism 1800 ok (b25db520), aikit 4/4, describe/scene/editor/simulate green, web health ok and simulate hash 7e4b602e; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794133337.261069,
+      "timestamp_str": "2026-11-08 13:22:17",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-94-web-session",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-94-web-session' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794133337.7207441,
+      "timestamp_str": "2026-11-08 13:22:17",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

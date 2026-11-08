@@ -1,0 +1,44 @@
+{
+  "area": "keystone testbed: web session and editor API",
+  "commands": [
+    "python -m pytest tests/test_keystone_web_api.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python play.py --describe",
+    "python play.py --simulate --frames 120",
+    "python play.py --replay bot_campaign.json",
+    "python play.py --serve --port 8901 (GET /api/health, /api/describe, /api/scene; POST /api/simulate)",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 94,
+  "feature": "keystone GameSession JSON API (describe/scene/editor/simulate) behind the web console",
+  "fix": "add tests/test_keystone_web_api.py so the in-memory session that serves /api/describe, /api/scene, /api/editor and POST /api/simulate is covered directly against the shooter; document the full keystone testbed matrix in README",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "292 passed"
+  },
+  "keystone": {
+    "session": "GameSession(ShooterGame())",
+    "describe": {"game": "shooter", "buttons": 9, "capabilities": 32, "snapshot_fields": 26},
+    "scene": {"game": "shooter", "node_count": 112, "required_ids": ["floor", "platform-pad", "pickup:surge-pickup", "warden-core"]},
+    "editor": {"schema": "present", "selected": "platform-pad", "selection_count": 1},
+    "simulate": {"hash": "7e4b602e029d12d68672790318d119cd", "outcome": "ongoing", "wave": 1, "hp": 100},
+    "web_health": {"api": 1, "editor_schema": 57, "game": "shooter", "ok": true, "scene_schema": 2}
+  },
+  "cli_checks": {
+    "describe": {"capabilities": 32, "snapshot_fields": 26},
+    "simulate_120": {"hash": "7e4b602e029d12d68672790318d119cd", "outcome": "ongoing", "wave": 1},
+    "replay_campaign": {"hash": "bb425a57b9839e001906cff227fb618f", "outcome": "win", "wave": 4, "kills": 30, "score": 11560, "hp": 38}
+  },
+  "tests": {
+    "web_api_tests": 4,
+    "suite": "292 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone web session",
+    "editor API",
+    "json simulate"
+  ]
+}
