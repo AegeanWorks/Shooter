@@ -1119,7 +1119,9 @@ class ShooterGame:
                 for item in list(self.profile.get("history", []))[:5]
             ]
             extras: list[tuple[str, tuple]] = []
-            if self.profile_save_errors > 0:
+            if self.profile_disabled:
+                extras.append(("PROFILE DISABLED", (1.0, 0.30, 0.30, 1.0)))
+            elif self.profile_save_errors > 0:
                 extras.append(("PROFILE NOT SAVED", (1.0, 0.30, 0.30, 1.0)))
             if self.campaign_cleared:
                 extras.append(("CAMPAIGN CLEARED", (1.0, 0.62, 0.20, 1.0)))

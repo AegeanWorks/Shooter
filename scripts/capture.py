@@ -1088,6 +1088,40 @@ def route_surge_forfeit(prefix: str, shadows: bool = True, srgb: bool = True, po
         engine.close()
 
 
+def route_profile_disabled(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Death debrief with an unsupported schema: the disabled-profile pair."""
+    from keystone.app import Engine
+
+    profile_dir = Path(tempfile.mkdtemp(prefix="shooter-disabled-"))
+    profile_path = profile_dir / "profile.json"
+    profile_path.write_text('{"schema": 99, "best_score": 1}', encoding="utf-8")
+    game = ShooterGame(profile_path=profile_path)
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.hp = 10
+        g.sim.score = 1500
+        g.sim.kills = 9
+        g.sim.best_streak = 4
+        g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
+        for _ in range(240):
+            g.update(FIXED_STEP, ActionState())
+            if not g.sim.alive:
+                break
+        print(
+            f"profile-disabled disabled={g.profile_disabled} "
+            f"last_run={g.last_run is not None} "
+            f"file={profile_path.read_text(encoding='utf-8')!r}"
+        )
+        engine.capture(f"{prefix}_profile_disabled.png", f"{prefix}_profile_disabled.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_save_error(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Death debrief with the profile write locked: the save-error pair."""
     from keystone.app import Engine
@@ -1801,6 +1835,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_surge_forfeit(prefix, shadows, srgb, post, bloom)
     if which == "save_error":
         route_save_error(prefix, shadows, srgb, post, bloom)
+    if which == "profile_disabled":
+        route_profile_disabled(prefix, shadows, srgb, post, bloom)
     if which == "killmark":
         route_killmark(prefix, shadows, srgb, post, bloom)
     if which == "slam_ring":

@@ -1333,3 +1333,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 218 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-64.json`.
+
+## Cycle 65 - Progression/saves: disabled-profile warning
+- **Area**: progression and saves (65th cycle).
+- **Defect / evidence**: an unsupported profile schema sets
+  `profile_disabled`; `_save_profile` and `_record_progress` then return
+  early, but the death debrief looked normal. The player saw a scored run
+  with no sign that nothing would persist. The baseline test found a
+  normal debrief.
+- **Fix**: add a red `PROFILE DISABLED` line first in the debrief extras
+  when `profile_disabled` is true, taking precedence over `PROFILE NOT
+  SAVED`. Schema refusal, no-overwrite guard, in-memory run record and
+  debrief behavior are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-65/`;
+  960x540 seed 1, schema-99 profile, staged brute death. 9,692 changed px
+  (1.87%, bbox 290,334-669,383), mean luma 51.24 -> 49.91; draws 6,
+  triangles 278.
+- **Played runs**: `profile_bad 240` before/after same death hash
+  `f8cd9e28...`, disabled true, last_run recorded, runs 0, save_errors 0,
+  hp 0, 0 drops; the schema-99 file stays byte-for-byte unchanged.
+- **Gates**: `python -m pytest -q` 220 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-65.json`.
