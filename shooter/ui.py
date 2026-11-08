@@ -173,7 +173,8 @@ def draw_shooter(canvas, hud, sim) -> None:
     streak = int(getattr(sim, "streak", 0))
     od_t = float(getattr(sim, "overdrive_t", 0.0))
     if streak > 0:
-        _center(canvas, cx, 52, f"STREAK x{streak}", accent)
+        pct = int(round(float(sim.streak_bonus()) * 100.0))
+        _center(canvas, cx, 52, f"STREAK x{streak}  +{pct}%", accent)
     if od_t > 0.0:
         _center(canvas, cx, 68, f"OVERDRIVE {od_t:.1f}s x2", accent)
     elif str(getattr(sim, "weapon", "")) == "surge" and float(getattr(sim, "surge_t", 0.0)) > 0.0:

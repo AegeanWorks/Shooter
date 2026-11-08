@@ -118,6 +118,14 @@ class Sim:
             "surge_lock": bool(e.get("surge_lock", True)),
         }
 
+    def streak_bonus(self) -> float:
+        """Current per-kill score bonus: 10% each, capped at 50%."""
+        cfg = self._eng()
+        return min(
+            float(cfg["streak_cap"]),
+            float(cfg["streak_per"]) * int(getattr(self, "streak", 0)),
+        )
+
     def overdrive_preview(self) -> dict:
         cfg = self._eng()
         if not bool(self.alive):

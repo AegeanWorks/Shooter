@@ -66,7 +66,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts, switch cues, win history, career debrief, floor grid/trim/pilasters/platform rim, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, kill marker, ammo/reload, kill-feed, damage, boss/pickup direction
+│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, kill marker, ammo/reload, kill-feed, damage, boss/pickup direction
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, W/L history, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -117,13 +117,14 @@ projects/shooter/
 │   ├── test_wisp_bolt.py   <- wisp chest->eye tracer and violet material
 │   ├── test_summon_mark.py <- warden escort positions, spawn marks
 │   ├── test_platform_rim.py <- jump-platform lit edge, shared trim
+│   ├── test_streak_bonus.py <- 10%/kill cap 50%, shown as STREAK +P%
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/pickup/highground/switch
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -164,7 +165,8 @@ projects/shooter/
 │   ├── cycle-37.json  <- improvement-cycle 37 proof: career-debrief pair, same-hash run
 │   ├── cycle-38.json  <- improvement-cycle 38 proof: wisp-bolt pair, campaign run
 │   ├── cycle-39.json  <- improvement-cycle 39 proof: summon-marker pair, same-hash boss run
-│   └── cycle-40.json  <- improvement-cycle 40 proof: platform-rim pair, same-hash platform run
+│   ├── cycle-40.json  <- improvement-cycle 40 proof: platform-rim pair, same-hash platform run
+│   └── cycle-41.json  <- improvement-cycle 41 proof: streak-bonus pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

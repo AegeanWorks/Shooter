@@ -843,3 +843,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 165 passed; determinism 1800 ok; aikit
   `check shooter` 4/4; frame budget green.
 - **Evidence file**: `evidence/cycle-40.json`.
+
+## Cycle 41 - UI readability: show the streak bonus
+- **Area**: UI readability (41st cycle).
+- **Defect / evidence**: the HUD showed `STREAK xN` but not the score
+  bonus (10% per kill, capped at 50%) that breaks on hurt; the stake the
+  player is protecting was invisible. Baseline `test_streak_bonus.py`
+  failed 2/2 (no helper, no percentage).
+- **Fix**: add `Sim.streak_bonus()` (public, `min(cap, per * streak)`)
+  and show `STREAK xN  +P%` in the existing centered line. No sim
+  behavior, damage or snapshot change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-41/`;
+  960x540 seed 1, wave 3, score 1234, streak 7. Before `STREAK x7`;
+  after `STREAK x7  +50%`: 864 changed px (0.17%, bbox 391,52-568,65),
+  mean luma 35.43 -> 35.51; draws 6, triangles 290.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950
+  / hp 100, 39 shots / 37 hits, 101 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 167 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-41.json`.

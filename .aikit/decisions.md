@@ -399,3 +399,10 @@ Status: accepted
 Context: The 0.7 m platform is the only walkable elevated surface; cycle 05 skipped its lit cap because the top must stay clear. From the approach view it looked like a solid blue cover, with no cue that it is jumpable.
 Decision: Add two lit trim strips (6.1 × 0.08 × 0.10) on the long top edges at y 0.74, sharing `material.trim` with the existing wall/cover trim batch. They are decoration only, with no colliders or sim state. The count is two rather than four to keep the frame-budget plan under 40 (shadow calls 32→34, draws unchanged).
 Consequences: Suite 165/165 green (two new tests); determinism 1800 ok; aikit 4/4; frame budget green. The approach pair at 960×540 seed 1 changes 14,003 px (2.7%, bbox 51,92-908,399), mean luma 49.08→48.24, draws 6, triangles 98→122. `platform 120` keeps hash `c1603d79…`, 28 frames, hp 100, score 250, landed, audio 1, 0 drops. Evidence: `evidence/cycle-40.json`, images in workspace `shots/shooter-campaign/cycle-40/`.
+
+## ADR-058: Show the streak score bonus (UI readability)
+Date: 2026-11-08
+Status: accepted
+Context: The HUD showed `STREAK xN` but hid the score multiplier: 10% per kill, capped at 50%, broken on hurt. The player could not see the stake the streak represents without reverse-engineering the score. The baseline test found no bonus helper or percentage.
+Decision: Add `Sim.streak_bonus()` returning `min(streak_cap, streak_per * streak)` and render `STREAK xN  +P%` in the existing centered line. The streak math, scoring, break-on-hurt and snapshot are untouched.
+Consequences: Suite 167/167 green (two new tests); determinism 1800 ok; aikit 4/4. At 960×540 seed 1 with streak 7 the line changes 864 px (0.17%, bbox 391,52-568,65), mean luma 35.43→35.51, draws 6, triangles 290. `kite 600` keeps hash `4fe640c5…`, 10 kills / 1950 / hp 100, 101 audio, peak 8, 0 drops. Evidence: `evidence/cycle-41.json`, images in workspace `shots/shooter-campaign/cycle-41/`.

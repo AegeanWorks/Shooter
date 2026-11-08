@@ -417,6 +417,33 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_streak_bonus(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Streak 7 at wave 3: the bonus-percentage pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.wave = 3
+        g.sim.score = 1234
+        g.sim.streak = 7
+        g.sim.best_streak = 9
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"streak-bonus frame={g.sim.tick} streak={g.sim.streak} "
+            f"bonus={float(getattr(g.sim, 'streak_bonus', lambda: 0.0)()):.2f}"
+        )
+        engine.capture(f"{prefix}_streak_bonus.png", f"{prefix}_streak_bonus.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_platform_rim(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Approach view of the jump platform: the lit-rim pair."""
     import math
@@ -1307,6 +1334,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_summon_mark(prefix, shadows, srgb, post, bloom)
     if which == "platform_rim":
         route_platform_rim(prefix, shadows, srgb, post, bloom)
+    if which == "streak_bonus":
+        route_streak_bonus(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

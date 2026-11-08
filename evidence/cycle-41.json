@@ -1,0 +1,58 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py streak_bonus <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 41,
+  "fix": "expose Sim.streak_bonus() (10% per kill, cap 50%) and show STREAK xN +P% in the centered HUD line",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "167 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 101,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "hits": 37,
+      "kills": 10,
+      "score": 1950,
+      "shots": 39
+    },
+    "parity": "same hash as the cycle-40 baseline; HUD-only change"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-41/after",
+    "before_dir": "shots/shooter-campaign/cycle-41/before",
+    "route": "scripts/capture.py streak_bonus; 960x540 seed 1, wave 3, score 1234, streak 7"
+  },
+  "tests": {
+    "streak_bonus_tests": 2,
+    "suite": "167 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "streak bonus",
+    "score stake",
+    "UI readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      391,
+      52,
+      568,
+      65
+    ],
+    "changed_px": 864,
+    "draws": 6,
+    "fraction": 0.0017,
+    "mean_luma_after": 35.51,
+    "mean_luma_before": 35.43,
+    "triangles": 290
+  }
+}
