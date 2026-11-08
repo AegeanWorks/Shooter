@@ -2387,3 +2387,18 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 391 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-115.json`.
+
+## Cycle 116 - Keystone testbed: procedural primitive geometry
+- **Area**: keystone testbed (116th cycle).
+- **Feature / evidence**: procedural primitives feed the shooter's meshes but
+  had no direct coverage of topology, winding, radial normals or UV ranges.
+- **Fix**: add `tests/test_keystone_primitives_mechanics.py` with five
+  direct geometry tests at small segment counts.
+- **Proof**: cube faces wind to their normals with standard UVs; plane
+  is +Y with exact UVs; cone sides are unit/outward/up with -Y base
+  normals; cylinder sides are horizontal/radial with signed cap normals;
+  sphere normals match radius-normalized positions and UVs span [0,1];
+  every primitive rejects bad arguments.
+- **Gates**: `python -m pytest -q` 396 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-116.json`.

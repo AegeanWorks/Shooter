@@ -89,6 +89,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `asset_io` | loaders/suffixes, fingerprints, kinds, ReloadReport | `tests/test_keystone_asset_io_mechanics.py` |
 | `mesh_builder` | quad/box counts, mesh merge, matrix normals, skinned concat/mode | `tests/test_keystone_mesh_builder_mechanics.py` |
 | `serialization` | binary/JSON atomic writes, backup chain, BOM reads, temp cleanup | `tests/test_keystone_serialization_mechanics.py` |
+| `primitives` | cube/plane/cone/cylinder/sphere counts, bounds, normals, UVs | `tests/test_keystone_primitives_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -149,6 +150,7 @@ projects/shooter/
 │   ├── test_keystone_asset_io_mechanics.py <- loaders, fingerprints, kinds, reload report
 │   ├── test_keystone_mesh_builder_mechanics.py <- quad/box, merge, matrix normals, skin concat
 │   ├── test_keystone_serialization_mechanics.py <- binary/JSON atomic, backup, BOM, temp cleanup
+│   ├── test_keystone_primitives_mechanics.py <- cube/plane/cone/cylinder/sphere geometry
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -342,21 +344,22 @@ projects/shooter/
 │   ├── cycle-99.json  <- raycasts, sphere pushout, scene round trip
 │   ├── cycle-100.json <- editor groups/layers/locks/overrides
 │   ├── cycle-101.json <- cycle 101 proof: undo/redo/play/materials/animation keys/diff
-│   ├── cycle-102.json <- cycle 102 proof: skinning, glTF import and sprite math
-│   ├── cycle-103.json <- cycle 103 proof: input/UI/assets/merge_batches
-│   ├── cycle-104.json <- cycle 104 proof: HTTP web server routes and statuses
-│   ├── cycle-105.json <- cycle 105 proof: project manifests and export bundles
-│   ├── cycle-106.json <- cycle 106 proof: engine loop, pause overlay and CLI gates
+│   ├── cycle-102.json <- skinning, glTF, sprite math
+│   ├── cycle-103.json <- input/UI/assets/merge
+│   ├── cycle-104.json <- HTTP routes/statuses
+│   ├── cycle-105.json <- manifests and export bundles
+│   ├── cycle-106.json <- engine loop, pause, CLI gates
 │   ├── keystone-manifest-asset-repro.md <- upstream report: manifest-asset validation duplicate
-│   ├── cycle-107.json <- cycle 107 proof: component codecs + minimal manifest-asset reproducer
-│   ├── cycle-108.json <- cycle 108 proof: project CLI commands + self-clearing reproducer
-│   ├── cycle-109.json <- cycle 109 proof: camera orientation/projection + CPU frustum culling
-│   ├── cycle-110.json <- cycle 110 proof: scene/prefab trash uniqueness and restore safety
-│   ├── cycle-111.json <- cycle 111 proof: frame stats/metadata, report diff, pixel-diff PNG
-│   ├── cycle-112.json <- cycle 112 proof: action parsing, observe hash, audit tamper chain
-│   ├── cycle-113.json <- cycle 113 proof: asset loaders, fingerprints, kind checks, reload report
-│   ├── cycle-114.json <- cycle 114 proof: mesh builder quad/box, matrix normals, skin concat
-│   └── cycle-115.json <- cycle 115 proof: atomic binary/JSON writes, backups, BOM, temp cleanup
+│   ├── cycle-107.json <- component codecs, reproducer
+│   ├── cycle-108.json <- project CLI, self-clearing reproducer
+│   ├── cycle-109.json <- camera, frustum culling
+│   ├── cycle-110.json <- scene/prefab trash and restore
+│   ├── cycle-111.json <- frame stats, report/pixel diff
+│   ├── cycle-112.json <- action parsing, observe, audit
+│   ├── cycle-113.json <- asset loaders, fingerprints, reload
+│   ├── cycle-114.json <- mesh builder, matrix normals, skin
+│   ├── cycle-115.json <- atomic writes, backups, BOM
+│   └── cycle-116.json <- primitive counts, bounds, normals, UVs
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

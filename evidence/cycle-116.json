@@ -1,0 +1,82 @@
+{
+  "area": "keystone testbed: procedural primitive geometry",
+  "commands": [
+    "python -m pytest tests/test_keystone_primitives_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 116,
+  "feature": "cube face winding/UVs, plane layout, cone and cylinder side/cap normals, sphere radial normals/UVs and every primitive's argument guards",
+  "fix": "add tests/test_keystone_primitives_mechanics.py with five direct geometry tests at small segment counts",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "396 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "cube": {
+      "vertices": 24,
+      "indices": 36,
+      "triangles": 12,
+      "bounds": [[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]],
+      "face_normals": 6,
+      "winding_matches_normals": true,
+      "uvs": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+      "zero_size": "ValueError"
+    },
+    "plane": {
+      "vertices": 4,
+      "indices": 6,
+      "triangles": 2,
+      "bounds": [[-2.0, 0.0, -2.0], [2.0, 0.0, 2.0]],
+      "normal": [0.0, 1.0, 0.0],
+      "uvs": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]],
+      "non_positive": "ValueError"
+    },
+    "cone": {
+      "vertices": 48,
+      "indices": 48,
+      "triangles": 16,
+      "bounds": [[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]],
+      "side_normals_unit": true,
+      "side_normals_outward_up": true,
+      "base_normals": [0.0, -1.0, 0.0],
+      "apex_and_base_present": true,
+      "bad_arguments": "ValueError"
+    },
+    "cylinder": {
+      "vertices": 50,
+      "indices": 96,
+      "triangles": 32,
+      "bounds": [[-1.0, -1.0, -1.0], [1.0, 1.0, 1.0]],
+      "side_normals_horizontal": true,
+      "side_normals_radial": true,
+      "cap_normals": [1.0, -1.0],
+      "cap_centers_present": true,
+      "bad_arguments": "ValueError"
+    },
+    "sphere": {
+      "vertices": 45,
+      "indices": 192,
+      "triangles": 64,
+      "bounds": [[-2.0, -2.0, -2.0], [2.0, 2.0, 2.0]],
+      "normals_unit_radial": true,
+      "uv_range": [[0.0, 1.0], [0.0, 1.0]],
+      "bad_arguments": "ValueError"
+    }
+  },
+  "tests": {
+    "primitive_tests": 5,
+    "suite": "396 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone primitives",
+    "cube winding",
+    "plane geometry",
+    "cone normals",
+    "cylinder caps",
+    "sphere UVs"
+  ]
+}
