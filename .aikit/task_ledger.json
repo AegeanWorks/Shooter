@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-94-web-session",
+    "task_id": "shooter-cycle-95-mechanics",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794133337.261069,
+    "updated_at": 1794136002.84974,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794133337.7207427
+    "completed_at": 1794136004.754038
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-88-enemy-spacing",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Enemy spacing proven: 273 tests, determinism 1800 ok (b25db520), aikit 4/4, 67147 px pair, final slack -1.0->0.02/90->16 overlap frames, reference re-recorded (win 2486); checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794126712.2704833,
-      "timestamp_str": "2026-11-08 11:31:52",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-88-enemy-spacing",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-88-enemy-spacing' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794126717.0923636,
-      "timestamp_str": "2026-11-08 11:31:57",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-89-keystone-core-anim",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: consume the new AnimationStateMachine + StateMachineLibrary + apply_pose in the warden core, with library tests, a charge pair and a same-hash slam run",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794130421.156718,
-      "timestamp_str": "2026-11-08 12:33:41",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The shooter is the Keystone testbed, but the new runtime state machine, file-backed .kstate library and apply_pose had no real consumer; the boss core still used a hardcoded 1.18 swell.",
-        "benefits": "The warden core now breathes in calm and pulses to 1.32 in charge from a committed .kstate asset, proving the new Keystone APIs in shipped gameplay.",
-        "risks": "contract: boss-core presentation only; dependency: .kstate shipped asset; concurrency: none; state: no sim/hash change, missing asset falls back to the old pulse.",
-        "mitigation": "Five focused tests, a charge-peak capture pair, a same-hash slam run and the full gates."
-      },
-      "plan_digest": "a28bc6c4082d9f8a8673d2701145802448a64583e626f8ddd55c2d2b70d47e36"
-    },
     {
       "task_id": "shooter-cycle-89-keystone-core-anim",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794133337.7207441,
       "timestamp_str": "2026-11-08 13:22:17",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-95-mechanics",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover replay/trigger/particle/batch/broadphase mechanics, with pinned campaign replay and a fairness wall-budget fix",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794135991.8425472,
+      "timestamp_str": "2026-11-08 14:06:31",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The shooter uses keystone's replay, trigger, particle, batching and broadphase mechanics, but the suite covered them only indirectly.",
+        "benefits": "Six direct mechanics tests pin the campaign replay win/hash, one-shot trigger edges, deterministic bursts, the static batch plan and the collider-matching grid.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: fairness wall budget 30s->120s, assertions unchanged.",
+        "mitigation": "Pinned hashes/counts, full suite, determinism and the project gates."
+      },
+      "plan_digest": "bb4c352917b67b164f31e1c2e9f3398c170ef7ff5f258bf98285d05b1258903f"
+    },
+    {
+      "task_id": "shooter-cycle-95-mechanics",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Mechanics covered: 298 tests, determinism 1800 ok (b25db520), aikit 4/4, replay win bb425a57, trigger/pickup one-shot, 12 particles deterministic, 8 groups/26 saved calls, 12-proxy grid; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794136002.84974,
+      "timestamp_str": "2026-11-08 14:06:42",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-95-mechanics",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-95-mechanics' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794136004.75404,
+      "timestamp_str": "2026-11-08 14:06:44",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

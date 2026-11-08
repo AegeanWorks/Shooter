@@ -69,6 +69,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `Prefab` + `PrefabLibrary` (`.kprefab`) | 3-root pickup beacon | `tests/test_pickup_prefab.py` |
 | `MaterialLibrary` (`.kmaterial`) | ammo-cache material | `tests/test_cache_material_library.py` |
 | `GameSession` web/editor/JSON API | describe/scene/editor/simulate | `tests/test_keystone_web_api.py` |
+| `CommandLog`/`verify_log` + `TriggerTracker` + `ParticleSystem` + `plan_batches` + `SpatialGrid` | replay, trigger edges, particle bursts, batch plan, broadphase | `tests/test_keystone_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -109,6 +110,7 @@ projects/shooter/
 │   ├── test_pickup_prefab.py <- keystone .kprefab instantiation, ids/payloads
 │   ├── test_cache_material_library.py <- keystone .kmaterial cache material
 │   ├── test_keystone_web_api.py <- GameSession describe/scene/editor/simulate
+│   ├── test_keystone_mechanics.py <- replay/triggers/particles/batching/broadphase
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -292,7 +294,9 @@ projects/shooter/
 │   ├── cycle-90.json  <- cycle 90 proof: keystone lifecycle pad, 0-px same-hash pair
 │   ├── cycle-91.json  <- cycle 91 proof: keystone material graph core, same-hash slam run
 │   ├── cycle-92.json  <- cycle 92 proof: keystone prefab pickup, 0-px same-hash walk
-│   └── cycle-93.json  <- cycle 93 proof: keystone cache material, 0-px same-hash campaign
+│   ├── cycle-93.json  <- cycle 93 proof: keystone cache material, 0-px same-hash campaign
+│   ├── cycle-94.json  <- cycle 94 proof: GameSession describe/scene/editor/simulate coverage
+│   └── cycle-95.json  <- cycle 95 proof: replay/trigger/particle/batch/broadphase mechanics
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

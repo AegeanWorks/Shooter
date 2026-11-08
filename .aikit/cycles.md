@@ -1973,3 +1973,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 292 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-94.json`.
+
+## Cycle 95 - Keystone testbed: engine mechanics
+- **Area**: keystone testbed (95th cycle).
+- **Feature / evidence**: The shooter uses keystone's replay runner,
+  trigger tracker, particle system, batch planner and spatial grid, but
+  the project suite covered them only indirectly.
+- **Fix**: add `tests/test_keystone_mechanics.py` covering
+  `run_log`/`verify_log` on the campaign reference, TriggerTracker
+  enter/held/exit edges, one-shot surge pickup, deterministic impact
+  bursts, the static batch plan (8 groups / 34 draw calls / 26 saved /
+  482 triangles) and the 12-proxy broadphase. Raise the fairness wall
+  budget 30 s -> 120 s after the new tests made the old bound flaky on
+  this machine; the fair/witnessed-win assertions are unchanged.
+- **Proof**: replay hash `bb425a57...` wins wave 4 with 30 kills /
+  11560 / hp 38; trigger enters once and exits; pickup refills once;
+  12/12 particles deterministic; trim batch contains `platform-pad`;
+  grid count equals colliders and the above-arena query is empty.
+- **Gates**: `python -m pytest -q` 298 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-95.json`.

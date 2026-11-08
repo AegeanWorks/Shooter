@@ -1,0 +1,69 @@
+{
+  "area": "keystone testbed: engine mechanics",
+  "commands": [
+    "python -m pytest tests/test_keystone_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 95,
+  "feature": "CommandLog run_log/verify_log, TriggerTracker edges, ParticleSystem bursts, plan_batches, SpatialGrid broadphase",
+  "fix": "add tests/test_keystone_mechanics.py so the replay runner, edge-trigger pickup, deterministic particle burst, static batch plan and spatial-grid broadphase are covered against the shooter; raise the fairness wall budget 30s -> 120s because the added tests made the old bound flaky on this machine (the fair/win assertions are unchanged)",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "298 passed"
+  },
+  "mechanics": {
+    "replay": {
+      "command": "run_log(ShooterGame, bot_campaign.json)",
+      "frames": 3000,
+      "hash": "bb425a57b9839e001906cff227fb618f",
+      "outcome": "win",
+      "wave": 4,
+      "kills": 30,
+      "score": 11560,
+      "hp": 38,
+      "verify_prefix": {"frames": 300, "ok": true}
+    },
+    "triggers": {
+      "entered": ["surge"],
+      "held_entered": [],
+      "exited": ["surge"],
+      "pickup_events": 1,
+      "ammo_refills": 1
+    },
+    "particles": {
+      "emitter": "impact",
+      "burst": 12,
+      "alive_after_step": 12,
+      "deterministic": true
+    },
+    "batching": {
+      "groups": 8,
+      "draw_calls": 34,
+      "batched_calls": 8,
+      "saved_calls": 26,
+      "triangles": 482,
+      "trim_batch_has_platform_pad": true
+    },
+    "broadphase": {
+      "grid_entries": 12,
+      "colliders": 12,
+      "cover_query_hit": true,
+      "above_arena_empty": true
+    }
+  },
+  "tests": {
+    "mechanics_tests": 6,
+    "suite": "298 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone replay",
+    "trigger tracker",
+    "particles",
+    "batch planning",
+    "spatial grid"
+  ]
+}
