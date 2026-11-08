@@ -1002,7 +1002,7 @@ class ShooterGame:
             history = [
                 f"{int(item.get('score', 0))}"
                 f"{'W' if item.get('outcome') == 'win' else 'L'}"
-                for item in list(self.profile.get("history", []))[:3]
+                for item in list(self.profile.get("history", []))[:5]
             ]
             extras: list[tuple[str, tuple]] = []
             if self.campaign_cleared:
@@ -1010,7 +1010,9 @@ class ShooterGame:
             if self.run_new_best:
                 extras.append(("NEW BEST", (1.0, 0.62, 0.20, 1.0)))
             if history:
-                extras.append((f"RECENT {' / '.join(history)}", (0.55, 0.60, 0.68, 1.0)))
+                extras.append((f"RECENT {' / '.join(history[:3])}", (0.55, 0.60, 0.68, 1.0)))
+                if len(history) > 3:
+                    extras.append((f"HISTORY {' / '.join(history[3:])}", (0.55, 0.60, 0.68, 1.0)))
             runs = int(self.profile.get("runs", 0))
             wins = int(self.profile.get("wins", 0))
             if runs > 0:

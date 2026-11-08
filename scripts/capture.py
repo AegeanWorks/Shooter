@@ -1348,7 +1348,7 @@ def route_win(prefix: str, shadows: bool = True, srgb: bool = True, post: bool =
 
 def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True,
                         bloom: bool = True, win_history: bool = False,
-                        wide_history: bool = False) -> None:
+                        wide_history: bool = False, full_history: bool = False) -> None:
     """Staged run-over frame with a seeded best, against the no-profile build."""
     from keystone.app import Engine
 
@@ -1367,6 +1367,17 @@ def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, po
                  "time_s": 25, "outcome": "win"},
             ]
             seeded["wins"] = 2
+        elif full_history:
+            seeded["history"] = [
+                {"score": 980, "kills": 8, "wave": 3, "best_streak": 5,
+                 "time_s": 41, "outcome": "lose"},
+                {"score": 860, "kills": 7, "wave": 3, "best_streak": 4,
+                 "time_s": 38, "outcome": "lose"},
+                {"score": 740, "kills": 6, "wave": 2, "best_streak": 3,
+                 "time_s": 30, "outcome": "lose"},
+                {"score": 620, "kills": 5, "wave": 2, "best_streak": 2,
+                 "time_s": 25, "outcome": "lose"},
+            ]
         else:
             seeded["history"] = [
                 {"score": 980, "kills": 8, "wave": 3, "best_streak": 5,
@@ -1423,6 +1434,12 @@ def route_debrief_width(prefix: str, shadows: bool = True, srgb: bool = True, po
     route_death_profile(prefix, shadows, srgb, post, bloom, wide_history=True)
 
 
+def route_history5(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True,
+                   bloom: bool = True) -> None:
+    """Debrief with four prior runs plus the current one: the full-history pair."""
+    route_death_profile(prefix, shadows, srgb, post, bloom, full_history=True)
+
+
 def route_death(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
@@ -1468,6 +1485,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_win_history(prefix, shadows, srgb, post, bloom)
     if which == "debrief_width":
         route_debrief_width(prefix, shadows, srgb, post, bloom)
+    if which == "history5":
+        route_history5(prefix, shadows, srgb, post, bloom)
     if which == "win":
         route_win(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":

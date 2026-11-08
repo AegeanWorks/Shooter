@@ -1043,3 +1043,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 190 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-50.json`.
+
+## Cycle 51 - Progression and saves: full five-run history
+- **Area**: progression and saves (51st cycle).
+- **Opportunity**: the profile stores a five-run history (cycle 23), but
+  the debrief rendered only `history[:3]`; the two oldest persisted runs
+  were never visible. The baseline test found only three scores.
+- **Fix**: build all five entries; show the first three on `RECENT` and
+  the remaining two on a second `HISTORY` line. The cycle-34 dynamic
+  panel width/height contain both lines. No schema or save change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-51/`;
+  960x540 seed 1, four seeded runs plus the current 1500. Before
+  `RECENT 1500L / 980L / 860L`; after adds `HISTORY 740L / 620L` and a
+  taller panel: 12,064 changed px (2.33%, bbox 275,378-684,449), mean
+  luma 48.16 -> 46.79; draws 6, triangles 278.
+- **Played runs**: `death 240` before/after same hash `f8cd9e28...`,
+  1 frame, hp 0, score 1500, audio 3, peak 3, drops 0.
+- **Gates**: `python -m pytest -q` 191 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-51.json`.

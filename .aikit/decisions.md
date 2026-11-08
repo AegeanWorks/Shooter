@@ -469,3 +469,10 @@ Status: accepted
 Context: The wisp bolt became visible in cycle 38, but the attack was silent until the hit; the only sound was the generic `hurt` clip. The warden and brute have dedicated attack cues; the ranged wisp had none. The staged hit measured events `['hurt']`, cue `''`, one voice.
 Decision: Emit `wisp_bolt` in the wisp attack branch before the hurt event; add a 0.08 s 1200 Hz sine and a danger `WISP BOLT` caption. The bolt, LOS, damage, cooldown and snapshot are untouched; the hurt clip still plays after it.
 Consequences: Suite 190/190 green (two new tests); determinism 1800 ok; aikit 4/4. The staged hit pair at 960×540 seed 1 changes 3,488 px (0.67%, bbox 414,164-815,459), mean luma 34.78→34.64, draws 8, triangles 326. `kite 3000` goes from 458 to 461 audio (3 natural bolts) with the same hash `945e3fdd…`, 32 kills / 10135 / hp 82, 3 hurts, peak 8, 0 drops. Evidence: `evidence/cycle-50.json`, images in workspace `shots/shooter-campaign/cycle-50/`.
+
+## ADR-068: Full five-run history in the debrief (progression/saves)
+Date: 2026-11-08
+Status: accepted
+Context: The profile stores a five-run history (cycle 23), but the debrief rendered only `history[:3]`; the two oldest persisted runs were never shown. The baseline test found only the first three scores, so the stored contract and the UI disagreed.
+Decision: Build all five entries in the debrief; show the first three on `RECENT` and the remaining two on a second `HISTORY` line. The cycle-34 dynamic panel width/height already contain the added line. No schema, save-format or run-record change.
+Consequences: Suite 191/191 green (one new test); determinism 1800 ok; aikit 4/4. The four-seeded-runs plus current-1500 pair at 960×540 seed 1 changes 12,064 px (2.33%, bbox 275,378-684,449), mean luma 48.16→46.79, draws 6, triangles 278. `death 240` keeps hash `f8cd9e28…`, 1 frame, hp 0, score 1500, audio 3, 0 drops. Evidence: `evidence/cycle-51.json`, images in workspace `shots/shooter-campaign/cycle-51/`.

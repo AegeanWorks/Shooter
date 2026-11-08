@@ -1,0 +1,65 @@
+{
+  "area": "progression and saves",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py history5 <prefix>",
+    "python scripts/play_run.py death 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 51,
+  "fix": "render all five stored runs: RECENT shows the first three and HISTORY the remaining two; the auto-sized debrief panel contains both lines",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "191 passed"
+  },
+  "play_runs": {
+    "death_240": {
+      "after": {
+        "audio": 3,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      },
+      "before": {
+        "audio": 3,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      }
+    },
+    "parity": "same hash; the five-run history is draw-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-51/after",
+    "before_dir": "shots/shooter-campaign/cycle-51/before",
+    "route": "scripts/capture.py history5; 960x540 seed 1, four seeded runs plus the current 1500"
+  },
+  "tests": {
+    "recent_five_tests": 1,
+    "suite": "191 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "full run history",
+    "debrief",
+    "five stored runs"
+  ],
+  "visual_diff": {
+    "bbox": [
+      275,
+      378,
+      684,
+      449
+    ],
+    "changed_px": 12064,
+    "draws": 6,
+    "fraction": 0.0233,
+    "mean_luma_after": 46.79,
+    "mean_luma_before": 48.16,
+    "triangles": 278
+  }
+}
