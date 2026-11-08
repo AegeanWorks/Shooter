@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-87-brute-windup",
+    "task_id": "shooter-cycle-88-enemy-spacing",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794126062.4074855,
+    "updated_at": 1794126712.2704833,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794126074.9184942
+    "completed_at": 1794126717.0923612
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-81-warden-los",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Warden LOS proven: 257 tests, determinism 1800 ok, aikit 4/4, 123656 px cover pair, warden_cover hp 70->100, slam event intact; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794123140.4770737,
-      "timestamp_str": "2026-11-08 10:32:20",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-81-warden-los",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-81-warden-los' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794123158.8504524,
-      "timestamp_str": "2026-11-08 10:32:38",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-82-west-gap",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Levels cycle: move the low platform 0.5 m east so the west wall gap is player-width, with a walk-through test, pair and west_gap drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794123247.8550174,
-      "timestamp_str": "2026-11-08 10:34:07",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The platform west face sits 0.5 m from the wall, narrower than the 0.7 m player, so the visible rear strip is an impassable dead end.",
-        "benefits": "A 1.0 m gap opens a real path around the platform's west side without changing its height or the jump.",
-        "risks": "contract: level layout/collider shift; dependency: none; concurrency: none; state: no new nodes; determinism and fairness need rechecking.",
-        "mitigation": "Failing-first walk-through test, a west-gap capture pair, a west_gap drill and the full jump/fairness suites."
-      },
-      "plan_digest": "0ceec8f89727feb3f282e2e00ddd4d17abb4caeef6b32c983cb84695084c554e"
-    },
     {
       "task_id": "shooter-cycle-82-west-gap",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794126074.918496,
       "timestamp_str": "2026-11-08 11:21:14",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-88-enemy-spacing",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Enemies cycle: deterministic enemy separation so melee crowds keep their DATA radii, with a spacing test, capture pair and spacing drill",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794126265.0056682,
+      "timestamp_str": "2026-11-08 11:24:25",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Four mites converge onto the exact same coordinate (min pair gap 0.000) because movement has no enemy separation; the crowd reads as one blob and every bite comes from one point.",
+        "benefits": "A deterministic soft-spacing pass keeps alive enemies at least their combined radii apart, so silhouettes, hit targets and damage sources stay distinct.",
+        "risks": "contract: enemy movement/determinism; dependency: none; concurrency: none; state: new DATA clearance, no RNG, fairness may shift.",
+        "mitigation": "Failing-first spacing test, a staged capture pair, a spacing drill with min-gap telemetry, and the campaign fairness suite."
+      },
+      "plan_digest": "e95c695e4e1066ffa17a721070095a8ecfcead0d948c2a1ef425a12a1d08a8df"
+    },
+    {
+      "task_id": "shooter-cycle-88-enemy-spacing",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Enemy spacing proven: 273 tests, determinism 1800 ok (b25db520), aikit 4/4, 67147 px pair, final slack -1.0->0.02/90->16 overlap frames, reference re-recorded (win 2486); checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794126712.2704833,
+      "timestamp_str": "2026-11-08 11:31:52",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-88-enemy-spacing",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-88-enemy-spacing' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794126717.0923636,
+      "timestamp_str": "2026-11-08 11:31:57",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

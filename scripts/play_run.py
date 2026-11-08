@@ -14,6 +14,7 @@ Modes:
   brute    stand in a brute's slam range (brute-slam cue drill)
   brute_gap stand 2.7 m from a brute (dead-zone close drill)
   brute_windup stand in brute range (windup tell, then the delayed slam)
+  enemy_spacing stage four mites on one point (crowd-spacing drill)
   warden_cover stand behind the north cover during a warden slam (LOS drill)
   west_gap walk the west-wall strip past the platform (gap drill)
   boss_death stand in a warden slam at 5 HP (death-screen UI drill)
@@ -218,6 +219,25 @@ def main(
             sim.enemies = [
                 _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 5.8), hp=120,
                        max_hp=120, attack_cd=0.0)
+            ]
+        if mode == "enemy_spacing":
+            sim = game.sim
+            sim.wave = 2
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+            sim.body = sim.body.__class__(
+                position=Vec3(0.0, 0.9002, 8.0),
+                half_extents=sim.body.half_extents,
+                velocity=Vec3(), on_ground=True,
+            )
+            sim.hvel = Vec3()
+            sim.yaw = 0.0
+            sim.pitch = 0.0
+            sim.enemies = [
+                _Enemy(etype="mite", pos=Vec3(0.0, 0.5, 6.2), hp=30,
+                       max_hp=30, attack_cd=999.0)
+                for _ in range(4)
             ]
         if mode == "warden_cover":
             sim = game.sim
@@ -479,6 +499,9 @@ def main(
         chunks: list[dict] = []
         slow_frames = 0
         ran = 0
+        spacing_slack = None
+        spacing_final = None
+        spacing_overlap_frames = 0
         for frame in range(frames):
             ran = frame + 1
             if mode == "ambush":
@@ -493,6 +516,21 @@ def main(
                 game.sim.hp = 5
             tick = time.perf_counter()
             game.update(FIXED_STEP, _action(mode, game, frame, strafe))
+            if mode == "enemy_spacing":
+                alive = [e for e in game.sim.enemies if e.alive]
+                worst = None
+                for i, a in enumerate(alive):
+                    ra = float(game.sim.enemy_defs[a.etype]["radius"])
+                    for b in alive[i + 1:]:
+                        rb = float(game.sim.enemy_defs[b.etype]["radius"])
+                        gap = math.hypot(a.pos.x - b.pos.x, a.pos.z - b.pos.z)
+                        slack = gap - (ra + rb)
+                        worst = slack if worst is None else min(worst, slack)
+                if worst is not None:
+                    spacing_slack = worst if spacing_slack is None else min(spacing_slack, worst)
+                    spacing_final = worst
+                    if worst < -0.01:
+                        spacing_overlap_frames += 1
             elapsed = time.perf_counter() - tick
             chunk_wall += elapsed
             chunk_max = max(chunk_max, elapsed)
@@ -619,6 +657,12 @@ def main(
                 "cue_t": round(float(getattr(game, "sound_cue_t", 0.0)), 3),
                 "voices": int(game.mixer.voice_count()),
                 "weapon": str(game.sim.weapon),
+            },
+            "spacing": {
+                "min_slack": None if spacing_slack is None else round(spacing_slack, 3),
+                "final_slack": None if spacing_final is None else round(spacing_final, 3),
+                "overlap_frames": int(spacing_overlap_frames),
+                "count": sum(1 for e in game.sim.enemies if e.alive),
             },
             "denied": {
                 "cue": getattr(game, "sound_cue", ""),

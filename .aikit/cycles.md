@@ -1810,3 +1810,30 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 271 passed; determinism 1800 ok;
   aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-87.json`.
+
+## Cycle 88 - Enemies/bosses: keep enemy crowds apart
+- **Area**: enemies and bosses (88th cycle).
+- **Defect / evidence**: movement was cover-aware but had no
+  enemy-enemy term. Four mites converging on one player-ring point
+  ended at exactly (-0.02, 6.83): min pair gap 0.000, one visible
+  blob, every bite from one point.
+- **Fix**: deterministic `_separate_enemies()` pass after enemy
+  movement pushes overlapping alive pairs apart by half their DATA
+  radii deficit (`enemy_separation` in levels.json: strength 0.5,
+  clearance 0.02, passes 3). Cover blocks a nudge; an exact stack
+  uses a stable golden-angle direction; no RNG. The fairness witness
+  was re-recorded from the adaptive kite run after spacing changed
+  the old reference outcome.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-88/`;
+  960x540 seed 1, four mites staged on (0, 6.2), player z 8.0, 12
+  updates. 67,147 changed px (12.95%, bbox 0,398-946,539), mean luma
+  35.32 -> 42.80; draws 7, triangles 1570. Before: one overlapping
+  blob at gap 0.00; after: four distinct mites at gap 0.97.
+- **Played runs**: `enemy_spacing 90` before/after both hp 100 with
+  0 hurts and 0 drops, but final slack -1.0 -> +0.02 and overlap
+  frames 90 -> 16. `kite 3000` with spacing wins at wave 4, 30
+  kills, score 11560, hp 38 (win frame 2486); re-recorded
+  `bot_campaign.json` replays the witnessed win.
+- **Gates**: `python -m pytest -q` 273 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-88.json`.

@@ -990,6 +990,56 @@ class Sim:
                         self._summon_mites(e, int(edef.get("summon_count", 2)), events)
             # clamp arena
             e.pos = Vec3(max(-19.0, min(19.0, e.pos.x)), e.pos.y, max(-19.0, min(19.0, e.pos.z)))
+        self._separate_enemies()
+
+    def _separate_enemies(self) -> None:
+        """Deterministic soft spacing so melee crowds never stack.
+
+        Movement is cover-aware but has no enemy-enemy term, so mites
+        converge from every heading onto the same player-ring point.
+        Push overlapping pairs apart by half their DATA radii deficit;
+        cover blocks a nudge, and no RNG or frame-order hash is used.
+        """
+        cfg = self.levels.get("enemy_separation", {})
+        strength = float(cfg.get("strength", 0.5))
+        clearance = float(cfg.get("clearance", 0.02))
+        passes = int(cfg.get("passes", 3))
+        for _ in range(passes):
+            alive = [e for e in self.enemies if e.alive]
+            if len(alive) < 2:
+                return
+            moved = False
+            for i, a in enumerate(alive):
+                ra = float(self.enemy_defs[a.etype]["radius"])
+                for j in range(i + 1, len(alive)):
+                    b = alive[j]
+                    rb = float(self.enemy_defs[b.etype]["radius"])
+                    minimum = ra + rb + clearance
+                    dx = b.pos.x - a.pos.x
+                    dz = b.pos.z - a.pos.z
+                    distance = math.hypot(dx, dz)
+                    if distance >= minimum:
+                        continue
+                    if distance <= 1e-9:
+                        # Stable golden-angle fallback for an exact stack.
+                        angle = (i * 7 + j * 13) * 2.399963229728653
+                        nx, nz = math.cos(angle), math.sin(angle)
+                    else:
+                        nx, nz = dx / distance, dz / distance
+                    push = (minimum - distance) * 0.5 * strength
+                    self._nudge_enemy(a, -nx * push, -nz * push)
+                    self._nudge_enemy(b, nx * push, nz * push)
+                    moved = True
+            if not moved:
+                break
+
+    def _nudge_enemy(self, enemy: _Enemy, dx: float, dz: float) -> None:
+        """Move by a spacing nudge unless a cover or the arena edge blocks it."""
+        radius = float(self.enemy_defs[enemy.etype]["radius"])
+        nx = max(-19.0, min(19.0, enemy.pos.x + dx))
+        nz = max(-19.0, min(19.0, enemy.pos.z + dz))
+        if not self._enemy_blocked_at(nx, nz, radius):
+            enemy.pos = Vec3(nx, enemy.pos.y, nz)
 
     # ---- snapshot ------------------------------------------------------
     def snapshot(self) -> dict:

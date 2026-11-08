@@ -1,0 +1,77 @@
+{
+  "area": "enemies and bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py enemy_spacing <prefix>",
+    "python scripts/play_run.py enemy_spacing 90 <report>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 88,
+  "fix": "add a deterministic enemy-separation pass (DATA: strength 0.5, clearance 0.02, passes 3) so alive melee crowds keep their combined radii; cover blocks a nudge and an exact stack falls back to a stable golden angle; re-record the fairness witness from the winning adaptive kite run",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "273 passed"
+  },
+  "play_runs": {
+    "after": {
+      "audio": 0,
+      "drops": 0,
+      "final_slack": 0.02,
+      "frames": 90,
+      "hash": "0d04320bca5ba0dbabad1c10145af467",
+      "hp": 100,
+      "hurts": 0,
+      "min_slack": -0.442,
+      "overlap_frames": 16
+    },
+    "before": {
+      "audio": 0,
+      "drops": 0,
+      "final_slack": -1.0,
+      "frames": 90,
+      "hash": "dc2288597782eb911ee5c6da4a65b684",
+      "hp": 100,
+      "hurts": 0,
+      "min_slack": -1.0,
+      "overlap_frames": 90
+    },
+    "fairness": {
+      "frames": 3000,
+      "hash": "bb425a57b9839e001906cff227fb618f",
+      "hp": 38,
+      "kills": 30,
+      "outcome": "win",
+      "score": 11560,
+      "wave": 4,
+      "win_frame": 2486
+    },
+    "summary": "same 90-frame four-mite-on-one-point drill: before every mite ends at one coordinate (final slack -1.0, 90 overlap frames); after the crowd settles at slack +0.02 with 16 overlap frames spent spreading out. The old fairness actions no longer won under spacing, so bot_campaign.json was re-recorded from the adaptive kite run (win frame 2486, 30 kills, hp 38)."
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-88/after_enemy_spacing.*",
+    "before_dir": "shots/shooter-campaign/cycle-88/before_enemy_spacing.*",
+    "route": "scripts/capture.py enemy_spacing; 960x540 seed 1, four mites staged on (0, 6.2), player z 8.0, 12 updates"
+  },
+  "tests": {
+    "enemy_spacing_tests": 2,
+    "suite": "273 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "enemy spacing",
+    "crowd silhouette",
+    "fairness re-record"
+  ],
+  "visual_diff": {
+    "bbox": [0, 398, 946, 539],
+    "changed_px": 67147,
+    "draws": 7,
+    "fraction": 0.1295,
+    "mean_luma_after": 42.8,
+    "mean_luma_before": 35.32,
+    "triangles": 1570
+  }
+}

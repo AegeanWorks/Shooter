@@ -12,6 +12,7 @@ No balance changes; driver only.
 
 from __future__ import annotations
 
+import math
 import sys
 import tempfile
 from pathlib import Path
@@ -900,6 +901,48 @@ def route_brute_windup(prefix: str, shadows: bool = True, srgb: bool = True, pos
             f"hp={g.sim.hp} cue={getattr(g, 'sound_cue', '')!r}"
         )
         engine.capture(f"{prefix}_brute_windup.png", f"{prefix}_brute_windup.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
+def route_enemy_spacing(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Four mites staged on one point: the crowd-spacing pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.wave = 2
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, 0.9002, 8.0), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = 0.0
+        g.sim.pitch = 0.0
+        g.sim.enemies = [
+            _Enemy(etype="mite", pos=Vec3(0.0, 0.5, 6.2), hp=30,
+                   max_hp=30, attack_cd=999.0)
+            for _ in range(4)
+        ]
+        for _ in range(12):
+            g.update(FIXED_STEP, ActionState())
+        gaps = [
+            math.hypot(a.pos.x - b.pos.x, a.pos.z - b.pos.z)
+            for i, a in enumerate(g.sim.enemies)
+            for b in g.sim.enemies[i + 1:]
+        ]
+        print(
+            f"enemy-spacing gap={min(gaps):.2f} hp={g.sim.hp} "
+            f"positions={[(round(e.pos.x, 2), round(e.pos.z, 2)) for e in g.sim.enemies]}"
+        )
+        engine.capture(f"{prefix}_enemy_spacing.png", f"{prefix}_enemy_spacing.json")
         _profiler(engine)
     finally:
         engine.close()
@@ -2560,6 +2603,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_brute_gap(prefix, shadows, srgb, post, bloom)
     if which == "brute_windup":
         route_brute_windup(prefix, shadows, srgb, post, bloom)
+    if which == "enemy_spacing":
+        route_enemy_spacing(prefix, shadows, srgb, post, bloom)
     if which == "score_pop":
         route_score_pop(prefix, shadows, srgb, post, bloom)
     if which == "target_hp":
