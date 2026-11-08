@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-41-streak-bonus",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794104380.016718,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794104399.6265047
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-35-wall-depth",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Graphics cycle: 8 wall pilasters, failing-first tests, spawn-view pair and same-hash run; budget reduced from 16 after the 45-call plan failure",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794102434.4417343,
-      "timestamp_str": "2026-11-08 04:47:14",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The four boundary walls were flat gray planes with no vertical rhythm.",
-        "benefits": "Shared-material pilasters add wall depth while staying under the 40-draw plan.",
-        "risks": "contract: decoration nodes only; dependency: none; concurrency: none; state: none; budget: 16 nodes failed the plan, 8 pass.",
-        "mitigation": "Pilaster count/position/material tests, frame-budget gate, spawn pair, same kite hash."
-      },
-      "plan_digest": "1564334347264d63b13981407faf011f1f3b0c49a6765de021248013d9fe4125"
-    },
     {
       "task_id": "shooter-cycle-35-wall-depth",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794104380.016718,
       "timestamp_str": "2026-11-08 05:19:40",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-41-streak-bonus",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-41-streak-bonus' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794104399.6265068,
+      "timestamp_str": "2026-11-08 05:19:59",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
