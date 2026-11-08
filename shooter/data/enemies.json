@@ -23,7 +23,8 @@
       "radius": 0.7,
       "height": 1.4,
       "reach_up": 0.45,
-      "behavior": "advance_pause_slam"
+      "behavior": "advance_pause_slam",
+      "windup_s": 0.35
     },
     {
       "id": "wisp",

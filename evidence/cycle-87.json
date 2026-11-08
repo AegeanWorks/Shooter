@@ -1,0 +1,100 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py brute_windup <prefix>",
+    "python scripts/play_run.py brute_windup 60 <report>",
+    "python scripts/play_run.py brute_gap 240 <report>",
+    "python scripts/play_run.py brute 60 <report>",
+    "python scripts/audio_probe.py <dir>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 87,
+  "fix": "split the brute slam into a 0.35 s windup (brute_windup event, 140 Hz clip, BRUTE WINDUP caption, 10% swell) and a delayed slam; damage, range, LOS, reach and cooldown stay as before",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "271 passed"
+  },
+  "play_runs": {
+    "after": {
+      "audio": 3,
+      "drops": 0,
+      "events": [
+        {"events": ["brute_windup"], "frame": 1},
+        {"events": ["brute_slam", "hurt"], "frame": 23}
+      ],
+      "frames": 60,
+      "hash": "80e01877eeb2143154eedd98220a728a",
+      "hp": 80,
+      "hurt_frame": 23
+    },
+    "before": {
+      "audio": 2,
+      "drops": 0,
+      "events": [
+        {"events": ["brute_slam", "hurt"], "frame": 1}
+      ],
+      "frames": 60,
+      "hash": "7d061e07a7f621c5a4bdb69179c21d1a",
+      "hp": 80,
+      "hurt_frame": 1
+    },
+    "brute_gap_after": {
+      "audio": 4,
+      "drops": 0,
+      "frames": 240,
+      "hash": "068a1b67022e25c6ff6914c3e830d520",
+      "hp": 80,
+      "hurts": 1
+    },
+    "brute_after": {
+      "audio": 3,
+      "drops": 0,
+      "frames": 60,
+      "hash": "8980499b6936aa5e4173e27470c38a7d",
+      "hp": 80,
+      "hurts": 1
+    },
+    "summary": "same 60-frame stand-in-range drill: the slam leaves hp 100 -> 80 in both builds, but the hurt frame moves from 1 to 23 (0.37 s) behind a BRUTE WINDUP tell; a 240-frame gap drill and the old 60-frame brute drill still take the slam"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-87/after_brute_windup.*",
+    "before_dir": "shots/shooter-campaign/cycle-87/before_brute_windup.*",
+    "route": "scripts/capture.py brute_windup; 960x540 seed 1, player z 8.0, brute z 5.8, one update"
+  },
+  "tests": {
+    "brute_windup_tests": 2,
+    "suite": "271 passed",
+    "updated": [
+      "tests/test_enemy_los.py",
+      "tests/test_brute_slam.py",
+      "tests/test_melee_reach.py"
+    ]
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "brute windup",
+    "delayed slam",
+    "telegraph"
+  ],
+  "visual_diff": {
+    "bbox": [0, 56, 959, 539],
+    "changed_px": 34916,
+    "draws": 7,
+    "fraction": 0.0674,
+    "mean_luma_after": 39.04,
+    "mean_luma_before": 38.59,
+    "triangles": 302
+  },
+  "audio_probe": {
+    "brute_windup": {
+      "duration_s": 0.14,
+      "peak": 1.0,
+      "rms": 1.0
+    },
+    "cues": 21,
+    "sequence_s": 5.95
+  }
+}

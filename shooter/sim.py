@@ -889,24 +889,33 @@ class Sim:
                         self.alive = False
                         events.append("died")
             elif e.etype == "brute":
-                if e.pause_t > 0.0:
-                    e.pause_t = max(0.0, e.pause_t - dt)
-                elif dist > float(edef["range"]):
-                    self._move_enemy(e, direction.x * speed * dt, direction.z * speed * dt)
-                    if dist < 6.0:
-                        e.pause_t = 0.4
-                if (dist <= float(edef["range"]) and e.attack_cd <= 0.0
-                        and self.alive and self._enemy_has_los(e)
-                        and self._in_melee_reach(e)):
-                    events.append("brute_slam")
-                    self.hp -= int(edef["dmg"])
-                    e.attack_cd = 2.0
-                    events.append("hurt")
-                    self._on_hurt(events, e)
-                    if self.hp <= 0:
-                        self.hp = 0
-                        self.alive = False
-                        events.append("died")
+                if e.windup_t > 0.0:
+                    e.windup_t = max(0.0, e.windup_t - dt)
+                    if e.windup_t <= 0.0:
+                        events.append("brute_slam")
+                        if (dist <= float(edef["range"]) and self.alive
+                                and self._enemy_has_los(e)
+                                and self._in_melee_reach(e)):
+                            self.hp -= int(edef["dmg"])
+                            events.append("hurt")
+                            self._on_hurt(events, e)
+                            if self.hp <= 0:
+                                self.hp = 0
+                                self.alive = False
+                                events.append("died")
+                else:
+                    if e.pause_t > 0.0:
+                        e.pause_t = max(0.0, e.pause_t - dt)
+                    elif dist > float(edef["range"]):
+                        self._move_enemy(e, direction.x * speed * dt, direction.z * speed * dt)
+                        if dist < 6.0:
+                            e.pause_t = 0.4
+                    if (dist <= float(edef["range"]) and e.attack_cd <= 0.0
+                            and self.alive and self._enemy_has_los(e)
+                            and self._in_melee_reach(e)):
+                        e.windup_t = float(edef.get("windup_s", 0.35))
+                        e.attack_cd = 2.0
+                        events.append("brute_windup")
             elif e.etype == "wisp":
                 side = Vec3(-direction.z, 0.0, direction.x)
                 flank = 1.0 if math.sin(self.time * 1.3 + e.state_t * 0.7) >= 0.0 else -1.0

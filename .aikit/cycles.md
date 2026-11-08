@@ -1783,3 +1783,30 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 269 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-86.json`.
+
+## Cycle 87 - Combat feel: telegraph the brute slam
+- **Area**: combat feel (87th cycle).
+- **Defect / evidence**: the brute dealt its 20-damage slam on the
+  first in-range frame. Unlike the warden it had no windup event,
+  caption or visual tell, so the hit could not be read or dodged.
+- **Fix**: split the brute attack into a 0.35 s windup and a delayed
+  slam. The windup emits `brute_windup`, plays a 0.14 s 140 Hz square
+  with a `BRUTE WINDUP` caption and a 10% body swell; the slam
+  re-checks range/LOS/reach at impact, so stepping out during the tell
+  dodges it. Damage, range, LOS, reach and cooldown are unchanged;
+  `windup_s` lives in `enemies.json`.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-87/`;
+  960x540 seed 1, player z 8.0, brute z 5.8, one update. 34,916 changed
+  px (6.74%, bbox 0,56-959,539), mean luma 38.59 -> 39.04; draws 7,
+  triangles 302. Before reads BRUTE SLAM/HP 80; after BRUTE WINDUP/
+  HP 100.
+- **Played runs**: `brute_windup 60` before/after both end hp 80 and
+  1 hurt, but the hurt frame moves 1 -> 23 (audio 2 -> 3) behind the
+  tell; `brute_gap 240` still closes and slams (hp 80, 1 hurt), plain
+  `brute 60` still slams (hp 80, 1 hurt). Campaign fairness
+  reference still witnesses a win; 0 drops.
+- **Audio**: probe reports 21 cues / 5.95 s sequence; brute windup
+  0.14 s peak 1.0 rms 1.0.
+- **Gates**: `python -m pytest -q` 271 passed; determinism 1800 ok;
+  aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-87.json`.

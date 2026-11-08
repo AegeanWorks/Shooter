@@ -869,6 +869,42 @@ def route_brute_gap(prefix: str, shadows: bool = True, srgb: bool = True, post: 
         engine.close()
 
 
+def route_brute_windup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """First brute tell at close range: windup swell + BRUTE WINDUP caption."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.wave = 2
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, 0.9002, 8.0), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = 0.0
+        g.sim.pitch = 0.0
+        g.sim.enemies = [
+            _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 5.8), hp=120,
+                   max_hp=120, attack_cd=0.0)
+        ]
+        g.update(FIXED_STEP, ActionState())
+        brute = g.sim.enemies[0]
+        print(
+            f"brute-windup z={brute.pos.z:.2f} windup_t={brute.windup_t:.2f} "
+            f"hp={g.sim.hp} cue={getattr(g, 'sound_cue', '')!r}"
+        )
+        engine.capture(f"{prefix}_brute_windup.png", f"{prefix}_brute_windup.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_brute_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First brute hit at close range: the brute-slam cue pair."""
     from keystone.app import Engine
@@ -2522,6 +2558,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_brute_slam(prefix, shadows, srgb, post, bloom)
     if which == "brute_gap":
         route_brute_gap(prefix, shadows, srgb, post, bloom)
+    if which == "brute_windup":
+        route_brute_windup(prefix, shadows, srgb, post, bloom)
     if which == "score_pop":
         route_score_pop(prefix, shadows, srgb, post, bloom)
     if which == "target_hp":

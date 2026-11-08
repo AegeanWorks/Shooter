@@ -49,6 +49,11 @@ def test_mite_still_bites_at_ground_level():
 def test_brute_still_reaches_the_platform_edge():
     s = _sim(1.6001, 17.5, "brute", 18.8, 0.7, 120)
     events = s.step(1.0 / 60.0, ActionState())
+    assert "brute_windup" in events, events
+    for _ in range(40):
+        events += s.step(1.0 / 60.0, ActionState())
+        if "brute_slam" in events:
+            break
     assert int(s.hp) == 80, (s.hp, events)
     assert "hurt" in events, events
 

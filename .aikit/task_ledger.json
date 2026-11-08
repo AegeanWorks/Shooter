@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-86-backup-restart",
+    "task_id": "shooter-cycle-87-brute-windup",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794125142.5808427,
+    "updated_at": 1794126062.4074855,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794125160.5686216
+    "completed_at": 1794126074.9184942
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-80-lowhp-pulse",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Low-health pulse proven after fixing the test-canvas stub: 255 tests, determinism 1800 ok, aikit 4/4, 17856 px pair, same clutch hash ae293bcd; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794122680.1729167,
-      "timestamp_str": "2026-11-08 10:24:40",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-80-lowhp-pulse",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-80-lowhp-pulse' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794122696.8582976,
-      "timestamp_str": "2026-11-08 10:24:56",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-81-warden-los",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Enemies cycle: require warden slam LOS so cover blocks the hit, with a cover test, slam pair and warden_cover drill",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794122750.9522076,
-      "timestamp_str": "2026-11-08 10:25:50",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The warden slam applies damage on distance and vertical reach only; unlike the brute and wisp paths it never checks cover LOS, so a 30-damage slam lands through the 2 m north cover.",
-        "benefits": "Cover now reliably blocks the slam; the windup, ring, range, damage and cooldown are unchanged.",
-        "risks": "contract: warden damage gate only; dependency: none; concurrency: none; state: deterministic LOS only, no new tuning.",
-        "mitigation": "Failing-first cover-slam test, a staged cover pair, a warden_cover drill and the fairness/campaign suites."
-      },
-      "plan_digest": "d22fec95f1fd9a59288fa911188897dd1a466077b353e5d173b5fc6d3e837a70"
-    },
     {
       "task_id": "shooter-cycle-81-warden-los",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794125160.5686233,
       "timestamp_str": "2026-11-08 11:06:00",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-87-brute-windup",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Combat-feel cycle: add a 0.35 s brute windup with a swell and cue, with first-frame delay tests, a windup pair and drills",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794125223.202027,
+      "timestamp_str": "2026-11-08 11:07:03",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "The brute slam deals 20 damage on the first in-range frame with no prior event; unlike the warden it cannot be read or dodged.",
+        "benefits": "A short windup, visible swell and BRUTE WINDUP cue make the slam readable while preserving damage, range, LOS and cooldown.",
+        "risks": "contract: brute attack timing/visual/audio; dependency: none; concurrency: none; state: deterministic windup field, fairness needs rechecking.",
+        "mitigation": "Failing-first delay tests, a windup pair, short/long brute drills and the full fairness suite."
+      },
+      "plan_digest": "6a6862f6e213e8635e6e861499e41834bc0c5d1be3c235ee04064fa92bc2c2bd"
+    },
+    {
+      "task_id": "shooter-cycle-87-brute-windup",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Brute windup proven: 271 tests, determinism 1800 ok, aikit 4/4, 34916 px pair, hurt frame 1->23 at same hp 80, gap/brute drills intact; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794126062.4074855,
+      "timestamp_str": "2026-11-08 11:21:02",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-87-brute-windup",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-87-brute-windup' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794126074.918496,
+      "timestamp_str": "2026-11-08 11:21:14",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

@@ -29,7 +29,9 @@ def _sim(player_z: float, brute_z: float, x: float = -6.0) -> Sim:
 
 def test_brute_cannot_slam_through_cover():
     s = _sim(3.8, 6.2)
-    events = s.step(1.0 / 60.0, ActionState())
+    events: list[str] = []
+    for _ in range(60):
+        events += s.step(1.0 / 60.0, ActionState())
     assert int(s.hp) == 100, (s.hp, events)
     assert "hurt" not in events
 
@@ -37,5 +39,10 @@ def test_brute_cannot_slam_through_cover():
 def test_brute_still_slams_in_the_open():
     s = _sim(0.0, 2.0, x=10.0)
     events = s.step(1.0 / 60.0, ActionState())
+    assert "brute_windup" in events, events
+    for _ in range(40):
+        events += s.step(1.0 / 60.0, ActionState())
+        if "brute_slam" in events:
+            break
     assert int(s.hp) == 80, (s.hp, events)
     assert "hurt" in events

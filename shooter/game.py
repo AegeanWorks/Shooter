@@ -528,6 +528,7 @@ class ShooterGame:
             "boss_windup": square(70.0, 0.35, name="boss_windup"),
             "boss_slam": noise(0.30, seed=17, name="boss_slam"),
             "brute_slam": noise(0.15, seed=33, name="brute_slam"),
+            "brute_windup": square(140.0, 0.14, name="brute_windup"),
             "wisp_bolt": sine(1200.0, 0.08, name="wisp_bolt"),
             "boss_summon": square(310.0, 0.12, name="boss_summon"),
             "boss_down": sine(330.0, 0.45, name="boss_down"),
@@ -790,6 +791,9 @@ class ShooterGame:
         elif event == "brute_slam":
             self._play_clip(self._clips["brute_slam"], 0.7)
             self._cue("BRUTE SLAM", danger=True)
+        elif event == "brute_windup":
+            self._play_clip(self._clips["brute_windup"], 0.55)
+            self._cue("BRUTE WINDUP", danger=True)
         elif event == "wisp_bolt":
             self._play_clip(self._clips["wisp_bolt"], 0.65)
             self._cue("WISP BOLT", danger=True)
@@ -901,6 +905,8 @@ class ShooterGame:
                     # Boss telegraph: brief swelling during the slam windup so
                     # the 30-damage hit is readable before it lands.
                     s = 1.0 + (0.10 * math.sin(self.sim.time * 26.0) if e.windup_t > 0.0 else 0.0)
+                elif e.etype == "brute" and e.windup_t > 0.0:
+                    s *= 1.0 + 0.10 * math.sin(self.sim.time * 26.0)
                 # Hit reaction: a short squash + push away from the player.
                 # Presentation only; the sim hitbox and damage never move.
                 flinch = 0.0

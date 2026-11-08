@@ -24,6 +24,7 @@ from shooter.game import ShooterGame  # noqa: E402
 CUES = (
     "boss_windup",
     "boss_slam",
+    "brute_windup",
     "boss_summon",
     "boss_down",
     "overdrive",
@@ -46,6 +47,7 @@ CUES = (
 VISUAL_CUES = (
     "boss_windup",
     "boss_slam",
+    "brute_windup",
     "boss_down",
     "overdrive",
     "critical",

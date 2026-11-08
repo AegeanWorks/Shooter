@@ -31,6 +31,11 @@ def _sim() -> Sim:
 def test_brute_slam_emits_its_own_event():
     s = _sim()
     events = s.step(1.0 / 60.0, ActionState())
+    assert "brute_windup" in events, events
+    for _ in range(40):
+        events += s.step(1.0 / 60.0, ActionState())
+        if "brute_slam" in events:
+            break
     assert int(s.hp) == 80, (s.hp, events)
     assert "brute_slam" in events, events
     assert "hurt" in events, events
