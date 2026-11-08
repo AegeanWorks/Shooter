@@ -332,6 +332,9 @@ class ShooterGame:
             "cache": sine(1040.0, 0.08, name="cache"),
             "reload": noise(0.06, seed=21, name="reload"),
             "reloaded": sine(980.0, 0.06, name="reloaded"),
+            "switch_pulse": square(300.0, 0.05, name="switch_pulse"),
+            "switch_scatter": square(220.0, 0.06, name="switch_scatter"),
+            "switch_lance": square(420.0, 0.05, name="switch_lance"),
             "near_miss": sine(1320.0, 0.06, name="near_miss"),
             "streak_break": square(140.0, 0.12, name="streak_break"),
             "death": square(60.0, 0.50, name="death"),
@@ -482,6 +485,13 @@ class ShooterGame:
                     },
                 )
                 self.kill_feed = self.kill_feed[:4]
+            return
+        if event.startswith("switch:"):
+            wid = event.split(":", 1)[1]
+            clip = self._clips.get(f"switch_{wid}", self._clips.get("switch_pulse"))
+            if clip is not None:
+                self._play_clip(clip, 0.35)
+            self._cue(wid.upper())
             return
         if event == "spawn":
             cfg = dict(self.sim.juice.get("spawn_mark", {}))

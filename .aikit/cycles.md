@@ -601,3 +601,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 133 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-28.json`.
+
+## Cycle 29 - Audio cues: weapon-switch click and caption
+- **Area**: audio cues (29th cycle).
+- **Defect / evidence**: `_switch` emitted `switch:<weapon>` but
+  `_play_event` ignored it, so slot changes were silent. Baseline
+  `tests/test_switch_cue.py` found an empty cue, zero voices and no
+  `switch_*` clips (2/3 failed).
+- **Fix**: add `switch_pulse` (300 Hz), `switch_scatter` (220 Hz) and
+  `switch_lance` (420 Hz) short square clicks; handle `switch:<wid>` by
+  playing the matching clip at 0.35 gain and showing the uppercase
+  weapon caption. No sim/weapon timing change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-29/`;
+  960x540 seed 1, frame 1, slot 2. Before no caption/audio; after
+  `SCATTER` + `AUDIO 1 VOX`: 7,828 changed px (1.51%, bbox
+  426,164-947,459), mean luma 35.10 -> 35.20; draws 5, triangles 242.
+- **Played runs**: `switch 30` before audio 0 / cue empty / voices 0;
+  after audio 3 / cue `PULSE` / voices 3; same hash `f03a087f...`,
+  0 drops.
+- **Gates**: `python -m pytest -q` 136 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-29.json`.

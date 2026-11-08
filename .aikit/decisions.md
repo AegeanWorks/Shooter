@@ -315,3 +315,10 @@ Status: accepted
 Context: The tracer pool and muzzle flash used one yellow/white material for every gun, and the tracer dict carried no weapon identity, so pulse, scatter, lance and surge fire looked the same. The baseline tint test failed all four checks.
 Decision: `_fire` tags each tracer with the firing weapon (presentation telemetry, never in the snapshot). The game registers `material.tracer_{pulse,scatter,lance,surge}` and `material.flash_{...}` with distinct colors/emissives and assigns them in `_sync_scene`; pulse keeps the legacy yellow tracer and white flash as the control. The generic materials remain as fallbacks.
 Consequences: Suite 133/133 green (four new tests); determinism 1800 ok; aikit 4/4. At 960×540 seed 1, first-shot pairs: pulse 0 px (control), scatter 882 px (0.17%, bbox 528,312-557,347), surge 226 px (0.04%), lance 62 px (0.01%); mean luma ~40.1; draws 9, triangles 542. `kite 600` keeps hash `4fe640c5…` and its 10 kills / 1950 / hp 100. Evidence: `evidence/cycle-28.json`, images in workspace `shots/shooter-campaign/cycle-28/`.
+
+## ADR-046: Weapon-switch click and caption (audio cues)
+Date: 2026-11-08
+Status: accepted
+Context: `_switch` emitted `switch:<weapon>`, but the game ignored the event. Slot changes altered the viewmodel tint and status text silently: the baseline test measured an empty cue, zero voices and no `switch_*` clips.
+Decision: Add short square clicks for pulse (300 Hz), scatter (220 Hz) and lance (420 Hz), play the matching clip at 0.35 gain on `switch:<wid>`, and show the uppercase weapon name as the caption. Surge falls back to the pulse click. The sim switch timing, cooldown and ammo path are untouched.
+Consequences: Suite 136/136 green (three new tests); determinism 1800 ok; aikit 4/4. The slot-2 pair at 960×540 seed 1 changes 7,828 px (1.51%, bbox 426,164-947,459; caption + AUDIO line), mean luma 35.10→35.20, draws 5, triangles 242. `switch 30` goes from audio 0 / empty cue to audio 3 / `PULSE`, with the same hash `f03a087f…` and 0 drops. Evidence: `evidence/cycle-29.json`, images in workspace `shots/shooter-campaign/cycle-29/`.

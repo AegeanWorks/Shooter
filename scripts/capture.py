@@ -417,6 +417,30 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_switch_cue(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One clean frame after pressing slot 2: the weapon-switch cue pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.update(FIXED_STEP, ActionState(pressed=frozenset({"slot2"})))
+        print(
+            f"switch-cue frame={g.sim.tick} weapon={g.sim.weapon} "
+            f"cue={getattr(g, 'sound_cue', '')!r} "
+            f"voices={g.mixer.voice_count()}"
+        )
+        engine.capture(f"{prefix}_switch_cue.png", f"{prefix}_switch_cue.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_tracer_tint(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """One first-shot frame per weapon: the tracer/flash tint pair.
 
@@ -996,6 +1020,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_score_center(prefix, shadows, srgb, post, bloom)
     if which == "tracer_tint":
         route_tracer_tint(prefix, shadows, srgb, post, bloom)
+    if which == "switch_cue":
+        route_switch_cue(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

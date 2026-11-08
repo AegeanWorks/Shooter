@@ -1,0 +1,65 @@
+{
+  "area": "audio cues",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py switch_cue <prefix>",
+    "python scripts/play_run.py switch 30 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 29,
+  "fix": "handle switch:<weapon>: a distinct short click per slot plus a caption naming the gun; presentation only",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "136 passed"
+  },
+  "play_runs": {
+    "parity": "same hash f03a087f before/after; three switches, no sim change",
+    "switch_30": {
+      "after": {
+        "audio": 3,
+        "cue": "PULSE",
+        "hash": "f03a087fdd27596a0d9da5a39a4e5453",
+        "voices": 3,
+        "weapon": "pulse"
+      },
+      "before": {
+        "audio": 0,
+        "cue": "",
+        "hash": "f03a087fdd27596a0d9da5a39a4e5453",
+        "voices": 0,
+        "weapon": "pulse"
+      }
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-29/after",
+    "before_dir": "shots/shooter-campaign/cycle-29/before",
+    "route": "scripts/capture.py switch_cue; 960x540 seed 1, frame 1, slot 2 pressed"
+  },
+  "tests": {
+    "suite": "136 passed",
+    "switch_cue_tests": 3
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "weapon switch",
+    "slot click",
+    "caption"
+  ],
+  "visual_diff": {
+    "bbox": [
+      426,
+      164,
+      947,
+      459
+    ],
+    "changed_px": 7828,
+    "draws": 5,
+    "fraction": 0.0151,
+    "mean_luma_after": 35.2,
+    "mean_luma_before": 35.1,
+    "triangles": 242
+  }
+}
