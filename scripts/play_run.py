@@ -12,6 +12,7 @@ Modes:
   boss     warden-only wave-3 fight with the kite policy (ends on boss death)
   slam     close-range warden windup/slam (audio + caption drill)
   brute    stand in a brute's slam range (brute-slam cue drill)
+  brute_gap stand 2.7 m from a brute (dead-zone close drill)
   summon   stand on the platform edge while a warden summons by the cover
   summon_overlap  idle at spawn while a centre warden summons (overlap drill)
   campaign stage a wave-3 warden kill, then idle through the clear banner
@@ -154,6 +155,24 @@ def main(
             game.sim.spawn_t = 999.0
             game.sim.enemies = [
                 _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 6.5), hp=120,
+                       max_hp=120, attack_cd=0.0)
+            ]
+        if mode == "brute_gap":
+            sim = game.sim
+            sim.wave = 2
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+            sim.body = sim.body.__class__(
+                position=Vec3(0.0, 0.9002, 8.0),
+                half_extents=sim.body.half_extents,
+                velocity=Vec3(), on_ground=True,
+            )
+            sim.hvel = Vec3()
+            sim.yaw = 0.0
+            sim.pitch = 0.0
+            sim.enemies = [
+                _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 5.3), hp=120,
                        max_hp=120, attack_cd=0.0)
             ]
         if mode in ("death", "save_fail", "profile_bad", "profile_corrupt"):

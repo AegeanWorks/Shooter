@@ -630,3 +630,10 @@ Status: accepted
 Context: The first-person gun stayed rigidly locked to the camera while walking or sprinting; only recoil and reload moved it. Movement read as a floating camera rather than a carried weapon.
 Decision: Add a deterministic figure-eight bob to the existing viewmodel nodes while grounded: `bob_right` 0.022 m and `bob_up` 0.016 m at 8 Hz, scaled by horizontal speed up to 6.4 m/s. Amounts live in `juice.viewmodel`; the bob is zero at rest and in the air. No sim, movement, aim, draw or save change.
 Consequences: Suite 241/241 green (three new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The sprint pair at 960x540 seed 1 changes 3,043 px (0.59%, bbox 551,333-665,411), mean luma 30.73 -> 30.68, draws 6, triangles 242; the gun body moves from x 0.210 to 0.232 at the captured phase. `strafe 300` keeps hash `14a48660...`, 30 shots, hp 92, 1 hurt, audio 36, peak 8, 0 drops. Evidence: `evidence/cycle-73.json`, images in workspace `shots/shooter-campaign/cycle-73/`.
+
+## ADR-091: Close the brute melee dead zone (enemies/bosses)
+Date: 2026-11-08
+Status: accepted
+Context: The brute movement branch advanced only while farther than 3.0 m, but the slam required distance <=2.5 m. A brute at 2.7 m from a stationary player therefore stood still forever, outside its own range; the reproduced run stayed at hp 100 with no events for 180 frames.
+Decision: Change the movement gate to `dist > attack_range`, so the brute closes the final half metre and enters its existing slam range. Damage, range, reach, cooldown, pause behavior, LOS and all other enemy branches are unchanged; no new data or nodes.
+Consequences: Suite 242/242 green (one new test); determinism 1800 ok (hash a1528cee); aikit 4/4; the recorded fairness reference still replays a witnessed win without re-recording. The idle pair at 960x540 seed 1 changes 101,970 px (19.67%, bbox 0,12-959,539), mean luma 38.04 -> 38.39, draws 7, triangles 302. `brute_gap 180` before/after: hp 100 -> 80, hurts 0 -> 1, audio 0 -> 2, brute_slam now fires; both runs stay alive at wave 2. Evidence: `evidence/cycle-74.json`, images in workspace `shots/shooter-campaign/cycle-74/`.

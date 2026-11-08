@@ -1528,3 +1528,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 241 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-73.json`.
+
+## Cycle 74 - Enemies/bosses: close the brute melee dead zone
+- **Area**: enemies and bosses (74th cycle).
+- **Defect / evidence**: brutes advanced only while farther than 3.0 m
+  but slammed only within 2.5 m. At 2.7 m from a stationary player the
+  brute stood still forever, outside its own range; the baseline run stayed
+  at hp 100 with no events for 180 frames.
+- **Fix**: change the movement gate to `dist > attack_range`, so the brute
+  closes the final half metre and enters its existing slam range. Damage,
+  range, reach, cooldown, pause, LOS and other enemy branches are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-74/`;
+  960x540 seed 1, player idle at z 8, brute starts at z 5.3 (2.7 m).
+  101,970 changed px (19.67%, bbox 0,12-959,539), mean luma
+  38.04 -> 38.39; draws 7, triangles 302. Before: hp 100, no cue; after:
+  hp 80, BRUTE SLAM and damage cue.
+- **Played runs**: `brute_gap 180` before/after hp 100 -> 80, hurts
+  0 -> 1, audio 0 -> 2, brute_slam now fires; both runs stay alive at
+  wave 2. The fairness reference still replays a win unchanged.
+- **Gates**: `python -m pytest -q` 242 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-74.json`.

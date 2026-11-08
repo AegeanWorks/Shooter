@@ -1,45 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-73-viewmodel-bob",
+    "task_id": "shooter-cycle-74-brute-gap",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794119613.666678,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794119975.0547605,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794119627.2174459
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-68-platform-runway",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Levels cycle: mark the launch run-up with one shared-trim runway strip from the pad to the platform edge, with an approach pair and platform-drill parity",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794117527.3584845,
-      "timestamp_str": "2026-11-08 08:58:47",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The launch pad marks the takeoff spot but the 2.5 m gap to the platform edge is unmarked, so the intended jump line is guesswork.",
-        "benefits": "A lit runway connects pad to edge, making the jump route readable without new colliders or sim state.",
-        "risks": "contract: decoration only; dependency: none; concurrency: none; state: no sim, collider, camera or save change.",
-        "mitigation": "Failing-first runway test, an approach capture pair at 960x540, platform-drill hash parity and the full gates."
-      },
-      "plan_digest": "076f511efd6db95a807ba9be504d4d84d039642517773206f811c0cd96ecd8a6"
-    },
-    {
-      "task_id": "shooter-cycle-68-platform-runway",
-      "phase": "abandoned",
-      "phase_num": 2,
-      "description": "Task 'shooter-cycle-68-platform-runway' abandoned: platform runway dead end: pad already nearly touches the platform edge; superseded by campaign seal",
-      "status": "abandoned",
-      "timestamp": 1794117775.7278438,
-      "timestamp_str": "2026-11-08 09:02:55",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-68-campaign-seal",
       "phase": "in_progress",
@@ -272,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794119627.217448,
       "timestamp_str": "2026-11-08 09:33:47",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-74-brute-gap",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Enemies cycle: close the brute 2.5-3.0 m dead zone so it advances into attack range, with a stall test, idle pair and brute drill",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794119674.7057781,
+      "timestamp_str": "2026-11-08 09:34:34",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "A brute moves only when farther than 3.0 m but slams only within 2.5 m; at 2.7 m from a stationary player it stands still forever.",
+        "benefits": "Brutes close the final half metre and slam, matching their intended melee pressure without changing damage, range or cooldowns.",
+        "risks": "contract: brute movement branch only; dependency: none; concurrency: none; state: deterministic movement, no new damage tuning.",
+        "mitigation": "Failing-first stall test, a fixed-time idle capture pair, a brute-gap drill and the fairness/campaign suites."
+      },
+      "plan_digest": "1badd47d3464c70c4a39507f07bab7367d1ae5b2b42715e8d783ce67281ac303"
+    },
+    {
+      "task_id": "shooter-cycle-74-brute-gap",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Brute gap closed: 242 tests, determinism 1800 ok, aikit 4/4, 101970 px slam pair, brute_gap hp 100->80, brute_slam fires; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794119975.0547605,
+      "timestamp_str": "2026-11-08 09:39:35",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

@@ -873,7 +873,7 @@ class Sim:
             elif e.etype == "brute":
                 if e.pause_t > 0.0:
                     e.pause_t = max(0.0, e.pause_t - dt)
-                elif dist > 3.0:
+                elif dist > float(edef["range"]):
                     self._move_enemy(e, direction.x * speed * dt, direction.z * speed * dt)
                     if dist < 6.0:
                         e.pause_t = 0.4

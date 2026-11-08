@@ -1,0 +1,69 @@
+{
+  "area": "enemies and bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py brute_gap <prefix>",
+    "python scripts/play_run.py brute_gap 180 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 74,
+  "fix": "advance a brute whenever its distance exceeds the attack range (2.5 m) instead of only beyond 3.0 m, closing the 0.5 m dead zone; damage, range, cooldown and pause behaviour remain",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "242 passed"
+  },
+  "play_runs": {
+    "brute_gap_after": {
+      "audio": 2,
+      "drops": 0,
+      "frames": 180,
+      "hash": "813274f43481e30f4bc96abb2d18641a",
+      "hp": 80,
+      "hurts": 1,
+      "kills": 0,
+      "wave": 2
+    },
+    "brute_gap_before": {
+      "audio": 0,
+      "drops": 0,
+      "frames": 180,
+      "hash": "112f54832a69433e81904c4033a6b9e6",
+      "hp": 100,
+      "hurts": 0,
+      "kills": 0,
+      "wave": 2
+    },
+    "parity": "hash changes by design (the brute now closes and slams); both runs stay alive at wave 2 for 180 frames, after 1 hurt / hp 80 versus no event / hp 100"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-74/after",
+    "before_dir": "shots/shooter-campaign/cycle-74/before",
+    "route": "scripts/capture.py brute_gap; 960x540 seed 1, player idle at z 8, brute starts at z 5.3 (2.7 m)"
+  },
+  "tests": {
+    "brute_gap_tests": 1,
+    "suite": "242 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "brute AI",
+    "melee dead zone",
+    "attack range"
+  ],
+  "visual_diff": {
+    "bbox": [
+      0,
+      12,
+      959,
+      539
+    ],
+    "changed_px": 101970,
+    "draws": 7,
+    "fraction": 0.1967,
+    "mean_luma_after": 38.39,
+    "mean_luma_before": 38.04,
+    "triangles": 302
+  }
+}

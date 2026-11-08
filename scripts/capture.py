@@ -783,6 +783,43 @@ def route_score_pop(prefix: str, shadows: bool = True, srgb: bool = True, post: 
         engine.close()
 
 
+def route_brute_gap(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Idle frame where a 2.7 m brute either stalls or slams: the gap pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.wave = 2
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.player_pos = Vec3(0.0, 0.9002, 8.0)
+        g.sim.body = g.sim.body.__class__(
+            position=Vec3(0.0, 0.9002, 8.0), half_extents=g.sim.body.half_extents,
+            velocity=Vec3(), on_ground=True,
+        )
+        g.sim.hvel = Vec3()
+        g.sim.yaw = 0.0
+        g.sim.pitch = 0.0
+        g.sim.enemies = [
+            _Enemy(etype="brute", pos=Vec3(0.0, 0.7, 5.3), hp=120,
+                   max_hp=120, attack_cd=0.0)
+        ]
+        for _ in range(110):
+            g.update(FIXED_STEP, ActionState())
+        brute = g.sim.enemies[0]
+        print(
+            f"brute-gap z={brute.pos.z:.2f} dist={8.0 - brute.pos.z:.2f} "
+            f"hp={g.sim.hp} hurt_t={getattr(g.sim, 'hurt_t', 0.0):.2f}"
+        )
+        engine.capture(f"{prefix}_brute_gap.png", f"{prefix}_brute_gap.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_brute_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First brute hit at close range: the brute-slam cue pair."""
     from keystone.app import Engine
@@ -2137,6 +2174,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_death_fx(prefix, shadows, srgb, post, bloom)
     if which == "brute_slam":
         route_brute_slam(prefix, shadows, srgb, post, bloom)
+    if which == "brute_gap":
+        route_brute_gap(prefix, shadows, srgb, post, bloom)
     if which == "score_pop":
         route_score_pop(prefix, shadows, srgb, post, bloom)
     if which == "target_hp":

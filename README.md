@@ -148,14 +148,15 @@ projects/shooter/
 │   ├── test_save_error.py <- failed profile write warns, unwritable parent no crash
 │   ├── test_viewmodel_recoil.py <- kick-driven gun back/up offset and settle
 │   ├── test_viewmodel_bob.py <- speed-driven sway, rest and DATA checks
+│   ├── test_brute_gap.py <- brute closes its 2.5-3.0 m dead zone
 │   ├── test_summon_cover.py <- warden escorts never spawn inside covers
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
-│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/summon/summon_overlap/pickup/highground/switch/forfeit/save_fail/profile_bad/profile_corrupt/campaign
+│   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/brute_gap/summon/summon_overlap/pickup/highground/switch/forfeit/save_fail/profile_bad/profile_corrupt/campaign
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/profile_reset/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/profile_reset/recoil/viewmodel_bob/summon_cover/summon_overlap/pickup_pop/critical/reload_dip/campaign_seal/campaign_complete/cache_visual/cache_drop_cue/brute_gap/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -229,7 +230,8 @@ projects/shooter/
 │   ├── cycle-70.json  <- improvement-cycle 70 proof: ammo-cache pair, cache-bearing campaign run
 │   ├── cycle-71.json  <- improvement-cycle 71 proof: cache-drop cue pair, campaign clip count + WAV
 │   ├── cycle-72.json  <- improvement-cycle 72 proof: profile-reset pair, corrupt-profile run
-│   └── cycle-73.json  <- improvement-cycle 73 proof: viewmodel-bob pair, same-hash strafe run
+│   ├── cycle-73.json  <- improvement-cycle 73 proof: viewmodel-bob pair, same-hash strafe run
+│   └── cycle-74.json  <- improvement-cycle 74 proof: brute-gap pair, brute_gap drill
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
