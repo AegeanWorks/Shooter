@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-23-run-history",
+    "task_id": "shooter-cycle-24-reticle",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794097347.6450424,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794098349.1077642,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794097384.3014839
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-17-dry-fire",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Dry fire proven: 100 tests, aikit 4/4, determinism 1800 ok, 7828px cue pair, same dry hash; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794092347.9198055,
-      "timestamp_str": "2026-11-08 01:59:07",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-17-dry-fire",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-17-dry-fire' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794092416.9813354,
-      "timestamp_str": "2026-11-08 02:00:16",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-18-brute-los",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794097384.3014853,
       "timestamp_str": "2026-11-08 03:23:04",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-24-reticle",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Combat cycle: spread-aware reticle, failing-first gap tests, four-weapon pair and same-hash runs",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794098342.6772451,
+      "timestamp_str": "2026-11-08 03:39:02",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "A fixed 8 px reticle matched only the pulse and misrepresented the scatter, surge and lance hip-fire cones.",
+        "benefits": "Each gun's crosshair now shows its real relative spread; no gameplay change.",
+        "risks": "contract: HUD draw-only; dependency: none; concurrency: none; state: juice DATA only.",
+        "mitigation": "Failing-first gap tests, four-weapon staged pair with pulse control, same kite/strafe hashes."
+      },
+      "plan_digest": "9fa88e05546629492d776ccce90cee9e61581786e2ec1a09a47ea9a4be06f642"
+    },
+    {
+      "task_id": "shooter-cycle-24-reticle",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Reticle proven: 118 tests, determinism 1800 ok, aikit 4/4, scatter 576/surge 448/lance 256 px, pulse control 0 px, same kite/strafe hashes; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794098349.1077642,
+      "timestamp_str": "2026-11-08 03:39:09",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

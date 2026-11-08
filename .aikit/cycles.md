@@ -486,3 +486,28 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 114 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-23.json`.
+
+## Cycle 24 - Combat feel: spread-aware reticle
+- **Area**: combat feel (24th cycle).
+- **Defect / evidence**: the HUD always drew the same 8 px crosshair
+  half-gap. Hip-fire DATA spans 0.1 deg (lance), 1.2 (pulse), 2.5 (surge)
+  and 4.5 (scatter): at 10 m the scatter cone is +/-0.79 m while the reticle
+  claimed +/-0.23 m, and the lance claimed 12x its real cone. Baseline
+  `tests/test_reticle.py` measured `{pulse: 8, scatter: 8, lance: 8,
+  surge: 8}` and failed 4/4.
+- **Fix**: add `juice.json:reticle` (8 px / 1.2 deg reference, 3-40 px
+  clamp, 4 px hitmark expansion) and `ui.reticle_gap()`; draw the arms from
+  the equipped weapon's `spread_hip_deg`. Pulse stays exactly 8 px;
+  scatter 30, surge 17, lance 3. No sim/weapon DATA change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-24/`;
+  960x540 seed 1, frames 1-4, same target/camera/renderer S1C1P1B1.
+  scatter 576 px (0.11%, bbox 440,230-519,309), lance 256 px (0.05%, bbox
+  462,252-497,287), surge 448 px (0.09%, bbox 453,243-506,296), mean luma
+  35.51 -> 35.52 / 35.45 -> 35.46 / 35.92 -> 35.93; pulse control and the
+  live kite frame are pixel-identical (0 px).
+- **Played runs**: `kite 600` before/after same hash `4fe640c5...`,
+  10 kills / 1950 / hp 100, 39 shots / 37 hits, 90 audio, peak 8, drops 0;
+  `strafe 300` same hash `14a48660...`, 30 shots / 0 hits / hp 92.
+- **Gates**: `python -m pytest -q` 118 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-24.json`.

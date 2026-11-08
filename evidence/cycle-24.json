@@ -1,0 +1,122 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py reticle <prefix>",
+    "python scripts/play_run.py kite 600 <report> <png> <capture>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 24,
+  "fix": "spread-aware crosshair gap from juice.json:reticle and the equipped weapon's spread_hip_deg; pulse keeps the 8 px reference",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "118 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "after": {
+        "hash": "4fe640c52ae60bda8c2cffba018382af",
+        "hp": 100,
+        "kills": 10,
+        "mean_step_ms": 1.6508,
+        "score": 1950,
+        "shot_hits": [39, 37],
+        "wave": 2
+      },
+      "before": {
+        "hash": "4fe640c52ae60bda8c2cffba018382af",
+        "hp": 100,
+        "kills": 10,
+        "mean_step_ms": 1.1899,
+        "score": 1950,
+        "shot_hits": [39, 37],
+        "wave": 2
+      },
+      "dropped_sfx": 0,
+      "audio": 90,
+      "peak_voices": 8
+    },
+    "parity": "kite 600 and strafe 300 keep their hashes; the live kite capture is pixel-identical",
+    "strafe_300": {
+      "after": {
+        "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+        "hp": 92,
+        "mean_step_ms": 0.7629,
+        "shots": 30
+      },
+      "before": {
+        "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+        "hp": 92,
+        "mean_step_ms": 0.9489,
+        "shots": 30
+      }
+    }
+  },
+  "reticle_gaps": {
+    "hitmark_bonus": 4,
+    "lance": 3,
+    "pulse": 8,
+    "reference_deg": 1.2,
+    "scatter": 30,
+    "surge": 17
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-24/after",
+    "before_dir": "shots/shooter-campaign/cycle-24/before",
+    "route": "scripts/capture.py reticle; 960x540 seed 1, frames 1-4, same target/camera/renderer S1C1P1B1"
+  },
+  "tests": {
+    "reticle_tests": 4,
+    "suite": "118 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "reticle",
+    "hip-fire spread",
+    "combat readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      440,
+      230,
+      519,
+      309
+    ],
+    "changed_px": 576,
+    "draws": 6,
+    "fraction": 0.0011,
+    "mean_luma_after": 35.52,
+    "mean_luma_before": 35.51,
+    "triangles": 562
+  },
+  "visual_diff_by_weapon": {
+    "lance": {
+      "bbox": [462, 252, 497, 287],
+      "changed_px": 256,
+      "fraction": 0.0005,
+      "mean_luma_after": 35.46,
+      "mean_luma_before": 35.45
+    },
+    "pulse": {
+      "changed_px": 0,
+      "control": true
+    },
+    "scatter": {
+      "bbox": [440, 230, 519, 309],
+      "changed_px": 576,
+      "fraction": 0.0011,
+      "mean_luma_after": 35.52,
+      "mean_luma_before": 35.51
+    },
+    "surge": {
+      "bbox": [453, 243, 506, 296],
+      "changed_px": 448,
+      "fraction": 0.0009,
+      "mean_luma_after": 35.93,
+      "mean_luma_before": 35.92
+    }
+  }
+}

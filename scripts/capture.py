@@ -382,6 +382,41 @@ def route_reload(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One clean frame per weapon: the hip-fire reticle-spread pair.
+
+    Same seed, frame count, target, camera and renderer flags in both builds;
+    only the HUD gap may differ. The pulse frame is the unchanged control.
+    """
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=30, max_hp=30)]
+        for wid in ("scatter", "lance", "surge", "pulse"):
+            g.sim.weapon = wid
+            if wid == "surge":
+                g.sim.surge_t = float(g.sim.weapons["surge"].get("duration_s", 10.0))
+                g.sim.ammo["surge"] = int(g.sim.weapons["surge"]["mag"])
+            else:
+                g.sim.surge_t = 0.0
+            g.update(FIXED_STEP, ActionState())
+            wdef = g.sim.weapons[wid]
+            print(
+                f"reticle {wid} frame={g.sim.tick} spread={float(wdef['spread_hip_deg']):.2f}deg "
+                f"mag={g.sim.ammo[wid]}/{g.sim.reserve[wid]} hp={g.sim.hp}"
+            )
+            engine.capture(f"{prefix}_{wid}.png", f"{prefix}_{wid}.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_boss_hp(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Half-health warden bar: the numeric-HP HUD pair."""
     from keystone.app import Engine
@@ -812,6 +847,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_los(prefix, shadows, srgb, post, bloom)
     if which == "boss_hp":
         route_boss_hp(prefix, shadows, srgb, post, bloom)
+    if which == "reticle":
+        route_reticle(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

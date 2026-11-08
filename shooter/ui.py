@@ -7,6 +7,32 @@ import math
 from keystone.ui.font import text_width
 
 
+def reticle_gap(sim) -> int:
+    """Crosshair half-gap in px for the equipped weapon's hip-fire cone.
+
+    The pulse rifle's 8 px is the reference; every other gun scales by the
+    tangent of its spread, so the 4.5-degree scatter reads much wider than
+    the 0.1-degree lance. Tuning lives in juice.json:reticle and the hit
+    expansion is added on top.
+    """
+    weapon = str(getattr(sim, "weapon", "pulse"))
+    wdef = getattr(sim, "weapons", {}).get(weapon, {})
+    ret = dict((getattr(sim, "juice", {}) or {}).get("reticle", {}))
+    ref_gap = float(ret.get("ref_gap_px", 8.0))
+    ref_spread = math.radians(float(ret.get("ref_spread_deg", 1.2)))
+    spread = math.radians(float(wdef.get("spread_hip_deg", math.degrees(ref_spread))))
+    low = float(ret.get("min_gap_px", 3.0))
+    high = float(ret.get("max_gap_px", 40.0))
+    if math.tan(ref_spread) > 1e-9:
+        ratio = math.tan(spread) / math.tan(ref_spread)
+    else:
+        ratio = 1.0
+    gap = int(round(max(low, min(high, ref_gap * ratio))))
+    if float(getattr(sim, "hitmark_t", 0.0)) > 0.0:
+        gap += int(round(float(ret.get("hit_gap_px", 4.0))))
+    return gap
+
+
 def draw_shooter(canvas, hud, sim) -> None:
     w, h = int(hud.width), int(hud.height)
     cx, cy = w // 2, h // 2
@@ -16,10 +42,11 @@ def draw_shooter(canvas, hud, sim) -> None:
     danger = (1.0, 0.30, 0.30, 1.0)
     panel_c = (0.03, 0.04, 0.06, 0.72)
 
-    # crosshair (expands on hit) with a dark backing so the arms survive a
-    # white muzzle flash or a bright floor patch.
-    gap = 8 if float(getattr(sim, "hitmark_t", 0.0)) <= 0.0 else 12
-    col = accent if float(getattr(sim, "hitmark_t", 0.0)) > 0.0 else white
+    # crosshair (spread-aware, expands on hit) with a dark backing so the
+    # arms survive a white muzzle flash or a bright floor patch.
+    hitmark = float(getattr(sim, "hitmark_t", 0.0)) > 0.0
+    gap = reticle_gap(sim)
+    col = accent if hitmark else white
     ink = (0.02, 0.02, 0.03, 0.90)
     for x, y, rw, rh in (
         (cx - gap - 8, cy - 1, 8, 2),

@@ -66,13 +66,13 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon, floor grid/trim, mixer + cue captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: crosshair/ammo alert/reload/wave/score/streak/kill-feed/overdrive/damage/boss/pickup
+│   ├── ui.py            <- single-source HUD: spread-aware crosshair/ammo alert/reload/wave/score/streak/kill-feed/overdrive/damage/boss/pickup
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, history, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
 │       ├── enemies.json    <- mite/brute/wisp/warden boss
 │       ├── levels.json     <- arena + low jump platform + open spawn lane + 5 waves (wave 3 warden) + win_wave 4
-│       ├── juice.json      <- tracer/flash offset/scale, viewmodel, particle caps, hitstop, flinch
+│       ├── juice.json      <- tracer/flash offset/scale, viewmodel, reticle, particle caps, hitstop, flinch
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       └── grade.json      <- renderer flags adopted as DATA
 ├── tests/
@@ -100,13 +100,14 @@ projects/shooter/
 │   ├── test_viewmodel.py   <- camera-follow gun, weapon tint, death hide
 │   ├── test_reload_cue.py  <- reload-completion voice/caption + ammo parity
 │   ├── test_history.py     <- schema-3 migration, capped run history, RECENT line
+│   ├── test_reticle.py     <- per-weapon hip-fire reticle gap; pulse reference
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/pickup reports
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/burst/pickup/pickup_spawn/hurt/boss/slam/death)
+│   └── capture.py     <- seeded routes (spawn/combat/burst/pickup/hurt/boss/slam/reticle/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
