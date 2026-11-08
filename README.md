@@ -92,6 +92,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `primitives` | cube/plane/cone/cylinder/sphere counts, bounds, normals, UVs | `tests/test_keystone_primitives_mechanics.py` |
 | `gpu.instancing` | grouping, culling, ordering, savings, skinned exclusion | `tests/test_keystone_instancing_mechanics.py` |
 | `playtest` | canon/signals, policies, transcripts/diffs, reports, fairness verdicts | `tests/test_keystone_playtest_mechanics.py` |
+| `Scene` graph | queries, IDs, parenting, traversal, visibility | `tests/test_keystone_scene_graph_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -155,6 +156,7 @@ projects/shooter/
 │   ├── test_keystone_primitives_mechanics.py <- cube/plane/cone/cylinder/sphere geometry
 │   ├── test_keystone_instancing_mechanics.py <- grouping, culling, ordering, savings
 │   ├── test_keystone_playtest_mechanics.py <- canon, policies, transcripts, reports, fairness
+│   ├── test_keystone_scene_graph_mechanics.py <- queries, IDs, parenting, traversal, visibility
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -365,7 +367,8 @@ projects/shooter/
 │   ├── cycle-115.json <- atomic writes, backups, BOM
 │   ├── cycle-116.json <- primitive counts, bounds, normals, UVs
 │   ├── cycle-117.json <- instancing grouping, culling, ordering
-│   └── cycle-118.json <- playtest canon/policies/transcripts/fairness
+│   ├── cycle-118.json <- playtest canon/policies/transcripts/fairness
+│   └── cycle-119.json <- scene queries, IDs, parenting, traversal, visibility
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

@@ -2437,3 +2437,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 406 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-118.json`.
+
+## Cycle 119 - Keystone testbed: scene graph queries and identity
+- **Area**: keystone testbed (119th cycle).
+- **Feature / evidence**: scene queries, identity allocation and parenting
+  are core runtime/authoring mechanics but were covered only indirectly
+  through editor and culling tests.
+- **Fix**: add `tests/test_keystone_scene_graph_mechanics.py` with five
+  in-memory graph tests.
+- **Proof**: name/tag/layer/component filters and find/by-id resolve;
+  automatic IDs allocate node-1/node-2, duplicate explicit/root/subtree
+  IDs raise, failures do not consume IDs and explicit collisions are
+  skipped; reparenting moves children, removals clear parents, different
+  parents and cycles raise; traversal is depth-first pre-order and hidden
+  ancestors hide descendants; restore_next_id resumes at node-10 and
+  ignores lower rewinds while rejecting invalid values.
+- **Gates**: `python -m pytest -q` 411 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-119.json`.

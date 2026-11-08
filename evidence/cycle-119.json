@@ -1,0 +1,71 @@
+{
+  "area": "keystone testbed: scene graph queries, IDs and parenting",
+  "commands": [
+    "python -m pytest tests/test_keystone_scene_graph_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 119,
+  "feature": "name/tag/layer/component queries and find/by-id, deterministic ID allocation with duplicate rejection, reparenting and cycle guards, depth-first traversal order and visibility chains",
+  "fix": "add tests/test_keystone_scene_graph_mechanics.py with five in-memory scene-graph tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "411 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "queries": {
+      "name": ["enemy", "enemy-2"],
+      "tag": ["enemy", "enemy-2"],
+      "layer": ["pickup"],
+      "component": ["enemy"],
+      "combined": ["enemy-2"],
+      "find": true,
+      "find_by_id": true,
+      "missing": null
+    },
+    "ids": {
+      "auto": ["node-1", "node-2"],
+      "duplicate_explicit": "ValueError",
+      "duplicate_root": "ValueError",
+      "next_after_failure": "node-3",
+      "subtree_duplicate": "ValueError",
+      "explicit_collision_skip": "node-2"
+    },
+    "parenting": {
+      "reparent_moves_child": true,
+      "remove_child_clears_parent": true,
+      "constructor_parent_links": true,
+      "different_parent_conflict": "ValueError",
+      "self_cycle": "ValueError",
+      "subtree_cycle": "ValueError",
+      "sibling_attached": true
+    },
+    "traversal": {
+      "order": ["", "parent", "child-a", "grandchild", "child-b", "sibling"],
+      "hidden_parent_chain": true,
+      "hidden_child_subtree": true,
+      "traversal_keeps_hidden": true
+    },
+    "next_id": {
+      "restore_10": "node-10",
+      "restore_lower_keeps_max": "node-11",
+      "invalid": "ValueError",
+      "explicit_then_auto": "node-2"
+    }
+  },
+  "tests": {
+    "scene_graph_tests": 5,
+    "suite": "411 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone scene graph",
+    "node queries",
+    "node ids",
+    "parenting",
+    "traversal order",
+    "visibility chain"
+  ]
+}

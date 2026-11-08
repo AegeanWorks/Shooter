@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-118-playtest",
+    "task_id": "shooter-cycle-119-scene-graph",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794148906.1974313,
+    "updated_at": 1794149424.386036,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794148906.812129
+    "completed_at": 1794149424.796204
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-112-agents",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Agents/audit covered: 376 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794145489.310333,
-      "timestamp_str": "2026-11-08 16:44:49",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-112-agents",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-112-agents' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794145489.8090189,
-      "timestamp_str": "2026-11-08 16:44:49",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-113-asset-io",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover asset loaders/kinds/fingerprints, AssetSource validation and ReloadReport reporting",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794145525.3832905,
-      "timestamp_str": "2026-11-08 16:45:25",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "asset_io backs registry hot reload but its loaders, suffix inference, fingerprints and report contracts have no direct shooter coverage.",
-        "benefits": "Five tests pin loader selection, suffix/kind mapping, fingerprint updates, payload kind checks and JSON-safe reload reports.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp files only; no game/sim/hash change.",
-        "mitigation": "Small temp OBJ/PNG/prefab sources, full suite, determinism and project gates."
-      },
-      "plan_digest": "8f519f4c69aa87713b7f42094b199e7f132b1457a91caa0c599b117dbfc8c72c"
-    },
     {
       "task_id": "shooter-cycle-113-asset-io",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794148906.8121312,
       "timestamp_str": "2026-11-08 17:41:46",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-119-scene-graph",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover scene queries/IDs, parenting/reparenting, traversal order and visibility chains",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794148962.9069357,
+      "timestamp_str": "2026-11-08 17:42:42",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Scene graph queries and identity allocation are core authoring/runtime mechanics but the testbed covers them only indirectly through editor and culling tests.",
+        "benefits": "Five tests pin name/tag/layer/component filters, find/by-id, duplicate-ID rejection, deterministic allocation, reparenting/cycle guards, traversal order and invisible ancestors.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: in-memory scenes only; no game/sim/hash change.",
+        "mitigation": "Small explicit-id scenes, full suite, determinism and project gates."
+      },
+      "plan_digest": "c022a141133ac1aae5ada413b8f3a5d0211a78f42cf5317bdc654fe97b724fd7"
+    },
+    {
+      "task_id": "shooter-cycle-119-scene-graph",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Scene graph covered: 411 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794149424.386036,
+      "timestamp_str": "2026-11-08 17:50:24",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-119-scene-graph",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-119-scene-graph' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794149424.7962065,
+      "timestamp_str": "2026-11-08 17:50:24",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
