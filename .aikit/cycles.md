@@ -962,3 +962,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 181 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-46.json`.
+
+## Cycle 47 - Levels: jump-platform launch pad
+- **Area**: levels (47th cycle).
+- **Opportunity**: the rim marks the platform top, but the floor launch
+  spot was unmarked; the approach showed the edge with no "jump here"
+  cue. The before frame had only the rim.
+- **Fix**: add one flat lit trim pad (1.4 x 0.02 x 1.4) at
+  `(-16, 0.02, 11.2)` before the south edge, sharing `material.trim`.
+  Decoration only: no collider, no sim state. One node keeps the
+  frame-budget plan at 40 (shadow calls 34 -> 35).
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-47/`;
+  960x540 seed 1, approach view at (-16,9.5) facing +Z. Before rim only;
+  after rim + cyan pad: 7,994 changed px (1.54%, bbox 361,92-899,539),
+  mean luma 48.24 -> 49.47; draws 6, triangles 122 -> 134.
+- **Played runs**: `platform 120` before/after same hash `c1603d79...`,
+  28 frames, hp 100, score 250, landed, audio 1, peak 1, drops 0.
+- **Gates**: `python -m pytest -q` 183 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4; frame budget green.
+- **Evidence file**: `evidence/cycle-47.json`.

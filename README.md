@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts, death silhouettes, brute/wisp cues, crosshair bounty, switch cues, win/career debrief, floor grid/trim/pilasters/platform rim, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts, death silhouettes, brute/wisp cues, crosshair bounty, switch cues, win/career debrief, floor grid/trim/pilasters/platform rim/pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health, kill marker, ammo/reload, kill-feed, damage, boss/pickup direction
@@ -123,6 +123,7 @@ projects/shooter/
 │   ├── test_best_row.py    <- career bests row, hidden at zero
 │   ├── test_score_pop.py   <- +N bounty at the crosshair, expiry
 │   ├── test_target_hp.py   <- crosshair target HP bar, warden exclusion
+│   ├── test_approach_pad.py <- platform launch pad, trim material, position
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -176,7 +177,8 @@ projects/shooter/
 │   ├── cycle-43.json  <- improvement-cycle 43 proof: brute-slam cue pair, brute drill
 │   ├── cycle-44.json  <- improvement-cycle 44 proof: career-bests debrief pair, same-hash run
 │   ├── cycle-45.json  <- improvement-cycle 45 proof: crosshair bounty pop, same-hash run
-│   └── cycle-46.json  <- improvement-cycle 46 proof: target-health pair, same-hash run
+│   ├── cycle-46.json  <- improvement-cycle 46 proof: target-health pair, same-hash run
+│   └── cycle-47.json  <- improvement-cycle 47 proof: platform launch-pad pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

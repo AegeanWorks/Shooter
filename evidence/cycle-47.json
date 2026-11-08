@@ -1,0 +1,69 @@
+{
+  "area": "levels",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py platform_rim <prefix>",
+    "python scripts/play_run.py platform 120 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 47,
+  "fix": "one flat lit trim pad (1.4 x 0.02 x 1.4) at the jump-platform approach; decoration only, one node, budget-safe",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "budget": "shadow calls 34 -> 35; plan stays <= 40",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "183 passed"
+  },
+  "play_runs": {
+    "parity": "same platform hash c1603d79 before/after; the pad has no collider",
+    "platform_120": {
+      "after": {
+        "audio": 1,
+        "frames": 28,
+        "hash": "c1603d797193787331a17b9ebb62c55d",
+        "hp": 100,
+        "landed": true,
+        "score": 250
+      },
+      "before": {
+        "audio": 1,
+        "frames": 28,
+        "hash": "c1603d797193787331a17b9ebb62c55d",
+        "hp": 100,
+        "landed": true,
+        "score": 250
+      }
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-47/after",
+    "before_dir": "shots/shooter-campaign/cycle-47/before",
+    "route": "scripts/capture.py platform_rim; 960x540 seed 1, approach view at (-16,9.5) facing +Z"
+  },
+  "tests": {
+    "approach_pad_tests": 2,
+    "suite": "183 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "launch pad",
+    "jump platform",
+    "level navigation"
+  ],
+  "visual_diff": {
+    "bbox": [
+      361,
+      92,
+      899,
+      539
+    ],
+    "changed_px": 7994,
+    "draws": 6,
+    "fraction": 0.0154,
+    "mean_luma_after": 49.47,
+    "mean_luma_before": 48.24,
+    "shadow_calls": 35,
+    "triangles": 134
+  }
+}

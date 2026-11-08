@@ -86,6 +86,7 @@ class ShooterGame:
         self._slam_ring: list[Node] = []
         self._wall_pilasters: list[Node] = []
         self._platform_rim: list[Node] = []
+        self._approach_pad: Node | None = None
         self.spawn_marks: list[dict] = []
         self._flash: Node | None = None
         self._view_body: Node | None = None
@@ -264,6 +265,16 @@ class ShooterGame:
                 )
                 self.scene.add(node)
                 self._platform_rim.append(node)
+            pad = Node(
+                "platform-pad", id="platform-pad",
+                transform=Transform(
+                    position=Vec3(px, 0.02, pz - pd / 2.0 - 0.8),
+                    scale=Vec3(1.4, 0.02, 1.4),
+                ),
+                mesh=wall_mesh, material=trim_mat,
+            )
+            self.scene.add(pad)
+            self._approach_pad = pad
 
         # Wall pilasters: shared vertical strips that give the four flat
         # boundary walls depth. Decoration only (no colliders, no sim).
