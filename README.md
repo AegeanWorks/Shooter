@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/cover-safe summons/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload/no-reserve, kill-feed, damage, boss/pickup direction (tag survives boss)
@@ -136,6 +136,7 @@ projects/shooter/
 │   ├── test_pickup_pop.py  <- surge collection orb burst and clear
 │   ├── test_critical_cue.py <- critical kill voice, caption, standard-kill parity
 │   ├── test_profile_disabled.py <- disabled schema warns on the debrief, file preserved
+│   ├── test_reload_dip.py  <- viewmodel dip/return during reload, DATA-driven
 │   ├── test_wall_texture.py <- deterministic wall panel texture, no new draws
 │   ├── test_surge_forfeit_cue.py <- surge-forfeit voice + caption, switch parity
 │   ├── test_save_error.py <- failed profile write warns, unwritable parent no crash
@@ -147,7 +148,7 @@ projects/shooter/
 │   ├── soak.py        <- full-length sustain soak + timing/budget report
 │   ├── play_run.py    <- played-run evidence: idle/kite/strafe/ambush/boss/slam/brute/summon/pickup/highground/switch/forfeit/save_fail/profile_bad
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
-│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/recoil/summon_cover/pickup_pop/critical/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
+│   └── capture.py     <- seeded routes (spawn/combat/pickup/hurt/boss/slam/reticle/highground/spawn_mark/score_center/tracer_tint/switch_cue/surge_forfeit/save_error/profile_disabled/recoil/summon_cover/pickup_pop/critical/reload_dip/win_history/killmark/slam_ring/pickup_arrow/debrief_width/wall_depth/spawn_cue/wisp_bolt/summon_mark/platform_rim/streak_bonus/death_fx/brute_slam/score_pop/target_hp/boss_pickup/cover_texture/history5/platform_pulse/death)
 ├── evidence/
 │   ├── cycle-01.json  <- improvement-cycle 1 proof: diffs, runs, gate results
 │   ├── cycle-02.json  <- improvement-cycle 2 proof: boss pair, runs, gate results
@@ -213,7 +214,8 @@ projects/shooter/
 │   ├── cycle-62.json  <- improvement-cycle 62 proof: no-reserve HUD pair, dry-fire run
 │   ├── cycle-63.json  <- improvement-cycle 63 proof: pickup-pop pair, same-hash pickup run
 │   ├── cycle-64.json  <- improvement-cycle 64 proof: critical-cue pair, campaign clip count + WAV
-│   └── cycle-65.json  <- improvement-cycle 65 proof: disabled-profile pair, profile_bad run
+│   ├── cycle-65.json  <- improvement-cycle 65 proof: disabled-profile pair, profile_bad run
+│   └── cycle-66.json  <- improvement-cycle 66 proof: reload-dip pair, same-hash reload run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

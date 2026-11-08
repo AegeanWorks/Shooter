@@ -1355,3 +1355,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 220 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-65.json`.
+
+## Cycle 66 - Combat feel: reload viewmodel dip
+- **Area**: combat feel (66th cycle).
+- **Opportunity**: the reload bar and completion cue existed, but the
+  first-person gun stayed rigidly at hip through the whole reload, so the
+  weapon felt static while the magazine filled.
+- **Fix**: dip the existing viewmodel nodes down 0.12 m and back 0.06 m on
+  a `sin(pi*phase)` curve from `reload_t / reload_s`, returning to rest at
+  completion. Amounts live in `juice.viewmodel reload_drop/reload_back`;
+  no new nodes, draws, sim timing, ammo or input changes.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-66/`;
+  960x540 seed 1, pulse reload held at half duration. 12,027 changed px
+  (2.32%, bbox 551,333-673,529), mean luma 32.60 -> 32.83; draws 6,
+  triangles 290; gun body y 1.450 -> 1.330.
+- **Played runs**: `reload 60` before/after same hash `d7eb253d...`,
+  6 frames, ammo 30/reserve 90, cue RELOADED, hp 100, audio 1, drops 0.
+- **Gates**: `python -m pytest -q` 223 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-66.json`.

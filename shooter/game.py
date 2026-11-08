@@ -925,6 +925,16 @@ class ShooterGame:
             recoil = min(1.0, abs(sim.kick) / math.radians(4.0))
             recoil_back = float(cfg.get("recoil_back", 0.0)) * recoil
             recoil_up = float(cfg.get("recoil_up", 0.0)) * recoil
+            reload_t = float(getattr(sim, "reload_t", 0.0))
+            reload_curve = 0.0
+            if reload_t > 0.0:
+                wdef = sim.weapons.get(sim.weapon, {})
+                duration = float(wdef.get("reload_s", 0.0))
+                if duration > 0.0:
+                    phase = max(0.0, min(1.0, 1.0 - reload_t / duration))
+                    reload_curve = math.sin(math.pi * phase)
+            reload_drop = float(cfg.get("reload_drop", 0.0)) * reload_curve
+            reload_back = float(cfg.get("reload_back", 0.0)) * reload_curve
             rotation = (
                 Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), sim.yaw)
                 * Quat.from_axis_angle(Vec3(1.0, 0.0, 0.0), sim.pitch)
@@ -942,9 +952,9 @@ class ShooterGame:
             if sim.alive:
                 self._view_body.transform = Transform(
                     position=gun_pos(
-                        float(cfg.get("forward", 0.40)) - recoil_back,
+                        float(cfg.get("forward", 0.40)) - recoil_back - reload_back,
                         float(cfg.get("right", 0.18)),
-                        float(cfg.get("down", 0.16)) - recoil_up,
+                        float(cfg.get("down", 0.16)) - recoil_up + reload_drop,
                     ),
                     rotation=rotation,
                     scale=Vec3(
@@ -955,9 +965,9 @@ class ShooterGame:
                 )
                 self._view_barrel.transform = Transform(
                     position=gun_pos(
-                        float(cfg.get("barrel_forward", 0.62)) - recoil_back,
+                        float(cfg.get("barrel_forward", 0.62)) - recoil_back - reload_back,
                         float(cfg.get("right", 0.18)),
-                        float(cfg.get("barrel_down", 0.20)) - recoil_up,
+                        float(cfg.get("barrel_down", 0.20)) - recoil_up + reload_drop,
                     ),
                     rotation=rotation,
                     scale=Vec3(

@@ -48,6 +48,8 @@
     "down": 0.17,
     "recoil_back": 0.10,
     "recoil_up": 0.08,
+    "reload_drop": 0.12,
+    "reload_back": 0.06,
     "body_width": 0.055,
     "body_height": 0.055,
     "body_length": 0.26,

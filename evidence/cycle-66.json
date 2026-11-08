@@ -1,0 +1,69 @@
+{
+  "area": "combat feel",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py reload_dip <prefix>",
+    "python scripts/play_run.py reload 60 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 66,
+  "fix": "dip the existing viewmodel down 0.12 m and back 0.06 m on a sin(pi*phase) curve while reload_t runs, returning to rest at completion; amounts live in juice.viewmodel reload_drop/reload_back",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "223 passed"
+  },
+  "play_runs": {
+    "parity": "same hash d7eb253d before/after; viewmodel presentation only",
+    "reload_after": {
+      "ammo": 30,
+      "audio": 1,
+      "cue": "RELOADED",
+      "drops": 0,
+      "frames": 6,
+      "hash": "d7eb253d06b4a75db1c5bd6d360244b1",
+      "hp": 100,
+      "reserve": 90
+    },
+    "reload_before": {
+      "ammo": 30,
+      "audio": 1,
+      "cue": "RELOADED",
+      "drops": 0,
+      "frames": 6,
+      "hash": "d7eb253d06b4a75db1c5bd6d360244b1",
+      "hp": 100,
+      "reserve": 90
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-66/after",
+    "before_dir": "shots/shooter-campaign/cycle-66/before",
+    "route": "scripts/capture.py reload_dip; 960x540 seed 1, pulse reload_t held at half duration"
+  },
+  "tests": {
+    "reload_dip_tests": 3,
+    "suite": "223 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "reload animation",
+    "viewmodel dip",
+    "DATA-driven presentation"
+  ],
+  "visual_diff": {
+    "bbox": [
+      551,
+      333,
+      673,
+      529
+    ],
+    "changed_px": 12027,
+    "draws": 6,
+    "fraction": 0.0232,
+    "mean_luma_after": 32.83,
+    "mean_luma_before": 32.6,
+    "triangles": 290
+  }
+}

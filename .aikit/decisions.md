@@ -574,3 +574,10 @@ Status: accepted
 Context: An unsupported profile schema makes `load` raise, so `ShooterGame` sets `profile_disabled=True`. `_save_profile` and `_record_progress` then return early, but the death debrief looked normal: the player saw a scored run with no sign that nothing would persist.
 Decision: Add a red `PROFILE DISABLED` line first in the debrief extras when `profile_disabled` is true, taking precedence over `PROFILE NOT SAVED`. The schema refusal, no-overwrite guard, in-memory run record and debrief behavior are unchanged.
 Consequences: Suite 220/220 green (two new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The schema-99 death pair at 960x540 seed 1 changes 9,692 px (1.87%, bbox 290,334-669,383), mean luma 51.24 -> 49.91, draws 6, triangles 278. `profile_bad 240` before/after same death hash `f8cd9e28...`, disabled true, last_run recorded, runs 0, save_errors 0, hp 0, 0 drops; the schema-99 file is preserved byte-for-byte. Evidence: `evidence/cycle-65.json`, images in workspace `shots/shooter-campaign/cycle-65/`.
+
+## ADR-083: Reload viewmodel dip (combat feel)
+Date: 2026-11-08
+Status: accepted
+Context: The reload bar and completion cue existed, but the first-person gun stayed rigidly at hip through the whole reload, so the weapon felt static while the magazine filled.
+Decision: Dip the existing viewmodel nodes along the view basis by `reload_drop` 0.12 m and `reload_back` 0.06 m on a `sin(pi * phase)` curve derived from `reload_t / reload_s`, returning to rest at completion. Amounts live in `juice.viewmodel`; no new nodes, draws, sim timing, ammo or input changes.
+Consequences: Suite 223/223 green (three new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The mid-reload pair at 960x540 seed 1 changes 12,027 px (2.32%, bbox 551,333-673,529), mean luma 32.60 -> 32.83, draws 6, triangles 290; the gun body drops from y 1.450 to 1.330. `reload 60` keeps hash `d7eb253d...`, 6 frames, ammo 30/reserve 90, cue RELOADED, hp 100, audio 1, 0 drops. Evidence: `evidence/cycle-66.json`, images in workspace `shots/shooter-campaign/cycle-66/`.

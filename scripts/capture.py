@@ -466,6 +466,32 @@ def route_slam(prefix: str, shadows: bool = True, srgb: bool = True, post: bool 
         engine.close()
 
 
+def route_reload_dip(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Mid-reload frame with the viewmodel dipped: the reload-dip pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = []
+        g.sim.ammo["pulse"] = 0
+        g.sim.reserve["pulse"] = 120
+        g.sim.reload_t = float(g.sim.weapons["pulse"]["reload_s"]) / 2.0
+        g._sync_scene()
+        print(
+            f"reload-dip frame={g.sim.tick} reload_t={g.sim.reload_t:.3f} "
+            f"ammo={g.sim.ammo['pulse']} body_y={g._view_body.transform.position.y:.3f}"
+        )
+        engine.capture(f"{prefix}_reload_dip.png", f"{prefix}_reload_dip.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_reload(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Frame where the reload tail completes; the reload-cue pair."""
     from keystone.app import Engine
@@ -1873,6 +1899,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_platform_pulse(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
+    if which == "reload_dip":
+        route_reload_dip(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):
         route_death(prefix, shadows, srgb, post, bloom)
 
