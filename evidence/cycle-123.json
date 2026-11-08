@@ -1,0 +1,82 @@
+{
+  "area": "keystone testbed: static/skinned batch planning and merging",
+  "commands": [
+    "python -m pytest tests/test_keystone_batch_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 123,
+  "feature": "static grouping by mesh/material, skinned keying by joints/binds/world, world-space material merges, exclude-by-id/name, empty summaries and plan/merge count agreement",
+  "fix": "add tests/test_keystone_batch_mechanics.py with five CPU-only scene tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "431 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "static_plan": {
+      "groups": 2,
+      "draw_calls": 4,
+      "batched_calls": 2,
+      "saved_calls": 2,
+      "triangles": 48,
+      "batches": [["a", "b", "c"], ["d"]],
+      "skin_zero": true,
+      "empty": "all zeroes"
+    },
+    "skinned_plan": {
+      "groups": 0,
+      "draw_calls": 0,
+      "skin_groups": 3,
+      "skin_calls": 4,
+      "skin_triangles": 4,
+      "keys": ["material", "joints", "inverse_bind", "world"]
+    },
+    "static_merge": {
+      "groups": 1,
+      "merged_calls": 1,
+      "saved_calls": 2,
+      "triangles": 36,
+      "bounds": [[-2.5, -0.5, -0.5], [2.5, 0.5, 0.5]],
+      "plan_groups": 3,
+      "plan_draw_calls": 3,
+      "exclude_by_id": ["b", "c"],
+      "exclude_by_name": ["a", "c"],
+      "string_exclude": "TypeError",
+      "scene_unchanged": true
+    },
+    "skinned_merge": {
+      "groups": 2,
+      "skin_merged_calls": 2,
+      "skin_saved_calls": 1,
+      "world_length": 16,
+      "merged_skinned": true,
+      "different_bind_calls": 3,
+      "different_bind_saved": 1
+    },
+    "invariants": {
+      "plan_equals_merge_plan": true,
+      "batch_counts_sum": 2,
+      "merged_triangles_sum": 26,
+      "groups": 2,
+      "saved_calls": 1,
+      "skin_merged_calls": 1,
+      "skin_saved_calls": 1,
+      "nodes_sorted": true,
+      "empty": "all zeroes"
+    }
+  },
+  "tests": {
+    "batch_tests": 5,
+    "suite": "431 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone batch",
+    "draw call planning",
+    "world-space merge",
+    "skinned batches",
+    "exclude nodes"
+  ]
+}

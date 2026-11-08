@@ -96,6 +96,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `History` | push/undo/redo, copy isolation, branch discard, capacity, clear | `tests/test_keystone_history_mechanics.py` |
 | `scene_snapshot` | nodes/transforms, camera/environment, assets, validation, restore | `tests/test_keystone_scene_snapshot_mechanics.py` |
 | `scene_diff` | empty/added/removed/changed nodes, sections, validation | `tests/test_keystone_scene_diff_mechanics.py` |
+| `batch` | static/skinned planning, world-space merges, exclusions, invariants | `tests/test_keystone_batch_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -163,6 +164,7 @@ projects/shooter/
 │   ├── test_keystone_history_mechanics.py <- undo/redo, copy isolation, capacity
 │   ├── test_keystone_scene_snapshot_mechanics.py <- nodes, camera/environment, assets, restore
 │   ├── test_keystone_scene_diff_mechanics.py <- added/removed/changed nodes, sections, validation
+│   ├── test_keystone_batch_mechanics.py <- static/skinned planning, merges, exclusions
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -295,11 +297,11 @@ projects/shooter/
 │   ├── cycle-38.json  <- improvement-cycle 38 proof: wisp-bolt pair, campaign run
 │   ├── cycle-39.json  <- improvement-cycle 39 proof: summon-marker pair, same-hash boss run
 │   ├── cycle-40.json  <- improvement-cycle 40 proof: platform-rim pair, same-hash platform run
-│   ├── cycle-41.json  <- improvement-cycle 41 proof: streak-bonus pair, same-hash run
-│   ├── cycle-42.json  <- improvement-cycle 42 proof: death-silhouette pair, same-hash run
-│   ├── cycle-43.json  <- improvement-cycle 43 proof: brute-slam cue pair, brute drill
-│   ├── cycle-44.json  <- improvement-cycle 44 proof: career-bests debrief pair, same-hash run
-│   ├── cycle-45.json  <- improvement-cycle 45 proof: crosshair bounty pop, same-hash run
+│   ├── cycle-41.json
+│   ├── cycle-42.json
+│   ├── cycle-43.json
+│   ├── cycle-44.json
+│   ├── cycle-45.json
 │   ├── cycle-46.json
 │   ├── cycle-47.json
 │   ├── cycle-48.json
@@ -377,7 +379,8 @@ projects/shooter/
 │   ├── cycle-119.json <- scene queries, IDs, parenting, traversal, visibility
 │   ├── cycle-120.json <- history undo/redo, copy isolation, capacity
 │   ├── cycle-121.json <- scene snapshot nodes/assets/environment/restore
-│   └── cycle-122.json <- scene diff nodes/sections/validation
+│   ├── cycle-122.json <- scene diff nodes/sections/validation
+│   └── cycle-123.json <- batch planning, world-space merges, exclusions
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

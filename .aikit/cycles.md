@@ -2504,3 +2504,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 426 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-122.json`.
+
+## Cycle 123 - Keystone testbed: batch planning and merging
+- **Area**: keystone testbed (123rd cycle).
+- **Feature / evidence**: `batch` drives draw-call planning and world-space
+  merging but was covered only indirectly through asset/editor tests;
+  skinned keying and exclusion semantics were untested.
+- **Fix**: add `tests/test_keystone_batch_mechanics.py` with five CPU-only
+  scene tests.
+- **Proof**: static plans group by mesh/material with sorted batches and
+  savings; skinned plans key on material/joints/inverse-bind/world and
+  report separate skin calls; merges bake material groups into world-space
+  meshes, honor id/name exclusions and leave the scene untouched; skinned
+  merges share world/binds; mixed plan/merge counts and empty summaries
+  agree.
+- **Gates**: `python -m pytest -q` 431 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-123.json`.
