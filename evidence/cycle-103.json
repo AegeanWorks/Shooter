@@ -1,0 +1,59 @@
+{
+  "area": "keystone testbed: input, UI, asset loading and batch merging",
+  "commands": [
+    "python -m pytest tests/test_keystone_input_ui_asset_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 103,
+  "feature": "InputMap contexts/rebinding + ActionState pressed/held, PauseMenu + Canvas clipping, PNG/OBJ loading, merge_batches on the shooter scene",
+  "fix": "add tests/test_keystone_input_ui_asset_mechanics.py covering gameplay/menu input contexts, pressed-vs-held sampling and rebinding/save-load, ActionState round trips, pause-menu wrapping and canvas edge clipping, PNG pixel round trips, OBJ quad triangulation and the full merge_batches summary with an excluded node",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "337 passed"
+  },
+  "mechanics": {
+    "input": {
+      "gameplay_first": {"held": ["jump"], "pressed": ["jump"]},
+      "gameplay_second": {"held": ["jump"], "pressed": []},
+      "menu_context": {"held": ["jump"], "pressed": ["jump"]},
+      "rebind_gameplay": "space",
+      "rebind_menu": "j",
+      "save_load": {"context": "menu", "jump": "enter", "contexts": ["gameplay", "menu"]}
+    },
+    "action_state": {"pressed": ["fire", "jump"], "held": ["fire", "sprint"], "stripped_pressed": []},
+    "ui": {
+      "pause_menu_wrap": ["resume", "toggle_ui", "resume", "quit"],
+      "canvas_clips": [[0.0, 0.0, 3.0, 3.0], [8.0, 8.0, 2.0, 2.0]],
+      "offscreen_quads": 0,
+      "text_label": "A",
+      "button": {"label": "RESUME", "action": "resume", "selected": true}
+    },
+    "assets": {
+      "png": {"size": [2, 2], "rows_flipped": true, "bad_pixels": "ValueError"},
+      "obj": {"vertices": 4, "triangles": 2, "indices": [0, 1, 2, 0, 2, 3], "normal": [0.0, 0.0, 1.0]},
+      "parsed_triangle": {"vertices": 3, "indices": [0, 1, 2]}
+    },
+    "batching": {
+      "plan": {"groups": 8, "draw_calls": 34, "batched_calls": 8, "saved_calls": 26, "triangles": 482},
+      "merge": {"groups": 7, "merged_calls": 7, "saved_calls": 27, "triangles": 482, "skin_merged_calls": 0},
+      "exclude_platform_pad": {"groups": 7, "merged_calls": 7, "saved_calls": 26, "triangles": 470}
+    }
+  },
+  "tests": {
+    "input_ui_asset_tests": 5,
+    "suite": "337 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone input map",
+    "action state",
+    "pause menu",
+    "canvas clipping",
+    "png loader",
+    "obj loader",
+    "batch merge"
+  ]
+}

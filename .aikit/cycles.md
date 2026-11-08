@@ -2136,3 +2136,26 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 332 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-102.json`.
+
+## Cycle 103 - Keystone testbed: input, UI, assets and batch merging
+- **Area**: keystone testbed (103rd cycle).
+- **Feature / evidence**: Keystone ships context-aware input
+  mapping, a pause-menu/canvas UI core, dependency-free PNG/OBJ
+  loading and static batch merging, but the shooter suite had no direct
+  coverage.
+- **Fix**: add `tests/test_keystone_input_ui_asset_mechanics.py`
+  covering gameplay/menu contexts and pressed-vs-held sampling,
+  rebinding/save-load, ActionState round trips, pause-menu wrapping and
+  canvas edge clipping, PNG pixel round trips, OBJ quad triangulation
+  and `merge_batches` on the shooter scene with an excluded node.
+- **Proof**: gameplay presses jump once then only holds it; the menu
+  rebinds jump to `enter` and save/load restores the menu context;
+  canvas clips to `(0,0,3,3)`/`(8,8,2,2)` and drops offscreen
+  quads; the 2x2 PNG round-trips its flipped rows; the OBJ quad loads
+  4 vertices/2 triangles with a +Z normal; the scene plans 8 groups /
+  34 draw calls / 26 saved, merges to 7 calls / 27 saved / 482
+  triangles, and excluding `platform-pad` drops to 26 saved / 470
+  triangles.
+- **Gates**: `python -m pytest -q` 337 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-103.json`.
