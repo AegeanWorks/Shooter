@@ -587,6 +587,13 @@ class ShooterGame:
         elif event == "boss_summon":
             self._play_clip(self._clips["boss_summon"], 0.7)
             self._cue("WARDEN SUMMON", danger=True)
+            cfg = dict(self.sim.juice.get("spawn_mark", {}))
+            for pos in list(getattr(self.sim, "summon_positions", []))[:MAX_SPAWN_MARKS]:
+                self.spawn_marks.insert(0, {
+                    "x": float(pos.x), "z": float(pos.z),
+                    "t": float(cfg.get("life_s", 0.7)),
+                })
+            self.spawn_marks = self.spawn_marks[:MAX_SPAWN_MARKS]
         elif event in ("pickup", "wave"):
             self._play_clip(self._clips["pickup" if event == "pickup" else "wave"], 0.7)
             self._cue("SURGE ACQUIRED" if event == "pickup" else "WAVE CLEAR")

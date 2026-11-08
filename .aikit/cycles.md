@@ -803,3 +803,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 161 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-38.json`.
+
+## Cycle 39 - Enemies/bosses: warden summon origin markers
+- **Area**: enemies/bosses (39th cycle).
+- **Opportunity**: `boss_summon` had its own audio and caption, but the
+  two summoned mites appeared with no origin cue; only normal `spawn`
+  events used the marker pool. The staged frame measured
+  `positions=0 marks=0` with the cue already showing.
+- **Fix**: `_summon_mites` records the clamped escort positions in
+  `summon_positions` (presentation only, not in the snapshot);
+  `_play_event("boss_summon")` adds a spawn mark for each position (cap
+  4). The existing caption/audio and all summon behavior are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-39/`;
+  960x540 seed 1, warden at (0,1.1,2.0), `summon_cd=0`. Before cue only;
+  after cue + two orange origin beams: 6,296 changed px (1.21%, bbox
+  302,92-935,406), mean luma 38.49 -> 38.75; draws 9 -> 10, triangles
+  1134 -> 1158.
+- **Played runs**: `boss 1800` before/after same hash `81f05265...`,
+  507 frames, 3 kills, 3080, hp 100, 56/56, 121 audio, peak 8, drops 0.
+- **Gates**: `python -m pytest -q` 163 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-39.json`.

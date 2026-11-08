@@ -1,0 +1,67 @@
+{
+  "area": "enemies/bosses",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py summon_mark <prefix>",
+    "python scripts/play_run.py boss 1800 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 39,
+  "fix": "record warden summon positions (non-snapshot) and reuse the spawn-marker pool for each escort on boss_summon",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "163 passed"
+  },
+  "play_runs": {
+    "boss_1800": {
+      "after": {
+        "audio": 121,
+        "frames": 507,
+        "hash": "81f05265247d06899e4dd5608901cb89",
+        "hp": 100,
+        "kills": 3,
+        "score": 3080
+      },
+      "before": {
+        "audio": 121,
+        "frames": 507,
+        "hash": "81f05265247d06899e4dd5608901cb89",
+        "hp": 100,
+        "kills": 3,
+        "score": 3080
+      }
+    },
+    "parity": "same boss hash; summon behavior and damage unchanged"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-39/after",
+    "before_dir": "shots/shooter-campaign/cycle-39/before",
+    "route": "scripts/capture.py summon_mark; 960x540 seed 1, warden at (0,1.1,2.0), summon_cd=0"
+  },
+  "tests": {
+    "suite": "163 passed",
+    "summon_mark_tests": 2
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "warden summon",
+    "escort origin",
+    "spawn markers"
+  ],
+  "visual_diff": {
+    "bbox": [
+      302,
+      92,
+      935,
+      406
+    ],
+    "changed_px": 6296,
+    "draws": 10,
+    "fraction": 0.0121,
+    "mean_luma_after": 38.75,
+    "mean_luma_before": 38.49,
+    "triangles": 1158
+  }
+}

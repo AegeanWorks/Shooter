@@ -417,6 +417,32 @@ def route_reticle(prefix: str, shadows: bool = True, srgb: bool = True, post: bo
         engine.close()
 
 
+def route_summon_mark(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One warden summon at center: the escort-origin marker pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.wave = 3
+        g.sim.enemies = [_Enemy(etype="warden", pos=Vec3(0.0, 1.1, 2.0),
+                                hp=600, max_hp=600, summon_cd=0.0)]
+        g.update(FIXED_STEP, ActionState())
+        print(
+            f"summon-mark frame={g.sim.tick} "
+            f"positions={len(getattr(g.sim, 'summon_positions', []))} "
+            f"marks={len(g.spawn_marks)} cue={getattr(g, 'sound_cue', '')!r}"
+        )
+        engine.capture(f"{prefix}_summon_mark.png", f"{prefix}_summon_mark.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_wisp_bolt(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """First wisp hit from the right: the enemy-bolt pair."""
     from keystone.app import Engine
@@ -1245,6 +1271,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_spawn_cue(prefix, shadows, srgb, post, bloom)
     if which == "wisp_bolt":
         route_wisp_bolt(prefix, shadows, srgb, post, bloom)
+    if which == "summon_mark":
+        route_summon_mark(prefix, shadows, srgb, post, bloom)
     if which == "reload":
         route_reload(prefix, shadows, srgb, post, bloom)
     if which in ("all", "death"):

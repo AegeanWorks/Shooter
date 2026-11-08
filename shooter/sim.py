@@ -207,9 +207,11 @@ class Sim:
         self.wave = 1
         self.spawn_queue: list[str] = []
         self.spawn_t = 0.0
-        # Presentation telemetry: where the last wave spawn appeared. Never
-        # read by damage/RNG/movement and never part of the snapshot.
+        # Presentation telemetry: where the last wave spawn appeared and
+        # where the last warden summons landed. Never read by damage/RNG/
+        # movement and never part of the snapshot.
         self.spawn_pos = Vec3()
+        self.summon_positions: list[Vec3] = []
         self.pickup_active = False
         self.pickup_taken = False
         self._build_wave()
@@ -271,23 +273,29 @@ class Sim:
         """Spawn a bounded escort around the warden; never exceeds max_alive."""
         room = int(self.levels.get("max_alive", 24)) - sum(1 for e in self.enemies if e.alive)
         if room <= 0:
+            self.summon_positions = []
             return
         made = 0
+        positions: list[Vec3] = []
         for _ in range(min(int(count), room)):
             angle = self.rng.uniform(0.0, math.tau)
             radius = self.rng.uniform(1.2, 2.4)
             sx = boss.pos.x + math.cos(angle) * radius
             sz = boss.pos.z + math.sin(angle) * radius
+            mx = max(-19.0, min(19.0, sx))
+            mz = max(-19.0, min(19.0, sz))
             self.enemies.append(
                 _Enemy(
                     etype="mite",
-                    pos=Vec3(max(-19.0, min(19.0, sx)), 0.5, max(-19.0, min(19.0, sz))),
+                    pos=Vec3(mx, 0.5, mz),
                     hp=int(self.enemy_defs["mite"]["hp"]),
                     max_hp=int(self.enemy_defs["mite"]["hp"]),
                     attack_cd=0.6,
                 )
             )
+            positions.append(Vec3(mx, 0.5, mz))
             made += 1
+        self.summon_positions = positions
         if made:
             events.append("boss_summon")
 
