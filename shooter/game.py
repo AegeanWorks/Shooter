@@ -670,14 +670,23 @@ class ShooterGame:
         }
         hit_mat = self.assets.require("material.enemy_hit").payload
         hit_span = max(1e-6, float(self.sim.juice.get("hit_flinch_s", 0.25)))
+        death_span = max(1e-6, float(self.sim.juice.get("death_fx_s", 0.15)))
         ordered = sorted(sim.enemies, key=lambda e: (0 if e.alive else 1, e.etype))
         for i, node in enumerate(self._enemy_nodes):
-            if i < len(ordered) and ordered[i].alive:
+            if i < len(ordered) and (ordered[i].alive or ordered[i].death_t > 0.0):
                 e = ordered[i]
                 mesh, mat, _ = mesh_by_type[e.etype]
                 node.mesh = mesh
-                node.material = hit_mat if e.hit_t > hit_span * 0.4 else mat
                 node.visible = True
+                if not e.alive:
+                    # Brief white-hot shrink so the kill has a body exit.
+                    k = max(0.0, min(1.0, e.death_t / death_span))
+                    node.material = hit_mat
+                    node.transform = Transform(
+                        position=e.pos, scale=Vec3(k, k, k)
+                    )
+                    continue
+                node.material = hit_mat if e.hit_t > hit_span * 0.4 else mat
                 # death squash: scale down when hp low (presentation from sim hp)
                 frac = max(0.4, min(1.0, e.hp / max(1, self.sim.enemy_defs[e.etype]["hp"])))
                 s = 0.6 + 0.4 * frac

@@ -1,0 +1,56 @@
+{
+  "area": "graphics and effects",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py death_fx <prefix>",
+    "python scripts/play_run.py kite 600 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 42,
+  "fix": "0.15 s death_t on the enemy, decremented after death; the scene renders a shrinking white-hot silhouette before hiding the node",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "170 passed"
+  },
+  "play_runs": {
+    "kite_600": {
+      "audio": 101,
+      "hash": "4fe640c52ae60bda8c2cffba018382af",
+      "hp": 100,
+      "kills": 10,
+      "score": 1950
+    },
+    "parity": "same hash as the cycle-41 baseline; death_t is not in the snapshot"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-42/after",
+    "before_dir": "shots/shooter-campaign/cycle-42/before",
+    "route": "scripts/capture.py death_fx; 960x540 seed 1, two frames after the first kill"
+  },
+  "tests": {
+    "death_fx_tests": 3,
+    "suite": "170 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "death transition",
+    "shrinking silhouette",
+    "kill readability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      438,
+      92,
+      923,
+      373
+    ],
+    "changed_px": 3255,
+    "draws": 10,
+    "fraction": 0.0063,
+    "mean_luma_after": 38.64,
+    "mean_luma_before": 38.25,
+    "triangles": 698
+  }
+}

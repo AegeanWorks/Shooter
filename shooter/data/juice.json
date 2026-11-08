@@ -8,6 +8,7 @@
   "flash_scale": 0.055,
   "impact_burst": 12,
   "kill_burst": 20,
+  "death_fx_s": 0.15,
   "max_particles": 256,
   "kick_deg": 0.6,
   "kick_decay": 8.0,

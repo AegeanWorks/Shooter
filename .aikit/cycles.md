@@ -862,3 +862,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 167 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-41.json`.
+
+## Cycle 42 - Graphics and effects: enemy death silhouette
+- **Area**: graphics and effects (42nd cycle).
+- **Opportunity**: a killed enemy node disappeared on the kill frame; the
+  burst, feed, sound, hitstop and killmark played, but the body had no
+  exit transition. The baseline `test_death_fx.py` failed 3/3.
+- **Fix**: add `juice.death_fx_s` 0.15 and `_Enemy.death_t`, set on a
+  kill and decremented for dead enemies; `_sync_scene` renders a dead
+  enemy as a shrinking white-hot silhouette (`material.enemy_hit`)
+  before hiding it. `death_t` is not in the snapshot; damage, AI and RNG
+  are unchanged.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-42/`;
+  960x540 seed 1, two frames after the first kill. Before only the
+  impact/kill particles; after a white shrinking mite: 3,255 changed px
+  (0.63%, bbox 438,92-923,373), mean luma 38.25 -> 38.64; draws
+  9 -> 10, triangles 378 -> 698.
+- **Played runs**: `kite 600` keeps hash `4fe640c5...` (10 kills / 1950
+  / hp 100, 101 audio, peak 8, drops 0).
+- **Gates**: `python -m pytest -q` 170 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-42.json`.

@@ -50,6 +50,7 @@ class _Enemy:
     windup_t: float = 0.0
     summon_cd: float = 0.0
     hit_t: float = 0.0
+    death_t: float = 0.0
 
 
 class Sim:
@@ -713,6 +714,7 @@ class Sim:
                             events.append("near_miss_bonus")
                 if e.hp <= 0 and e.alive:
                     e.alive = False
+                    e.death_t = float(self.juice.get("death_fx_s", 0.15))
                     self.kills += 1
                     edef = self.enemy_defs[e.etype]
                     # Variable-magnitude + intermittent cache on a separate
@@ -792,6 +794,7 @@ class Sim:
         wall_boxes = self.colliders
         for e in self.enemies:
             if not e.alive:
+                e.death_t = max(0.0, float(getattr(e, "death_t", 0.0)) - dt)
                 continue
             edef = self.enemy_defs[e.etype]
             e.attack_cd = max(0.0, e.attack_cd - dt)
