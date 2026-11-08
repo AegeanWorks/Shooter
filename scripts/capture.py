@@ -173,6 +173,49 @@ def route_recoil(prefix: str, shadows: bool = True, srgb: bool = True, post: boo
         engine.close()
 
 
+def route_summon_overlap(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """Forced warden summon at centre: the boss/escort overlap pair."""
+    import math
+
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.reseed(12)
+        g.sim.wave = 3
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [
+            _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 0.0), hp=600,
+                   max_hp=600, summon_cd=0.0)
+        ]
+        g.update(FIXED_STEP, ActionState())
+        boss = next(e for e in g.sim.enemies if e.etype == "warden")
+        gaps = [
+            round(math.hypot(p.x - boss.pos.x, p.z - boss.pos.z), 2)
+            for p in g.sim.summon_positions
+        ]
+        pair = (
+            round(math.hypot(
+                g.sim.summon_positions[0].x - g.sim.summon_positions[1].x,
+                g.sim.summon_positions[0].z - g.sim.summon_positions[1].z,
+            ), 2)
+            if len(g.sim.summon_positions) == 2 else None
+        )
+        print(
+            f"summon-overlap count={len(g.sim.summon_positions)} "
+            f"boss_gaps={gaps} pair_gap={pair} "
+            f"positions={[(round(p.x, 2), round(p.z, 2)) for p in g.sim.summon_positions]}"
+        )
+        engine.capture(f"{prefix}_summon_overlap.png", f"{prefix}_summon_overlap.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_summon_cover(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     """Forced warden summon next to the centre cover: the summon-placement pair."""
     from keystone.app import Engine
@@ -1800,6 +1843,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_recoil(prefix, shadows, srgb, post, bloom)
     if which == "summon_cover":
         route_summon_cover(prefix, shadows, srgb, post, bloom)
+    if which == "summon_overlap":
+        route_summon_overlap(prefix, shadows, srgb, post, bloom)
     if which in ("all", "pickup"):
         route_pickup(prefix, shadows, srgb, post, bloom)
     if which == "pickup_pop":

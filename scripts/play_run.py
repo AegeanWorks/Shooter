@@ -13,6 +13,7 @@ Modes:
   slam     close-range warden windup/slam (audio + caption drill)
   brute    stand in a brute's slam range (brute-slam cue drill)
   summon   stand on the platform edge while a warden summons by the cover
+  summon_overlap  idle at spawn while a centre warden summons (overlap drill)
   pickup   walk the clear side lane into the live surge pickup (ends on pickup)
   death    staged near-death run (profile/debrief proof; ends on death)
   save_fail staged near-death run with the profile lock held (save-error proof)
@@ -227,6 +228,15 @@ def main(
                 _Enemy(etype="warden", pos=Vec3(-16.0, 1.1, 11.0), hp=600,
                        max_hp=600, summon_cd=0.0)
             ]
+        if mode == "summon_overlap":
+            sim = game.sim
+            sim.wave = 3
+            sim.spawn_queue = ["mite"]
+            sim.spawn_t = 999.0
+            sim.enemies = [
+                _Enemy(etype="warden", pos=Vec3(0.0, 1.1, 0.0), hp=600,
+                       max_hp=600, summon_cd=0.0)
+            ]
         if mode == "pickup":
             sim = game.sim
             sim.wave = 2
@@ -251,13 +261,42 @@ def main(
         last_wave = int(game.sim.wave)
         last_hp = int(game.sim.hp)
         original_step = game.sim.step
+        summon_snapshot = None
 
         def step(dt, actions):
+            nonlocal summon_snapshot
             events = original_step(dt, actions)
             current = int(game.sim.tick)
             nonempty = [e for e in events if e]
             if nonempty:
                 recorded.append({"frame": int(current), "events": nonempty})
+            if "boss_summon" in events and summon_snapshot is None:
+                positions = list(getattr(game.sim, "summon_positions", []))
+                boss = next(
+                    (e for e in game.sim.enemies if e.etype == "warden" and e.alive),
+                    None,
+                )
+                mite_r = float(game.sim.enemy_defs["mite"]["radius"])
+                boss_r = float(game.sim.enemy_defs["warden"]["radius"])
+                gaps = [
+                    math.hypot(p.x - boss.pos.x, p.z - boss.pos.z)
+                    for p in positions
+                ] if boss is not None else []
+                pair_gaps = [
+                    math.hypot(p.x - q.x, p.z - q.z)
+                    for i, p in enumerate(positions)
+                    for q in positions[i + 1:]
+                ]
+                summon_snapshot = {
+                    "count": len(positions),
+                    "boss_overlap": sum(1 for gap in gaps if gap < boss_r + mite_r),
+                    "pair_overlap": sum(1 for gap in pair_gaps if gap < 2.0 * mite_r),
+                    "boss_gaps": [round(gap, 2) for gap in gaps],
+                    "pair_gaps": [round(gap, 2) for gap in pair_gaps],
+                    "positions": [
+                        [round(float(p.x), 2), round(float(p.z), 2)] for p in positions
+                    ],
+                }
             if "hurt" in events:
                 hurt = getattr(game.sim, "hurt_t", None)
                 source = getattr(game.sim, "hurt_from", None)
@@ -329,6 +368,8 @@ def main(
                 break
             if mode == "forfeit" and frame >= 5:
                 break
+            if mode == "summon_overlap" and frame >= 5:
+                break
             if mode == "pickup" and game.sim.weapon == "surge":
                 break
             if (frame + 1) % CHUNK == 0:
@@ -380,6 +421,7 @@ def main(
                     [round(float(p.x), 2), round(float(p.z), 2)]
                     for p in getattr(game.sim, "summon_positions", [])
                 ],
+                "spawn": summon_snapshot,
             },
             "profile": {
                 "best_score": int(getattr(game, "profile", {}).get("best_score", 0)),

@@ -51,7 +51,8 @@
       "attack_cd_s": 3.0,
       "summon_first_s": 2.5,
       "summon_cd_s": 7.0,
-      "summon_count": 2
+      "summon_count": 2,
+      "summon_clearance": 0.04
     }
   ]
 }

@@ -1,0 +1,108 @@
+{
+  "area": "enemies and bosses",
+  "campaign_reference": {
+    "frames": 3000,
+    "hash": "d1631a1e2474da5b07b05a4c20c153bf",
+    "hp": 64,
+    "kills": 33,
+    "score": 12545,
+    "wave": 4
+  },
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py summon_overlap <prefix>",
+    "python scripts/play_run.py summon_overlap 5 <report> --seed=12",
+    "python scripts/soak.py 3000 bot_campaign.json <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 67,
+  "fix": "reject escort ring candidates that overlap the warden or an existing escort at mite+enemy radius+0.04 m clearance, retrying 16 times; the cover check stays. summon_clearance is DATA-owned; bot_campaign.json was re-recorded from the winning adaptive kite run",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "224 passed"
+  },
+  "play_runs": {
+    "reference": "bot_campaign.json re-recorded: 3000 frames, 33 kills, score 12545, wave 4, hp 64, hash d1631a1e; fairness test replays it as a witnessed win",
+    "summon_overlap_after": {
+      "audio": 1,
+      "boss_gaps": [
+        2.03,
+        1.87
+      ],
+      "boss_overlap": 0,
+      "drops": 0,
+      "frames": 5,
+      "hash": "7818efa6d855737d379d543c01a45d23",
+      "hp": 100,
+      "hurts": 0,
+      "pair_gap": 2.38,
+      "pair_overlap": 0,
+      "positions": [
+        [
+          0.75,
+          -1.86
+        ],
+        [
+          -1.5,
+          -1.08
+        ]
+      ]
+    },
+    "summon_overlap_before": {
+      "audio": 1,
+      "boss_gaps": [
+        1.21,
+        1.53
+      ],
+      "boss_overlap": 1,
+      "drops": 0,
+      "frames": 5,
+      "hash": "d13d8544842a76e40ed22a85e2eed30e",
+      "hp": 100,
+      "hurts": 0,
+      "pair_gap": 1.84,
+      "pair_overlap": 0,
+      "positions": [
+        [
+          0.76,
+          0.98
+        ],
+        [
+          -1.08,
+          1.11
+        ]
+      ]
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-67/after",
+    "before_dir": "shots/shooter-campaign/cycle-67/before",
+    "route": "scripts/capture.py summon_overlap; 960x540 seed 12, forced centre warden summon"
+  },
+  "tests": {
+    "suite": "224 passed",
+    "summon_overlap_tests": 1
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "warden escorts",
+    "entity clearance",
+    "fairness reference"
+  ],
+  "visual_diff": {
+    "bbox": [
+      375,
+      230,
+      542,
+      358
+    ],
+    "changed_px": 5488,
+    "draws": 10,
+    "fraction": 0.0106,
+    "mean_luma_after": 33.85,
+    "mean_luma_before": 34.5,
+    "triangles": 1158
+  }
+}

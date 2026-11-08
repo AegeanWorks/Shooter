@@ -287,18 +287,31 @@ class Sim:
         made = 0
         positions: list[Vec3] = []
         mite_radius = float(self.enemy_defs["mite"]["radius"])
+        clearance = float(self.enemy_defs["warden"].get("summon_clearance", 0.04))
         for _ in range(min(int(count), room)):
-            for _attempt in range(12):
+            for _attempt in range(16):
                 angle = self.rng.uniform(0.0, math.tau)
                 radius = self.rng.uniform(1.2, 2.4)
                 sx = boss.pos.x + math.cos(angle) * radius
                 sz = boss.pos.z + math.sin(angle) * radius
                 mx = max(-19.0, min(19.0, sx))
                 mz = max(-19.0, min(19.0, sz))
-                if not self._enemy_blocked_at(mx, mz, mite_radius):
+                if self._enemy_blocked_at(mx, mz, mite_radius):
+                    continue
+                overlap = False
+                for enemy in self.enemies:
+                    if not enemy.alive:
+                        continue
+                    enemy_radius = float(self.enemy_defs[enemy.etype]["radius"])
+                    if math.hypot(mx - enemy.pos.x, mz - enemy.pos.z) < (
+                        mite_radius + enemy_radius + clearance
+                    ):
+                        overlap = True
+                        break
+                if not overlap:
                     break
             else:
-                continue  # surrounded by cover: skip rather than bury the mite
+                continue  # crowded: skip rather than overlap the boss/escort
             self.enemies.append(
                 _Enemy(
                     etype="mite",

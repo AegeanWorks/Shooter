@@ -1374,3 +1374,29 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 223 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-66.json`.
+
+## Cycle 67 - Enemies/bosses: entity-safe warden escorts
+- **Area**: enemies and bosses (67th cycle).
+- **Defect / evidence**: cycle 60 rejected cover-blocked escorts, but the
+  ring starts at 1.2 m while the warden radius is 1.0 m and the mite
+  radius 0.5 m. Escorts could spawn inside the boss or overlap a previous
+  escort; seed 12 put both mites inside the warden footprint, and seeds
+  23/37 produced overlapping pairs.
+- **Fix**: reject any candidate within mite radius + enemy radius + 0.04 m
+  of a live enemy (warden and already-placed escorts included), retry 16
+  times. `summon_clearance` is DATA-owned on the warden; cover check,
+  count, `max_alive`, RNG order and summon event remain. Summon positions
+  change, so `bot_campaign.json` was re-recorded from the winning adaptive
+  kite run (33 kills, score 12545, wave 4, hp 64,
+  hash `d1631a1e...`); the fairness test still replays a witnessed win.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-67/`;
+  960x540 seed 12, forced centre warden summon. Before: both mites embedded
+  in the warden; after: clear. 5,488 changed px (1.06%, bbox
+  375,230-542,358), mean luma 34.50 -> 33.85; draws 10, triangles 1158.
+- **Played runs**: `summon_overlap 5` seed 12 before/after boss overlaps
+  1 -> 0, boss gaps 1.21/1.53 -> 2.03/1.87, pair gap 1.84 -> 2.38; both
+  hp 100, 0 hurts, 0 drops. Re-recorded reference: 3000 frames, 33 kills,
+  score 12545, wave 4, hp 64, hash `d1631a1e...`.
+- **Gates**: `python -m pytest -q` 224 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-67.json`.
