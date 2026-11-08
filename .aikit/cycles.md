@@ -704,3 +704,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 151 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-33.json`.
+
+## Cycle 34 - UI readability: fit wide debrief history
+- **Area**: UI readability (34th cycle).
+- **Defect / evidence**: cycle 30's W/L markers widened the RECENT line;
+  with six-digit scores it measured 406 px at x 310 inside the fixed
+  380 px debrief panel (text ended at 716, panel at 670). Baseline
+  `test_debrief_width.py` failed the fit check.
+- **Fix**: size the debrief panel from its longest extra line
+  (`max(380, widest + 40)`), center it, and draw every line from its
+  left margin. Normal scores keep the 380 px layout.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-34/`;
+  960x540 seed 1, seeded 999999W/888888L/777777W, staged death 999999.
+  Before overflow; after a 446 px panel contains
+  `RECENT 999999L / 999999W / 888888L`: 15,022 changed px (2.9%, bbox
+  257,262-715,383), mean luma 51.61 -> 50.55; draws 5, triangles 230.
+- **Played runs**: `death 240` before/after same hash `f8cd9e28...`,
+  1 frame, hp 0, score 1500, audio 2, peak 2, drops 0.
+- **Gates**: `python -m pytest -q` 153 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-34.json`.

@@ -999,7 +999,8 @@ def route_win(prefix: str, shadows: bool = True, srgb: bool = True, post: bool =
 
 
 def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True,
-                        bloom: bool = True, win_history: bool = False) -> None:
+                        bloom: bool = True, win_history: bool = False,
+                        wide_history: bool = False) -> None:
     """Staged run-over frame with a seeded best, against the no-profile build."""
     from keystone.app import Engine
 
@@ -1008,14 +1009,25 @@ def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, po
         seeded = default_profile()
         seeded.update({"runs": 3, "best_score": 1000, "best_kills": 12,
                        "best_wave": 4, "best_streak": 6})
-        seeded["history"] = [
-            {"score": 980, "kills": 8, "wave": 3, "best_streak": 5,
-             "time_s": 41, "outcome": "win" if win_history else "lose"},
-            {"score": 740, "kills": 6, "wave": 2, "best_streak": 3,
-             "time_s": 30, "outcome": "lose"},
-        ]
-        if win_history:
-            seeded["wins"] = 1
+        if wide_history:
+            seeded["history"] = [
+                {"score": 999999, "kills": 8, "wave": 3, "best_streak": 5,
+                 "time_s": 41, "outcome": "win"},
+                {"score": 888888, "kills": 6, "wave": 2, "best_streak": 3,
+                 "time_s": 30, "outcome": "lose"},
+                {"score": 777777, "kills": 5, "wave": 2, "best_streak": 2,
+                 "time_s": 25, "outcome": "win"},
+            ]
+            seeded["wins"] = 2
+        else:
+            seeded["history"] = [
+                {"score": 980, "kills": 8, "wave": 3, "best_streak": 5,
+                 "time_s": 41, "outcome": "win" if win_history else "lose"},
+                {"score": 740, "kills": 6, "wave": 2, "best_streak": 3,
+                 "time_s": 30, "outcome": "lose"},
+            ]
+            if win_history:
+                seeded["wins"] = 1
         ProfileStore(profile_path).save(seeded)
     try:
         game = ShooterGame(profile_path=profile_path)
@@ -1029,7 +1041,7 @@ def route_death_profile(prefix: str, shadows: bool = True, srgb: bool = True, po
         g.sim.spawn_t = 999.0
         g.sim.wave = 2
         g.sim.hp = 10
-        g.sim.score = 1500
+        g.sim.score = 999999 if wide_history else 1500
         g.sim.kills = 9
         g.sim.best_streak = 4
         g.sim.enemies = [_Enemy(etype="brute", pos=Vec3(0.0, 0.7, 7.0), hp=120, max_hp=120)]
@@ -1055,6 +1067,12 @@ def route_win_history(prefix: str, shadows: bool = True, srgb: bool = True, post
                       bloom: bool = True) -> None:
     """Debrief with a seeded win + loss: the outcome-marker pair."""
     route_death_profile(prefix, shadows, srgb, post, bloom, win_history=True)
+
+
+def route_debrief_width(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True,
+                        bloom: bool = True) -> None:
+    """Debrief with six-digit recent scores: the panel-width pair."""
+    route_death_profile(prefix, shadows, srgb, post, bloom, wide_history=True)
 
 
 def route_death(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
@@ -1100,6 +1118,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_death_profile(prefix, shadows, srgb, post, bloom)
     if which == "win_history":
         route_win_history(prefix, shadows, srgb, post, bloom)
+    if which == "debrief_width":
+        route_debrief_width(prefix, shadows, srgb, post, bloom)
     if which == "win":
         route_win(prefix, shadows, srgb, post, bloom)
     if which == "hud_ammo":

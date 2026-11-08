@@ -350,3 +350,10 @@ Status: accepted
 Context: The wave-2 surge pickup has a world beacon and a top-center `SURGE PICKUP READY` label within 18 m, but facing away left the player with a label and no direction. The staged spawn frame facing +Z showed the label and no edge cue; the baseline test failed the off-screen case.
 Decision: In the existing pickup-label branch, compute the bearing from camera yaw and draw a green `SURGE` chip (68×26) at the screen edge in that direction when `|bearing| > 1.35` rad; clamp its center inside 48 px horizontally and 140 px top / 150 px bottom. The chip is presentation-only; the pickup trigger, spot and sim state are untouched.
 Consequences: Suite 151/151 green (three new tests); determinism 1800 ok; aikit 4/4. At 960×540 seed 1 the pair changes 1,768 px (0.34%, bbox 446,377-513,402), mean luma 34.12→34.18, draws 5, triangles 62. `pickup 240` keeps hash `7f84f3e9…`, 147 frames, hp 100, audio 1, 0 drops. Evidence: `evidence/cycle-33.json`, images in workspace `shots/shooter-campaign/cycle-33/`.
+
+## ADR-051: Width-following death debrief (UI readability)
+Date: 2026-11-08
+Status: accepted
+Context: The death debrief used a fixed 380 px panel. After the cycle-30 W/L markers, a six-digit RECENT line measured 406 px at x 310, ending at 716 while the panel ended at 670, so the history spilled onto the floor. The baseline fit test failed.
+Decision: Compute `widest` from the extra lines and keep at least 340 px, set `panel_width = max(380, widest + 40)`, center the panel on `cx`, and draw every debrief line from `panel_left + 20`. Normal-score layouts remain exactly 380 px wide; the fixed text column moves with the panel for consistent margins.
+Consequences: Suite 153/153 green (two new tests); determinism 1800 ok; aikit 4/4. The seeded six-digit pair at 960×540 seed 1 changes 15,022 px (2.9%, bbox 257,262-715,383), mean luma 51.61→50.55, draws 5, triangles 230. `death 240` keeps hash `f8cd9e28…`, 1 frame, hp 0, score 1500, audio 2, 0 drops. Evidence: `evidence/cycle-34.json`, images in workspace `shots/shooter-campaign/cycle-34/`.

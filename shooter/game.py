@@ -882,18 +882,22 @@ class ShooterGame:
                 extras.append(("NEW BEST", (1.0, 0.62, 0.20, 1.0)))
             if history:
                 extras.append((f"RECENT {' / '.join(history)}", (0.55, 0.60, 0.68, 1.0)))
+            widest = max([text_width(label, 2) for label, _color in extras] + [340])
+            panel_width = max(380, widest + 40)
+            panel_left = cx - panel_width // 2
+            text_x = panel_left + 20
             panel_height = 100 + 22 * max(0, len(extras) - 1)
-            canvas.rect(cx - 190, top, 380, panel_height, (0.03, 0.04, 0.06, 0.86))
-            canvas.text(cx - 170, top + 6, "RUN OVER", (1.0, 0.30, 0.30, 1.0), 2)
+            canvas.rect(panel_left, top, panel_width, panel_height, (0.03, 0.04, 0.06, 0.86))
+            canvas.text(text_x, top + 6, "RUN OVER", (1.0, 0.30, 0.30, 1.0), 2)
             canvas.text(
-                cx - 170, top + 28,
+                text_x, top + 28,
                 f"SCORE {run['score']}  KILLS {run['kills']}  WAVE {run['wave']}",
                 (0.95, 0.95, 0.97, 1.0), 2,
             )
             canvas.text(
-                cx - 170, top + 50,
+                text_x, top + 50,
                 f"BEST STREAK {run['best_streak']}  TIME {run['time_s']}s",
                 (0.55, 0.60, 0.68, 1.0), 2,
             )
             for index, (label, color) in enumerate(extras):
-                canvas.text(cx - 170, top + 72 + index * 22, label, color, 2)
+                canvas.text(text_x, top + 72 + index * 22, label, color, 2)

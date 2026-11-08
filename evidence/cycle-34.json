@@ -1,0 +1,65 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py debrief_width <prefix>",
+    "python scripts/play_run.py death 240 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 34,
+  "fix": "debrief panel width follows its longest line (max(380, widest + 40)) and all text uses the panel's left margin; normal scores keep 380 px",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "153 passed"
+  },
+  "play_runs": {
+    "death_240": {
+      "after": {
+        "audio": 2,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      },
+      "before": {
+        "audio": 2,
+        "frames": 1,
+        "hash": "f8cd9e2813b9ce8441e2e1f18560c240",
+        "hp": 0,
+        "score": 1500
+      }
+    },
+    "parity": "same hash; the fix is draw-only"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-34/after",
+    "before_dir": "shots/shooter-campaign/cycle-34/before",
+    "route": "scripts/capture.py debrief_width; 960x540 seed 1, seeded 999999W/888888L/777777W, staged death 999999"
+  },
+  "tests": {
+    "debrief_width_tests": 2,
+    "suite": "153 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "debrief fit",
+    "high-score history",
+    "panel width"
+  ],
+  "visual_diff": {
+    "bbox": [
+      257,
+      262,
+      715,
+      383
+    ],
+    "changed_px": 15022,
+    "draws": 5,
+    "fraction": 0.029,
+    "mean_luma_after": 50.55,
+    "mean_luma_before": 51.61,
+    "triangles": 230
+  }
+}

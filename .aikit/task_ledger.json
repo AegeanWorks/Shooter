@@ -1,38 +1,16 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-33-pickup-arrow",
+    "task_id": "shooter-cycle-34-debrief-width",
     "last_phase": "in_progress",
-    "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1794101749.6916978,
+    "active_phase": 4,
+    "status": "in_progress",
+    "updated_at": 1794102054.0978856,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": [],
-    "completed_at": 1794101768.474115
+    "continuations": []
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-27-centered-status",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Centered status proven: 129 tests, determinism 1800 ok, aikit 4/4, 4724 px top-band pair, same kite hash 4fe640c5; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794099672.1707644,
-      "timestamp_str": "2026-11-08 04:01:12",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-27-centered-status",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-27-centered-status' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794099687.7463784,
-      "timestamp_str": "2026-11-08 04:01:27",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
     {
       "task_id": "shooter-cycle-28-weapon-tints",
       "phase": "in_progress",
@@ -265,6 +243,35 @@
       "status": "completed",
       "timestamp": 1794101768.4741173,
       "timestamp_str": "2026-11-08 04:36:08",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-34-debrief-width",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] UI cycle: width-following death debrief, failing-first fit tests, six-digit pair and same-hash death run",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794102046.8673482,
+      "timestamp_str": "2026-11-08 04:40:46",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "Six-digit W/L history overflowed the fixed 380 px debrief panel.",
+        "benefits": "The panel follows its longest line; normal scores keep the 380 px layout.",
+        "risks": "contract: draw-only; dependency: keystone.ui.font text_width (already used); concurrency: none; state: none.",
+        "mitigation": "Wide-fit and normal-width tests, six-digit pair, same death hash."
+      },
+      "plan_digest": "ff12107e3e9ff02304104d14bac320bf6389d58e916c862be45a40131ad0a89d"
+    },
+    {
+      "task_id": "shooter-cycle-34-debrief-width",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Debrief width proven: 153 tests, determinism 1800 ok, aikit 4/4, 15022 px panel pair, same death hash f8cd9e28; checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794102054.0978856,
+      "timestamp_str": "2026-11-08 04:40:54",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
