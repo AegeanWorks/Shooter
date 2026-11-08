@@ -95,6 +95,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `Scene` graph | queries, IDs, parenting, traversal, visibility | `tests/test_keystone_scene_graph_mechanics.py` |
 | `History` | push/undo/redo, copy isolation, branch discard, capacity, clear | `tests/test_keystone_history_mechanics.py` |
 | `scene_snapshot` | nodes/transforms, camera/environment, assets, validation, restore | `tests/test_keystone_scene_snapshot_mechanics.py` |
+| `scene_diff` | empty/added/removed/changed nodes, sections, validation | `tests/test_keystone_scene_diff_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -161,6 +162,7 @@ projects/shooter/
 │   ├── test_keystone_scene_graph_mechanics.py <- queries, IDs, parenting, traversal, visibility
 │   ├── test_keystone_history_mechanics.py <- undo/redo, copy isolation, capacity
 │   ├── test_keystone_scene_snapshot_mechanics.py <- nodes, camera/environment, assets, restore
+│   ├── test_keystone_scene_diff_mechanics.py <- added/removed/changed nodes, sections, validation
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -298,10 +300,10 @@ projects/shooter/
 │   ├── cycle-43.json  <- improvement-cycle 43 proof: brute-slam cue pair, brute drill
 │   ├── cycle-44.json  <- improvement-cycle 44 proof: career-bests debrief pair, same-hash run
 │   ├── cycle-45.json  <- improvement-cycle 45 proof: crosshair bounty pop, same-hash run
-│   ├── cycle-46.json  <- improvement-cycle 46 proof: target-health pair, same-hash run
-│   ├── cycle-47.json  <- improvement-cycle 47 proof: platform launch-pad pair, same-hash run
-│   ├── cycle-48.json  <- improvement-cycle 48 proof: boss-pickup tag pair, campaign run
-│   ├── cycle-49.json  <- improvement-cycle 49 proof: cover-panel pair, same-hash run
+│   ├── cycle-46.json
+│   ├── cycle-47.json
+│   ├── cycle-48.json
+│   ├── cycle-49.json
 │   ├── cycle-50.json
 │   ├── cycle-51.json
 │   ├── cycle-52.json
@@ -310,7 +312,7 @@ projects/shooter/
 │   ├── cycle-55.json
 │   ├── cycle-56.json
 │   ├── cycle-57.json
-│   ├── cycle-58.json  <- improvement-cycle 58 proof: save-error debrief pair, death drill
+│   ├── cycle-58.json
 │   ├── cycle-59.json
 │   ├── cycle-60.json
 │   ├── cycle-61.json
@@ -374,7 +376,8 @@ projects/shooter/
 │   ├── cycle-118.json <- playtest canon/policies/transcripts/fairness
 │   ├── cycle-119.json <- scene queries, IDs, parenting, traversal, visibility
 │   ├── cycle-120.json <- history undo/redo, copy isolation, capacity
-│   └── cycle-121.json <- scene snapshot nodes/assets/environment/restore
+│   ├── cycle-121.json <- scene snapshot nodes/assets/environment/restore
+│   └── cycle-122.json <- scene diff nodes/sections/validation
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

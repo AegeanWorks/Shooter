@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-121-scene-snapshot",
+    "task_id": "shooter-cycle-122-scene-diff",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794150304.5973415,
+    "updated_at": 1794150643.1502397,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794150304.9723926
+    "completed_at": 1794150643.7819932
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-115-serialization",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Serialization covered: 391 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794146719.7969813,
-      "timestamp_str": "2026-11-08 17:05:19",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-115-serialization",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-115-serialization' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794146720.1481452,
-      "timestamp_str": "2026-11-08 17:05:20",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-116-primitives",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover procedural cube/plane/cone/cylinder/sphere counts, bounds, normals and UVs",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794146799.5332937,
-      "timestamp_str": "2026-11-08 17:06:39",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "Procedural primitives feed the shooter's meshes but had no direct testbed coverage of their topology, winding, radial normals or UV ranges.",
-        "benefits": "Five tests pin cube face winding, plane UVs, cone/cylinder side and cap normals, sphere radial normals and all primitive bounds/argument guards.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: in-memory meshes only; no game/sim/hash change.",
-        "mitigation": "Small segment counts, full suite, determinism and project gates."
-      },
-      "plan_digest": "d575dd47fe737d72d03dbd7bc3dbd09d3e90b0f34b6d9cc2c1b3753ad3615dd8"
-    },
     {
       "task_id": "shooter-cycle-116-primitives",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794150304.9723957,
       "timestamp_str": "2026-11-08 18:05:04",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-122-scene-diff",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover structured scene-document diffs for nodes, camera/environment/root and validation",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794150341.8058555,
+      "timestamp_str": "2026-11-08 18:05:41",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "scene_diff drives editor/AI iteration but the testbed covers it only through GameSession diff scenes, not the document-level contract or validation.",
+        "benefits": "Five tests pin empty diffs, added/removed/changed node fields, section diffs, validation errors and deterministic JSON-safe output.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: in-memory documents; no game/sim/hash change.",
+        "mitigation": "Small explicit-id snapshots, full suite, determinism and project gates."
+      },
+      "plan_digest": "b083b0c6fa6b52bfd7dcb4e66eea6a35973a6411d5be40d78eb8064612cc9d80"
+    },
+    {
+      "task_id": "shooter-cycle-122-scene-diff",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Scene diff covered: 426 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794150643.1502397,
+      "timestamp_str": "2026-11-08 18:10:43",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-122-scene-diff",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-122-scene-diff' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794150643.7819955,
+      "timestamp_str": "2026-11-08 18:10:43",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

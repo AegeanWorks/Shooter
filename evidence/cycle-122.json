@@ -1,0 +1,72 @@
+{
+  "area": "keystone testbed: structured scene-document diffs",
+  "commands": [
+    "python -m pytest tests/test_keystone_scene_diff_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 122,
+  "feature": "empty diffs, added/removed/changed node fields, camera/environment/root section diffs, validation errors and deterministic JSON-safe output over real scene snapshots",
+  "fix": "add tests/test_keystone_scene_diff_mechanics.py with five document-level diff tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "426 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "identical": {
+      "schema": 4,
+      "added": [],
+      "removed": [],
+      "changed": [],
+      "sections_empty": true,
+      "has_changes": false
+    },
+    "nodes": {
+      "added": ["c"],
+      "removed": ["a"],
+      "changed_id": "b",
+      "fields": ["name", "tags", "layer", "visible"],
+      "unknown_fields_ignored": true,
+      "has_changes": true
+    },
+    "sections": {
+      "camera": ["position", "yaw"],
+      "environment": ["ambient", "shadow"],
+      "root": ["visible", "transform"],
+      "absent_section_before": null,
+      "nested_values_compared_one_level": true
+    },
+    "validation": {
+      "non_mapping": "TypeError",
+      "nodes_not_list": "TypeError",
+      "node_not_mapping": "TypeError",
+      "missing_id": "ValueError",
+      "blank_id": "ValueError",
+      "duplicate_id": "ValueError"
+    },
+    "determinism": {
+      "real_snapshots": true,
+      "added": ["c"],
+      "removed": ["a"],
+      "changed": ["b"],
+      "changed_fields": ["tags", "layer", "transform"],
+      "camera_change": true,
+      "json_safe": true,
+      "repeat_equal": true
+    }
+  },
+  "tests": {
+    "scene_diff_tests": 5,
+    "suite": "426 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone scene diff",
+    "scene document comparison",
+    "node changes",
+    "camera environment diff",
+    "deterministic JSON"
+  ]
+}

@@ -2487,3 +2487,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 421 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-121.json`.
+
+## Cycle 122 - Keystone testbed: structured scene diffs
+- **Area**: keystone testbed (122nd cycle).
+- **Feature / evidence**: `scene_diff` drives editor/AI iteration but was
+  covered only through GameSession diff scenes, not the document-level
+  contract or validation.
+- **Fix**: add `tests/test_keystone_scene_diff_mechanics.py` with five
+  document-level tests.
+- **Proof**: identical snapshots diff empty with `has_changes` false;
+  added/removed node ids and changed fields (name/tags/layer/visible) are
+  reported with before/after while unknown fields are ignored;
+  camera/environment/root sections diff one level deep; malformed
+  documents raise; real snapshots produce deterministic JSON-safe diffs
+  with sorted ids.
+- **Gates**: `python -m pytest -q` 426 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-122.json`.
