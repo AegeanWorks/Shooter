@@ -525,3 +525,10 @@ Status: accepted
 Context: `_save_profile` only incremented `profile_save_errors`; the death debrief looked normal while the run was lost. A profile parent that could not be created raised `FileExistsError` out of the finish, and a held lock already made `save` return False. Neither outcome reached the player.
 Decision: Wrap the store save in `_save_profile` so an `OSError` counts as a failure instead of escaping, and put a red `PROFILE NOT SAVED` line first in the debrief extras when `profile_save_errors > 0`. The profile schema, save format, lock policy and sim are untouched.
 Consequences: Suite 207/207 green (three new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The locked-profile death pair at 960x540 seed 1 changes 13,320 px (2.57%, bbox 281,334-678,449), mean luma 47.08 -> 45.72, draws 6, triangles 278. `save_fail 240` before/after same death hash `f8cd9e28...`, profile runs 1, save_errors 1, last_run recorded, hp 0, 0 drops. Evidence: `evidence/cycle-58.json`, images in workspace `shots/shooter-campaign/cycle-58/`.
+
+## ADR-076: Viewmodel recoil punch (combat feel)
+Date: 2026-11-08
+Status: accepted
+Context: Firing added `sim.kick` and the camera pitched with it, but the first-person gun was rigidly camera-parented: the gun never moved relative to the view, so the kick read as the world tilting instead of the weapon punching.
+Decision: Offset the two existing viewmodel nodes along the view basis by `recoil_back` 0.10 m and `recoil_up` 0.08 m, scaled by `min(1, |kick| / 4 degrees)`, with both amounts in `juice.viewmodel`. No new nodes, materials, draw calls, aim rays, hitboxes or sim state; the offset returns to rest with the existing kick decay.
+Consequences: Suite 210/210 green (three new tests); determinism 1800 ok (hash a1528cee); aikit 4/4. The scatter fire-frame pair at 960x540 seed 1 changes 7,141 px (1.38%, bbox 551,334-671,425), mean luma 35.28 -> 35.18, draws 10, triangles 886. `strafe 300` keeps hash `14a48660...`, 30 shots, hp 92, 1 hurt, audio 36, peak 8, 0 drops. Evidence: `evidence/cycle-59.json`, images in workspace `shots/shooter-campaign/cycle-59/`.

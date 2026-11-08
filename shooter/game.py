@@ -890,6 +890,9 @@ class ShooterGame:
             right = Vec3(math.cos(sim.yaw), 0.0, math.sin(sim.yaw))
             up = right.cross(forward)
             eye = sim.eye()
+            recoil = min(1.0, abs(sim.kick) / math.radians(4.0))
+            recoil_back = float(cfg.get("recoil_back", 0.0)) * recoil
+            recoil_up = float(cfg.get("recoil_up", 0.0)) * recoil
             rotation = (
                 Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), sim.yaw)
                 * Quat.from_axis_angle(Vec3(1.0, 0.0, 0.0), sim.pitch)
@@ -907,9 +910,9 @@ class ShooterGame:
             if sim.alive:
                 self._view_body.transform = Transform(
                     position=gun_pos(
-                        float(cfg.get("forward", 0.40)),
+                        float(cfg.get("forward", 0.40)) - recoil_back,
                         float(cfg.get("right", 0.18)),
-                        float(cfg.get("down", 0.16)),
+                        float(cfg.get("down", 0.16)) - recoil_up,
                     ),
                     rotation=rotation,
                     scale=Vec3(
@@ -920,9 +923,9 @@ class ShooterGame:
                 )
                 self._view_barrel.transform = Transform(
                     position=gun_pos(
-                        float(cfg.get("barrel_forward", 0.62)),
+                        float(cfg.get("barrel_forward", 0.62)) - recoil_back,
                         float(cfg.get("right", 0.18)),
-                        float(cfg.get("barrel_down", 0.20)),
+                        float(cfg.get("barrel_down", 0.20)) - recoil_up,
                     ),
                     rotation=rotation,
                     scale=Vec3(

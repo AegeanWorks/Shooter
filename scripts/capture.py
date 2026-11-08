@@ -148,6 +148,31 @@ def route_fireburst(prefix: str, shadows: bool = True, srgb: bool = True, post: 
         engine.close()
 
 
+def route_recoil(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
+    """One scatter shot frame: the viewmodel recoil pair."""
+    from keystone.app import Engine
+
+    game = _new_game()
+    engine = Engine(game, 960, 540, visible=False, msaa=0, ui=True)
+    _tune(engine, shadows, srgb, post, bloom)
+    try:
+        g = engine.game
+        g.sim.spawn_queue = ["mite"]
+        g.sim.spawn_t = 999.0
+        g.sim.enemies = [_Enemy(etype="mite", pos=Vec3(0.0, 0.5, 2.0), hp=30, max_hp=30)]
+        g.sim.weapon = "scatter"
+        g.sim.ammo["scatter"] = 6
+        g.update(FIXED_STEP, ActionState(pressed=frozenset({"fire"})))
+        print(
+            f"recoil kick={float(g.sim.kick):.4f} shots={g.sim.shots} "
+            f"flash={g.sim.flash_t:.3f}"
+        )
+        engine.capture(f"{prefix}_recoil.png", f"{prefix}_recoil.json")
+        _profiler(engine)
+    finally:
+        engine.close()
+
+
 def route_pickup(prefix: str, shadows: bool = True, srgb: bool = True, post: bool = True, bloom: bool = True) -> None:
     from keystone.app import Engine
 
@@ -1590,6 +1615,8 @@ def main(which: str = "all", prefix: str = "shot_fix", shadows: bool = True, srg
         route_combat(prefix, 277, shadows, srgb, post, bloom)
     if which in ("all", "burst"):
         route_fireburst(prefix, shadows, srgb, post, bloom)
+    if which == "recoil":
+        route_recoil(prefix, shadows, srgb, post, bloom)
     if which in ("all", "pickup"):
         route_pickup(prefix, shadows, srgb, post, bloom)
     if which == "hurt":

@@ -1206,3 +1206,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 207 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-58.json`.
+
+## Cycle 59 - Combat feel: viewmodel recoil punch
+- **Area**: combat feel (59th cycle).
+- **Opportunity**: firing already kicked the camera, but the first-person
+  gun was rigidly camera-parented and never moved relative to the view;
+  the kick read as the world tilting rather than the weapon punching.
+- **Fix**: offset the two existing viewmodel nodes back 0.10 m and up
+  0.08 m at the 4-degree kick cap, scaled by the current kick and owned by
+  `juice.viewmodel` (`recoil_back`, `recoil_up`). No new nodes, draws,
+  aim rays, hitboxes or sim state; the gun settles with kick decay.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-59/`;
+  960x540 seed 1, one scatter shot at a 2 m mite. Gun moves up/back:
+  7,141 changed px (1.38%, bbox 551,334-671,425), mean luma
+  35.28 -> 35.18; draws 10, triangles 886. The first pass pulled the gun
+  slightly downward, so `recoil_up` was raised 0.05 -> 0.08 and the frame
+  re-captured.
+- **Played runs**: `strafe 300` before/after same hash `14a48660...`,
+  30 shots, hp 92, 1 hurt, 36 audio, peak 8, drops 0.
+- **Gates**: `python -m pytest -q` 210 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-59.json`.
