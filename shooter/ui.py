@@ -97,8 +97,9 @@ def draw_shooter(canvas, hud, sim) -> None:
             canvas.rect(bx, by, max(1, int(bw * progress)), bh, accent)
             canvas.text(cx - 50, by + 10, "RELOADING", dim, 2)
         elif mag <= mag_size // 4:
-            canvas.rect(cx - 55, cy + 30, 110, 22, panel_c)
-            canvas.text(cx - 45, cy + 35, "LOW AMMO", danger, 2)
+            label = f"LOW AMMO {mag}"
+            canvas.rect(cx - 75, cy + 30, 150, 22, panel_c)
+            canvas.text(cx - 65, cy + 35, label, danger, 2)
 
     # Directional damage cue: point at the last attacker for a short window.
     # World-space source + camera yaw -> bearing around the crosshair; the

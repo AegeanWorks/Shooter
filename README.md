@@ -66,7 +66,7 @@ projects/shooter/
 │   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel, boss core/beacon/slam ring, spawn/summon marks, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim/pulsing pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
-│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, ammo/reload, kill-feed, damage, boss/pickup direction (tag survives boss)
+│   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload, kill-feed, damage, boss/pickup direction (tag survives boss)
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, W/L history, debrief)
 │   └── data/
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -131,6 +131,7 @@ projects/shooter/
 │   ├── test_hurt_shake.py  <- hurt_t camera jolt, sim hash unchanged
 │   ├── test_target_dead.py <- target bar hidden on the death screen
 │   ├── test_pad_pulse.py   <- launch pad sine scale pulse
+│   ├── test_lowammo_count.py <- LOW AMMO <mag> near the crosshair
 │   └── test_audit.py       <- wave-1/2 audit regression pins
 ├── scripts/
 │   ├── record_bot.py  <- emit CommandLog for --replay
@@ -192,7 +193,8 @@ projects/shooter/
 │   ├── cycle-51.json  <- improvement-cycle 51 proof: five-run history pair, same-hash run
 │   ├── cycle-52.json  <- improvement-cycle 52 proof: damage camera-jolt pair, same-hash run
 │   ├── cycle-53.json  <- improvement-cycle 53 proof: clean death screen pair, same-hash run
-│   └── cycle-54.json  <- improvement-cycle 54 proof: platform pulse pair, same-hash run
+│   ├── cycle-54.json  <- improvement-cycle 54 proof: platform pulse pair, same-hash run
+│   └── cycle-55.json  <- improvement-cycle 55 proof: low-ammo count pair, same-hash run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

@@ -1,0 +1,65 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py hud_ammo <prefix>",
+    "python scripts/play_run.py strafe 300 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 55,
+  "fix": "show LOW AMMO <magazine> in the near-crosshair panel and widen it to 150 px; the engine status remains the full ammo source",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true exit 0",
+    "pytest": "199 passed"
+  },
+  "play_runs": {
+    "parity": "same hash 14a48660 before/after; HUD-only change",
+    "strafe_300": {
+      "after": {
+        "audio": 36,
+        "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+        "hp": 92,
+        "hurts": 1,
+        "shots": 30
+      },
+      "before": {
+        "audio": 36,
+        "hash": "14a48660d23e4b6d7563ff2ab7b65dd5",
+        "hp": 92,
+        "hurts": 1,
+        "shots": 30
+      }
+    }
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-55/after",
+    "before_dir": "shots/shooter-campaign/cycle-55/before",
+    "route": "scripts/capture.py hud_ammo; 960x540 seed 1, pulse magazine 3"
+  },
+  "tests": {
+    "lowammo_count_tests": 3,
+    "suite": "199 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "low-ammo count",
+    "reload decision",
+    "HUD glanceability"
+  ],
+  "visual_diff": {
+    "bbox": [
+      405,
+      300,
+      554,
+      321
+    ],
+    "changed_px": 1448,
+    "draws": 6,
+    "fraction": 0.0028,
+    "mean_luma_after": 34.02,
+    "mean_luma_before": 34.04,
+    "triangles": 290
+  }
+}

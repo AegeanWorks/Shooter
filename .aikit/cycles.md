@@ -1121,3 +1121,22 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 196 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-54.json`.
+
+## Cycle 55 - UI readability: low-ammo count
+- **Area**: UI readability (55th cycle).
+- **Defect / evidence**: the near-crosshair low-ammo warning was binary
+  `LOW AMMO`; the exact magazine count lived only in the top-left engine
+  status, so the player could not tell 3 rounds from 1 at the aim point.
+  The baseline test measured `['LOW AMMO', ...]` with no count.
+- **Fix**: show `LOW AMMO <mag>` and widen the panel from 110 to 150 px
+  so two-digit magazines fit. The engine status remains the full ammo
+  source; no sim change.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-55/`;
+  960x540 seed 1, pulse magazine 3. Before `LOW AMMO`; after
+  `LOW AMMO 3`: 1,448 changed px (0.28%, bbox 405,300-554,321), mean
+  luma 34.04 -> 34.02; draws 6, triangles 290.
+- **Played runs**: `strafe 300` before/after same hash `14a48660...`,
+  30 shots, hp 92, 1 hurt, 36 audio, peak 8, drops 0.
+- **Gates**: `python -m pytest -q` 199 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-55.json`.

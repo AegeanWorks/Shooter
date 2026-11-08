@@ -497,3 +497,10 @@ Status: accepted
 Context: The cycle-47 launch pad marked the jump spot, but it was static and could blend into the floor grid at approach distance; the before frame measured a constant 1.4 scale with no motion.
 Decision: In `_sync_scene`, pulse the existing `_approach_pad` scale by `1 + 0.08*sin(time*3)`; position and flat height stay fixed. No new nodes, draws, colliders or sim state. The jump path is untouched.
 Consequences: Suite 196/196 green (one new test); determinism 1800 ok; aikit 4/4. The approach pair at 960×540 seed 1 (time 0.5) changes 1,629 px (0.31%, bbox 352,498-607,539), mean luma 49.47→49.71, draws 6, triangles 134. `platform 120` keeps hash `c1603d79…`, 28 frames, hp 100, score 250, landed, audio 1, 0 drops. Evidence: `evidence/cycle-54.json`, images in workspace `shots/shooter-campaign/cycle-54/`.
+
+## ADR-072: Low-ammo count at the crosshair (UI readability)
+Date: 2026-11-08
+Status: accepted
+Context: The near-crosshair low-ammo warning said only `LOW AMMO`; the exact magazine count lived in the top-left engine status, so the player could not tell 3 rounds from 1 at the aim point, which changes the reload decision. The baseline test measured the countless label.
+Decision: Show `LOW AMMO <mag>` and widen the panel from 110 to 150 px so two-digit magazines fit. The engine status remains the full ammo source (weapon + magazine + reserve); the sim and all ammo values are untouched.
+Consequences: Suite 199/199 green (three new tests); determinism 1800 ok; aikit 4/4. The magazine-3 pair at 960×540 seed 1 changes 1,448 px (0.28%, bbox 405,300-554,321), mean luma 34.04→34.02, draws 6, triangles 290. `strafe 300` keeps hash `14a48660…`, 30 shots, hp 92, 1 hurt, 36 audio, peak 8, 0 drops. Evidence: `evidence/cycle-55.json`, images in workspace `shots/shooter-campaign/cycle-55/`.
