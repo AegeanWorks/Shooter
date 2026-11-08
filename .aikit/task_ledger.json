@@ -3,32 +3,15 @@
   "active_task": {
     "task_id": "shooter-cycle-57-surge-forfeit-cue",
     "last_phase": "in_progress",
-    "active_phase": 4,
-    "status": "in_progress",
+    "active_phase": 5,
+    "status": "completed",
     "updated_at": 1794111150.6484087,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
-    "continuations": []
+    "continuations": [],
+    "completed_at": 1794111225.1274745
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-51-full-history",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Progression cycle: full five-run history, failing-first test, debrief pair and same-hash death run; follow-up: hide the target bar while dead",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794108384.7940319,
-      "timestamp_str": "2026-11-08 06:26:24",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The profile stores five runs but the debrief showed only three.",
-        "benefits": "All persisted results are visible across RECENT and HISTORY.",
-        "risks": "contract: draw-only; dependency: none; concurrency: none; state: reads existing five-run history.",
-        "mitigation": "Five-entry test, seeded pair, same death hash."
-      },
-      "plan_digest": "da98ed872226f0bf3a98a4c611746e35dcfe8ddbaf90c4a145eaab110a754ce0"
-    },
     {
       "task_id": "shooter-cycle-51-full-history",
       "phase": "in_progress",
@@ -272,6 +255,16 @@
       "status": "in_progress",
       "timestamp": 1794111150.6484087,
       "timestamp_str": "2026-11-08 07:12:30",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-57-surge-forfeit-cue",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-57-surge-forfeit-cue' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794111225.127477,
+      "timestamp_str": "2026-11-08 07:13:45",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
