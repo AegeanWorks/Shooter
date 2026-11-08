@@ -85,6 +85,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `component_codec` | dataclass/custom codecs, scene/prefab round trips, lifecycle | `tests/test_keystone_component_codec_mechanics.py` |
 | `library_trash` | scene/prefab delete, unique/sorted trash, suffix isolation, restore refusals | `tests/test_keystone_library_trash_mechanics.py` |
 | `analysis` | frame stats/hashes, node/material metadata, report diff, pixel-diff PNG | `tests/test_keystone_analysis_mechanics.py` |
+| `agents` | action clamps/wrappers, observe hash, report summary, audit tamper chain | `tests/test_keystone_agent_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -98,7 +99,7 @@ python play.py --serve --port 8901   # GET /api/health, /api/scene; POST /api/si
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip/bob/overdrive glow, boss core/beacon/slam ring, spawn/summon marks, ammo-cache pool, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, critical kill feed tag, campaign-complete line, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim+base/pulsing pad, mixer + captions
+│   ├── game.py          <- ShooterGame: ops/draw_ui, Scene sync, viewmodel/cues, boss beacons, HUD/debrief, floor/cover/pad, mixer/captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/cover-safe summons/entity clearance/campaign seal/muzzle telemetry/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload/no-reserve, pulsing low-health edge, kill-feed, damage, boss/pickup direction (tag survives boss)
@@ -141,6 +142,7 @@ projects/shooter/
 │   ├── test_keystone_camera_culling_mechanics.py <- camera math + nested/hidden/skinned culling
 │   ├── test_keystone_library_trash_mechanics.py <- scene/prefab trash, uniqueness, restore safety
 │   ├── test_keystone_analysis_mechanics.py <- frame stats/hashes, report diff, pixel diff
+│   ├── test_keystone_agent_mechanics.py <- action clamps, observe hash, audit chain
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -344,7 +346,8 @@ projects/shooter/
 │   ├── cycle-108.json <- cycle 108 proof: project CLI commands + self-clearing reproducer
 │   ├── cycle-109.json <- cycle 109 proof: camera orientation/projection + CPU frustum culling
 │   ├── cycle-110.json <- cycle 110 proof: scene/prefab trash uniqueness and restore safety
-│   └── cycle-111.json <- cycle 111 proof: frame stats/metadata, report diff, pixel-diff PNG
+│   ├── cycle-111.json <- cycle 111 proof: frame stats/metadata, report diff, pixel-diff PNG
+│   └── cycle-112.json <- cycle 112 proof: action parsing, observe hash, audit tamper chain
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

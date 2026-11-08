@@ -1,0 +1,92 @@
+{
+  "area": "keystone testbed: AI actions, observations and audit trails",
+  "commands": [
+    "python -m pytest tests/test_keystone_agent_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 112,
+  "feature": "LLM-style action JSON parsing/clamping, deterministic auditable observe() with random-state restoration, report summaries, and the in-memory/file hash-chained AuditTrail",
+  "fix": "add tests/test_keystone_agent_mechanics.py with five tests using ShooterGame, real analysis reports and temp audit files",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "376 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "parse_actions": {
+      "axes_clamped": [-1.0, 1.0],
+      "pressed": ["jump"],
+      "held": ["fire"],
+      "pointer": [1.0, 2.0],
+      "mouse_clicked": true,
+      "wrappers": ["actions", "frames"],
+      "empty": "ValueError",
+      "nested_actions_object": "TypeError",
+      "non_object_item": "TypeError",
+      "unknown_key": "ValueError",
+      "non_numeric": "ValueError",
+      "non_finite": "ValueError"
+    },
+    "observe": {
+      "schema": 1,
+      "game": "shooter",
+      "hash_stable": true,
+      "random_state_restored": true,
+      "agents_capability": true,
+      "fire_button": true,
+      "frames": 4,
+      "actions_len": 4,
+      "hash_recomputed": true,
+      "zero_frames": "ValueError",
+      "missing_build_scene": "TypeError"
+    },
+    "summarize_report": {
+      "truncated": true,
+      "kept_nodes": 2,
+      "node_count": 5,
+      "material": {"color": [1.0, 0.0, 0.0], "metallic": 0.0, "roughness": 0.7},
+      "hash_image_stats_preserved": true,
+      "ui": null,
+      "full_nodes": 5,
+      "invalid_report": "TypeError"
+    },
+    "audit_chain": {
+      "first_index": 0,
+      "first_previous": "genesis",
+      "second_previous": "first hash",
+      "hash_recomputed": true,
+      "verify": true,
+      "payload_tamper": false,
+      "previous_tamper": false,
+      "index_tamper": false,
+      "blank_kind": "ValueError",
+      "non_mapping_payload": "TypeError"
+    },
+    "audit_persistence": {
+      "file_schema": 1,
+      "kinds": ["simulate", "render"],
+      "backup_file": false,
+      "reload_entries": 2,
+      "reload_verify": true,
+      "truncated_verify": false,
+      "append_index": 2,
+      "append_previous_ok": true,
+      "bad_documents": "ValueError"
+    }
+  },
+  "tests": {
+    "agent_tests": 5,
+    "suite": "376 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone agents",
+    "action parsing",
+    "observation hash",
+    "report summary",
+    "audit trail",
+    "tamper detection"
+  ]
+}

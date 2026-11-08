@@ -2320,3 +2320,21 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 371 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-111.json`.
+
+## Cycle 112 - Keystone testbed: AI actions, observations and audit trails
+- **Area**: keystone testbed (112th cycle).
+- **Feature / evidence**: `keystone.agents` is the AI action/observation/audit
+  layer but had no direct shooter coverage for axis clamping, wrapper
+  payloads, observation hashes or audit tamper detection.
+- **Fix**: add `tests/test_keystone_agent_mechanics.py` with five tests
+  using ShooterGame, real reports and temp audit files.
+- **Proof**: axes clamp to [-1,1] with `actions`/`frames` wrappers and
+  invalid payloads raise; `observe` restores the global random state, keeps
+  a stable/recomputable hash and describes the shooter's `fire` action;
+  summaries truncate 5 nodes to 2 and keep material fields; audit records
+  chain from `genesis`, tampering with payload/previous/index fails
+  verification, and persisted trails reload, append, detect truncation and
+  reject bad documents.
+- **Gates**: `python -m pytest -q` 376 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-112.json`.

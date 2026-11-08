@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-111-analysis",
+    "task_id": "shooter-cycle-112-agents",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794145054.6737604,
+    "updated_at": 1794145489.310333,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794145055.849182
+    "completed_at": 1794145489.8090165
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-105-project-export",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Projects/exports covered: 345 tests passed + 1 xfailed (known manifest-asset bug), determinism 1800 ok (b25db520), aikit 4/4; checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794142237.1752517,
-      "timestamp_str": "2026-11-08 15:50:37",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-105-project-export",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-105-project-export' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794142239.9030457,
-      "timestamp_str": "2026-11-08 15:50:39",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-106-engine-loop",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover the headless Engine loop/clock, pause overlay/engine pause, --expect-hash/--replay CLI and a minimal manifest-asset reproducer",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794142796.7679489,
-      "timestamp_str": "2026-11-08 15:59:56",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "The Engine loop, pause overlay and no-GL CLI gates were only exercised indirectly, and the manifest-asset bug had only an export-level xfail.",
-        "benefits": "Four tests pin headless frame ticks/clock release, pause hitboxes and paused ticks, both CLI gates, and a minimal validate_project reproducer for the asset bug.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: no game/sim/hash change; headless GL contexts are closed.",
-        "mitigation": "Headless engines closed in finally, temp projects only, full suite, determinism and project gates."
-      },
-      "plan_digest": "18abd72464ea67d29904c7f503921205037780037b909361d395ca79c80b63cc"
-    },
     {
       "task_id": "shooter-cycle-106-engine-loop",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794145055.8491855,
       "timestamp_str": "2026-11-08 16:37:35",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-112-agents",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover AI action parsing/clamping, deterministic observe, report summaries and hash-chained audit persistence",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794145122.1840198,
+      "timestamp_str": "2026-11-08 16:38:42",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "keystone.agents is the AI observation/action/audit layer but the shooter testbed has no direct coverage of clamping, observation hashes or audit tamper detection.",
+        "benefits": "Five tests pin wrapper parsing and axis clamps, observe determinism plus random-state restoration, summary truncation/material fields, hash-chain verification and persisted reload/truncation/bad documents.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp audit JSON only; no game/sim/hash change.",
+        "mitigation": "Small frame counts and 1-4 node scenes, temp paths, full suite, determinism and project gates."
+      },
+      "plan_digest": "99f31797d9602da8eca1efb990e3d6120a6c7400f192bb3262de08f8e403c0d4"
+    },
+    {
+      "task_id": "shooter-cycle-112-agents",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Agents/audit covered: 376 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794145489.310333,
+      "timestamp_str": "2026-11-08 16:44:49",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-112-agents",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-112-agents' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794145489.8090189,
+      "timestamp_str": "2026-11-08 16:44:49",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]
