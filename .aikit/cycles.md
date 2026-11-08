@@ -2621,3 +2621,20 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 461 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-129.json`.
+
+## Cycle 130 - Gameplay: file-backed OBJ cache crate and hot reload
+- **Area**: gameplay integration (130th cycle).
+- **Feature / evidence**: `obj_loader`, `asset_io` suffix inference,
+  fingerprints and `ReloadReport` were proven by the testbed, but every
+  game mesh was built in code and no file asset was loaded.
+- **Fix**: add `shooter/data/cache_crate.obj` and
+  `shooter/asset_pipeline.py`; register the crate through
+  `AssetRegistry.register_file`, render the ammo cache with it, and
+  refresh bound sources once per second.
+- **Proof**: the crate loads as 24 triangles through the asset pipeline
+  with a bound source; a missing file falls back to the old cube; every
+  cache node uses the loaded mesh; `reload_assets()` reports the unchanged
+  crate and exposes a JSON-safe report.
+- **Gates**: `python -m pytest -q` 465 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-130.json`.

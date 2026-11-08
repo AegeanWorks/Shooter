@@ -785,3 +785,10 @@ Status: accepted
 Context: Keystone's AnimationLibrary, Track sampling and AnimationController crossfade were proven by the shooter testbed but had no game consumer; enemy idle motion was ad-hoc sine math inside _sync_scene.
 Decision: Add shooter/anim.py, which loads four committed idle clips (mite_idle, brute_idle, wisp_idle, warden_idle) through AnimationLibrary, binds one AnimationController per enemy node slot, crossfades for 0.15 s when a slot's type changes, and returns the sampled "subject" Transform. ShooterGame layers that rotation and its uniform breathe scale onto the sim-driven position and existing combat squash; a missing clip set falls back to the previous static look.
 Consequences: Suite 461/461 green plus 2 xfailed (five animation tests); determinism 1800 ok (hash b25db520); aikit 4/4. Animation is presentation-only: a thirty-frame game run matches a plain Sim snapshot, and the flinch squash invariant still holds. Evidence: evidence/cycle-129.json.
+
+## ADR-113: Load the ammo cache from a committed OBJ and hot-reload it (gameplay)
+Date: 2026-11-08
+Status: accepted
+Context: Keystone's obj_loader, asset_io suffix inference, fingerprints and ReloadReport were proven by the shooter testbed, but the game built every mesh in code and never loaded a file asset, so the asset pipeline had no game consumer.
+Decision: Add shooter/data/cache_crate.obj (0.6 body plus a 0.08 lid rim, 24 triangles) and shooter/asset_pipeline.py, which registers it through AssetRegistry.register_file and falls back to the previous pickup cube when the file is missing or invalid. The ammo-cache pool renders the loaded crate, and ShooterGame.update refreshes bound sources once per second through ShooterGame.reload_assets(), which stores ReloadReport.describe() for diagnostics.
+Consequences: Suite 465/465 green plus 2 xfailed (four asset tests, two updated cache assertions); determinism 1800 ok (hash b25db520); aikit 4/4. The file is fingerprinted and hot-reloadable, the fallback keeps play safe, and the sim hash never changes. Evidence: evidence/cycle-130.json.

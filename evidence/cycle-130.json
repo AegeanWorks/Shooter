@@ -1,0 +1,54 @@
+{
+  "area": "gameplay: file-backed OBJ asset and hot reload",
+  "commands": [
+    "python -m pytest tests/test_cache_asset.py tests/test_cache_visual.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 130,
+  "feature": "The testbed proved obj_loader, asset_io suffix inference, fingerprints and ReloadReport, but every game mesh was built in code and no file asset was ever loaded.",
+  "fix": "add shooter/data/cache_crate.obj, register it through AssetRegistry.register_file via shooter/asset_pipeline.py, render the ammo cache with it, and refresh bound sources once per second",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "465 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "asset": {
+      "file": "shooter/data/cache_crate.obj",
+      "body": 0.6,
+      "lid_rim": 0.08,
+      "triangles": 24,
+      "kind_inference": ".obj -> mesh",
+      "fingerprint_bound": true
+    },
+    "fallback": {
+      "missing_file": "registers the previous 0.6 cube",
+      "register_returns": false
+    },
+    "hot_reload": {
+      "poll_seconds": 1.0,
+      "report": "ReloadReport.describe()",
+      "unchanged_includes": "mesh.cache_crate",
+      "json_safe": true
+    },
+    "game": {
+      "cache_mesh": "mesh.cache_crate",
+      "shared_by_pool": true,
+      "sim_hash_unchanged": true
+    }
+  },
+  "tests": {
+    "cache_asset_tests": 4,
+    "suite": "465 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "obj asset",
+    "asset pipeline",
+    "asset registry",
+    "hot reload",
+    "ammo cache"
+  ]
+}

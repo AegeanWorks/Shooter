@@ -27,6 +27,7 @@ from keystone.texture import TextureData
 from keystone.ui.font import text_width
 
 from .anim import EnemyAnimations
+from .asset_pipeline import CACHE_CRATE, register_cache_crate
 from .profile import ProfileStore, default_profile
 from .sim import Sim
 from .ui import draw_shooter
@@ -218,6 +219,8 @@ class ShooterGame:
         self._enemy_anim: EnemyAnimations | None = None
         self._pad_pulse: PadPulseComponent | None = None
         self._lifecycle: ComponentRuntime | None = None
+        self.asset_reload_report: dict | None = None
+        self._asset_reload_t = 0.0
         self._built = False
 
     # ---- five-operation contract --------------------------------------
@@ -538,14 +541,19 @@ class ShooterGame:
                 mesh=self.assets.require("mesh.beacon_orb").payload, material=pickup_mat,
             )
             self.scene.add(self._pickup_orb)
-        # Ammo-cache pool: shared glowing cubes mark sim-dropped caches.
-        # Presentation only; lifetime, pickup and reward RNG stay in sim.
+        # Ammo-cache pool: a committed .obj crate loaded through the keystone
+        # asset pipeline (suffix inference, fingerprint, hot reload). A
+        # missing file falls back to the previous cube so play never blocks.
+        register_cache_crate(self.assets, Path(__file__).parent / "data", pickup_mesh)
+        crate_mesh = self.assets.require(CACHE_CRATE).payload
+        self.asset_reload_report = None
+        self._asset_reload_t = 0.0
         self._cache_nodes = []
         cache_mat = self.assets.require("material.cache").payload
         for index in range(MAX_CACHES):
             node = Node(
                 f"ammo-cache-{index}", id=f"ammo-cache-{index}", visible=False,
-                mesh=pickup_mesh, material=cache_mat,
+                mesh=crate_mesh, material=cache_mat,
             )
             self.scene.add(node)
             self._cache_nodes.append(node)
@@ -655,6 +663,12 @@ class ShooterGame:
         """Attach an optional (clip, gain) observer for evidence tooling."""
         self._clip_hook = hook
 
+    def reload_assets(self):
+        """Re-read changed file-backed assets; expose the JSON-safe report."""
+        report = self.assets.refresh()
+        self.asset_reload_report = report.describe()
+        return report
+
     def _play_clip(self, clip, gain: float) -> None:
         """Play one SFX clip, counting (never hiding) a mixer refusal.
 
@@ -710,6 +724,12 @@ class ShooterGame:
             self.mixer.clear()
         if self._lifecycle is not None:
             self._lifecycle.update(float(dt))
+        # File-backed assets poll once per second (not per frame): a changed
+        # .obj hot-reloads and the report stays visible to diagnostics.
+        self._asset_reload_t += float(dt)
+        if self._asset_reload_t >= 1.0:
+            self._asset_reload_t = 0.0
+            self.reload_assets()
         self._sync_scene(float(dt))
 
     def _cue(self, text: str, danger: bool = False) -> None:
@@ -1266,7 +1286,9 @@ class ShooterGame:
                     ),
                     scale=Vec3(size, size, size),
                 )
+        cache_mesh = self.assets.require(CACHE_CRATE).payload
         for i, node in enumerate(self._cache_nodes):
+            node.mesh = cache_mesh
             if i < len(sim.caches):
                 cache = sim.caches[i]
                 node.visible = True

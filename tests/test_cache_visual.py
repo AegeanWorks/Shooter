@@ -7,6 +7,7 @@ cache lifetime, pickup and reward RNG are untouched.
 
 from keystone.math3d import Vec3
 
+from shooter.asset_pipeline import CACHE_CRATE
 from shooter.game import ShooterGame
 
 MAX_CACHES = 4
@@ -31,13 +32,13 @@ def test_cache_pool_renders_the_active_drop():
     assert len(active) == 1, [node.visible for node in nodes]
     assert abs(active[0].transform.position.x) < 1e-6
     assert abs(active[0].transform.position.z + 3.0) < 1e-6
-    assert active[0].mesh is g.assets.require("mesh.pickup").payload
+    assert active[0].mesh is g.assets.require(CACHE_CRATE).payload
 
 
 def test_cache_nodes_share_the_glowing_material():
     g = _game()
     material = g.assets.require("material.cache").payload
-    mesh = g.assets.require("mesh.pickup").payload
+    mesh = g.assets.require(CACHE_CRATE).payload
     assert all(node.material is material for node in g._cache_nodes)
     assert all(node.mesh is mesh for node in g._cache_nodes)
     assert material.emissive.x > material.color.x * 0.5

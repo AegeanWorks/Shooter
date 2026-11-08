@@ -103,6 +103,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `gltf` loader | sources/GLB, buffers, accessors, validation, registry | `tests/test_keystone_gltf_loader_mechanics.py` |
 | `schema`/public API | exports/version agreement, editor actions, describe parity, CubeDemo determinism | `tests/test_keystone_api_contract_mechanics.py` |
 | `AnimationLibrary` + `AnimationController` | enemy idle `.kanim` clips, sampling, crossfade, sim parity | `tests/test_enemy_animation.py` |
+| `asset_io` + `obj_loader` | .obj cache crate, suffix inference, fingerprint, hot reload | `tests/test_cache_asset.py` |
 
 ```powershell
 python play.py --describe
@@ -121,6 +122,8 @@ projects/shooter/
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: crosshair/status/streak/target/kill-feed/boss-pickup arrows
 │   ├── profile.py       <- versioned, atomic run profile (bests, wins, runs, W/L history, debrief, quarantine recovery flags)
+│   ├── anim.py          <- .kanim enemy idle clips and controller binding
+│   ├── asset_pipeline.py <- file-backed .obj registration and fallback
 │   └── data/
 │       ├── anim/           <- enemy idle .kanim clips (mite/brute/wisp/warden)
 │       ├── weapons.json    <- 4 guns (pulse/scatter/lance/surge)
@@ -132,7 +135,8 @@ projects/shooter/
 │       ├── warden_core.kstate <- keystone state machine: calm/charge core pulse
 │       ├── core_material.json <- keystone material graph: checker boss core
 │       ├── pickup_beacon.kprefab <- keystone multi-root prefab: pickup/beam/orb
-│       └── cache_material.kmaterial <- keystone material library: ammo cache
+│       ├── cache_material.kmaterial <- keystone material library: ammo cache
+│       └── cache_crate.obj <- ammo-cache crate mesh (0.6 body + lid rim)
 ├── tests/
 │   ├── conftest.py         <- adds keystone + shooter to sys.path
 │   ├── test_shooter.py     <- move/shoot/hit/kill/die/score/determinism/budget
@@ -244,6 +248,7 @@ projects/shooter/
 │   ├── test_campaign_seal.py <- cleared campaign stops wave-4 spawns
 │   ├── test_campaign_complete.py <- persistent post-banner completion line
 │   ├── test_cache_visual.py <- dropped ammo caches render from a shared pool
+│   ├── test_cache_asset.py <- .obj crate registration, fallback, reload report
 │   ├── test_cache_drop_cue.py <- cache drop voice/caption, standard-kill parity
 │   ├── test_profile_recovery.py <- corrupt-profile flags and debrief reset/recovered
 │   ├── test_profile_backup_restart.py <- missing-main backup restore on restart
@@ -399,7 +404,8 @@ projects/shooter/
 │   ├── cycle-126.json <- glTF prefab/registry saves, textures, re-import
 │   ├── cycle-127.json <- GLB/source, buffers, accessors, validation
 │   ├── cycle-128.json <- exports, schema versions, describe parity, determinism
-│   └── cycle-129.json <- .kanim enemy idle clips, crossfade, sim parity
+│   ├── cycle-129.json <- .kanim enemy idle clips, crossfade, sim parity
+│   └── cycle-130.json <- .obj cache crate, hot reload report
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
