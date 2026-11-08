@@ -1,0 +1,62 @@
+{
+  "area": "keystone testbed: skinning, glTF import and sprite math",
+  "commands": [
+    "python -m pytest tests/test_keystone_skinning_gltf_sprite_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 102,
+  "feature": "CPU linear-blend skinning (skin_point/skin_mesh/bone_matrices), skinned and plain glTF import, point-sprite scale/alpha/billboard math",
+  "fix": "add tests/test_keystone_skinning_gltf_sprite_mechanics.py covering rigid/blended skin points and validation, a skinned glTF with two joints and a deformed vertex, a triangle glTF with material/registry import, and deterministic sprite attenuation/alpha/billboard math",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "332 passed"
+  },
+  "mechanics": {
+    "skinning": {
+      "identity_position": [1.0, 0.0, 0.0],
+      "translation_x": 3.0,
+      "half_blend_x": 1.0,
+      "invalid_weights": "ValueError",
+      "invalid_joint": "ValueError",
+      "skin_mesh_x": 1.0,
+      "layout_preserved": true,
+      "bone_palette_x": 1.0,
+      "missing_joint": "ValueError"
+    },
+    "gltf": {
+      "skinned_node_count": 1,
+      "skin_joints": ["node-1", "node-2"],
+      "inverse_binds": 2,
+      "bones": 2,
+      "bone_1_x": 1.0,
+      "deformed_vertex_x": 1.5,
+      "triangle_node_count": 1,
+      "triangle_count": 1,
+      "material_color": [0.2, 0.4, 0.6],
+      "registry_mesh": "gltf.mesh.0"
+    },
+    "sprites": {
+      "constants": {"atten": 180.0, "max": 64.0, "min": 1.0, "color": [1.0, 0.9, 0.7]},
+      "scale_at_180_1": 1.0,
+      "scale_clamps": [64.0, 1.0],
+      "soft_alpha": {"center": 1.0, "corner": 0.0, "mid": "0..1"},
+      "sprite_alpha": {"start": 1.0, "end": 0.0, "mid": 0.5},
+      "billboard_center": [1.0, 2.0, 3.0]
+    }
+  },
+  "tests": {
+    "skinning_gltf_sprite_tests": 5,
+    "suite": "332 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone skinning",
+    "gltf import",
+    "skinned mesh",
+    "sprite math",
+    "billboard"
+  ]
+}

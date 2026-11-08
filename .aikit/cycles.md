@@ -2115,3 +2115,24 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 327 passed; determinism 1800 ok
   (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-101.json`.
+
+## Cycle 102 - Keystone testbed: skinning, glTF and sprite math
+- **Area**: keystone testbed (102nd cycle).
+- **Feature / evidence**: Keystone ships CPU linear-blend skinning,
+  dependency-free glTF import and deterministic point-sprite math, but
+  the shooter suite covered none of them.
+- **Fix**: add `tests/test_keystone_skinning_gltf_sprite_mechanics.py`
+  covering rigid/blended skin points and validation, skin-mesh layout
+  and bone palettes, a skinned glTF (two joints, deformed vertex), a
+  triangle glTF with material/registry import and sprite
+  scale/alpha/billboard math.
+- **Proof**: identity keeps `[1,0,0]`, a 2 m translation gives x 3,
+  a 0.5/0.5 blend gives x 1; `skin_mesh` moves x to 1 and keeps the
+  index layout; the imported skinned glTF exposes `node-1`/
+  `node-2` joints, two bones and a deformed vertex at x 1.5; the
+  triangle glTF imports 1 triangle / material `[0.2,0.4,0.6]` and
+  registers `gltf.mesh.0`; sprite scale/alpha/billboard values match
+  their fixed formulas.
+- **Gates**: `python -m pytest -q` 332 passed; determinism 1800 ok
+  (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-102.json`.
