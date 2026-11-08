@@ -1,0 +1,69 @@
+{
+  "area": "UI readability",
+  "commands": [
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python scripts/capture.py critical <prefix>",
+    "python scripts/play_run.py kite 3000 <report>",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 76,
+  "fix": "tag critical kills as CRIT <TYPE> +<total> and draw them in accent orange in the 2.5 s kill feed; a same-frame pending flag links the critical event to the following kill entry",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash a1528cee36c61f200e5a667ab9f040de",
+    "pytest": "246 passed"
+  },
+  "play_runs": {
+    "kite_after": {
+      "audio": 439,
+      "critical_rewards": 4,
+      "drops": 0,
+      "hash": "54bdc60c3a9b14df12abd74ae2e29034",
+      "hp": 76,
+      "hurts": 4,
+      "kills": 30,
+      "score": 12065
+    },
+    "kite_before": {
+      "audio": 439,
+      "critical_rewards": 4,
+      "drops": 0,
+      "hash": "54bdc60c3a9b14df12abd74ae2e29034",
+      "hp": 76,
+      "hurts": 4,
+      "kills": 30,
+      "score": 12065
+    },
+    "parity": "same campaign hash 54bdc60c before/after; HUD feed only, with 4 natural critical kills in the run"
+  },
+  "state": {
+    "after_dir": "shots/shooter-campaign/cycle-76/after",
+    "before_dir": "shots/shooter-campaign/cycle-76/before",
+    "route": "scripts/capture.py critical; 960x540 seed 1, forced critical roll on a 1 hp mite"
+  },
+  "tests": {
+    "critical_killfeed_tests": 2,
+    "suite": "246 passed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "critical kill",
+    "kill feed",
+    "persistent reward record"
+  ],
+  "visual_diff": {
+    "bbox": [
+      16,
+      104,
+      181,
+      117
+    ],
+    "changed_px": 900,
+    "draws": 10,
+    "fraction": 0.0017,
+    "mean_luma_after": 35.62,
+    "mean_luma_before": 35.6,
+    "triangles": 698
+  }
+}

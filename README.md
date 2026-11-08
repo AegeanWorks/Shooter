@@ -63,7 +63,7 @@ python play.py --replay bot_campaign.json
 projects/shooter/
 ├── shooter/
 │   ├── __init__.py      <- plug-in exports
-│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip/bob, boss core/beacon/slam ring, spawn/summon marks, ammo-cache pool, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, campaign-complete line, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim+base/pulsing pad, mixer + captions
+│   ├── game.py          <- ShooterGame: five ops + draw_ui, Scene sync, viewmodel + recoil/reload dip/bob, boss core/beacon/slam ring, spawn/summon marks, ammo-cache pool, fire tints, wisp bolts/warning, death silhouettes, brute cues, crosshair bounty, damage jolt, switch cues, critical kill feed tag, campaign-complete line, win/career/full-history debrief, floor grid/cover panels/trim/pilasters/platform rim+base/pulsing pad, mixer + captions
 │   ├── sim.py           <- deterministic sim: move/weapons/enemies/waves/boss/cover-safe summons/entity clearance/campaign seal/hit-reaction/cover-slide/particles
 │   ├── bot.py           <- headless bot scripts (move/fire/assault/kite/overdrive_step)
 │   ├── ui.py            <- single-source HUD: spread-aware crosshair, centered status, streak bonus, target health (hidden on death), kill marker, low-ammo count/reload/no-reserve, kill-feed, damage, boss/pickup direction (tag survives boss)
@@ -90,6 +90,7 @@ projects/shooter/
 │   ├── test_enemy_cover.py <- cover collision, slide-around, spawn guard
 │   ├── test_levels_platform.py <- jumpable low platform + landing proof
 │   ├── test_kill_feed.py   <- typed kill event, feed draw/expiry
+│   ├── test_critical_killfeed.py <- CRIT prefix/color in the persistent feed
 │   ├── test_muzzle.py      <- off-axis flash offset and small node scale
 │   ├── test_denial.py      <- denied overdrive voice/caption + state parity
 │   ├── test_wins.py        <- schema-2 migration, persisted wins, win banner
@@ -233,7 +234,8 @@ projects/shooter/
 │   ├── cycle-72.json  <- improvement-cycle 72 proof: profile-reset pair, corrupt-profile run
 │   ├── cycle-73.json  <- improvement-cycle 73 proof: viewmodel-bob pair, same-hash strafe run
 │   ├── cycle-74.json  <- improvement-cycle 74 proof: brute-gap pair, brute_gap drill
-│   └── cycle-75.json  <- improvement-cycle 75 proof: platform-base pair, same-hash platform run
+│   ├── cycle-75.json  <- improvement-cycle 75 proof: platform-base pair, same-hash platform run
+│   └── cycle-76.json  <- improvement-cycle 76 proof: CRIT feed pair, same-hash kite run
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)

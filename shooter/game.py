@@ -139,6 +139,7 @@ class ShooterGame:
         self.sound_cue_t = 0.0
         self.sound_cue_color = (1.0, 0.62, 0.20, 1.0)
         self._forfeit_cue_pending = False
+        self._critical_kill_pending = False
         self._pickup_fx_t = 0.0
         self.kill_feed: list[dict] = []
         self.score_pop: dict | None = None
@@ -207,6 +208,7 @@ class ShooterGame:
         self.sound_cue = ""
         self.sound_cue_t = 0.0
         self._forfeit_cue_pending = False
+        self._critical_kill_pending = False
         self._pickup_fx_t = 0.0
         self.run_new_best = False
         self.last_run = None
@@ -559,6 +561,7 @@ class ShooterGame:
             self.build_scene()
         events = self.sim.step(float(dt), actions)
         self._forfeit_cue_pending = False
+        self._critical_kill_pending = False
         for e in events:
             self._play_event(e)
         if "died" in events:
@@ -686,12 +689,16 @@ class ShooterGame:
         if event.startswith("kill:"):
             parts = event.split(":")
             if len(parts) == 3:
+                critical = self._critical_kill_pending
+                self._critical_kill_pending = False
+                prefix = "CRIT " if critical else ""
                 self.kill_feed.insert(
                     0,
                     {
-                        "text": f"{parts[1].upper()} +{parts[2]}",
+                        "text": f"{prefix}{parts[1].upper()} +{parts[2]}",
                         "t": 2.5,
                         "danger": parts[1] == "warden",
+                        "critical": critical,
                     },
                 )
                 self.kill_feed = self.kill_feed[:4]
@@ -747,6 +754,7 @@ class ShooterGame:
         elif event == "critical":
             self._play_clip(self._clips["critical"], 0.55)
             self._cue("CRITICAL")
+            self._critical_kill_pending = True
         elif event == "boss_down":
             self._play_clip(self._clips["boss_down"], 1.0)
             self._cue("WARDEN DOWN")
@@ -1144,7 +1152,12 @@ class ShooterGame:
             canvas.text(left + 12, top + 7, text, self.sound_cue_color, 2)
         for index, entry in enumerate(self.kill_feed):
             alpha = min(1.0, float(entry["t"]) / 0.6)
-            color = (1.0, 0.35, 0.30, alpha) if entry.get("danger") else (0.95, 0.90, 0.80, alpha)
+            if entry.get("critical"):
+                color = (1.0, 0.62, 0.20, alpha)
+            elif entry.get("danger"):
+                color = (1.0, 0.35, 0.30, alpha)
+            else:
+                color = (0.95, 0.90, 0.80, alpha)
             canvas.text(16, 104 + index * 18, str(entry["text"]), color, 2)
         if self.score_pop is not None:
             alpha = min(1.0, max(0.0, float(self.score_pop["t"]) / 0.6))

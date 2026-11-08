@@ -1569,3 +1569,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 244 passed; determinism 1800 ok; aikit
   `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-75.json`.
+
+## Cycle 76 - UI readability: critical tag in the kill feed
+- **Area**: UI readability (76th cycle).
+- **Defect / evidence**: cycle 64 added a transient `CRITICAL` caption,
+  but the persistent kill feed still recorded `MITE +220` with no marker.
+  Once the caption faded, a critical kill was indistinguishable from a
+  normal kill except by comparing scores.
+- **Fix**: set a same-update pending flag when the sim's `critical` event
+  arrives and consume it in the following `kill:<type>:<total>` entry:
+  prefix `CRIT `, store `critical=True`, and draw that entry in accent
+  orange ahead of the normal white/warden-red colors. Normal kills and the
+  2.5 s feed lifetime are unchanged; no sim or reward changes.
+- **Screenshot proof**: workspace `shots/shooter-campaign/cycle-76/`;
+  960x540 seed 1, forced critical on a 1 hp mite. 900 changed px (0.17%,
+  bbox 16,104-181,117), mean luma 35.60 -> 35.62; draws 10, triangles 698.
+- **Played runs**: `kite 3000` before/after same hash `54bdc60c...`,
+  30 kills, hp 76, 4 hurts, audio 439, 0 drops, 4 critical rewards.
+- **Gates**: `python -m pytest -q` 246 passed; determinism 1800 ok; aikit
+  `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-76.json`.
