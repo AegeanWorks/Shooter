@@ -2584,3 +2584,23 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 451 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-127.json`.
+
+## Cycle 128 - Keystone testbed: public API and schema contracts
+- **Area**: keystone testbed (128th cycle).
+- **Feature / evidence**: `schema` and the top-level package are the
+  contract every adapter shares, but no direct shooter test pinned export
+  resolution, version agreement or editor-action parity.
+- **Fix**: add `tests/test_keystone_api_contract_mechanics.py` with five
+  read-only contract tests.
+- **Proof**: `__version__` is set and all 88 `__all__` names are unique
+  and resolve, Engine stays lazy in `keystone.app` and a missing attribute
+  raises; schema versions pin web 1, scene 2, editor 59, prefab 2 and 81
+  unique editor actions plus report/snapshot/diff/export/playtest
+  versions; `describe_game(CubeDemo())` matches the schema actions and
+  capability flags; CubeDemo builds a Scene, advances snapshot time and
+  hashes identically over four simulated frames; culling/batch/scene_diff/
+  export/gltf_import `__all__` names all resolve and the glTF suffixes
+  are detected.
+- **Gates**: `python -m pytest -q` 456 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-128.json`.

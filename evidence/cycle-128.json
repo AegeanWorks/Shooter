@@ -1,0 +1,82 @@
+{
+  "area": "keystone testbed: public API and schema contracts",
+  "commands": [
+    "python -m pytest tests/test_keystone_api_contract_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 128,
+  "feature": "The public API and schema constants every adapter shares had no direct shooter contract test: export resolution and lazy Engine loading, version/action agreement, describe_game parity and CubeDemo determinism were only exercised indirectly.",
+  "fix": "add tests/test_keystone_api_contract_mechanics.py with five live contract tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "456 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "public_exports": {
+      "version": "0.45.0",
+      "all_count": 88,
+      "all_unique": true,
+      "all_resolve": true,
+      "lazy_engine_module": "keystone.app",
+      "missing_attribute": "AttributeError"
+    },
+    "schema": {
+      "web_api_version": 1,
+      "scene_schema_version": 2,
+      "editor_schema_version": 59,
+      "prefab_schema_version": 2,
+      "editor_actions": 81,
+      "editor_actions_unique": true,
+      "report_schema_version": 11,
+      "scene_snapshot_version": 6,
+      "scene_diff_schema_version": 4,
+      "export_schema_version": 1,
+      "playtest_report_schema": 1,
+      "transcript_schema": 1
+    },
+    "describe_game": {
+      "game": "cube-demo",
+      "editor_schema": 59,
+      "actions_match_schema": true,
+      "agents": true,
+      "prefabs": true,
+      "report_schema_match": true,
+      "web_api_version": 1,
+      "api_endpoint": "/api",
+      "axes": ["forward", "right", "up", "look_yaw", "look_pitch"],
+      "quit_button": true
+    },
+    "cube_demo": {
+      "build_scene": "Scene",
+      "snapshot_mapping": true,
+      "time_advances": true,
+      "simulation_hash_stable": true,
+      "frames": 4,
+      "ok": true
+    },
+    "modules": {
+      "culling": "re-exported",
+      "batch": "re-exported",
+      "scene_diff": "all resolves",
+      "export": "all resolves",
+      "gltf_import": "all resolves",
+      "gltf_suffixes": [".gltf", ".glb"],
+      "gltf_detection": true
+    }
+  },
+  "tests": {
+    "api_contract_tests": 5,
+    "suite": "456 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone public api",
+    "schema contract",
+    "editor actions",
+    "describe_game parity",
+    "cube demo determinism"
+  ]
+}

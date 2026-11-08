@@ -101,6 +101,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `obj_loader` | normals/UVs, negative indices, quads, homogeneous vertices, errors | `tests/test_keystone_obj_loader_mechanics.py` |
 | `gltf_import` | suffix detection, prefab/registry saves, textures, re-import, errors | `tests/test_keystone_gltf_import_mechanics.py` |
 | `gltf` loader | sources/GLB, buffers, accessors, validation, registry | `tests/test_keystone_gltf_loader_mechanics.py` |
+| `schema`/public API | exports/version agreement, editor actions, describe parity, CubeDemo determinism | `tests/test_keystone_api_contract_mechanics.py` |
 
 ```powershell
 python play.py --describe
@@ -173,6 +174,7 @@ projects/shooter/
 │   ├── test_keystone_obj_loader_mechanics.py <- normals/UVs, negative indices, quads, errors
 │   ├── test_keystone_gltf_import_mechanics.py <- glTF prefab/registry saves, textures, errors
 │   ├── test_keystone_gltf_loader_mechanics.py <- GLB/source, buffers, accessors, validation
+│   ├── test_keystone_api_contract_mechanics.py <- exports, schema versions, describe parity, determinism
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -392,7 +394,8 @@ projects/shooter/
 │   ├── cycle-124.json <- PNG round trips, corruption, texture sha, checker
 │   ├── cycle-125.json <- OBJ normals/UVs, negative indices, quads, errors
 │   ├── cycle-126.json <- glTF prefab/registry saves, textures, re-import
-│   └── cycle-127.json <- GLB/source, buffers, accessors, validation
+│   ├── cycle-127.json <- GLB/source, buffers, accessors, validation
+│   └── cycle-128.json <- exports, schema versions, describe parity, determinism
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
