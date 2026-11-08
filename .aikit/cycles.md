@@ -2521,3 +2521,18 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 431 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-123.json`.
+
+## Cycle 124 - Keystone testbed: PNG and RGBA textures
+- **Area**: keystone testbed (124th cycle).
+- **Feature / evidence**: `png`/`texture` power assets and captures but
+  direct round-trip, corruption, flip and checker semantics were untested.
+- **Fix**: add `tests/test_keystone_png_texture_mechanics.py` with five
+  image-pipeline tests.
+- **Proof**: top-down PNGs round-trip, the default write flips vertical,
+  signatures/lengths validate; bad signatures, missing IEND and CRC
+  mismatches raise; texture sha is shape/pixel-sensitive and name-
+  independent; `from_png`/`from_png_bytes` load pixels/names; checker
+  pixels alternate by cell with full alpha and reject bad args.
+- **Gates**: `python -m pytest -q` 436 passed, 2 xfailed;
+  determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
+- **Evidence file**: `evidence/cycle-124.json`.

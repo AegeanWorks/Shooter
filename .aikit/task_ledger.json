@@ -1,56 +1,17 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-123-batch",
+    "task_id": "shooter-cycle-124-png-texture",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794150908.3420703,
+    "updated_at": 1794151214.8908122,
     "owner": "opencode:deepseek-v4.1-flash",
     "started_by": "opencode:deepseek-v4.1-flash",
     "continuations": [],
-    "completed_at": 1794150908.5669131
+    "completed_at": 1794151215.2055967
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-117-instancing",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Instancing covered: 401 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794148066.6968727,
-      "timestamp_str": "2026-11-08 17:27:46",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-117-instancing",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-117-instancing' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794148066.9830391,
-      "timestamp_str": "2026-11-08 17:27:46",
-      "agent": "opencode:deepseek-v4.1-flash"
-    },
-    {
-      "task_id": "shooter-cycle-118-playtest",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Keystone testbed cycle: cover playtest canon/signals, policies, transcripts/diffs, reports and fairness verdicts",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794148178.5814793,
-      "timestamp_str": "2026-11-08 17:29:38",
-      "agent": "opencode:deepseek-v4.1-flash",
-      "impact_assessment": {
-        "why": "playtest is the seeded bot/fairness layer but the testbed has no direct coverage of canonical hashes, policy behavior, transcript diffs, reports or fairness branches.",
-        "benefits": "Five tests pin canon/signal readers, scripted/random/greedy policies, transcript replay/diffs, report envelopes and fair/unfair/unknown fairness verdicts with local fixtures.",
-        "risks": "contract: tests only; dependency: none; concurrency: none; state: in-memory games and temp-free runs; no game/sim/hash change.",
-        "mitigation": "Small frame budgets and local contract games, full suite, determinism and project gates."
-      },
-      "plan_digest": "0246478c9e943245d2848d41e60466fe6722600539ca805f9ab301c376a031e0"
-    },
     {
       "task_id": "shooter-cycle-118-playtest",
       "phase": "in_progress",
@@ -265,6 +226,45 @@
       "status": "completed",
       "timestamp": 1794150908.5669143,
       "timestamp_str": "2026-11-08 18:15:08",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-124-png-texture",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Keystone testbed cycle: cover PNG encode/decode/flip/corruption and texture validation/sha/from_png/checker",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794150954.302137,
+      "timestamp_str": "2026-11-08 18:15:54",
+      "agent": "opencode:deepseek-v4.1-flash",
+      "impact_assessment": {
+        "why": "png and texture are the image pipeline for assets/captures but direct round-trip, corruption and checker semantics are untested in the shooter testbed.",
+        "benefits": "Five tests pin RGBA round trips, vertical-flip convention, malformed PNG rejection, texture immutability/sha, PNG-backed textures and deterministic checker pixels.",
+        "risks": "contract: tests only; dependency: none; concurrency: none; state: temp PNGs only; no game/sim/hash change.",
+        "mitigation": "Small 2x2/4x4 images, full suite, determinism and project gates."
+      },
+      "plan_digest": "89103174fbe387f24b68332d70882690059b8a69cf47365fb1e9467c743c21e4"
+    },
+    {
+      "task_id": "shooter-cycle-124-png-texture",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] PNG/texture covered: 436 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1794151214.8908122,
+      "timestamp_str": "2026-11-08 18:20:14",
+      "agent": "opencode:deepseek-v4.1-flash"
+    },
+    {
+      "task_id": "shooter-cycle-124-png-texture",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-124-png-texture' completed successfully.",
+      "status": "completed",
+      "timestamp": 1794151215.2055984,
+      "timestamp_str": "2026-11-08 18:20:15",
       "agent": "opencode:deepseek-v4.1-flash"
     }
   ]

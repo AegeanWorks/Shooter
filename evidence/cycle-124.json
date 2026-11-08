@@ -1,0 +1,69 @@
+{
+  "area": "keystone testbed: PNG encoding and RGBA textures",
+  "commands": [
+    "python -m pytest tests/test_keystone_png_texture_mechanics.py -q",
+    "python -m pytest -q",
+    "python play.py --verify-determinism --frames 1800",
+    "python aikit.py check shooter (from AIKit root)"
+  ],
+  "cycle": 124,
+  "feature": "RGBA PNG round trips with the vertical-flip convention, corrupt PNG rejection, texture immutability/shape hashes, PNG-backed textures and the deterministic checker pattern",
+  "fix": "add tests/test_keystone_png_texture_mechanics.py with five image-pipeline tests",
+  "gates": {
+    "aikit_check": "4/4 gates passed",
+    "determinism": "--verify-determinism 1800 ok=true hash b25db52005e7aeb8a241f86d27b4d049",
+    "pytest": "436 passed, 2 xfailed"
+  },
+  "mechanics": {
+    "png_round_trip": {
+      "top_down_round_trip": true,
+      "default_flip_vertical": true,
+      "signature": true,
+      "invalid_size": "ValueError",
+      "wrong_length": "ValueError"
+    },
+    "png_errors": {
+      "bad_signature": "ValueError",
+      "no_iend": "ValueError",
+      "crc_mismatch": "ValueError"
+    },
+    "texture": {
+      "sha_name_independent": true,
+      "sha_shape_sensitive": true,
+      "sha_pixel_sensitive": true,
+      "bad_size": "ValueError",
+      "non_bytes": "TypeError",
+      "wrong_length": "ValueError",
+      "frozen": true
+    },
+    "texture_sources": {
+      "from_png_name": "stem",
+      "explicit_name": true,
+      "from_png_bytes": true,
+      "invalid_bytes": "ValueError"
+    },
+    "checker": {
+      "size": 4,
+      "cell": 2,
+      "light_at_0_0": true,
+      "dark_at_2_0": true,
+      "dark_at_0_2": true,
+      "light_at_2_2": true,
+      "alpha": 255,
+      "bad_size_or_cell": "ValueError",
+      "bad_colors": "TypeError"
+    }
+  },
+  "tests": {
+    "png_texture_tests": 5,
+    "suite": "436 passed, 2 xfailed"
+  },
+  "timestamp": "2026-11-08",
+  "topics": [
+    "keystone png",
+    "texture data",
+    "rgba round trip",
+    "png corruption",
+    "checker texture"
+  ]
+}
