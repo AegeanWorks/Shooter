@@ -134,6 +134,8 @@ def test_reload_report_ok_and_describe():
         "unchanged": [],
         "failed": [],
         "missing": [],
+        "rebound": 0,
+        "registry_rebound": 0,
         "ok": True,
     }
 
@@ -155,6 +157,8 @@ def test_reload_report_ok_and_describe():
         "unchanged": ["b"],
         "failed": [{"id": "c", "error": "boom"}],
         "missing": ["d"],
+        "rebound": 0,
+        "registry_rebound": 0,
         "ok": False,
     }
     assert json.loads(json.dumps(described)) == described

@@ -1365,6 +1365,20 @@ class ShooterGame:
         snap["dropped_sfx"] = int(self.dropped_sfx)
         return snap
 
+    def bind_input(self, mapping) -> None:
+        """Bind every live button the actions() contract advertises.
+
+        Mouse fire already arrives through ActionState.mouse_clicked; F is a
+        keyboard alternative. Number keys need keystone's digit key table.
+        """
+        mapping.bind("fire", "f")
+        mapping.bind("reload", "r")
+        mapping.bind("slot1", "1")
+        mapping.bind("slot2", "2")
+        mapping.bind("slot3", "3")
+        mapping.bind("overdrive", "j")
+        mapping.bind("jump", "space")
+
     def actions(self) -> dict:
         return {
             "axes": ["forward", "right", "up", "look_yaw", "look_pitch"],

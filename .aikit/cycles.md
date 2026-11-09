@@ -2724,3 +2724,25 @@ rotation completes.
 - **Gates**: `python -m pytest -q` 474 passed, 2 xfailed;
   determinism 1800 ok (hash b25db520); aikit `check shooter` 4/4.
 - **Evidence file**: `evidence/cycle-133.json`.
+
+## Cycle 134 - Testbed adoption: live input bindings
+- **FIND**: the improvement report listed live control binding as P0, but
+  live source showed Keystone already calls an optional `bind_input` hook.
+  The real gaps were consumer adoption, a key table with no number row, and
+  no diagnostic for dead key names (`fire -> mouse_left` is not a key).
+- **ANALYZE**: `Engine._apply_game_bindings` calls the hook; `_KEYS` had no
+  digits; `InputMap.sample` only reports names a `GLContext` knows. Killed:
+  re-adding the engine hook (already there) and binding fire only to a key
+  (mouse already arrives via `mouse_clicked`). Survivor: digit keys, a
+  dead-key diagnostic, and shooter adoption.
+- **IMPLEMENT**: Keystone adds `0-9`, `key_names()`,
+  `InputMap.unknown_keys()`, `Engine.unbound_buttons`/`unknown_keys` and
+  `capabilities.input_keys`. The shooter implements `bind_input`
+  (F/1/2/3/R/J/Space) and documents the live controls.
+- **PROOF**: five shooter tests drive `InputMap.sample` into the sim:
+  slot2 switches to scatter, R reloads, J starts overdrive, F fires,
+  Space jumps, and every declared button has a real key. A 300-frame kite
+  run completes at wave 2 with 5 kills, hp 100, hash `f6c94bce...`.
+- **Gates**: Keystone 942 tests and 6/6 gates; shooter 481 tests and 4/4
+  gates; determinism 1800 ok (hash b25db520).
+- **Evidence file**: `evidence/cycle-134.json`.

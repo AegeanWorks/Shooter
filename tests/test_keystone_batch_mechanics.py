@@ -71,6 +71,8 @@ def test_plan_batches_groups_static_by_mesh_and_material():
         "schema": 1,
         "groups": 0,
         "draw_calls": 0,
+        "node_draws": 0,
+        "instanced_calls": 0,
         "batched_calls": 0,
         "saved_calls": 0,
         "triangles": 0,

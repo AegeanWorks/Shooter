@@ -1,0 +1,48 @@
+{
+  "cycle": 134,
+  "area": "testbed adoption: live input bindings",
+  "find": {
+    "report_claim": "Keystone has no per-game live binding hook (report F1, based on shooter ADR-016)",
+    "live_evidence": "Engine._apply_game_bindings already calls an optional bind_input(mapping); plugin.describe_game reports input_bind_hook. The real gaps were: the shooter never implemented the hook; _KEYS had no number-row names; bind() accepted dead key names such as mouse_left with no diagnostic.",
+    "consumer_evidence": "shooter README said slots/reload/overdrive had no live key; tests/test_audit pinned the limitation"
+  },
+  "analyze": {
+    "read": [
+      "keystone/app.py _apply_game_bindings",
+      "keystone/input.py InputMap.sample/unbound_buttons",
+      "keystone/gpu/context.py _KEYS",
+      "shooter/shooter/sim.py pressed/held/mouse_clicked use"
+    ],
+    "killed": [
+      "re-adding the engine hook: it already exists",
+      "binding fire only to a key: mouse already arrives through ActionState.mouse_clicked"
+    ],
+    "survivor": "digit key names, a dead-key diagnostic, and shooter adoption of bind_input"
+  },
+  "fix": {
+    "keystone": "digits 0-9 in _KEYS, key_names(), InputMap.unknown_keys(), Engine.unbound_buttons/unknown_keys after the hook, capabilities.input_keys in --describe, docs and CHANGELOG",
+    "shooter": "ShooterGame.bind_input binds fire=F, reload=R, slot1/2/3=1/2/3, overdrive=J, jump=Space; controls README updated; ADR-117 supersedes the stale ADR-016 limitation",
+    "pins_updated": [
+      "ReloadReport.describe now includes rebound/registry_rebound",
+      "plan_batches now includes node_draws/instanced_calls"
+    ]
+  },
+  "proof": {
+    "keystone": {
+      "tests": 942,
+      "gates": "6/6 (test, lint, mechanics, hygiene, guidelines, secrets)"
+    },
+    "shooter": {
+      "tests": "481 collected; suite green",
+      "gates": "4/4 (test, hygiene, guidelines, secrets)",
+      "integration": "5 tests in tests/test_live_bindings.py drive InputMap.sample through the real ShooterGame: 2 -> scatter, R -> reload_t > 0, J -> overdrive_t > 0, F fires, Space jumps; unbound_buttons == [] and unknown_keys == []",
+      "played_run": "play_run.py kite 300 -> wave 2, kills 5, score 900, hp 100, hash f6c94bcea4d950c4ca286707abe57665",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049"
+    }
+  },
+  "errata": {
+    "report": "F1 was partly stale: the engine hook existed. It is corrected to the adoption + key-coverage gap.",
+    "concurrent_core_work": "Keystone commits 100c543, b22fa7e, 81e58e5 and 1c34cd4 already implement aspects of report F2/F3/F4/F6/F7/F9/F12/F13; the testbed should adopt and validate them next."
+  },
+  "timestamp": "2026-11-08"
+}

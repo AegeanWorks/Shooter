@@ -103,6 +103,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `gltf` loader | sources/GLB, buffers, accessors, validation, registry | `tests/test_keystone_gltf_loader_mechanics.py` |
 | `schema`/public API | exports/version agreement, editor actions, describe parity, CubeDemo determinism | `tests/test_keystone_api_contract_mechanics.py` |
 | `AnimationLibrary` + `AnimationController` | enemy idle `.kanim` clips, sampling, crossfade, sim parity | `tests/test_enemy_animation.py` |
+| `bind_input` + digit keys | live slots/reload/overdrive/fire/jump, dead-key diagnostics | `tests/test_live_bindings.py` |
 | `asset_io` + `obj_loader` | .obj cache crate, suffix inference, fingerprint, hot reload | `tests/test_cache_asset.py` |
 
 ```powershell
@@ -182,6 +183,7 @@ projects/shooter/
 │   ├── test_keystone_gltf_loader_mechanics.py <- GLB/source, buffers, accessors, validation
 │   ├── test_keystone_api_contract_mechanics.py <- exports, schema versions, describe parity, determinism
 │   ├── test_enemy_animation.py <- .kanim idle clips, crossfade, uniform scale, sim parity
+│   ├── test_live_bindings.py <- bind_input keys through InputMap into the sim
 │   ├── test_levels.py      <- pickup beacon visibility/label + trigger parity
 │   ├── test_ui.py          <- single HP/ammo source, crosshair contrast, HUD purity
 │   ├── test_graphics.py    <- floor grid, shared trim batch, draw budget
@@ -411,7 +413,8 @@ projects/shooter/
 │   ├── cycle-130.json <- .obj cache crate, hot reload report
 │   ├── cycle-131.json <- warden armor texture, boss capture pair, boss run
 │   ├── cycle-132.json <- viewmodel grip, spawn/reload/burst pairs, kite run
-│   └── cycle-133.json <- boss ember death flash
+│   ├── cycle-133.json <- boss ember death flash
+│   └── cycle-134.json <- live input bindings
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
@@ -464,16 +467,12 @@ projects/shooter/
 
 ## Controls (live Engine bindings)
 
-Live play uses the Engine's default key map only — the Engine builds a
-plain `InputMap()` with no per-game bindings hook, so just these reach
-the sim: W/S forward/back, A/D strafe, E jump, mouse look, left-click
-fire (one shot per click). `1/2/3` weapon slots, `R` reload, and voluntary
-overdrive have no live key binding yet (engine-side gap, filed — see
-ADR-016); drive them via headless `ActionState` scripts (`shooter.bot`
-kite/overdrive policies), `--replay` logs, or the `bot_kite600.json`
-reference. Shift sprint, P pause, H hide UI, F1 cursor, Esc quit. The rear-left
-corner has a 0.7 m platform; `E` jump can land on it (the other covers are too
-tall to jump).
+Live play uses the Engine default map plus `ShooterGame.bind_input`:
+W/S/A/D move, E or Space jump, mouse look, left-click or F fire, 1/2/3
+weapon slots, R reload, J voluntary overdrive, Shift sprint, P pause,
+H hide UI, F1 cursor, Esc quit. `--describe` reports the merged bindings
+and any declared button the engine cannot bind. The rear-left corner has
+a 0.7 m platform; E/Space can land on it (other covers are too tall).
 
 The campaign now clears after the wave-3 Warden boss (wave 4 entry): the HUD shows a
 `CAMPAIGN CLEAR` banner for four seconds, and the death debrief remembers it as
