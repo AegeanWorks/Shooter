@@ -2746,3 +2746,53 @@ rotation completes.
 - **Gates**: Keystone 942 tests and 6/6 gates; shooter 481 tests and 4/4
   gates; determinism 1800 ok (hash b25db520).
 - **Evidence file**: `evidence/cycle-134.json`.
+
+## Cycle 135 - Testbed adoption: asset registry reload and live scene rebinding
+- **FIND**: Keystone\'s AssetRegistry.reload(scene) landed in 100c543 to
+  solve live asset rebinding, but ShooterGame._sync_scene still manually
+  reassigned 
+ode.mesh = cache_mesh on every cache node every frame (60 FPS),
+  and 
+eload_assets() called 
+efresh() instead of 
+eload(self.scene).
+- **ANALYZE**: 
+eload(scene) walks scene.traverse(), rebinds node meshes
+  and materials, and reports the count in 
+eport.rebound. Calling 
+eload(scene)
+  in 
+eload_assets() makes the per-frame mesh re-point redundant and lets
+  the core engine manage scene re-linking cleanly.
+- **IMPLEMENT**: update ShooterGame.reload_assets to call
+  self.assets.reload(self.scene), remove the redundant per-frame
+  
+ode.mesh re-point from _sync_scene(), and add
+  	est_reload_assets_rebinds_live_cache_nodes_on_obj_modification in
+  	ests/test_cache_asset.py.
+- **VISUAL PROOF**: cache_visual before/after pair diffed with
+  keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True).
+- **PLAY PROOF**: play_run.py kite 300 runs 300 frames to wave 2 with 5 kills,
+  score 900, hp 100 and identical hash 6c94bcea4d950c4ca286707abe57665.
+- **Gates**: shooter 482 passed, 2 xfailed; determinism 1800 ok
+  (hash 25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
+- **Evidence file**: evidence/cycle-135.json.
+
+## Cycle 136 - Testbed adoption: animation channel masking with apply_pose
+- **FIND**: apply_pose(scene, pose, mask=...) landed in b22fa7e to allow animation to drive rotation/scale without clobbering simulated node positions. However, ShooterGame._sync_scene still worked around it with an unmasked call, reading self._boss_core.transform.rotation and scale, and manually reassembling a Transform. Furthermore, testbed mechanics lacked a test for channel masking.
+- **ANALYZE**: setting the simulated position on _boss_core.transform and calling apply_pose(self.scene, self._boss_pose, mask={'rotation', 'scale'}) directly achieves the exact same result in fewer lines while exercising the Keystone core feature as designed.
+- **IMPLEMENT**: adopt apply_pose(..., mask={'rotation', 'scale'}) in _sync_scene(), and add test_apply_pose_with_channel_mask_preserves_unmasked_position in tests/test_keystone_animation_mechanics.py.
+- **VISUAL PROOF**: route_boss before/after pair diffed with keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True).
+- **PLAY PROOF**: play_run.py boss 900 runs 507 frames to wave 4 with 3 kills, score 3080, hp 100 and identical hash cfd263b7f43f1d735914c52729cdc10e.
+- **Gates**: shooter 483 passed, 2 xfailed; determinism 1800 ok (hash b25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
+- **Evidence file**: evidence/cycle-136.json.
+
+## Cycle 137 - Testbed adoption: scene budget invariants and fingerprinting
+- **FIND**: ssert_scene_budget and scene_fingerprint landed in 22fa7e to replace brittle snapshot pins with invariant bounds. However, 	est_keystone_http_server_mechanics.py and 	est_keystone_mechanics.py still asserted exact node and draw counts (113 nodes, 35 draw calls, 494 triangles), causing false regression failures whenever presentation nodes were added.
+- **ANALYZE**: adopting ssert_scene_budget(g.scene, ...) and scene_fingerprint(g.scene) verifies coarse budgets (nodes, triangles, draw calls) while allowing presentation details to evolve without test churn.
+- **IMPLEMENT**: update 	est_keystone_mechanics.py to use ssert_scene_budget and scene_fingerprint, add 	est_scene_budget_invariants_pass_with_presentation_node, and convert exact node counts to invariant ranges in 	est_keystone_http_server_mechanics.py.
+- **VISUAL PROOF**: 
+oute_spawn before/after pair diffed with keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True).
+- **PLAY PROOF**: play_run.py kite 300 runs 300 frames to wave 2 with 5 kills, score 900, hp 100 and identical hash 6c94bcea4d950c4ca286707abe57665.
+- **Gates**: shooter 484 passed, 2 xfailed; determinism 1800 ok (hash 25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
+- **Evidence file**: evidence/cycle-137.json.

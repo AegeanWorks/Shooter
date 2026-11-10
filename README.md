@@ -104,7 +104,7 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `schema`/public API | exports/version agreement, editor actions, describe parity, CubeDemo determinism | `tests/test_keystone_api_contract_mechanics.py` |
 | `AnimationLibrary` + `AnimationController` | enemy idle `.kanim` clips, sampling, crossfade, sim parity | `tests/test_enemy_animation.py` |
 | `bind_input` + digit keys | live slots/reload/overdrive/fire/jump, dead-key diagnostics | `tests/test_live_bindings.py` |
-| `asset_io` + `obj_loader` | .obj cache crate, suffix inference, fingerprint, hot reload | `tests/test_cache_asset.py` |
+| `asset_io` + `obj_loader` + `reload` | .obj crate, suffix inference, hot-reload rebinding | `tests/test_cache_asset.py` |
 
 ```powershell
 python play.py --describe

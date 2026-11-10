@@ -1,0 +1,35 @@
+{
+  "cycle": 137,
+  "area": "testbed adoption: scene budget invariants and fingerprinting",
+  "find": {
+    "report_claim": "assert_scene_budget and scene_fingerprint landed in b22fa7e, but shooter pins are still exact counts (report F12)",
+    "live_evidence": "test_keystone_http_server_mechanics.py pinned exact node_count == 113 twice and exact draw_calls == 35 / saved_calls == 28; test_keystone_mechanics.py pinned exact draw_calls == 35, triangles == 494 and saved_calls == 27. Any presentation edit causes false regression failures in consumer mechanics tests.",
+    "consumer_evidence": "Cycle 132 adding a viewmodel grip broke three test assertions across two files despite no contract or regression bug"
+  },
+  "analyze": {
+    "read": [
+      "keystone/testing.py assert_scene_budget and scene_fingerprint",
+      "shooter/tests/test_keystone_mechanics.py",
+      "shooter/tests/test_keystone_http_server_mechanics.py"
+    ],
+    "killed": [
+      "keeping brittle exact integer pins: forces manual test churn whenever presentation assets change",
+      "removing all bounds checks: loses protection against accidental node explosion"
+    ],
+    "survivor": "adopt assert_scene_budget and scene_fingerprint in test_keystone_mechanics, replace exact node counts with budget invariant bounds in test_keystone_http_server_mechanics, and add test_scene_budget_invariants_pass_with_presentation_node"
+  },
+  "fix": {
+    "shooter": "test_keystone_mechanics.py adopts assert_scene_budget and scene_fingerprint; added test_scene_budget_invariants_pass_with_presentation_node proving presentation node additions preserve budget invariant; test_keystone_http_server_mechanics.py uses range bounds for node counts and batch calls"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "484 passed + 2 xfailed in full suite",
+      "gates": "4/4 (test, hygiene, guidelines, secrets)",
+      "integration": "test_scene_budget_invariants_pass_with_presentation_node proves adding an accent node passes budget invariants while exact counts would fail",
+      "visual": "route_spawn before/after diffed with keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True)",
+      "played_run": "play_run.py kite 300 -> wave 2, kills 5, score 900, hp 100, hash f6c94bcea4d950c4ca286707abe57665 (identical)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049"
+    }
+  },
+  "timestamp": "2026-11-11"
+}

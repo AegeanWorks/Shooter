@@ -1,0 +1,35 @@
+{
+  "cycle": 136,
+  "area": "testbed adoption: animation channel masking with apply_pose",
+  "find": {
+    "report_claim": "apply_pose(scene, pose, mask=...) landed in b22fa7e, but shooter game.py still worked around it with a temporary read and manual Transform reassembly (report F3)",
+    "live_evidence": "ShooterGame._sync_scene applied self._boss_pose with unmasked apply_pose, then read core_rot = self._boss_core.transform.rotation and core_scale = self._boss_core.transform.scale and reconstructed a new Transform; tests/test_keystone_animation_mechanics.py lacked channel mask test coverage",
+    "consumer_evidence": "game.py was duplicating transform assembly to avoid clobbering simulated position"
+  },
+  "analyze": {
+    "read": [
+      "keystone/animation.py apply_pose",
+      "shooter/shooter/game.py _sync_scene boss_core logic",
+      "shooter/tests/test_keystone_animation_mechanics.py"
+    ],
+    "killed": [
+      "keeping the temporary unpack/repack: duplicates blending logic and ignores core mask feature",
+      "omitting testbed mechanics proof: keeps new core feature untested in consumer test suite"
+    ],
+    "survivor": "set simulated position on warden-core transform, apply pose directly with mask={'rotation', 'scale'}, and add channel mask regression test in test_keystone_animation_mechanics.py"
+  },
+  "fix": {
+    "shooter": "ShooterGame._sync_scene sets boss_core position and calls apply_pose(self.scene, self._boss_pose, mask={'rotation', 'scale'}); added test_apply_pose_with_channel_mask_preserves_unmasked_position in tests/test_keystone_animation_mechanics.py"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "483 passed + 2 xfailed in full suite",
+      "gates": "4/4 (test, hygiene, guidelines, secrets)",
+      "integration": "test_apply_pose_with_channel_mask_preserves_unmasked_position proves unmasked channels (position) remain untouched while masked channels (rotation, scale) update",
+      "visual": "route_boss before/after diffed with keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True)",
+      "played_run": "play_run.py boss 900 -> wave 4, kills 3, score 3080, hp 100, hash cfd263b7f43f1d735914c52729cdc10e (identical)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049"
+    }
+  },
+  "timestamp": "2026-11-11"
+}

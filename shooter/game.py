@@ -699,8 +699,8 @@ class ShooterGame:
         self._clip_hook = hook
 
     def reload_assets(self):
-        """Re-read changed file-backed assets; expose the JSON-safe report."""
-        report = self.assets.refresh()
+        """Re-read changed file-backed assets and rebind scene nodes; expose report."""
+        report = self.assets.reload(self.scene)
         self.asset_reload_report = report.describe()
         return report
 
@@ -1160,19 +1160,17 @@ class ShooterGame:
                 dz = sim.player_pos.z - boss.pos.z
                 length = math.hypot(dx, dz)
                 ux, uz = (dx / length, dz / length) if length > 1e-6 else (0.0, -1.0)
+                pos = Vec3(boss.pos.x + ux * 1.25, boss.pos.y + 0.35, boss.pos.z + uz * 1.25)
                 if self._boss_anim is not None and "warden-core" in self._boss_pose:
-                    apply_pose(self.scene, self._boss_pose)
-                    core_rot = self._boss_core.transform.rotation
-                    core_scale = self._boss_core.transform.scale
+                    self._boss_core.transform = Transform(position=pos)
+                    apply_pose(self.scene, self._boss_pose, mask={"rotation", "scale"})
                 else:
                     pulse = 1.0 + (0.18 if boss.windup_t > 0.0 else 0.0)
-                    core_rot = Quat()
-                    core_scale = Vec3(pulse, pulse, pulse)
-                self._boss_core.transform = Transform(
-                    position=Vec3(boss.pos.x + ux * 1.25, boss.pos.y + 0.35, boss.pos.z + uz * 1.25),
-                    rotation=core_rot,
-                    scale=core_scale,
-                )
+                    self._boss_core.transform = Transform(
+                        position=pos,
+                        rotation=Quat(),
+                        scale=Vec3(pulse, pulse, pulse),
+                    )
         if self._pickup is not None:
             self._pickup.visible = bool(sim.pickup_active)
             if sim.pickup_active:
@@ -1341,9 +1339,7 @@ class ShooterGame:
                     ),
                     scale=Vec3(size, size, size),
                 )
-        cache_mesh = self.assets.require(CACHE_CRATE).payload
         for i, node in enumerate(self._cache_nodes):
-            node.mesh = cache_mesh
             if i < len(sim.caches):
                 cache = sim.caches[i]
                 node.visible = True

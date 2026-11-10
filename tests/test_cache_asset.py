@@ -52,3 +52,31 @@ def test_reload_assets_reports_unchanged_and_keeps_a_json_safe_report():
     assert CACHE_CRATE in report.unchanged
     assert game.asset_reload_report["checked"] >= 1
     assert game.asset_reload_report["ok"] is True
+
+
+def test_reload_assets_rebinds_live_cache_nodes_on_obj_modification(tmp_path):
+    obj_src = DATA / "cache_crate.obj"
+    crate_file = tmp_path / "cache_crate.obj"
+    crate_file.write_text(obj_src.read_text(encoding="utf-8"), encoding="utf-8")
+
+    game = ShooterGame()
+    game.build_scene()
+    game.assets.remove(CACHE_CRATE)
+    register_cache_crate(game.assets, tmp_path, cube(0.6))
+    old_mesh = game.assets.require(CACHE_CRATE).payload
+    for node in game._cache_nodes:
+        node.mesh = old_mesh
+
+    crate_file.write_text(
+        crate_file.read_text(encoding="utf-8") + "\nv 0 0 0\nv 1 0 0\nv 0 1 0\nf 17 18 19\n",
+        encoding="utf-8",
+    )
+
+    report = game.reload_assets()
+    assert report.ok is True
+    assert CACHE_CRATE in report.reloaded
+    assert report.rebound >= len(game._cache_nodes)
+    new_mesh = game.assets.require(CACHE_CRATE).payload
+    assert new_mesh is not old_mesh
+    assert all(node.mesh is new_mesh for node in game._cache_nodes)
+

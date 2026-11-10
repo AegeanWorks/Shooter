@@ -129,3 +129,17 @@ def test_apply_pose_writes_scene_nodes():
     assert updated == ["hero"], updated
     assert node.transform.position == Vec3(0.0, 1.0, 0.0)
     assert node.transform.scale == Vec3(1.2, 1.2, 1.2)
+
+
+def test_apply_pose_with_channel_mask_preserves_unmasked_position():
+    scene = Scene()
+    initial_pos = Vec3(5.0, 7.0, -3.0)
+    node = Node("hero", id="hero", transform=Transform(position=initial_pos))
+    scene.add(node)
+    pose = _bob_clip().sample(0.5)
+    # Mask to rotation and scale only; position in pose is Vec3(0.0, 1.0, 0.0)
+    updated = apply_pose(scene, pose, mask={"rotation", "scale"})
+    assert updated == ["hero"]
+    assert node.transform.position == initial_pos
+    assert node.transform.scale == Vec3(1.2, 1.2, 1.2)
+

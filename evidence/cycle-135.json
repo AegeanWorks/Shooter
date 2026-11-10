@@ -1,0 +1,36 @@
+{
+  "cycle": 135,
+  "area": "testbed adoption: asset registry reload and live scene rebinding",
+  "find": {
+    "report_claim": "AssetRegistry.reload(scene) landed in 100c543, but shooter game.py still re-points node.mesh every frame manually (report F2)",
+    "live_evidence": "ShooterGame._sync_scene reassigned node.mesh = cache_mesh on every cache node every frame (60 FPS); reload_assets() only called refresh() instead of reload(self.scene), so report.rebound stayed 0 and live nodes were not rebound by core",
+    "consumer_evidence": "tests/test_cache_asset.py had no test proving live scene rebinding when the file-backed OBJ changed"
+  },
+  "analyze": {
+    "read": [
+      "keystone/assets.py AssetRegistry.reload",
+      "shooter/shooter/game.py reload_assets and _sync_scene",
+      "shooter/shooter/asset_pipeline.py register_cache_crate",
+      "shooter/tests/test_cache_asset.py"
+    ],
+    "killed": [
+      "keeping the manual per-frame node.mesh assignment: defeats Keystone's core rebinding architecture",
+      "only refreshing assets without scene rebinding: leaves live nodes stale"
+    ],
+    "survivor": "adopt self.assets.reload(self.scene) in reload_assets, remove per-frame re-point from _sync_scene, and prove with failing-first test that OBJ modification updates live node meshes with positive rebound count"
+  },
+  "fix": {
+    "shooter": "ShooterGame.reload_assets now calls self.assets.reload(self.scene); removed redundant node.mesh = cache_mesh in _sync_scene; added failing-first test test_reload_assets_rebinds_live_cache_nodes_on_obj_modification in tests/test_cache_asset.py"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "482 passed + 2 xfailed in full suite",
+      "gates": "4/4 (test, hygiene, guidelines, secrets)",
+      "integration": "test_reload_assets_rebinds_live_cache_nodes_on_obj_modification proves OBJ file modification reloads crate mesh, updates all 4 live cache nodes, and reports rebound=4",
+      "visual": "cache_visual before/after diffed with keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True)",
+      "played_run": "play_run.py kite 300 -> wave 2, kills 5, score 900, hp 100, hash f6c94bcea4d950c4ca286707abe57665 (identical)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049"
+    }
+  },
+  "timestamp": "2026-11-11"
+}
