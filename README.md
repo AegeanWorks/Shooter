@@ -385,25 +385,15 @@ projects/shooter/
 ├── soak_report2.json       <- second sustain evidence trail
 ├── spin_actions.json       <- spin action sample
 ├── shot_combat.json        <- headless combat capture report
-├── shot_combat.png         <- headless combat capture image
 ├── shot_fix_burst.json     <- burst capture report
-├── shot_fix_burst.png      <- burst capture image
 ├── shot_fix_combat.json    <- combat capture report
-├── shot_fix_combat.png    <- combat capture image
 ├── shot_fix_death.json     <- death capture report
-├── shot_fix_death.png      <- death capture image
 ├── shot_fix_pickup.json    <- pickup capture report
-├── shot_fix_pickup.png     <- pickup capture image
 ├── shot_fix_spawn.json     <- spawn capture report
-├── shot_fix_spawn.png      <- spawn capture image
 ├── shot_min1.json          <- minute-1 capture report
-├── shot_min1.png           <- minute-1 capture image
 ├── shot_soak.json          <- soak capture report
-├── shot_soak.png           <- soak capture image
 ├── shot_stage4_min1.json   <- stage-4 capture report
-├── shot_stage4_min1.png    <- stage-4 capture image
 ├── shot_stage4_min30proxy.json <- stage-4 proxy capture report
-├── shot_stage4_min30proxy.png  <- stage-4 proxy capture image
 └── .aikit/
     ├── decisions.md     <- append-only ADRs
     ├── cycles.md        <- append-only improvement-cycle record
