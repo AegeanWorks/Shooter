@@ -1,72 +1,25 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-229-reseed-full-state",
+    "task_id": "shooter-delivery-2026-11-19",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1795109383.375332,
+    "updated_at": 1795112200.0666823,
     "owner": "opencode:e0f8cdde",
-    "lease_until": 1795116583.375332,
+    "lease_until": 1795119400.0666823,
     "started_by": "opencode:e0f8cdde",
     "continuations": [],
     "forced_completion": {
       "agent": "opencode:e0f8cdde",
-      "reason": "changes uncommitted by standing request (cycles 138-229); all five gates and the full suite pass",
-      "at": 1795109383.800769
+      "reason": "the delivery task owns already-committed work; no new source changes, Phase 4 evidence recorded",
+      "at": 1795112201.0676992
     },
-    "completed_at": 1795109383.8007708,
-    "completed_head": "4f4c75c7c388aaf2519557681678a93dd198496f",
-    "completed_tree": "6b265f4137c668e761bb9c016ddc403814d2b1c2"
+    "completed_at": 1795112201.0677006,
+    "completed_head": "ee46443260749e35bd19897f91343cfc33dc72bd",
+    "completed_tree": "73769d8b6e50359e8b831a583dcf3081b8fc1186"
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-cycle-223-weapon-shape-invariants",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Verified: all weapons have 0<falloff<range and positive pellets/mag/pierce; pulse falloff 25->70 fails the guard and weapons.json restored byte-identically; 813 passed, 5/5 gates, determinism b25db520; evidence/cycle-223.json",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795105413.427527,
-      "timestamp_str": "2026-11-19 19:23:33",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
-    },
-    {
-      "task_id": "shooter-cycle-223-weapon-shape-invariants",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-223-weapon-shape-invariants' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795105414.6781723,
-      "timestamp_str": "2026-11-19 19:23:34",
-      "agent": "opencode:e0f8cdde",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
-      "delivery": {
-        "roots": [
-          "."
-        ],
-        "forced": true
-      }
-    },
-    {
-      "task_id": "shooter-cycle-224-enemy-shape-invariants",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Pin structural invariants across all shipped enemies: positive core fields, body height >= diameter, and coherent warden summon cadence",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795105492.4476385,
-      "timestamp_str": "2026-11-19 19:24:52",
-      "agent": "opencode:e0f8cdde",
-      "impact_assessment": {
-        "why": "no test checks that enemy hp/speed/radius are positive, that height is at least the body diameter, or that the boss summon timings are coherent; a zero speed or fat radius would make an enemy inert or uncollidable with every test green",
-        "benefits": "a structurally broken enemy fails a test naming the enemy and field",
-        "risks": "contract: additive test, one shipped data file; dependency: Sim enemy_defs; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
-        "mitigation": "failing-first structural test in already-listed test_weapon_enemy_tuning_bands.py, mutation-check an enemy radius with byte-exact restore, rerun suite, gates and determinism"
-      },
-      "plan_digest": "efd380ee94d647ac52f2e9618595fe35f1ed59a2e598643700b7b8084226cec1"
-    },
     {
       "task_id": "shooter-cycle-224-enemy-shape-invariants",
       "phase": "in_progress",
@@ -324,6 +277,53 @@
       "timestamp_str": "2026-11-19 20:29:43",
       "agent": "opencode:e0f8cdde",
       "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
+    },
+    {
+      "task_id": "shooter-delivery-2026-11-19",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Open a delivery task after committing cycles 138-229 so the ledger is not stale",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795112190.9348304,
+      "timestamp_str": "2026-11-19 21:16:30",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "the ledger's completed task had two later non-bookkeeping commits, which blocks --strict; a fresh task must own the committed tree",
+        "benefits": "the committed tree is attributable to an active task and check --strict can pass",
+        "risks": "contract: ledger-only, no code; dependency: clean tree at HEAD ee46443; concurrency: none; state: no sim writes; README unchanged",
+        "mitigation": "record the Phase 4 outcome and complete the task against the committed head, then commit the ledger alone and rerun --strict"
+      },
+      "plan_digest": "2c18763591ddbb6755dea6cd65dc3f309d306bf1d6ceb9e85aa77bffa01d109e"
+    },
+    {
+      "task_id": "shooter-delivery-2026-11-19",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: work committed as 101adc8 and ledger as ee46443; tree clean, 819 tests pass, 5/5 gates, determinism b25db520, secrets clean",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795112200.0666823,
+      "timestamp_str": "2026-11-19 21:16:40",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-delivery-2026-11-19",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-delivery-2026-11-19' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795112201.3161702,
+      "timestamp_str": "2026-11-19 21:16:41",
+      "agent": "opencode:e0f8cdde",
+      "head": "ee46443260749e35bd19897f91343cfc33dc72bd",
       "delivery": {
         "roots": [
           "."
