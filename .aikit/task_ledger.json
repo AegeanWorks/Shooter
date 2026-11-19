@@ -1,71 +1,24 @@
 {
   "active_task": {
-    "task_id": "shooter-fix-recycled-port",
+    "task_id": "shooter-refresh-map-delivery",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1795114093.0626922,
+    "updated_at": 1795114201.9246933,
     "owner": "opencode:e0f8cdde",
-    "lease_until": 1795121293.0626922,
+    "lease_until": 1795121401.9246933,
     "started_by": "opencode:e0f8cdde",
     "continuations": [],
     "forced_completion": {
       "agent": "opencode:e0f8cdde",
-      "reason": "the fix is already committed in 04376bb and Phase 4 evidence is recorded",
-      "at": 1795114093.4352117
+      "reason": "the map refresh is already committed in 43f1ef3; Phase 4 evidence recorded",
+      "at": 1795114202.2367332
     },
-    "completed_at": 1795114093.4352133,
-    "completed_head": "c00cb54d18027a856ad212233c781871c214b2e6",
-    "completed_tree": "cb5ac1fbeb5756011a6bf63eea84666c48e36e2f"
+    "completed_at": 1795114202.2367344,
+    "completed_head": "43f1ef3b5570d1e308383ddd4d6fa320d55aed9a",
+    "completed_tree": "2d5a7ef3be564a207f264abde522182a4ef3be9b"
   },
   "checkpoints": [
-    {
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed",
-      "description": "[2/2] Verified: death_fx_scale keys exactly match the enemy roster, caps in (0,1], warden smallest; warden->wardenx key rename fails the guard and juice.json restored byte-identically; 815 passed, 5/5 gates, determinism b25db520; evidence/cycle-225.json",
-      "files_affected": [],
-      "phase": "in_progress",
-      "phase_num": 4,
-      "status": "in_progress",
-      "task_id": "shooter-cycle-225-death-fx-caps",
-      "timestamp": 1795106722.9938588,
-      "timestamp_str": "2026-11-19 19:45:22"
-    },
-    {
-      "agent": "opencode:e0f8cdde",
-      "delivery": {
-        "forced": true,
-        "roots": [
-          "."
-        ]
-      },
-      "description": "Task 'shooter-cycle-225-death-fx-caps' completed successfully.",
-      "head_reconciled": "batched delivery in 101adc8; per-task head not attributable",
-      "phase": "completed",
-      "phase_num": 5,
-      "status": "completed",
-      "task_id": "shooter-cycle-225-death-fx-caps",
-      "timestamp": 1795106723.8130605,
-      "timestamp_str": "2026-11-19 19:45:23"
-    },
-    {
-      "agent": "opencode:e0f8cdde",
-      "description": "[1/2] Pin cross-field spawn-capacity and progression invariants in levels.json: max_alive >= every wave total, and pickup_wave < win_wave",
-      "files_affected": [],
-      "impact_assessment": {
-        "benefits": "a spawn cap below wave demand or a pickup at/after victory fails a test naming the values",
-        "mitigation": "failing-first cross-field test in already-listed test_data_integrity.py, mutation-check max_alive to 2 with byte-exact restore, rerun suite, gates and determinism",
-        "risks": "contract: additive test, one shipped data file; dependency: sim._load levels.json; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
-        "why": "max_alive is pinned only to an observable band (<=24), so lowering it to 2 would still pass the long-wave test while making full waves unspawnable; pickup_wave vs win_wave ordering is unpinned so the surge could become unavailable before victory"
-      },
-      "phase": "in_progress",
-      "phase_num": 2,
-      "plan_digest": "1e38e64fb9a8a2aacf1498566c4585caf23e09b8778a138af2f6e12d4deee535",
-      "status": "in_progress",
-      "task_id": "shooter-cycle-226-spawn-capacity",
-      "timestamp": 1795106834.2092378,
-      "timestamp_str": "2026-11-19 19:47:14"
-    },
     {
       "agent": "opencode:e0f8cdde",
       "checklists": "passed",
@@ -323,6 +276,53 @@
       "timestamp_str": "2026-11-19 21:48:13",
       "agent": "opencode:e0f8cdde",
       "head": "c00cb54d18027a856ad212233c781871c214b2e6",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
+    },
+    {
+      "task_id": "shooter-refresh-map-delivery",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Open a task for the regenerated codebase map committed in 43f1ef3",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795114201.5790746,
+      "timestamp_str": "2026-11-19 21:50:01",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "the map refresh is a non-bookkeeping commit after the last completed task, blocking strict delivery (ADR-419)",
+        "benefits": "the committed tree is attributable and strict can pass",
+        "risks": "contract: ledger-only; dependency: HEAD 43f1ef3; concurrency: none; state: no sim writes; README unchanged",
+        "mitigation": "complete the task at the committed head, then make the ledger the last commit and rerun --strict"
+      },
+      "plan_digest": "f76048dec981b94f33743eee54a5a226576c934a7db9932f3e4316cb1b8cf69d"
+    },
+    {
+      "task_id": "shooter-refresh-map-delivery",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: codebase map regenerated, ADR-002 recorded, ledger heads reconciled; strict preflight blockers cleared",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795114201.9246933,
+      "timestamp_str": "2026-11-19 21:50:01",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-refresh-map-delivery",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-refresh-map-delivery' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795114202.3912992,
+      "timestamp_str": "2026-11-19 21:50:02",
+      "agent": "opencode:e0f8cdde",
+      "head": "43f1ef3b5570d1e308383ddd4d6fa320d55aed9a",
       "delivery": {
         "roots": [
           "."
