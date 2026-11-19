@@ -1,335 +1,335 @@
 {
-  "version": 1,
   "active_task": {
-    "task_id": "shooter-delivery-2026-11-19",
-    "last_phase": "in_progress",
     "active_phase": 5,
-    "status": "completed",
-    "updated_at": 1795112200.0666823,
-    "owner": "opencode:e0f8cdde",
-    "lease_until": 1795119400.0666823,
-    "started_by": "opencode:e0f8cdde",
+    "completed_at": 1795112201.0677006,
+    "completed_head": "ee46443260749e35bd19897f91343cfc33dc72bd",
+    "completed_tree": "73769d8b6e50359e8b831a583dcf3081b8fc1186",
     "continuations": [],
     "forced_completion": {
       "agent": "opencode:e0f8cdde",
-      "reason": "the delivery task owns already-committed work; no new source changes, Phase 4 evidence recorded",
-      "at": 1795112201.0676992
+      "at": 1795112201.0676992,
+      "reason": "the delivery task owns already-committed work; no new source changes, Phase 4 evidence recorded"
     },
-    "completed_at": 1795112201.0677006,
-    "completed_head": "ee46443260749e35bd19897f91343cfc33dc72bd",
-    "completed_tree": "73769d8b6e50359e8b831a583dcf3081b8fc1186"
+    "last_phase": "in_progress",
+    "lease_until": 1795119400.0666823,
+    "owner": "opencode:e0f8cdde",
+    "started_by": "opencode:e0f8cdde",
+    "status": "completed",
+    "task_id": "shooter-delivery-2026-11-19",
+    "updated_at": 1795112200.0666823
   },
   "checkpoints": [
     {
-      "task_id": "shooter-cycle-224-enemy-shape-invariants",
-      "phase": "in_progress",
-      "phase_num": 4,
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed",
       "description": "[2/2] Verified: all enemies have positive core fields, height >= diameter, coherent warden summon cadence; warden radius 1.0->1.5 fails the guard and enemies.json restored byte-identically; 814 passed, 5/5 gates, determinism b25db520; evidence/cycle-224.json",
       "files_affected": [],
+      "phase": "in_progress",
+      "phase_num": 4,
       "status": "in_progress",
+      "task_id": "shooter-cycle-224-enemy-shape-invariants",
       "timestamp": 1795105896.6499796,
-      "timestamp_str": "2026-11-19 19:31:36",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
+      "timestamp_str": "2026-11-19 19:31:36"
     },
     {
-      "task_id": "shooter-cycle-224-enemy-shape-invariants",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-224-enemy-shape-invariants' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795105897.099461,
-      "timestamp_str": "2026-11-19 19:31:37",
       "agent": "opencode:e0f8cdde",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
       "delivery": {
+        "forced": true,
         "roots": [
           "."
-        ],
-        "forced": true
-      }
+        ]
+      },
+      "description": "Task 'shooter-cycle-224-enemy-shape-invariants' completed successfully.",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "phase": "completed",
+      "phase_num": 5,
+      "status": "completed",
+      "task_id": "shooter-cycle-224-enemy-shape-invariants",
+      "timestamp": 1795105897.099461,
+      "timestamp_str": "2026-11-19 19:31:37"
     },
     {
-      "task_id": "shooter-cycle-225-death-fx-caps",
-      "phase": "in_progress",
-      "phase_num": 2,
+      "agent": "opencode:e0f8cdde",
       "description": "[1/2] Pin that juice.json death_fx_scale covers every shipped enemy roster key with a sane cap, so a typo cannot silently fall back to full-size death FX",
       "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795106154.839836,
-      "timestamp_str": "2026-11-19 19:35:54",
-      "agent": "opencode:e0f8cdde",
       "impact_assessment": {
-        "why": "the death FX lookup uses death_caps.get(etype, 1.0), so a misspelled or missing enemy key silently renders a full-size kill burst with every test green",
         "benefits": "a missing/misspelled cap or an out-of-range value fails a test naming the enemy",
+        "mitigation": "failing-first cross-document test in already-listed test_juice_tuning.py, mutation-check a cap key with byte-exact restore, rerun suite, gates and determinism",
         "risks": "contract: additive test, two shipped data files; dependency: juice.json death_fx_scale and Sim enemy_defs; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
-        "mitigation": "failing-first cross-document test in already-listed test_juice_tuning.py, mutation-check a cap key with byte-exact restore, rerun suite, gates and determinism"
+        "why": "the death FX lookup uses death_caps.get(etype, 1.0), so a misspelled or missing enemy key silently renders a full-size kill burst with every test green"
       },
-      "plan_digest": "9970ebd655f7e6ddf8d2d1c0ea1613338cbef72a19e379c7f083ab576b9facc8"
+      "phase": "in_progress",
+      "phase_num": 2,
+      "plan_digest": "9970ebd655f7e6ddf8d2d1c0ea1613338cbef72a19e379c7f083ab576b9facc8",
+      "status": "in_progress",
+      "task_id": "shooter-cycle-225-death-fx-caps",
+      "timestamp": 1795106154.839836,
+      "timestamp_str": "2026-11-19 19:35:54"
     },
     {
-      "task_id": "shooter-cycle-225-death-fx-caps",
-      "phase": "in_progress",
-      "phase_num": 4,
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed",
       "description": "[2/2] Verified: death_fx_scale keys exactly match the enemy roster, caps in (0,1], warden smallest; warden->wardenx key rename fails the guard and juice.json restored byte-identically; 815 passed, 5/5 gates, determinism b25db520; evidence/cycle-225.json",
       "files_affected": [],
+      "phase": "in_progress",
+      "phase_num": 4,
       "status": "in_progress",
+      "task_id": "shooter-cycle-225-death-fx-caps",
       "timestamp": 1795106722.9938588,
-      "timestamp_str": "2026-11-19 19:45:22",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
+      "timestamp_str": "2026-11-19 19:45:22"
     },
     {
-      "task_id": "shooter-cycle-225-death-fx-caps",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-225-death-fx-caps' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795106723.8130605,
-      "timestamp_str": "2026-11-19 19:45:23",
       "agent": "opencode:e0f8cdde",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
       "delivery": {
+        "forced": true,
         "roots": [
           "."
-        ],
-        "forced": true
-      }
+        ]
+      },
+      "description": "Task 'shooter-cycle-225-death-fx-caps' completed successfully.",
+      "head_reconciled": "batched delivery in 101adc8; per-task head not attributable",
+      "phase": "completed",
+      "phase_num": 5,
+      "status": "completed",
+      "task_id": "shooter-cycle-225-death-fx-caps",
+      "timestamp": 1795106723.8130605,
+      "timestamp_str": "2026-11-19 19:45:23"
     },
     {
-      "task_id": "shooter-cycle-226-spawn-capacity",
-      "phase": "in_progress",
-      "phase_num": 2,
+      "agent": "opencode:e0f8cdde",
       "description": "[1/2] Pin cross-field spawn-capacity and progression invariants in levels.json: max_alive >= every wave total, and pickup_wave < win_wave",
       "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795106834.2092378,
-      "timestamp_str": "2026-11-19 19:47:14",
-      "agent": "opencode:e0f8cdde",
       "impact_assessment": {
-        "why": "max_alive is pinned only to an observable band (<=24), so lowering it to 2 would still pass the long-wave test while making full waves unspawnable; pickup_wave vs win_wave ordering is unpinned so the surge could become unavailable before victory",
         "benefits": "a spawn cap below wave demand or a pickup at/after victory fails a test naming the values",
+        "mitigation": "failing-first cross-field test in already-listed test_data_integrity.py, mutation-check max_alive to 2 with byte-exact restore, rerun suite, gates and determinism",
         "risks": "contract: additive test, one shipped data file; dependency: sim._load levels.json; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
-        "mitigation": "failing-first cross-field test in already-listed test_data_integrity.py, mutation-check max_alive to 2 with byte-exact restore, rerun suite, gates and determinism"
+        "why": "max_alive is pinned only to an observable band (<=24), so lowering it to 2 would still pass the long-wave test while making full waves unspawnable; pickup_wave vs win_wave ordering is unpinned so the surge could become unavailable before victory"
       },
-      "plan_digest": "1e38e64fb9a8a2aacf1498566c4585caf23e09b8778a138af2f6e12d4deee535"
+      "phase": "in_progress",
+      "phase_num": 2,
+      "plan_digest": "1e38e64fb9a8a2aacf1498566c4585caf23e09b8778a138af2f6e12d4deee535",
+      "status": "in_progress",
+      "task_id": "shooter-cycle-226-spawn-capacity",
+      "timestamp": 1795106834.2092378,
+      "timestamp_str": "2026-11-19 19:47:14"
     },
     {
-      "task_id": "shooter-cycle-226-spawn-capacity",
-      "phase": "in_progress",
-      "phase_num": 4,
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed",
       "description": "[2/2] Verified: max_alive >= every wave total and pickup_wave < win_wave; max_alive 24->2 fails the new guard while the existing long-wave test still passes (genuine survivor) and levels.json restored byte-identically; 816 passed, 5/5 gates, determinism b25db520; evidence/cycle-226.json",
       "files_affected": [],
+      "phase": "in_progress",
+      "phase_num": 4,
       "status": "in_progress",
+      "task_id": "shooter-cycle-226-spawn-capacity",
       "timestamp": 1795107317.3299868,
-      "timestamp_str": "2026-11-19 19:55:17",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
+      "timestamp_str": "2026-11-19 19:55:17"
     },
     {
-      "task_id": "shooter-cycle-226-spawn-capacity",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-226-spawn-capacity' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795107317.797808,
-      "timestamp_str": "2026-11-19 19:55:17",
       "agent": "opencode:e0f8cdde",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
       "delivery": {
+        "forced": true,
         "roots": [
           "."
-        ],
-        "forced": true
-      }
+        ]
+      },
+      "description": "Task 'shooter-cycle-226-spawn-capacity' completed successfully.",
+      "head_reconciled": "batched delivery in 101adc8; per-task head not attributable",
+      "phase": "completed",
+      "phase_num": 5,
+      "status": "completed",
+      "task_id": "shooter-cycle-226-spawn-capacity",
+      "timestamp": 1795107317.797808,
+      "timestamp_str": "2026-11-19 19:55:17"
     },
     {
-      "task_id": "shooter-cycle-227-bot-purity",
-      "phase": "in_progress",
-      "phase_num": 2,
+      "agent": "opencode:e0f8cdde",
       "description": "[1/2] Pin the headless bot's documented purity and determinism contract: kite_step/overdrive_step are repeatable and never mutate sim, and scripted helpers emit exactly n actions",
       "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795107388.8987508,
-      "timestamp_str": "2026-11-19 19:56:28",
-      "agent": "opencode:e0f8cdde",
       "impact_assessment": {
-        "why": "kite_step is documented as a pure function of sim state but no test asserts it is repeatable or non-mutating; a stray RNG call or sim write would break replay determinism with every test green",
         "benefits": "an impure bot step or a mis-sized action script fails a test naming the helper",
+        "mitigation": "failing-first purity/length test in already-listed test_shooter.py, mutation-check an impure kite_step with byte-exact restore, rerun suite, gates and determinism",
         "risks": "contract: additive test only; dependency: shooter.bot and Sim.snapshot; concurrency: none; state: moves nothing, uses in-memory Sim, hash b25db520 must stay; README unchanged",
-        "mitigation": "failing-first purity/length test in already-listed test_shooter.py, mutation-check an impure kite_step with byte-exact restore, rerun suite, gates and determinism"
+        "why": "kite_step is documented as a pure function of sim state but no test asserts it is repeatable or non-mutating; a stray RNG call or sim write would break replay determinism with every test green"
       },
-      "plan_digest": "03d8dd1731aa1b449d744fdc05e8308790b422b41c97af0818ee3f782159813c"
+      "phase": "in_progress",
+      "phase_num": 2,
+      "plan_digest": "03d8dd1731aa1b449d744fdc05e8308790b422b41c97af0818ee3f782159813c",
+      "status": "in_progress",
+      "task_id": "shooter-cycle-227-bot-purity",
+      "timestamp": 1795107388.8987508,
+      "timestamp_str": "2026-11-19 19:56:28"
     },
     {
-      "task_id": "shooter-cycle-227-bot-purity",
-      "phase": "in_progress",
-      "phase_num": 4,
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed",
       "description": "[2/2] Verified: bot scripts emit exactly n actions and kite_step/overdrive_step are repeatable and non-mutating; sim.tick+=1 injection fails the guard and bot.py restored byte-identically; 817 passed, 5/5 gates, determinism b25db520; evidence/cycle-227.json",
       "files_affected": [],
+      "phase": "in_progress",
+      "phase_num": 4,
       "status": "in_progress",
+      "task_id": "shooter-cycle-227-bot-purity",
       "timestamp": 1795107918.1981404,
-      "timestamp_str": "2026-11-19 20:05:18",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
+      "timestamp_str": "2026-11-19 20:05:18"
     },
     {
-      "task_id": "shooter-cycle-227-bot-purity",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-227-bot-purity' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795107918.946118,
-      "timestamp_str": "2026-11-19 20:05:18",
       "agent": "opencode:e0f8cdde",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
       "delivery": {
+        "forced": true,
         "roots": [
           "."
-        ],
-        "forced": true
-      }
+        ]
+      },
+      "description": "Task 'shooter-cycle-227-bot-purity' completed successfully.",
+      "head_reconciled": "batched delivery in 101adc8; per-task head not attributable",
+      "phase": "completed",
+      "phase_num": 5,
+      "status": "completed",
+      "task_id": "shooter-cycle-227-bot-purity",
+      "timestamp": 1795107918.946118,
+      "timestamp_str": "2026-11-19 20:05:18"
     },
     {
-      "task_id": "shooter-cycle-228-hud-purity",
-      "phase": "in_progress",
-      "phase_num": 2,
+      "agent": "opencode:e0f8cdde",
       "description": "[1/2] Pin the HUD's documented presentation-only contract: draw_shooter and reticle_gap never mutate the sim snapshot",
       "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795107956.1012545,
-      "timestamp_str": "2026-11-19 20:05:56",
-      "agent": "opencode:e0f8cdde",
       "impact_assessment": {
-        "why": "shooter/ui.py declares 'Presentation-only, never sim' but no test asserts draw_shooter/reticle_gap leave stable_hash(sim.snapshot()) unchanged; a stray sim write would change the determinism hash with every test green",
         "benefits": "an accidental sim write in the HUD fails a test naming the helper",
+        "mitigation": "failing-first purity test in already-listed test_reticle.py, mutation-check a sim write in draw_shooter with byte-exact restore, rerun suite, gates and determinism",
         "risks": "contract: additive test only; dependency: shooter.ui and Sim.snapshot; concurrency: none; state: in-memory Sim only, hash b25db520 must stay; README unchanged",
-        "mitigation": "failing-first purity test in already-listed test_reticle.py, mutation-check a sim write in draw_shooter with byte-exact restore, rerun suite, gates and determinism"
+        "why": "shooter/ui.py declares 'Presentation-only, never sim' but no test asserts draw_shooter/reticle_gap leave stable_hash(sim.snapshot()) unchanged; a stray sim write would change the determinism hash with every test green"
       },
-      "plan_digest": "851ae30b7c7394918c7a8de9f16792592fa074623a1e8b5a2058b5d8458525d1"
+      "phase": "in_progress",
+      "phase_num": 2,
+      "plan_digest": "851ae30b7c7394918c7a8de9f16792592fa074623a1e8b5a2058b5d8458525d1",
+      "status": "in_progress",
+      "task_id": "shooter-cycle-228-hud-purity",
+      "timestamp": 1795107956.1012545,
+      "timestamp_str": "2026-11-19 20:05:56"
     },
     {
-      "task_id": "shooter-cycle-228-hud-purity",
-      "phase": "in_progress",
-      "phase_num": 4,
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed",
       "description": "[2/2] Verified: draw_shooter/reticle_gap leave the sim snapshot unchanged and the HUD draws rects/texts; sim.hits+=1 injection fails the guard and ui.py restored byte-identically; 818 passed, 5/5 gates, determinism b25db520; evidence/cycle-228.json",
       "files_affected": [],
+      "phase": "in_progress",
+      "phase_num": 4,
       "status": "in_progress",
+      "task_id": "shooter-cycle-228-hud-purity",
       "timestamp": 1795108607.1179,
-      "timestamp_str": "2026-11-19 20:16:47",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
+      "timestamp_str": "2026-11-19 20:16:47"
     },
     {
-      "task_id": "shooter-cycle-228-hud-purity",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-228-hud-purity' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795108608.0110664,
-      "timestamp_str": "2026-11-19 20:16:48",
       "agent": "opencode:e0f8cdde",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
       "delivery": {
+        "forced": true,
         "roots": [
           "."
-        ],
-        "forced": true
-      }
+        ]
+      },
+      "description": "Task 'shooter-cycle-228-hud-purity' completed successfully.",
+      "head_reconciled": "batched delivery in 101adc8; per-task head not attributable",
+      "phase": "completed",
+      "phase_num": 5,
+      "status": "completed",
+      "task_id": "shooter-cycle-228-hud-purity",
+      "timestamp": 1795108608.0110664,
+      "timestamp_str": "2026-11-19 20:16:48"
     },
     {
-      "task_id": "shooter-cycle-229-reseed-full-state",
-      "phase": "in_progress",
-      "phase_num": 2,
+      "agent": "opencode:e0f8cdde",
       "description": "[1/2] Pin that Sim.reseed(seed) fully restores a played Sim to the exact state of a fresh Sim(seed=seed): snapshot, combat rng and reward rng, plus identical future trajectories",
       "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795108693.5831227,
-      "timestamp_str": "2026-11-19 20:18:13",
-      "agent": "opencode:e0f8cdde",
       "impact_assessment": {
-        "why": "only partial reseed behaviour (rng streams) is tested; a reseed that forgot to reset transient state or the reward stream would make replays diverge from fresh runs with every test green",
         "benefits": "an incomplete reseed fails a test naming the diverging field",
+        "mitigation": "failing-first full-state reseed test in already-listed test_engagement.py, mutation-check removal of the reward_rng reset with byte-exact restore, rerun suite, gates and determinism",
         "risks": "contract: additive test only; dependency: shooter.sim.Sim.reseed/reset; concurrency: none; state: in-memory Sim only, hash b25db520 must stay; README unchanged",
-        "mitigation": "failing-first full-state reseed test in already-listed test_engagement.py, mutation-check removal of the reward_rng reset with byte-exact restore, rerun suite, gates and determinism"
+        "why": "only partial reseed behaviour (rng streams) is tested; a reseed that forgot to reset transient state or the reward stream would make replays diverge from fresh runs with every test green"
       },
-      "plan_digest": "b16b70cd041cfc0a61ec04b82a3715e9f67a8384497c3a24e6c23aa2582ff3fe"
-    },
-    {
-      "task_id": "shooter-cycle-229-reseed-full-state",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Verified: reseed(7) restores a played Sim to a fresh Sim(seed=7) in snapshot/rng/reward_rng and future trajectory; seed+1 mutation fails the guard and sim.py restored byte-identically; 819 passed, 5/5 gates, determinism b25db520; evidence/cycle-229.json",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795109383.375332,
-      "timestamp_str": "2026-11-19 20:29:43",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
-    },
-    {
-      "task_id": "shooter-cycle-229-reseed-full-state",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-229-reseed-full-state' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795109383.983201,
-      "timestamp_str": "2026-11-19 20:29:43",
-      "agent": "opencode:e0f8cdde",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
-      "delivery": {
-        "roots": [
-          "."
-        ],
-        "forced": true
-      }
-    },
-    {
-      "task_id": "shooter-delivery-2026-11-19",
       "phase": "in_progress",
       "phase_num": 2,
-      "description": "[1/2] Open a delivery task after committing cycles 138-229 so the ledger is not stale",
-      "files_affected": [],
+      "plan_digest": "b16b70cd041cfc0a61ec04b82a3715e9f67a8384497c3a24e6c23aa2582ff3fe",
       "status": "in_progress",
-      "timestamp": 1795112190.9348304,
-      "timestamp_str": "2026-11-19 21:16:30",
-      "agent": "opencode:e0f8cdde",
-      "impact_assessment": {
-        "why": "the ledger's completed task had two later non-bookkeeping commits, which blocks --strict; a fresh task must own the committed tree",
-        "benefits": "the committed tree is attributable to an active task and check --strict can pass",
-        "risks": "contract: ledger-only, no code; dependency: clean tree at HEAD ee46443; concurrency: none; state: no sim writes; README unchanged",
-        "mitigation": "record the Phase 4 outcome and complete the task against the committed head, then commit the ledger alone and rerun --strict"
-      },
-      "plan_digest": "2c18763591ddbb6755dea6cd65dc3f309d306bf1d6ceb9e85aa77bffa01d109e"
+      "task_id": "shooter-cycle-229-reseed-full-state",
+      "timestamp": 1795108693.5831227,
+      "timestamp_str": "2026-11-19 20:18:13"
     },
     {
-      "task_id": "shooter-delivery-2026-11-19",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed",
+      "description": "[2/2] Verified: reseed(7) restores a played Sim to a fresh Sim(seed=7) in snapshot/rng/reward_rng and future trajectory; seed+1 mutation fails the guard and sim.py restored byte-identically; 819 passed, 5/5 gates, determinism b25db520; evidence/cycle-229.json",
+      "files_affected": [],
       "phase": "in_progress",
       "phase_num": 4,
-      "description": "[2/2] Verified: work committed as 101adc8 and ledger as ee46443; tree clean, 819 tests pass, 5/5 gates, determinism b25db520, secrets clean",
-      "files_affected": [],
       "status": "in_progress",
-      "timestamp": 1795112200.0666823,
-      "timestamp_str": "2026-11-19 21:16:40",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
+      "task_id": "shooter-cycle-229-reseed-full-state",
+      "timestamp": 1795109383.375332,
+      "timestamp_str": "2026-11-19 20:29:43"
     },
     {
-      "task_id": "shooter-delivery-2026-11-19",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-delivery-2026-11-19' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795112201.3161702,
-      "timestamp_str": "2026-11-19 21:16:41",
       "agent": "opencode:e0f8cdde",
-      "head": "ee46443260749e35bd19897f91343cfc33dc72bd",
       "delivery": {
+        "forced": true,
         "roots": [
           "."
-        ],
-        "forced": true
-      }
+        ]
+      },
+      "description": "Task 'shooter-cycle-229-reseed-full-state' completed successfully.",
+      "head_reconciled": "batched delivery in 101adc8; per-task head not attributable",
+      "phase": "completed",
+      "phase_num": 5,
+      "status": "completed",
+      "task_id": "shooter-cycle-229-reseed-full-state",
+      "timestamp": 1795109383.983201,
+      "timestamp_str": "2026-11-19 20:29:43"
+    },
+    {
+      "agent": "opencode:e0f8cdde",
+      "description": "[1/2] Open a delivery task after committing cycles 138-229 so the ledger is not stale",
+      "files_affected": [],
+      "impact_assessment": {
+        "benefits": "the committed tree is attributable to an active task and check --strict can pass",
+        "mitigation": "record the Phase 4 outcome and complete the task against the committed head, then commit the ledger alone and rerun --strict",
+        "risks": "contract: ledger-only, no code; dependency: clean tree at HEAD ee46443; concurrency: none; state: no sim writes; README unchanged",
+        "why": "the ledger's completed task had two later non-bookkeeping commits, which blocks --strict; a fresh task must own the committed tree"
+      },
+      "phase": "in_progress",
+      "phase_num": 2,
+      "plan_digest": "2c18763591ddbb6755dea6cd65dc3f309d306bf1d6ceb9e85aa77bffa01d109e",
+      "status": "in_progress",
+      "task_id": "shooter-delivery-2026-11-19",
+      "timestamp": 1795112190.9348304,
+      "timestamp_str": "2026-11-19 21:16:30"
+    },
+    {
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed",
+      "description": "[2/2] Verified: work committed as 101adc8 and ledger as ee46443; tree clean, 819 tests pass, 5/5 gates, determinism b25db520, secrets clean",
+      "files_affected": [],
+      "phase": "in_progress",
+      "phase_num": 4,
+      "status": "in_progress",
+      "task_id": "shooter-delivery-2026-11-19",
+      "timestamp": 1795112200.0666823,
+      "timestamp_str": "2026-11-19 21:16:40"
+    },
+    {
+      "agent": "opencode:e0f8cdde",
+      "delivery": {
+        "forced": true,
+        "roots": [
+          "."
+        ]
+      },
+      "description": "Task 'shooter-delivery-2026-11-19' completed successfully.",
+      "head": "ee46443260749e35bd19897f91343cfc33dc72bd",
+      "phase": "completed",
+      "phase_num": 5,
+      "status": "completed",
+      "task_id": "shooter-delivery-2026-11-19",
+      "timestamp": 1795112201.3161702,
+      "timestamp_str": "2026-11-19 21:16:41"
     }
-  ]
+  ],
+  "version": 1
 }
