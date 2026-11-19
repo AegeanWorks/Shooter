@@ -26,7 +26,7 @@ JOIN_TIMEOUT = 10
 
 from keystone.camera_path import CameraPath, camera_path_from_dict
 from keystone.serialization import read_json
-from keystone.web.server import create_server
+from keystone.web.server import KeystoneHTTPServer, create_server
 
 from shooter.game import ShooterGame
 
@@ -34,7 +34,12 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "shooter" / "data"
 
 
 @pytest.fixture()
-def library_server(tmp_path):
+def library_server(tmp_path, monkeypatch):
+    # KeystoneHTTPServer sets SO_REUSEADDR. On Windows that lets a stale socket
+    # from a previous test share a recycled port, so this fixture's requests can
+    # land on a server with no camera-path library (400 "unknown editor action")
+    # under load. Disable reuse for this bound port only; monkeypatch restores it.
+    monkeypatch.setattr(KeystoneHTTPServer, "allow_reuse_address", False)
     server = create_server(
         ShooterGame(),
         host="127.0.0.1",
@@ -49,6 +54,7 @@ def library_server(tmp_path):
         server.shutdown()
         server.server_close()
         thread.join(timeout=JOIN_TIMEOUT)
+        assert not thread.is_alive(), "HTTP test server did not stop"
 
 
 def _editor(base, action, **payload):
@@ -64,6 +70,11 @@ def _editor(base, action, **payload):
 
 def _shipped_path() -> CameraPath:
     return camera_path_from_dict(read_json(DATA_DIR / "campaign_clear.kpath"))
+
+
+def test_the_library_server_port_is_not_reusable(library_server):
+    """SO_REUSEADDR lets a stale socket share a port on Windows; pin it off."""
+    assert KeystoneHTTPServer.allow_reuse_address is False
 
 
 def test_the_shipped_document_saves_lists_and_previews_over_http(library_server):

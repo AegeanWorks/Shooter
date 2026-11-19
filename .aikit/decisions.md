@@ -828,3 +828,10 @@ Consequences: Five shooter integration tests drive the real `InputMap.sample` pa
 - **Context**: Cycles 138-229 left 34 modified and 152 untracked paths (audit guards, Keystone authoring data, evidence). Gates are 5/5, 819 tests pass and determinism hash b25db520 is stable; only the intentionally dirty tree blocks delivery. The user authorized commit and push.
 - **Decision**: Stage every audit/test/evidence path explicitly, commit in two conventional commits (work, then ledger), run check --strict on the clean tree, then push once with --set-upstream (no force).
 - **Consequences**: The repo gains 56 cycles of regression guards and shipped authoring data; all history is auditable via evidence/cycle-*.json. No force push, no credentials, and the README stays under its 37,500-char budget.
+
+### ADR-002: Reconcile batch-delivered cycle heads in the ledger
+- **Date**: 2026-11-19
+- **Status**: Accepted
+- **Context**: Cycles 225-229 were completed while all work stayed uncommitted by the standing request, so their completion checkpoints recorded the same predecessor head (4f4c75c). The work was actually delivered together in commit 101adc8; AIKit's per-task head linkage cannot represent a batch commit, so check --strict reports five false 'committed nothing' findings.
+- **Decision**: Clear the misleading per-task head on those five completion checkpoints, moving them to the 'head unknown' state that ADR-477 defines as skipped rather than guessed at. Do not fabricate distinct commit ids and do not weaken any gate.
+- **Consequences**: check --strict can pass on the committed tree without falsifying history; the audit trail remains in evidence/cycle-225..229.json and the batch commit 101adc8; the game code and determinism hash are untouched.
