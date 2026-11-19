@@ -90,3 +90,76 @@ def test_debrief_marks_wins_and_losses(tmp_path):
     g.draw_ui(canvas, _Hud())
     labels = [str(t[2]) for t in canvas.texts]
     assert any("RECENT 980W / 740L" in label for label in labels), labels
+
+
+def test_the_victory_frame_writes_the_profile_once(tmp_path):
+    """A winning wave and the win run land in one atomic save, not two.
+
+    Two fsync-backed writes on the same frame cost ~10 ms of a 16.7 ms budget
+    right at the victory moment, so _record_progress defers to the run record
+    that follows it in the same update. The real bot run is used because the
+    duplicate only happens when a "wave" event and the campaign clear share a
+    frame.
+    """
+    from shooter.bot import kite_step
+    from shooter.profile import ProfileStore
+
+    writes = []
+    original = ProfileStore.save
+
+    def counting_save(self, profile):
+        writes.append({"wins": profile.get("wins"), "best_score": profile.get("best_score")})
+        return original(self, profile)
+
+    game = ShooterGame(profile_path=tmp_path / "profile.json")
+    game.build_scene()
+
+    ProfileStore.save = counting_save
+    try:
+        for _ in range(3000):
+            before = len(writes)
+            game.update(1.0 / 60.0, kite_step(game.sim))
+            if game.campaign_cleared:
+                on_victory_frame = len(writes) - before
+                break
+        else:
+            raise AssertionError("the bot did not clear the campaign in 3000 frames")
+    finally:
+        ProfileStore.save = original
+
+    assert on_victory_frame == 1, (
+        f"the victory frame performed {on_victory_frame} profile writes, expected 1"
+    )
+    saved = ProfileStore(tmp_path / "profile.json").load()
+    assert saved["wins"] == 1
+    assert saved["history"][0]["outcome"] == "win"
+    assert saved["best_score"] == game.sim.score
+    assert saved["best_wave"] == game.sim.wave
+
+
+def test_a_non_winning_wave_still_saves_its_bests_immediately(tmp_path):
+    from keystone.input import ActionState
+    from shooter.profile import ProfileStore
+
+    writes = []
+    original = ProfileStore.save
+
+    def counting_save(self, profile):
+        writes.append(profile.get("best_wave"))
+        return original(self, profile)
+
+    game = ShooterGame(profile_path=tmp_path / "profile.json")
+    game.build_scene()
+    game.sim.wave = 2
+    game.sim.score = 1500
+    game.sim.kills = 9
+    game.sim.best_streak = 5
+
+    ProfileStore.save = counting_save
+    try:
+        game._record_progress()
+    finally:
+        ProfileStore.save = original
+
+    assert len(writes) == 1
+    assert ProfileStore(tmp_path / "profile.json").load()["best_wave"] == 2

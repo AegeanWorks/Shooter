@@ -1,0 +1,31 @@
+{
+  "cycle": 225,
+  "area": "Testbed audit: death FX cap coverage",
+  "find": {
+    "report_claim": "game.py looks up death_fx_scale with death_caps.get(etype, 1.0), so a misspelled or missing enemy key silently renders a full-size kill burst with every test green",
+    "live_evidence": "juice.json death_fx_scale has exactly the four roster keys (mite 1.0, brute 0.7, wisp 1.0, warden 0.45), all within (0,1], with warden the smallest",
+    "consumer_evidence": "a new cross-document test pins exact key coverage against the roster, cap band and boss-minimum invariant"
+  },
+  "analyze": {
+    "killed": [
+      "pinning the raw cap literals: design bands + key coverage allow a feel tweak while catching a typo",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_juice_tuning.py"
+    ],
+    "survivor": "one cross-document death-FX cap coverage test"
+  },
+  "fix": {
+    "shooter": "tests/test_juice_tuning.py gains the guard (now 15 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "renaming the warden cap key to wardenx fails the guard (key set no longer equals roster); juice.json restored byte-identically (sha256 0f5a961e3a944e39659610194418ac27c0713c40a53432995d94645fe5bb30a3)",
+      "harness_note": "first mutation harness assumed 6-space indentation; the file uses 4 spaces, so the search matched 0 bytes and was corrected before the real mutation",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "815 passed (814 + 1 new death-FX cap guard)",
+      "timing_note": "suite ran under machine load (177 s standalone, 187 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

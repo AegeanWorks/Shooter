@@ -1,0 +1,33 @@
+{
+  "cycle": 144,
+  "area": "testbed repair: editor schema 63 and the camera-path editor actions",
+  "find": {
+    "report_claim": "Keystone's in-flight editor work adds four camera-path actions (save/delete/restore/preview) and bumps EDITOR_SCHEMA_VERSION from 62 to 63",
+    "live_evidence": "the shooter testbed failed test_keystone_api_contract_mechanics::test_schema_versions_and_editor_actions with 'assert 63 == 62', because it pinned the editor contract at the previous value and did not assert the new actions",
+    "consumer_evidence": "keystone's own suite refers to EDITOR_SCHEMA_VERSION symbolically, so it cannot detect a consumer that pins a stale literal; only the testbed can"
+  },
+  "analyze": {
+    "read": [
+      "keystone/schema.py EDITOR_SCHEMA_VERSION and the new EDITOR_ACTIONS entries",
+      "shooter tests/test_keystone_api_contract_mechanics.py schema and action pins"
+    ],
+    "killed": [
+      "deleting the pin: the testbed exists to catch exactly this drift",
+      "asserting against the imported constant on both sides: a constant-to-constant assert passes even when Keystone ships a breaking change",
+      "relaxing to '>= 62': it would accept a rollback and would not name the actions the editor gained"
+    ],
+    "survivor": "pin the literal 63 and require the four new camera-path actions by name, so the testbed states the editor contract instead of observing it"
+  },
+  "fix": {
+    "shooter": "tests/test_keystone_api_contract_mechanics.py pins EDITOR_SCHEMA_VERSION 63 and requires save_camera_path, delete_camera_path, restore_camera_path and preview_camera_path alongside the existing action list"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "513 passed, 2 xfailed in full suite",
+      "repaired_suite": "5 passed in 1.19s",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; assertions only)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

@@ -1,0 +1,34 @@
+{
+  "cycle": 138,
+  "area": "testbed repair: retarget stale pins to Keystone schema 5 and content-keyed batching",
+  "find": {
+    "report_claim": "shooter HEAD 4f4c75c was pushed as green (cycles 135-137) but the testbed has been red since Keystone landed scene schema 5 and content-keyed batch/instancing grouping on 2026-11-12",
+    "live_evidence": "on a clean tree the suite failed 9 tests in four files: api_contract pinned scene 2 / editor 59 (actual 5 / 62), http_server pinned scene_schema 2 three times (actual 5), batch and instancing constructed separate-but-equal Material() objects and expected separate groups, and plan summaries lacked overlay_calls",
+    "gate_evidence": "aikit check shooter reported 2/4: the test gate failed on those 9 tests and the guidelines gate reported 19 README tree omissions (18 evidence files committed in 4f4c75c plus .aikit/task_ledger_archive.jsonl), with .aikit/codebase_map.md absent entirely"
+  },
+  "analyze": {
+    "read": [
+      "keystone/schema.py, keystone/batch.py, keystone/gpu/instancing.py at 024e1e7",
+      "git log -S on keystone/schema.py and keystone/batch.py to date the contract change",
+      "shooter tests/test_keystone_{api_contract,http_server,batch,instancing}_mechanics.py"
+    ],
+    "killed": [
+      "deleting the failing assertions: the testbed exists to assert Keystone's contract, so a deleted pin removes the guarantee",
+      "rewriting the batch scenes to keep identity-keyed expectations by forcing distinct object identities: identity is no longer what the planner reads, so the test would assert nothing about grouping",
+      "leaving the README drift: the gate blocks delivery and a cold-starting agent reads those paths"
+    ],
+    "survivor": "bump the four pin sets to the literal current contract, give the split-group nodes genuinely different material content (the property the planner now keys on), assert the content-keyed plan summaries, and list the 19 committed paths in the README tree while generating the missing codebase map"
+  },
+  "fix": {
+    "shooter": "test_keystone_api_contract_mechanics.py pins scene 5 / editor 62; test_keystone_http_server_mechanics.py pins scene_schema 5 at health, scene and inspector; test_keystone_batch_mechanics.py gives node d a distinct material, adds overlay_calls/overlay_triangles to the empty plan, and asserts the content-keyed merge plan (1 group, saved 2); test_keystone_instancing_mechanics.py gives node c a distinct material, adds overlay_calls, and rewrites the ordering test around a material split; README lists cycles 135-137 plus the before/after/diff capture files, task_ledger_archive.jsonl and codebase_map.md; .aikit/codebase_map.md regenerated"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "482 passed, 2 xfailed (100% pass rate)",
+      "repaired_suites": "19 passed in 2.30s across the four retargeted files",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after the fixes; guidelines reports the tree and map synchronized",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; only assertions and docs moved)"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

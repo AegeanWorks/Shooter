@@ -1,0 +1,35 @@
+{
+  "cycle": 218,
+  "area": "Testbed audit: audio cue manifest",
+  "find": {
+    "report_claim": "the game builds 34 named clips for its event layer but no test pinned the manifest, so a dropped cue could remove a voice/caption path silently",
+    "live_evidence": "the loaded clip table has 34 names from boss_down through wisp_bolt, all with positive durations (minimum 0.04 s)",
+    "consumer_evidence": "a new test asserts the exact name set and positive duration for every clip"
+  },
+  "probe_incident": {
+    "what": "an exploratory --help probe of shipped scripts showed several treat the flag as a positional argument: audio_probe wrote files into a --help/ directory and capture.py overwrote tracked shot_fix_*.png/json",
+    "recovery": "deleted the created --help/ directory and git-restored the ten shot_fix_* files; git status is clean for all of them. No script was changed in this cycle."
+  },
+  "analyze": {
+    "killed": [
+      "auditing script CLIs in this cycle: the probe had side effects and the fix would span several scripts, so the safer manifest guard was chosen instead",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_audio.py"
+    ],
+    "survivor": "one exact-name-set manifest test with positive-duration checks"
+  },
+  "fix": {
+    "shooter": "tests/test_audio.py gains the manifest guard (now 6 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "own_test_bug": "build_scene() returns a Scene, not the game; the first draft chained ._clips off the return value and was corrected to read the game object",
+      "mutation": "removing the wisp_bolt clip registration fails the manifest test; game.py restored byte-identically (sha256 8fb027cf7ab0463476ac850da540ed5f4618e4c7411085e50169138af3e1d947)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "807 passed (806 + 1 new audio-manifest guard)",
+      "timing_note": "suite ran under machine load (187 s standalone, 246 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

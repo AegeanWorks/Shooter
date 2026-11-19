@@ -1,0 +1,35 @@
+{
+  "cycle": 151,
+  "area": "documentation structure: collapse the generated evidence subtree so the README stops growing by a row per cycle",
+  "find": {
+    "report_claim": "PRINCIPLE-005's tree rule requires each tracked or pending file in an expanded directory to appear in README.md, and the advisory warned the file was at 35,702-35,781 of 37,500 chars with ~1,700 left",
+    "live_evidence": "the evidence/ directory was listed as one row plus 170 child rows (cycle-01 .. cycle-150 JSON plus before/after/diff capture files), about 10.7 kB of README; every cycle added another row and would have hit the hard limit within roughly twenty cycles",
+    "consumer_evidence": "the checker's own rule (audit_readme) only requires the top-level segment for a directory that has no children listed, so a collapsed directory row is the supported convention rather than an exemption"
+  },
+  "analyze": {
+    "read": [
+      "scripts/update_knowledge_base.py audit_readme: required set construction and the per-directory expansion loop",
+      "scripts/update_knowledge_base.py parse_readme_tree: indentation-stack parsing of the ```text block",
+      "README.md evidence block boundaries"
+    ],
+    "killed": [
+      "listing only cycle summaries and collapsing the captures: the directory would stay expanded, so the drift class would return with the next capture pair",
+      "renaming or deleting evidence files: they are generated artefacts other cycles cite by name",
+      "raising the character limit: that is a rule change to fit the document instead of a document that fits the rule"
+    ],
+    "survivor": "collapse evidence/ to a single descriptive row, since its 170 children are generated output whose authoritative index is .aikit/cycles.md, and prove the gate still catches genuinely new source files"
+  },
+  "fix": {
+    "shooter": "README.md replaces the 170 evidence child rows with one row ('evidence/ <- cycle-NNN.json per cycle plus before/after capture pairs'); file size drops from 35,781 to 27,619 chars (9,881 headroom)"
+  },
+  "proof": {
+    "shooter": {
+      "sustainability": "wrote a throwaway evidence/cycle-151.json and the guidelines gate still reported OK, so a new cycle costs no README change; then wrote a throwaway tests/test_zz_probe_new_file.py and the gate failed with \"README.md tree omits new file 'tests/test_zz_probe_new_file.py'\", proving the requirement was not weakened; both probes were removed",
+      "char_counts": "35,781 -> 27,619 chars; headroom 1,719 -> 9,881",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "537 passed, 2 xfailed in the full suite",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (documentation only)"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

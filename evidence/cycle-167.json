@@ -1,0 +1,36 @@
+{
+  "cycle": 167,
+  "area": "startup UX: broken gameplay data blamed the --game argument instead of naming the file",
+  "find": {
+    "report_claim": "play.py follows the Why:/Fix: convention for every startup failure it handles (old Python, missing Keystone, missing package, import error), so a player always gets an actionable message",
+    "live_evidence": "copying the project, corrupting shooter/data/weapons.json and running play.py produced \"Keystone could not start. / Why: Expecting property name ... / Fix: pass a valid package.module:Factory with build_scene, update, ...\" -- an actionable message pointing at entirely the wrong thing",
+    "consumer_evidence": "the root cause is on the shooter side: sim._load had no handling for its four REQUIRED data files (weapons, enemies, levels, juice), while the optional engagement.json did have a fallback; keystone's _start_failure_hint then blames the game factory for any load failure because it cannot tell what failed"
+  },
+  "analyze": {
+    "read": [
+      "shooter/sim.py _load and the four required loads in Sim.__init__",
+      "keystone/__main__.py _start_failure_hint and the Why:/Fix: passthrough",
+      "shooter/play.py startup checks"
+    ],
+    "killed": [
+      "patching keystone's hint to sniff for file errors: another worker owns that tree, and string-sniffing is worse than the caller knowing its own cause",
+      "adding silent fallbacks for the required files: a missing weapons.json means a broken install, and inventing a default would hide it and change gameplay",
+      "leaving the traceback: the engine already converts exceptions into Why:/Fix:, so the message was actionable but wrong"
+    ],
+    "survivor": "make the shooter loader raise a ValueError whose message carries Why: and Fix: naming the file and where a good copy comes from; keystone already prints such messages verbatim"
+  },
+  "fix": {
+    "shooter": "shooter/sim.py _load wraps read_text and json.loads, raising ValueError with the file name, the underlying reason and a restore instruction; tests/test_data_integrity.py (6 tests) covers a missing file, a corrupt file, all four required files being named, the optional engagement.json still falling back to {}, a healthy data dir loading, and the message never containing a traceback"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "612 passed, 2 xfailed in full suite",
+      "new_suite": "6 passed in 0.58-0.78s",
+      "end_to_end": "with weapons.json corrupted, play.py now prints \"Keystone could not start. / shooter data file 'weapons.json' is not valid JSON. / Why: Expecting property name ... / Fix: restore <path>/shooter/data/weapons.json from a fresh clone, or repair the JSON at that line.\"",
+      "mutation": "reverting _load to the bare one-liner failed 4 of the 6 tests (missing file, corrupt file, per-file naming, message shape); shooter/sim.py restored byte-identically (sha256 match)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

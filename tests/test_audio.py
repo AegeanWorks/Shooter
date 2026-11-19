@@ -78,6 +78,24 @@ def test_pickup_gets_audio_and_caption():
     assert g._clips["pickup"].duration() > 0.0
 
 
+def test_the_shipped_audio_cue_manifest_is_complete():
+    """Every voice the event layer can request must exist and be non-empty."""
+    game = ShooterGame()
+    game.build_scene()
+    clips = game._clips
+    expected = {
+        "boss_down", "boss_slam", "boss_summon", "boss_windup",
+        "brute_slam", "brute_windup", "cache", "cache_drop",
+        "clutch", "critical", "death", "dry_fire", "hit", "hurt",
+        "kill", "lance", "near_miss", "overdrive", "overdrive_denied",
+        "overdrive_end", "overdrive_hit", "pickup", "reload", "reloaded",
+        "scatter", "shoot", "spawn", "streak_break", "surge_forfeit",
+        "switch_lance", "switch_pulse", "switch_scatter", "wave", "wisp_bolt",
+    }
+    assert set(clips) == expected
+    assert all(clip.duration() > 0.0 for clip in clips.values())
+
+
 def test_clip_hook_observes_play_without_owning_mixer():
     g = _close_boss_game()
     seen: list[tuple[str, float]] = []

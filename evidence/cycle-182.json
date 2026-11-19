@@ -1,0 +1,38 @@
+{
+  "cycle": 182,
+  "area": "Keystone testbed: arena nav plan from pathfinding + navigation",
+  "find": {
+    "report_claim": "pathfinding and navigation were two of the 21 Keystone modules the shooter had never imported, even though the shipped arena publishes cover boxes, a spawn and a surge pickup — all the data a nav plan needs",
+    "live_evidence": "the sim has a SpatialGrid for wall colliders but no world-level route answer for an AI/soak consumer; feeding a route into movement would change the replay hash",
+    "consumer_evidence": "NavGrid is plain data, A* is deterministic with fixed neighbour order and tie-breaking, and PathFollower/navigation_report turn the route into a JSON-safe waypoint state"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/pathfinding.py: NavGrid, find_path, smooth_path, path_report",
+      "projects/keystone/keystone/navigation.py: PathFollower, grid_path_points, navigation_report",
+      "shooter/data/levels.json: arena size 40, seven covers, spawn (0,0.9,8), pickup (0,0.5,-6)"
+    ],
+    "killed": [
+      "driving sim movement with the follower: that would change combat, RNG and the b25db520 replay hash",
+      "computing the grid each frame: cycle 180 measured the cost of per-frame scene queries, so this is an on-demand query",
+      "hardcoding a route: the point of the consumer is that a designer editing the covers changes the plan"
+    ],
+    "survivor": "an on-demand nav_plan_report() that derives a 1 m NavGrid from the shipped covers, runs diagonal A* spawn -> pickup, smooths cells to world waypoints and exposes both path and follower reports"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports the pathfinding and navigation APIs and adds nav_plan_report(); tests/test_keystone_navigation_mechanics.py (5 tests) pins route shape, blocked covers, world waypoint endpoints, a blocked-goal not-found result and sim isolation; README testbed matrix and tree name both modules and the test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed with AttributeError: 'ShooterGame' object has no attribute 'nav_plan_report'",
+      "own_test_bug": "the first draft asserted waypoint count equals cell path length; smooth_path legitimately collapsed 15 cells to 2 waypoints, so the assertion was corrected to 0 < n <= cells",
+      "measured": "40x40 grid, 143 blocked cells, A* found=True, 14 steps, cost 14.0, 15 expanded, smoothed to waypoints (0.5,0,8.5) and (0.5,0,-5.5)",
+      "mutation": "replacing the cover-block marking with a no-op fails 2 of 5 tests (blocked cells and blocked-goal route); game.py restored byte-identically (sha256 5623aa167c5f67c8e6b379b3a5ddb3161d0aa9f1a4cd788b35251ec8d7f8426d)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "tests": "683 passed (678 + 5 new nav tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

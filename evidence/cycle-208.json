@@ -1,0 +1,31 @@
+{
+  "cycle": 208,
+  "area": "Testbed audit: readonly report contract",
+  "find": {
+    "report_claim": "cycles 178-207 added many on-demand reports whose promise is that they never touch sim state; nothing enforced that a future report could not assign self.sim.*",
+    "live_evidence": "a pytest --durations=15 run showed the suite healthy at 796 tests (slowest 12.14 s), so this cycle hardened the contract rather than chasing a regression",
+    "consumer_evidence": "the new AST guard walks every *_report/_probe/_preview method and crosshair_pick and reports offenders by method name and field"
+  },
+  "analyze": {
+    "killed": [
+      "relying on per-test snapshot assertions: they catch a mutation only in the report they happen to call, not in a future one",
+      "changing production code: the current reports already satisfy the contract, so only a guard is needed",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_testbed_report_mechanics.py"
+    ],
+    "survivor": "a reflective AST test that fails by method name if any report writes to self.sim"
+  },
+  "fix": {
+    "shooter": "tests/test_testbed_report_mechanics.py gains the guard (now 6 tests); no production code changed and the README budget is unchanged at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "measured": "guard passes on all current report methods; slowest suite test 12.14 s",
+      "mutation": "adding self.sim.hp = 0 to engine_version_report fails the guard; game.py restored byte-identically (sha256 8fb027cf7ab0463476ac850da540ed5f4618e4c7411085e50169138af3e1d947)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "797 passed (796 + 1 new guard)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

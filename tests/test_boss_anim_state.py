@@ -30,6 +30,22 @@ def test_warden_core_machine_loads_from_the_library():
     assert entry.current == "calm", entry.current
 
 
+def test_the_windup_transition_contract_stays_inside_its_bands():
+    machine = _library().load("warden_core")
+    transitions = {(t.source, t.target): t for t in machine.transitions}
+    assert set(transitions) == {("calm", "charge"), ("charge", "calm")}
+    enter = transitions[("calm", "charge")]
+    leave = transitions[("charge", "calm")]
+    for transition, operator in ((enter, "greater"), (leave, "less")):
+        assert transition.parameter == "windup"
+        assert transition.operator == operator
+        assert 0.4 <= float(transition.value) <= 0.6
+        assert 0.05 <= float(transition.duration) <= 0.15
+    for state in machine.states.values():
+        assert state.loop is True
+        assert float(state.speed) == 1.0
+
+
 def test_core_clips_target_the_scene_node():
     machine = _library().load("warden_core")
     calm = machine.states["calm"].clip

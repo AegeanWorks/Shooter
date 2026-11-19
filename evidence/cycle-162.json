@@ -1,0 +1,36 @@
+{
+  "cycle": 162,
+  "area": "portability proof: the 'Python 3.10+' promise is now enforced by tests",
+  "find": {
+    "report_claim": "the README states Python 3.10+ and Keystone's pyproject declares requires-python = \">=3.10\"; the pinned stack (numpy 2.5.3, PyOpenGL 3.1.10, glfw 2.11.0, pytest 9.1.1) is also documented",
+    "live_evidence": "all four pinned versions match what is installed exactly (numpy 2.5.3, PyOpenGL 3.1.10, glfw 2.11.0, pytest 9.1.1), but the build machine runs Python 3.14.7, so nothing would notice a 3.11+/3.12+ construct breaking a 3.10 user",
+    "consumer_evidence": "a floor regression fails at import or parse time on the supported interpreter while the CI machine on 3.14 reports green, which is the classic 'works on my machine' version of this bug"
+  },
+  "analyze": {
+    "read": [
+      "README prerequisites and the Keystone pyproject requires-python",
+      "all 155 shooter/test source files for syntax and stdlib floor",
+      "Python 3.14.7 as the running interpreter"
+    ],
+    "killed": [
+      "installing Python 3.10 to run the suite: heavy, and the host has no 3.10 toolchain; a static check answers the same question on any interpreter",
+      "pinning the check to `sys.version_info`: it would assert the build machine's version rather than the code's requirements",
+      "treating `itertools.pairwise` as a violation: it exists in exactly 3.10, so it is legal at the floor"
+    ],
+    "survivor": "parse every source for PEP 695 type parameters and scan imports/calls for stdlib names introduced after 3.10, then prove both guards by injecting each construct"
+  },
+  "fix": {
+    "shooter": "tests/test_python_floor.py (7 tests) parses all 155 source files, rejects PEP 695 type parameters, rejects post-3.10 stdlib imports and calls (typing.Self/override/Required/NotRequired/assert_type/TypeVarTuple, itertools.batched, datetime.UTC, asyncio.TaskGroup, tomllib), checks the README and Keystone pyproject agree on the floor, and imports the three core modules"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "583 passed, 2 xfailed in full suite",
+      "new_suite": "7 passed in 1.24s",
+      "audit": "a full sweep of 155 files found zero PEP 695 constructs and zero post-3.10 stdlib usages, so the promise currently holds",
+      "mutation": "`class Sim:` -> `class Sim[T]:` failed the syntax test with 'PEP 695 type parameters need Python 3.12 ... [sim.py:56]'; adding `from typing import Self` failed the stdlib test with 'sim.py:13 imports typing.Self (needs 3.11)'. shooter/sim.py was restored byte-identically (sha256) after each.",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

@@ -9,6 +9,7 @@ unchanged; the sim and hash never read the prefab.
 from pathlib import Path
 
 from keystone.prefab_library import PrefabLibrary
+from keystone.serialization import read_json
 
 from shooter.game import ShooterGame
 
@@ -27,6 +28,23 @@ def test_pickup_beacon_prefab_loads():
     assert [root.name for root in prefab.roots] == [
         "surge-pickup", "surge-beam", "surge-orb"
     ]
+
+
+def test_the_prefab_document_matches_the_sim_pickup_spot():
+    document = read_json(DATA / "pickup_beacon.kprefab")
+    assert document["schema"] == 2
+    assert [root["id"] for root in document["roots"]] == [
+        "surge-pickup", "surge-beam", "surge-orb"
+    ]
+    for root in document["roots"]:
+        assert root["layer"] == "default"
+        assert root["tags"] == [] and root["components"] == []
+        assert root["prefab_link"] is None and root["visible"] is False
+        assert root["transform"]["scale"] == [1.0, 1.0, 1.0]
+        assert root["transform"]["rotation"] == [0.0, 0.0, 0.0, 1.0]
+    pickup = next(root for root in document["roots"] if root["id"] == "surge-pickup")
+    spot = ShooterGame().sim.levels["pickup"]
+    assert pickup["transform"]["position"] == [spot["x"], spot["y"], spot["z"]]
 
 
 def test_game_instantiates_the_pickup_prefab():

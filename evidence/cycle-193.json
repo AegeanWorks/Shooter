@@ -1,0 +1,36 @@
+{
+  "cycle": 193,
+  "area": "Keystone testbed: nav grid authored from live collision boxes",
+  "find": {
+    "report_claim": "nav_authoring was one of the Keystone modules the corrected coverage scan still listed as unconsumed; it derives NavGrid blocked cells from the same AABBs the character collides with so routes follow the level",
+    "live_evidence": "a probe of the naive consumer failed: passing all sim.colliders to grid_from_boxes blocked all 1600 cells because the floor AABB spans the whole arena and the module ignores vertical extents",
+    "consumer_evidence": "filtering boxes whose top is at floor level leaves 11 wall/cover boxes; the authored 40x40 grid has 244 blocked cells at clearance 0.2 (268 at 0.5), open spawn and goal, and a 14-step route"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/nav_authoring.py: grid_from_boxes() clearance rule and vertical-extent caveat",
+      "shooter/sim.py:311-318 (colliders include a full-arena floor AABB)",
+      "shooter/game.py:nav_plan_report (authoritative spawn and goal cells)"
+    ],
+    "killed": [
+      "passing every collider: the floor would block the entire arena, as the probe proved",
+      "hardcoding blocked cells: that would drift from the level, the exact hazard nav_authoring exists to remove",
+      "replacing nav_plan_report: its cell route stays authoritative; this report is additive and compares against it"
+    ],
+    "survivor": "an on-demand nav_authoring_report() that filters floor-level boxes, rasterizes the rest with Keystone's clearance rule and reports endpoints plus route"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports grid_from_boxes and adds nav_authoring_report(clearance=0.2); tests/test_keystone_nav_authoring_mechanics.py (5 tests) pins shape, floor exclusion, clearance widening, reproducibility and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no nav_authoring_report)",
+      "measured": "40x40, 11 boxes, 1 floor excluded, 244 blocked at clearance 0.2 and 268 at 0.5, start (20,28) and goal (20,14) open, route found in 14 steps",
+      "mutation": "including the floor blocks all 1600 cells and fails all 5 tests; game.py restored byte-identically (sha256 7df85cd80ab1a051e8ff3ab4737fbb5aa31def573e4c1dd0debca5e5f17b79d1)",
+      "codebase_map": "regenerated after the new import, method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

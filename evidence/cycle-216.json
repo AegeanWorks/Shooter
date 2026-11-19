@@ -1,0 +1,30 @@
+{
+  "cycle": 216,
+  "area": "Testbed audit: pickup prefab document contract",
+  "find": {
+    "report_claim": "test_pickup_prefab pinned root names and instantiated meshes but not schema, root ids, layer, visibility, identity transforms, or whether its pickup position agrees with levels.json",
+    "live_evidence": "the shipped schema-2 prefab has three roots (surge-pickup/beam/orb), all default-layer, hidden, identity rotation/scale, and the pickup root sits at (0, 0.5, -6), matching the sim's pickup spot",
+    "consumer_evidence": "a new document test pins that metadata and the cross-document parity"
+  },
+  "analyze": {
+    "killed": [
+      "hardcoding the pickup position in the test: it reads levels.json, so editing either document alone fails",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_pickup_prefab.py"
+    ],
+    "survivor": "one prefab-structure and cross-document parity test"
+  },
+  "fix": {
+    "shooter": "tests/test_pickup_prefab.py gains the guard (now 4 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "moving the prefab pickup root z from -6.0 to -7.0 fails the guard; pickup_beacon.kprefab restored byte-identically (sha256 f0b09e98c10fc46228530f8a8a1a3564ee3109cad3c6a14d981058fd8236ef2d)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "805 passed (804 + 1 new prefab-document guard)",
+      "timing_note": "suite ran under machine load (227 s standalone, 242 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

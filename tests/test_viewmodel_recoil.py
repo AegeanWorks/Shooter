@@ -8,8 +8,6 @@ existing gun nodes along the view basis, driven by DATA.
 
 from __future__ import annotations
 
-import math
-
 from keystone.input import ActionState
 
 from shooter.game import ShooterGame
@@ -26,10 +24,8 @@ def _game() -> ShooterGame:
 
 
 def _forward_projection(g: ShooterGame, point) -> float:
-    eye = g.sim.eye()
-    fx = math.sin(g.sim.yaw)
-    fz = -math.cos(g.sim.yaw)
-    return (point.x - eye.x) * fx + (point.z - eye.z) * fz
+    # Camera space looks down -Z, so forward distance is simply -local z.
+    return -point.z
 
 
 def test_firing_pulls_the_viewmodel_toward_the_player():

@@ -27,6 +27,13 @@ def test_cache_material_loads_from_library():
     assert material.texture is None
 
 
+def test_cache_material_surface_fields_stay_in_their_bands():
+    material = MaterialLibrary(DATA).load("cache_material")
+    assert 0.0 <= float(material.metallic) <= 0.1, material.metallic
+    assert 0.60 <= float(material.roughness) <= 0.80, material.roughness
+    assert 0.0 <= float(material.checker_scale) <= 0.1, material.checker_scale
+
+
 def test_game_registers_the_cache_material():
     g = ShooterGame()
     g.build_scene()

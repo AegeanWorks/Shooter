@@ -1,0 +1,38 @@
+{
+  "cycle": 178,
+  "area": "Keystone testbed: camera_rig owns the first-person viewmodel",
+  "find": {
+    "report_claim": "camera_rig is a Keystone module built for exactly the viewmodel problem: parts attached to the lens rather than the level, on the overlay layer so geometry cannot cut through them; the shooter had never imported it",
+    "live_evidence": "_sync_scene hand-computed each gun part's world position from the eye and the camera right/up/forward basis (gun_pos) and added the three nodes to the level layer",
+    "consumer_evidence": "probe after the change: body local pos Vec3(0.27, -0.21, -0.6), barrel Vec3(0.27, -0.235, -0.8), grip Vec3(0.27, -0.31, -0.52); all three on overlay with parent camera-rig; root position equals the camera position after sync"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/camera_rig.py: CameraRig.attach(), sync(), OVERLAY_LAYER",
+      "shooter/game.py:649 (viewmodel node creation), :1486 (gun_pos and world transforms)",
+      "tests/test_viewmodel.py, test_viewmodel_bob.py, test_viewmodel_recoil.py, test_reload_dip.py, test_viewmodel_grip.py (world-space transform assertions)"
+    ],
+    "killed": [
+      "keeping the world-space nodes and adding a token rig: two owners for one viewmodel would drift and would not test the module",
+      "pinning the old batch/node counts: the overlay layer deliberately removes the viewmodel from static batches, so the counts must be retargeted with a reason, not loosened",
+      "adopting picking or navigation instead: neither has a live consumer in this game; camera_rig replaces code that already exists"
+    ],
+    "survivor": "attach the three parts to a CameraRig with declarative camera-space offsets, call sync() each frame, and rewrite the five viewmodel tests to assert local right/up/forward offsets"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports CameraRig, builds one rig in build_scene, attaches body/barrel/grip as overlay children, replaces gun_pos with gun_offset (right, -down, -forward), drops the hand-built rotation and calls rig.sync() each frame; the five viewmodel tests now read local offsets; tests/test_keystone_camera_rig_mechanics.py (4 tests) pins overlay parenting, root-follows-camera, stale-rig visibility and sim isolation; three exact pins in test_keystone_mechanics.py and test_keystone_http_server_mechanics.py retargeted 8->7 groups, 36->37 nodes, 7->6 merged groups with comments naming cycle 178",
+    "reason_for_batch_change": "the viewmodel's shared-cube group is no longer a static level batch once it is on OVERLAY_LAYER: groups 8->7, merged groups 7->6; the rig root adds one scene node: 36->37 with the test accent"
+  },
+  "proof": {
+    "shooter": {
+      "before_after": "world-space gun_pos math replaced by camera-space offsets; rig root follows camera, parts are overlay children",
+      "mutation": "deleting self._view_rig.sync() fails test_viewmodel_exists_and_the_rig_follows_camera with root (0,0,0) vs camera (0,1.6202,8); game.py restored byte-identically (sha256 66f82b051ea2cef3c173eb99ba40c6ab38609bf46204276b537f33bd183b4910)",
+      "stale_pin_retarget": "the first full check failed 3 exact pins with measured new values (groups 7, merged groups 6, nodes 37); all three retargeted with inline reasons, then 5/5 gates passed",
+      "codebase_map": "regenerated after the new import and test module",
+      "tests": "663 passed (659 + 4 new rig tests; 3 stale pins retargeted)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

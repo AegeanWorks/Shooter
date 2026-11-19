@@ -1,0 +1,35 @@
+{
+  "cycle": 210,
+  "area": "Testbed audit: grade.json renderer flags",
+  "find": {
+    "report_claim": "no game test asserted the four renderer flags adopted from grade.json in cycle 11/ADR-011",
+    "live_evidence": "the first full-suite mutation (shadows true->false) left all 798 tests green; the remaining three cases were cut short when the 15-minute sweep timeout fired under heavy machine load (one suite took 553 s)",
+    "consumer_evidence": "build_scene sets scene.shadow/color/post/bloom from the document; a new test asserts all four are enabled"
+  },
+  "incident": {
+    "what": "the sweep process was SIGTERM'd while the srgb flip was applied, leaving grade.json with srgb false and LF->CRLF drift from an intermediate edit",
+    "recovery": "restored the exact HEAD blob bytes via git cat-file; final sha256 a50877b585f0a92f234ec471625c17b49271226ed5fd84ec5368047718776202 matches the pre-sweep baseline and git status is clean for the file"
+  },
+  "analyze": {
+    "killed": [
+      "continuing the full-suite sweep after repeated 400-550 s runs: it would not finish reliably under the load",
+      "pinning the raw JSON booleans: the test asserts the live Scene settings, which is what the renderer actually uses"
+    ],
+    "survivor": "one test in the already-listed test_graphics.py asserting all four Scene flags are enabled"
+  },
+  "fix": {
+    "shooter": "tests/test_graphics.py gains the renderer-flag guard (now 6 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "flipping each of shadows, srgb, post and bloom in grade.json fails the guard; the file was restored byte-identically after every flip",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "799 passed (798 + 1 new flag guard)",
+      "timing_note": "final full suite took 414 s under load; all runs green"
+    }
+  },
+  "ledger_tool_note": "disruption_recovery.py --checkpoint raised NameError: interrupt is not defined while recording the Phase 4 checkpoint; --complete succeeded, leaving phase 2 and completed checkpoints without a phase 4 entry. The ledger was not hand-edited; the canonical aikit check shooter gate passed 5/5.",
+  "timestamp": "2026-11-19"
+}

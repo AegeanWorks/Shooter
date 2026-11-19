@@ -1,0 +1,40 @@
+{
+  "cycle": 174,
+  "area": "presentation tuning DATA: a juice.json mutation sweep, and a cap that was not data-owned",
+  "find": {
+    "report_claim": "cycles 170/171 used mutation sweeps to find gameplay constants the suite did not protect; the README calls the suite the canonical regression shield and juice.json the tuning file a designer edits",
+    "live_evidence": "a 12-case sweep doubled juice.json constants and ran the full suite for each: nine stayed green (slam_ring.width, slam_ring.height, spawn_mark.width, spawn_mark.height, spawn_mark.max, pad_pulse.amplitude, impact_burst, kill_burst, flash_life_s); three were caught (pad_pulse.base, hitstop_ticks, tracer_life_s)",
+    "consumer_evidence": "probing the most surprising survivor showed spawn_mark.max is not even wired: with max=2 the spawn path kept 2 marks but boss_summon kept 4; with max=6 the list held 6 marks while only 4 marker nodes existed, so the player still saw 4. build_scene sized _spawn_nodes from the module constant MAX_SPAWN_MARKS and both _play_event branches truncated to it"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py:45 (MAX_SPAWN_MARKS = 4), :724 (node pool), :1150 (spawn cap), :1202 and :1207 (summon cap)",
+      "shooter/sim.py:855/908 (particle bursts), :936 (flash lifetime), :641 (flash decay)",
+      "tests/test_spawn_mark.py, tests/test_slam_ring.py, tests/test_pad_pulse.py (presence checks, no value bands)"
+    ],
+    "killed": [
+      "pinning the raw literals from juice.json: that restates the data and would drift exactly like the stale keystone pins in cycle 138",
+      "raising MAX_SPAWN_MARKS to a new constant: the summon path would still ignore the DATA key, so the tunable would remain a lie",
+      "letting the list grow past the node pool: extra spawn marks would be invisible and the cap would look honoured in state but not on screen"
+    ],
+    "survivor": "one DATA read (_spawn_mark_cap) for the node pool and both event paths, plus observable design-band tests for every surviving constant"
+  },
+  "fix": {
+    "shooter": "shooter/game.py gains ShooterGame._spawn_mark_cap() (max(1, int(juice.spawn_mark.max)), MAX_SPAWN_MARKS only when absent) and uses it for the marker node pool, the spawn-event truncation and both boss_summon truncations; tests/test_spawn_mark.py gains two tests proving the value sizes the pool and bounds both paths; tests/test_juice_tuning.py (7 tests) pins the surviving constants by observable result inside design bands; README.md lists the new test"
+  },
+  "proof": {
+    "shooter": {
+      "before": "probe max=2: pool nodes=4, spawn marks=2, summon marks=4; probe max=6: pool nodes=4, spawn marks=6, visible=4, summon marks=4",
+      "after": "probe max=2: pool nodes=2, spawn marks=2, visible=2, summon marks=2; probe max=6: pool nodes=6, spawn marks=6, visible=6, summon marks=6; removing the key falls back to MAX_SPAWN_MARKS=4",
+      "mutations": "all nine sweep survivors now fail a targeted test when doubled (9/9 caught, survivors: none); reverting the three wiring reads to MAX_SPAWN_MARKS fails test_the_data_cap_sizes_the_pool_and_bounds_the_spawn_path and test_the_summon_path_uses_the_same_data_cap with the old 4-vs-2 values, and game.py was restored byte-identically (sha256 8671e1a226bb44ca67a11875909313481c782c5f0c727735c8cb70d130c21691)",
+      "codebase_map": "regenerated after adding the _spawn_mark_cap symbol; guidelines gate green",
+      "tests": "646 passed, 2 xfailed (637 + 9 new tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "recorded_not_fixed": {
+    "fallback_drift": "four sim.py fallback defaults disagree with the shipped juice.json values: tracer_life_s 0.08 vs 0.15, flash_life_s 0.06 vs 0.10, pickup_fx_scale 3.0 vs 1.5, pickup_fx_rise 1.2 vs 0.9. A missing key silently changes feel; separate from the wired-value problem fixed here, left for a dedicated defaults-vs-data cycle"
+  },
+  "timestamp": "2026-11-19"
+}

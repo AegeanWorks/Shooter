@@ -12,6 +12,14 @@ from keystone.input import ActionState
 from shooter.game import ShooterGame, _floor_grid_texture
 
 
+def test_the_shipped_renderer_flags_are_all_enabled():
+    """grade.json deliberately adopts all four deterministic renderer features."""
+    scene = ShooterGame().build_scene()
+    for name in ("shadow", "color", "post", "bloom"):
+        settings = getattr(scene, name)
+        assert settings.enabled is True, (name, settings)
+
+
 def test_floor_grid_texture_is_deterministic_and_named():
     first = _floor_grid_texture()
     second = _floor_grid_texture()

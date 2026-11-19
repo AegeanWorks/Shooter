@@ -1,0 +1,30 @@
+{
+  "cycle": 224,
+  "area": "Testbed audit: enemy shape invariants",
+  "find": {
+    "report_claim": "no test checked that enemy hp/speed/radius are positive, that an enemy's height is at least its body diameter, or that the warden's summon cadence is coherent; a zero speed or fat radius would make an enemy inert or uncollidable with every test green",
+    "live_evidence": "all four enemies have positive core fields and height >= 2*radius (mite/brute/wisp exactly equal, warden 2.2 > 2.0); warden summon_first 2.5 < summon_cd 7.0 with positive count/clearance",
+    "consumer_evidence": "a new structural test pins positivity, body proportion and boss cadence for every enemy"
+  },
+  "analyze": {
+    "killed": [
+      "pinning the descriptive behavior string: sim dispatches on etype, not behavior, so a behavior typo is inert and low value",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_weapon_enemy_tuning_bands.py beside the weapon one"
+    ],
+    "survivor": "one cross-enemy structural-invariant test"
+  },
+  "fix": {
+    "shooter": "tests/test_weapon_enemy_tuning_bands.py gains the guard (now 7 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "inflating warden radius 1.0->1.5 makes its diameter 3.0 exceed its height 2.2 and fails the guard; enemies.json restored byte-identically (sha256 fb38882f6b3da3f1ac7fafe7fe9cc736899fe8d9e35131bf69480a1a9446761a)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "814 passed (813 + 1 new enemy-shape guard)",
+      "timing_note": "suite ran under moderate machine load (115 s standalone, 159 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

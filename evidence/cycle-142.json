@@ -1,0 +1,35 @@
+{
+  "cycle": 142,
+  "area": "game fix: damage jolt now uses Keystone CameraShake instead of hand-rolled sines",
+  "find": {
+    "report_claim": "keystone.camera_shake is a deterministic trauma model: seeded sine phases, trauma clamped to 1 and decayed linearly, sample() returning position plus yaw/pitch offsets without mutating any camera, and a JSON shake_report",
+    "live_evidence": "shooter hand-rolled its own jolt inside _sync_scene: amp = min(1, hurt_t / 0.3) * 0.035 applied as sin(time * 55) on x and cos(time * 47) * 0.6 on y, with no rotation offset and no decay model of its own",
+    "consumer_evidence": "nothing in shooter imported keystone.camera_shake, so the module had no game consumer and the game carried a parallel, weaker implementation of the same feature"
+  },
+  "analyze": {
+    "read": [
+      "keystone/camera_shake.py CameraShake.add/update/sample/_noise and shake_report",
+      "shooter/game.py _sync_scene camera block and the hurt event handler",
+      "shooter/tests/test_hurt_shake.py (the old hand-rolled assertions)"
+    ],
+    "killed": [
+      "keeping both models: two shake sources would fight over the same camera each frame",
+      "driving the sim from trauma: that would change combat, RNG and the determinism hash",
+      "asserting camera return-to-eye against the pre-hit eye: the idle player's eye drifts a fraction of a millimetre, so the check must compare the live eye"
+    ],
+    "survivor": "own one CameraShake, add trauma on the hurt event, sample it while composing onto the sim pose, expose shake_report, and retarget the old test to prove the same intent through the new mechanism"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports CameraShake/shake_report, owns one instance (seed 0, amplitude 0.05, rotation 0.012, frequency 18, decay 2.4), adds 0.6 trauma on the hurt event, advances and samples it in _sync_scene while composing position/yaw/pitch onto the sim pose, exposes camera_shake_report while trauma is live, and resets on build_scene; the hand-rolled sine jolt and its now-unused hurt_t local are removed; tests/test_hurt_shake.py retargeted to four tests covering jolt-on-damage, exact composition onto the sim pose, sim hash isolation, and reset on rebuild"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "507 passed, 2 xfailed in full suite",
+      "hurt_suite": "4 passed in 1.32s",
+      "visual": "evidence/c142_hurt_shake: 960x540 before/after first-hit captures. Camera moved from [0.0, 1.62, 8.0] yaw 0 pitch 0 to [-0.004, 1.619, 7.994] yaw -0.0022 pitch -0.0005; diff 14425 changed pixels (2.78% of frame), max delta 188, bbox 0,236..959,539",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; trauma writes camera fields only)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

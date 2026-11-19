@@ -87,6 +87,22 @@ def test_hitmark_expands_the_spread_gap():
         assert _drawn_gap(wid, hitmark=True) == base + int(config["hit_gap_px"])
 
 
+def test_hud_drawing_is_presentation_only():
+    """draw_shooter/reticle_gap must never mutate sim state (no hash drift)."""
+    from keystone.replay import stable_hash
+
+    s = Sim(seed=7)
+    s.weapon = "scatter"
+    s.hitmark_t = 0.1
+    s.score = 1234
+    before = stable_hash(s.snapshot())
+    canvas = _Canvas()
+    draw_shooter(canvas, _Hud(), s)
+    reticle_gap(s)
+    assert stable_hash(s.snapshot()) == before
+    assert canvas.rects and canvas.texts, "the HUD must actually draw something"
+
+
 def test_reticle_config_is_data_owned():
     s = Sim(seed=1)
     for key in ("ref_gap_px", "ref_spread_deg", "min_gap_px", "max_gap_px",

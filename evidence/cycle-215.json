@@ -1,0 +1,30 @@
+{
+  "cycle": 215,
+  "area": "Testbed audit: cache material surface bands",
+  "find": {
+    "report_claim": "test_cache_material_library pins colour, emissive, specular, shininess and texture, but metallic, roughness and checker_scale were unasserted",
+    "live_evidence": "the shipped .kmaterial loads with metallic 0.0, roughness 0.7 and checker_scale 0.0",
+    "consumer_evidence": "a new band test checks the three surface fields on the loaded Material"
+  },
+  "analyze": {
+    "killed": [
+      "pinning exact floats: design bands allow a legitimate surface tweak while catching a large drift",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_cache_material_library.py"
+    ],
+    "survivor": "one surface-field band guard"
+  },
+  "fix": {
+    "shooter": "tests/test_cache_material_library.py gains the guard (now 4 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "changing roughness 0.7 to 0.1 fails the guard; cache_material.kmaterial restored byte-identically (sha256 052e6d413acc6e112bc692e7a00010903dcf698facbec4c72b603163ba4f40e8)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "804 passed (803 + 1 new material-surface guard)",
+      "timing_note": "suite ran under machine load (262 s standalone, 370 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

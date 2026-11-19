@@ -1,0 +1,36 @@
+{
+  "cycle": 198,
+  "area": "Testbed audit: one reset path for camera-shake state",
+  "find": {
+    "report_claim": "the trauma reset plus camera_shake_report/camera_shaker_report clears appeared three times: build_scene, _start_death_camera and _start_campaign_clear_camera",
+    "live_evidence": "grep found nine reset lines at three sites; cycle 176 already caught a missing report clear in this exact pattern, so another field added later could be forgotten at one caller",
+    "consumer_evidence": "after extraction a grep finds the three lines exactly once, in _clear_shake_reports(), and all three callers invoke it"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py:build_scene and both cinematic-start reset blocks",
+      "tests/test_hurt_shake.py and test_keystone_camera_shaker_mechanics.py (existing behaviour contract)",
+      "cycle 176's missing-report-clear finding"
+    ],
+    "killed": [
+      "leaving three copies: a future shake field could be cleared at only one caller",
+      "changing reset semantics (for example clearing only trauma): that would break the published report contract",
+      "adding a fourth report field without touching the helper: the mutation check shows a forgotten clear is caught"
+    ],
+    "survivor": "one _clear_shake_reports() helper called from rebuild, death cinematic and victory cinematic"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds _clear_shake_reports() and replaces all three reset blocks with it; tests/test_keystone_report_resets_mechanics.py (5 tests) pins helper behaviour, all three callers, idempotence and sim isolation; README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "2 of 5 new tests failed with AttributeError before the helper existed; the three caller tests passed, confirming the refactor preserves current behaviour",
+      "measured": "grep after the change: the three reset lines occur exactly once, inside the helper",
+      "mutation": "removing camera_shaker_report = None from the helper fails 3 of 5 tests; game.py restored byte-identically (sha256 c2072d4fee54afb6be1add036a2f5966a4ce34ab7e5321b35fc5c9db62175017)",
+      "codebase_map": "regenerated after the new helper and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

@@ -776,7 +776,8 @@ Date: 2026-11-08
 Status: accepted
 Context: The shooter exercised keystone's replay runner, TriggerTracker, ParticleSystem, batch planner and SpatialGrid, but the project suite covered them only indirectly. Adding direct mechanics tests lengthened the suite; the fairness test's 30 s wall budget then intermittently returned 
 o_witnessed_win on this loaded machine even though the reference replay still won (77 s for the test alone).
-Decision: Add 	ests/test_keystone_mechanics.py with a full 3000-frame un_log campaign replay (win/hash pinned), a 300-frame erify_log prefix, TriggerTracker enter/held/exit edges, the one-shot surge pickup, a deterministic 12-particle impact burst, the static batch plan (8 groups / 34 draw calls / 26 saved / 482 triangles) and the 12-proxy spatial grid. Raise the three fairness max_wall_seconds values from 30.0 to 120.0; the air verdict and witnessed-win assertions are unchanged.
+Decision: Add 	ests/test_keystone_mechanics.py with a full 3000-frame 
+un_log campaign replay (win/hash pinned), a 300-frame erify_log prefix, TriggerTracker enter/held/exit edges, the one-shot surge pickup, a deterministic 12-particle impact burst, the static batch plan (8 groups / 34 draw calls / 26 saved / 482 triangles) and the 12-proxy spatial grid. Raise the three fairness max_wall_seconds values from 30.0 to 120.0; the air verdict and witnessed-win assertions are unchanged.
 Consequences: Suite 298/298 green (six new mechanics tests); determinism 1800 ok (hash b25db520); aikit 4/4. The campaign replay wins wave 4 with 30 kills / 11560 / hp 38 and hash b425a57...; the pickup fires exactly once; the particle burst is deterministic; the trim batch includes platform-pad; the grid holds 12 proxies matching the colliders. Evidence: evidence/cycle-95.json.
 
 ## ADR-112: Animate enemies from committed .kanim clips (gameplay)
@@ -820,3 +821,10 @@ Status: accepted
 Context: ADR-016 filed the engine as having no per-game binding hook, but Keystone has since called an optional `bind_input(mapping)` and reports it through `describe_game()`. The shooter never implemented the hook, so weapon slots, reload and voluntary overdrive stayed headless-only. The real key table also had no number-row names, so a slot bound to "2" could never fire, and key names were not validated (`fire -> mouse_left` is not a key).
 Decision: Implement `ShooterGame.bind_input` (fire=F, reload=R, slots=1/2/3, overdrive=J, jump=Space; left-click fire stays on `mouse_clicked`). In Keystone, add digits 0-9 and `key_names()`, `InputMap.unknown_keys()`, `Engine.unbound_buttons`/`unknown_keys`, and `capabilities.input_keys` in `--describe`. Update the controls README and the stale ADR-016 limitation.
 Consequences: Five shooter integration tests drive the real `InputMap.sample` path into the sim: 2 switches to scatter, R starts a reload, J starts overdrive, F fires and Space jumps, and every declared button is bound to a real key. Keystone passes 942 tests and 6/6 gates; the shooter passes 481 tests and 4/4 gates. Determinism stays b25db520 and the 300-frame kite run hash is f6c94bce. Evidence: evidence/cycle-134.json.
+
+### ADR-001: Commit the accumulated testbed audit and deliver shooter
+- **Date**: 2026-11-19
+- **Status**: Accepted
+- **Context**: Cycles 138-229 left 34 modified and 152 untracked paths (audit guards, Keystone authoring data, evidence). Gates are 5/5, 819 tests pass and determinism hash b25db520 is stable; only the intentionally dirty tree blocks delivery. The user authorized commit and push.
+- **Decision**: Stage every audit/test/evidence path explicitly, commit in two conventional commits (work, then ledger), run check --strict on the clean tree, then push once with --set-upstream (no force).
+- **Consequences**: The repo gains 56 cycles of regression guards and shipped authoring data; all history is auditable via evidence/cycle-*.json. No force push, no credentials, and the README stays under its 37,500-char budget.

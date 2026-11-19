@@ -1,0 +1,35 @@
+{
+  "cycle": 147,
+  "area": "game cleanup: death-cinematic tuning moved into juice.json, plus the frame-report hash contract",
+  "find": {
+    "report_claim": "shooter/game.py's module docstring states 'All tuning in shooter/data/*.json, never hardcoded one-offs', and juice.json is the established tuning source for viewmodel offsets, death FX timing and every other game-feel constant",
+    "live_evidence": "the death cinematic added in cycle 141 hardcoded its orbit angles, radii, heights, key times and fov ramp in the builder, so those numbers could not be tuned without a code change and contradicted the module's own rule",
+    "consumer_evidence": "both cinematics should be authorable: the victory path is a .kpath document, while the death path is procedural (anchored to where the run ended and which way the player faced), so its numbers belong in juice.json rather than a static path"
+  },
+  "analyze": {
+    "read": [
+      "shooter/data/juice.json structure and shooter/sim.py juice loading",
+      "shooter/game.py _start_death_camera",
+      "keystone/analysis.py analyze_frame image block and hashed payload"
+    ],
+    "killed": [
+      "storing the death cinematic as a .kpath document: the path is relative to the death position and facing, so a static document would need translation plus yaw rebasing, which is more machinery than the tuning problem needs",
+      "re-serialising juice.json through json.dumps: it silently rewrote trailing zeros across 12 unrelated lines",
+      "mutating keystone/analysis.py to prove the hash contract: cycle 145 recorded that shared-tree mutation is unsafe while another worker is active"
+    ],
+    "survivor": "insert the tuning block as text in the file's existing style, read it with per-field validated fallbacks, and prove the refactor changed nothing by comparing rendered pixels"
+  },
+  "fix": {
+    "shooter": "shooter/data/juice.json gains a 10-line death_cinematic block (body_height, start_forward, start_fov, three keys with time/angle/radius/height_above_eye/height/fov) inserted without reformatting; shooter/game.py adds DEATH_CINEMATIC_DEFAULTS plus _number()/_death_cinematic_tuning() helpers with per-field fallbacks, and the builder now composes keys from the tuning; tests/test_keystone_frame_report_hash_mechanics.py (4 tests) pins that the report hash covers the artifact path (renamed captures hash differently while png/rgba digests and nodes match), the same path hashes identically, node placement and pixels both change the hash, and a pathless report still hashes the frame"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "524 passed, 2 xfailed in full suite",
+      "pixel_identity": "evidence/c147_death_tuning: before/after death frames with identical camera metadata ([ -3.3, 2.276, 8.819], fov 55.538..., yaw 1.3109, pitch -0.3806) and diff_images reporting 0 changed pixels, ratio 0.0, max delta 0",
+      "hash_contract": "the same frame captured twice under different filenames produced different report hashes (4538a25c vs 9cd530ff) while png_sha256, rgba_sha256, stats, nodes, ui and all scene flags were equal; the only differing field was image.path",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

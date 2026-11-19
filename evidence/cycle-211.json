@@ -1,0 +1,35 @@
+{
+  "cycle": 211,
+  "area": "Testbed audit: idle clip presentation bands",
+  "find": {
+    "report_claim": "the four shipped .kanim clips had determinism and uniformity assertions but no magnitude band, so a mistyped breathe scale could change enemy feel with every test green",
+    "live_evidence": "samples at t=0.5: mite scale 1.06, brute 1.021875, wisp 1.0, warden 1.02; wisp rotation y 0.965926",
+    "consumer_evidence": "a new test samples each clip and asserts uniform scale in 1.0..1.12, |rotation.y| <= 1.0 and at least one visible breathe > 1.02"
+  },
+  "ledger_tool_investigation": {
+    "prior_error": "cycle 210's Phase 4 checkpoint raised NameError: interrupt is not defined",
+    "finding": "record_checkpoint accepts interrupt and _claim is called with it; a controlled repro in a fresh temporary workspace recorded a checkpoint successfully, and cycle 211's own Phase 2 checkpoint also succeeded",
+    "conclusion": "the error could not be reproduced and appears transient; the ledger was not hand-edited, and the canonical aikit check shooter 5/5 gate backs the verification either way"
+  },
+  "analyze": {
+    "killed": [
+      "pinning exact keyframe literals: design bands allow a legitimate feel tweak while catching a doubled value",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_enemy_animation.py"
+    ],
+    "survivor": "one band test over all four shipped clips"
+  },
+  "fix": {
+    "shooter": "tests/test_enemy_animation.py gains the band guard (now 6 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "changing mite_idle's breathe key 1.06 to 1.2 fails the guard; the clip was restored byte-identically (sha256 3ce0d13c1df7572c799197eaf5888f87c9369a1fab696df4b8a6364fa1a74d85)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "800 passed (799 + 1 new clip-band guard)",
+      "timing_note": "gates and suite ran under heavy machine load (359.9 s test phase, 215.5 s standalone run); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

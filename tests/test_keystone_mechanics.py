@@ -114,7 +114,9 @@ def test_scene_batches_plan_shared_static_groups():
     assert budget["triangles"] >= 300
     assert len(scene_fingerprint(g.scene)) == 64
     plan = plan_batches(g.scene)
-    assert plan["groups"] == 8, plan["groups"]
+    # Cycle 178: the viewmodel moved to a CameraRig on OVERLAY_LAYER, so its
+    # shared-cube group is no longer part of the static level batch (8 -> 7).
+    assert plan["groups"] == 7, plan["groups"]
     assert plan["batched_calls"] == plan["groups"]
     assert plan["saved_calls"] == plan["draw_calls"] - plan["batched_calls"]
     assert plan["draw_calls"] <= 50, plan["draw_calls"]
@@ -133,7 +135,8 @@ def test_scene_budget_invariants_pass_with_presentation_node():
     g.scene.add(accent)
     # Exact pins would fail (node count changed), but budget invariants hold
     budget = assert_scene_budget(g.scene, max_nodes=60, max_triangles=650)
-    assert budget["nodes"] == 36
+    # The camera-rig root added one scene node in cycle 178 (36 -> 37).
+    assert budget["nodes"] == 37
 
 
 

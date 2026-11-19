@@ -1,0 +1,36 @@
+{
+  "cycle": 199,
+  "area": "Testbed audit: the bot preview's nav grid",
+  "find": {
+    "report_claim": "cycle 196 unified nav_plan_report and nav_authoring_report at 244 blocked cells, but bot_nav_preview still built a 143-cell cover-only grid from arena_tile_report and took its goal from the unified grid",
+    "live_evidence": "the local NavAgent was planning on one level model while the goal came from another; a wall-only change could move the route plan without moving the preview, or vice versa",
+    "consumer_evidence": "after the fix bot_nav_preview reports 244 blocked_cells and goal [20,14], identical to _nav_grid and nav_plan_report"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py:bot_nav_preview (tile-derived grid) versus _nav_grid (collider-derived)",
+      "tests/test_keystone_bot_nav_grid_mechanics.py design: expose blocked_cells as an additive report field",
+      "cycle 196's grid-unification finding"
+    ],
+    "killed": [
+      "leaving three nav grid derivations: the exact two-source-of-truth problem cycle 196 fixed elsewhere",
+      "changing the tile report to match the nav grid: TileMap is a different authoring artefact and its shipped counts must stay",
+      "replacing the NavAgent preview: it is the only consumer of that integration layer and was just added in cycle 191"
+    ],
+    "survivor": "bot_nav_preview now uses _arena_layout() and _nav_grid(0.0), and exposes blocked_cells so parity is testable"
+  },
+  "fix": {
+    "shooter": "shooter/game.py replaces the bot preview's tile-derived grid with the shared authoritative grid and adds an additive blocked_cells field; tests/test_keystone_bot_nav_grid_mechanics.py (4 tests) pins blocked-set parity, endpoint agreement, resized-arena propagation and sim isolation; README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "2 of 4 new tests failed with KeyError: 'blocked_cells' before the field and grid switch existed",
+      "measured": "bot preview 244 blocked cells and goal [20,14], matching _nav_grid (244) and nav_plan_report goal [20,14]",
+      "mutation": "restoring the cover-only tile grid fails 2 of 4 tests; game.py restored byte-identically (sha256 f8241e427baf6521d4131f676012e820d9dc3500f8f047588e5b6971a8052ed1)",
+      "codebase_map": "regenerated after the refactor and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

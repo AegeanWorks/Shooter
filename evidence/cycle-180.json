@@ -1,0 +1,39 @@
+{
+  "cycle": 180,
+  "area": "Keystone testbed: scene picking as a crosshair query",
+  "find": {
+    "report_claim": "picking is a Keystone module for asking 'what is under this ray' against visible world meshes, and was one of 21 modules the shooter had never imported",
+    "live_evidence": "the game already casts sim rays for combat but had no scene-level answer for AI/soak reports; cycle 178 moved the viewmodel to an overlay-layer rig, giving picking a real exclusion case to prove",
+    "consumer_evidence": "raycast_scene skips overlay and hidden nodes and hit_report returns a JSON-safe summary with deterministic tie-breaking"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/picking.py: raycast_scene(), hit_report(), OVERLAY_LAYER exclusion",
+      "shooter/game.py:_sync_scene (eye/forward available), build_scene (report reset)",
+      "probe of the shipped arena: straight ahead hits cover-5 at 17.5 m, yaw 0.8 hits wall-e, pitch -0.4 hits floor, pitch 1.4 misses cleanly"
+    ],
+    "killed": [
+      "reusing the sim's combat ray: that answers about colliders and damage, not the rendered scene, and would couple a presentation report to gameplay",
+      "picking without ignoring the muzzle: the flash is a short-lived world node and must never be reported as the crosshair target",
+      "a stored per-frame report: the first implementation made the test gate take 547 s instead of ~150 s because raycast_scene recomputes world bounds for every visible mesh on every simulation frame"
+    ],
+    "survivor": "an on-demand crosshair_pick() query backed by raycast_scene + hit_report, with the muzzle ignored and overlay nodes excluded by the module"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports Ray/hit_report/raycast_scene and exposes crosshair_pick() returning a JSON-safe scene hit from the sim eye along the sim aim; tests/test_keystone_picking_mechanics.py (5 tests) pins world hits, aim following, a clean sky miss, overlay exclusion and sim isolation; README testbed matrix and tree name the consumer and test",
+    "performance_correction": "the initial version cast the ray in _sync_scene and stored the report; the gate's test phase jumped from ~145 s to 547 s. It was converted to a query, after which the same gate took 97 s. The cycle-note and evidence record this so the per-frame form is not reintroduced"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "4 of 5 new tests failed with AttributeError before the consumer existed",
+      "mutation": "replacing the raycast with hit_report(None) fails 3 of 5 tests; game.py restored byte-identically (sha256 c9ce926a35eec59709d47bdca577f4e3c7614c93866d69e879a816cf08c42beb)",
+      "measured_hits": "yaw 0 -> cover-5 @ 17.5 m; yaw 0.8 -> wall-e @ 27.18 m; pitch -0.4 -> floor @ 4.16 m; pitch 1.4 -> hit=False; overlay viewmodel never picked",
+      "gate_timing": "per-frame report 547 s -> on-demand query 97 s for the test phase, 5/5 gates both times",
+      "codebase_map": "regenerated after the new import, method and test module",
+      "tests": "673 passed (668 + 5 new picking tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

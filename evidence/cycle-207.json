@@ -1,0 +1,32 @@
+{
+  "cycle": 207,
+  "area": "Cross-process determinism of the testbed report",
+  "find": {
+    "report_claim": "cycle 169 proved the sim is stable across PYTHONHASHSEED values, but the on-demand reports used as AI/soak evidence (asset digests, nav sets, aggregate sources) had never been checked across processes",
+    "live_evidence": "a probe of testbed_report() under seeds 0, 1 and 424242 produced one stable hash (99a985cd7eba4b1fce1c83fc4c9f32f0), so the new guard could be pinned without a production change",
+    "consumer_evidence": "the new test runs a fresh interpreter per seed and asserts one aggregate report hash"
+  },
+  "analyze": {
+    "killed": [
+      "changing production code without evidence: the reports were already stable, so this is a guard rather than a fix",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the test went into the already-listed test_cross_process_determinism.py",
+      "using an unordered set for sources: the mutation check shows it makes the report hash seed-dependent"
+    ],
+    "survivor": "a fourth cross-process test hashing the aggregate report under three hash seeds"
+  },
+  "fix": {
+    "shooter": "tests/test_cross_process_determinism.py gains a helper that runs ShooterGame().build_scene().testbed_report() in a fresh interpreter with PYTHONPATH set, and a test asserting one hash across seeds 0, 1 and 424242; no production code changed and the README budget is unchanged"
+  },
+  "proof": {
+    "shooter": {
+      "measured": "aggregate report hash 99a985cd7eba4b1fce1c83fc4c9f32f0 for seeds 0, 1 and 424242",
+      "mutation": "replacing sorted(sources) with list(set(sources)) fails the new test; game.py restored byte-identically (sha256 8fb027cf7ab0463476ac850da540ed5f4618e4c7411085e50169138af3e1d947)",
+      "readme_budget": "unchanged at 35,661 / 37,500 chars (1,839 left)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "796 passed (795 + 1 new cross-process test)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

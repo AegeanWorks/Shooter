@@ -1,0 +1,30 @@
+{
+  "cycle": 213,
+  "area": "Testbed audit: warden core state-machine contract",
+  "find": {
+    "report_claim": "test_boss_anim_state pinned state count, clip targets and pulse peaks, but the shipped .kstate transition operators, threshold, durations and loop/speed had no magnitude assertions",
+    "live_evidence": "the loaded machine has calm->charge (windup greater 0.5, duration 0.08) and charge->calm (windup less 0.5, duration 0.12), both states loop=true speed=1.0",
+    "consumer_evidence": "a new band test checks both transitions by source/target and every state's loop/speed"
+  },
+  "analyze": {
+    "killed": [
+      "pinning exact literals: bands allow a feel tweak while catching a doubled duration or shifted threshold",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_boss_anim_state.py"
+    ],
+    "survivor": "one transition-contract band test on the loaded machine"
+  },
+  "fix": {
+    "shooter": "tests/test_boss_anim_state.py gains the guard (now 6 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "changing the calm->charge duration 0.08 to 0.5 fails the guard; warden_core.kstate restored byte-identically (sha256 ec61276cd34a5a86ec5b6ca3e436e2b2fa6ef645d92b1a5988283f56676ef4d3)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "802 passed (801 + 1 new state-machine guard)",
+      "timing_note": "suite ran under machine load (228 s standalone, 225 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

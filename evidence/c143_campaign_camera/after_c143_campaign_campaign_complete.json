@@ -1,0 +1,5375 @@
+{
+  "fx": {
+    "alive": 0,
+    "drawn": 0,
+    "enabled": true
+  },
+  "hash": "d19025719b84ddb9dd6a32d8b82fbd09",
+  "image": {
+    "height": 540,
+    "path": "after_c143_campaign_campaign_complete.png",
+    "png_sha256": "e85797f7fd76b83a3fcaf4d443ee9a96ac9e2697bf4945f8a6ef0f8f5afb64df",
+    "rgba_sha256": "ee10a1192463479cea01c19d89685c018b455914a95fc68c541d25c4cd0b476e",
+    "width": 960
+  },
+  "scene": {
+    "bloom": {
+      "enabled": true
+    },
+    "camera": {
+      "far": 1000.0,
+      "fov_y": 52.0,
+      "near": 0.1,
+      "pitch": -0.1096,
+      "position": [
+        4.698,
+        1.9,
+        1.71
+      ],
+      "yaw": -1.2217
+    },
+    "color": {
+      "enabled": true
+    },
+    "culling": {
+      "enabled": true
+    },
+    "node_count": 113,
+    "nodes": [
+      {
+        "bbox": null,
+        "components": [],
+        "id": "root",
+        "layer": "default",
+        "name": "",
+        "parent": null,
+        "parent_id": null,
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "visible": true,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          243.62,
+          960.0,
+          540.0
+        ],
+        "components": [],
+        "id": "floor",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.5,
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 8.0,
+          "specular": 0.08,
+          "texture": {
+            "height": 128,
+            "name": "floor-grid",
+            "sha256": "9eb84144f6fd21f8c5ea1897a324199bda0e97f0269ab0f48f2fb99973f72639",
+            "width": 128
+          }
+        },
+        "name": "floor",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 2,
+        "visible": true,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          682.31,
+          0.0,
+          960.0,
+          540.0
+        ],
+        "components": [],
+        "id": "wall-n",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.15,
+          "color": [
+            0.4,
+            0.43,
+            0.5
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.25,
+          "texture": {
+            "height": 64,
+            "name": "wall-panel",
+            "sha256": "cf639e6952e0845f33c01af9cf5b60d9f4c0a34243c8f1a5e39042b8e44db8c9",
+            "width": 64
+          }
+        },
+        "name": "wall-n",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          1360.71,
+          227.96
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.0,
+          1.5,
+          -20.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          0.0,
+          0.0,
+          540.0
+        ],
+        "components": [],
+        "id": "wall-s",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.15,
+          "color": [
+            0.4,
+            0.43,
+            0.5
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.25,
+          "texture": {
+            "height": 64,
+            "name": "wall-panel",
+            "sha256": "cf639e6952e0845f33c01af9cf5b60d9f4c0a34243c8f1a5e39042b8e44db8c9",
+            "width": 64
+          }
+        },
+        "name": "wall-s",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.0,
+          1.5,
+          20.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          171.04,
+          712.14,
+          273.54
+        ],
+        "components": [],
+        "id": "wall-w",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.15,
+          "color": [
+            0.4,
+            0.43,
+            0.5
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.25,
+          "texture": {
+            "height": 64,
+            "name": "wall-panel",
+            "sha256": "cf639e6952e0845f33c01af9cf5b60d9f4c0a34243c8f1a5e39042b8e44db8c9",
+            "width": 64
+          }
+        },
+        "name": "wall-w",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          320.19,
+          218.51
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -20.0,
+          1.5,
+          0.0
+        ]
+      },
+      {
+        "bbox": null,
+        "components": [],
+        "id": "wall-e",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.15,
+          "color": [
+            0.4,
+            0.43,
+            0.5
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.25,
+          "texture": {
+            "height": 64,
+            "name": "wall-panel",
+            "sha256": "cf639e6952e0845f33c01af9cf5b60d9f4c0a34243c8f1a5e39042b8e44db8c9",
+            "width": 64
+          }
+        },
+        "name": "wall-e",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          20.0,
+          1.5,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          509.96,
+          225.55,
+          618.54,
+          309.21
+        ],
+        "components": [],
+        "id": "cover-0",
+        "layer": "default",
+        "material": {
+          "checker_scale": 1.0,
+          "color": [
+            0.64,
+            0.5,
+            0.32
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 18.0,
+          "specular": 0.15,
+          "texture": {
+            "height": 64,
+            "name": "cover-panel",
+            "sha256": "68f00c5a8b0b81216422da5e6b9afc9c5a2dfcbfd9f1f36cfbb70bb05dfc69dd",
+            "width": 64
+          }
+        },
+        "name": "cover-0",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          558.34,
+          262.21
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -6.0,
+          0.75,
+          -4.0
+        ]
+      },
+      {
+        "bbox": [
+          960.0,
+          304.29,
+          960.0,
+          540.0
+        ],
+        "components": [],
+        "id": "cover-1",
+        "layer": "default",
+        "material": {
+          "checker_scale": 1.0,
+          "color": [
+            0.64,
+            0.5,
+            0.32
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 18.0,
+          "specular": 0.15,
+          "texture": {
+            "height": 64,
+            "name": "cover-panel",
+            "sha256": "68f00c5a8b0b81216422da5e6b9afc9c5a2dfcbfd9f1f36cfbb70bb05dfc69dd",
+            "width": 64
+          }
+        },
+        "name": "cover-1",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          4258.74,
+          961.45
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          6.0,
+          0.75,
+          -4.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          230.34,
+          126.97,
+          349.98
+        ],
+        "components": [],
+        "id": "cover-2",
+        "layer": "default",
+        "material": {
+          "checker_scale": 1.0,
+          "color": [
+            0.64,
+            0.5,
+            0.32
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 18.0,
+          "specular": 0.15,
+          "texture": {
+            "height": 64,
+            "name": "cover-panel",
+            "sha256": "68f00c5a8b0b81216422da5e6b9afc9c5a2dfcbfd9f1f36cfbb70bb05dfc69dd",
+            "width": 64
+          }
+        },
+        "name": "cover-2",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          64.79,
+          280.27
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -6.0,
+          0.75,
+          5.0
+        ]
+      },
+      {
+        "bbox": null,
+        "components": [],
+        "id": "cover-3",
+        "layer": "default",
+        "material": {
+          "checker_scale": 1.0,
+          "color": [
+            0.64,
+            0.5,
+            0.32
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 18.0,
+          "specular": 0.15,
+          "texture": {
+            "height": 64,
+            "name": "cover-panel",
+            "sha256": "68f00c5a8b0b81216422da5e6b9afc9c5a2dfcbfd9f1f36cfbb70bb05dfc69dd",
+            "width": 64
+          }
+        },
+        "name": "cover-3",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          6.0,
+          0.75,
+          5.0
+        ]
+      },
+      {
+        "bbox": [
+          408.55,
+          306.92,
+          960.0,
+          540.0
+        ],
+        "components": [],
+        "id": "cover-4",
+        "layer": "default",
+        "material": {
+          "checker_scale": 1.0,
+          "color": [
+            0.64,
+            0.5,
+            0.32
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 18.0,
+          "specular": 0.15,
+          "texture": {
+            "height": 64,
+            "name": "cover-panel",
+            "sha256": "68f00c5a8b0b81216422da5e6b9afc9c5a2dfcbfd9f1f36cfbb70bb05dfc69dd",
+            "width": 64
+          }
+        },
+        "name": "cover-4",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          650.45,
+          469.82
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          2.5,
+          0.6,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          924.08,
+          200.29,
+          960.0,
+          370.92
+        ],
+        "components": [],
+        "id": "cover-5",
+        "layer": "default",
+        "material": {
+          "checker_scale": 1.0,
+          "color": [
+            0.64,
+            0.5,
+            0.32
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 18.0,
+          "specular": 0.15,
+          "texture": {
+            "height": 64,
+            "name": "cover-panel",
+            "sha256": "68f00c5a8b0b81216422da5e6b9afc9c5a2dfcbfd9f1f36cfbb70bb05dfc69dd",
+            "width": 64
+          }
+        },
+        "name": "cover-5",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          1094.3,
+          268.3
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.0,
+          1.0,
+          -10.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          245.62,
+          0.0,
+          307.68
+        ],
+        "components": [],
+        "id": "cover-6",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.38,
+            0.5,
+            0.58
+          ],
+          "emissive": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.2,
+          "texture": null
+        },
+        "name": "cover-6",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -259.62,
+          268.57
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -15.5,
+          0.35,
+          15.0
+        ]
+      },
+      {
+        "bbox": [
+          690.4,
+          0.0,
+          960.0,
+          190.66
+        ],
+        "components": [],
+        "id": "trim-wall-n",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-wall-n",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          1363.55,
+          158.71
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.0,
+          2.94,
+          -19.52
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          0.0,
+          0.0,
+          176.19
+        ],
+        "components": [],
+        "id": "trim-wall-s",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-wall-s",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.0,
+          2.94,
+          19.52
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          172.09,
+          705.0,
+          190.5
+        ],
+        "components": [],
+        "id": "trim-wall-w",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-wall-w",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          319.93,
+          184.02
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -19.52,
+          2.94,
+          0.0
+        ]
+      },
+      {
+        "bbox": null,
+        "components": [],
+        "id": "trim-wall-e",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-wall-e",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          19.52,
+          2.94,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          508.13,
+          222.22,
+          621.61,
+          230.62
+        ],
+        "components": [],
+        "id": "trim-cover-0",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-cover-0",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          558.9,
+          225.85
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -6.0,
+          1.54,
+          -4.0
+        ]
+      },
+      {
+        "bbox": [
+          960.0,
+          283.91,
+          960.0,
+          540.0
+        ],
+        "components": [],
+        "id": "trim-cover-1",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-cover-1",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          4685.46,
+          471.22
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          6.0,
+          1.54,
+          -4.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          226.03,
+          124.44,
+          239.64
+        ],
+        "components": [],
+        "id": "trim-cover-2",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-cover-2",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          60.77,
+          231.6
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -6.0,
+          1.54,
+          5.0
+        ]
+      },
+      {
+        "bbox": null,
+        "components": [],
+        "id": "trim-cover-3",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-cover-3",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          6.0,
+          1.54,
+          5.0
+        ]
+      },
+      {
+        "bbox": [
+          400.32,
+          294.84,
+          960.0,
+          490.29
+        ],
+        "components": [],
+        "id": "trim-cover-4",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-cover-4",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          654.86,
+          344.89
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          2.5,
+          1.24,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          929.85,
+          193.09,
+          960.0,
+          203.78
+        ],
+        "components": [],
+        "id": "trim-cover-5",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "trim-cover-5",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          1102.66,
+          199.77
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.0,
+          2.04,
+          -10.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          242.97,
+          0.0,
+          308.87
+        ],
+        "components": [],
+        "id": "platform-rim",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "platform-rim",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -261.8,
+          253.74
+        ],
+        "tags": [],
+        "triangles": 96,
+        "visible": true,
+        "world": [
+          -15.5,
+          0.74,
+          15.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          271.17,
+          0.0,
+          279.69
+        ],
+        "components": [
+          "PadPulseComponent"
+        ],
+        "id": "platform-pad",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.18,
+            0.62,
+            0.72
+          ],
+          "emissive": [
+            0.05,
+            0.34,
+            0.42
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "platform-pad",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -72.88,
+          275.18
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -15.5,
+          0.02,
+          11.2
+        ]
+      },
+      {
+        "bbox": [
+          864.3,
+          179.47,
+          878.52,
+          259.5
+        ],
+        "components": [],
+        "id": "pilaster-00",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-00",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          871.34,
+          219.74
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -10.0,
+          1.5,
+          -19.4
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          127.21,
+          0.0,
+          344.62
+        ],
+        "components": [],
+        "id": "pilaster-01",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-01",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -1064.69,
+          237.82
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -10.0,
+          1.5,
+          19.4
+        ]
+      },
+      {
+        "bbox": [
+          960.0,
+          0.0,
+          960.0,
+          540.0
+        ],
+        "components": [],
+        "id": "pilaster-02",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-02",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          5763.12,
+          307.3
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          10.0,
+          1.5,
+          -19.4
+        ]
+      },
+      {
+        "bbox": null,
+        "components": [],
+        "id": "pilaster-03",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-03",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          10.0,
+          1.5,
+          19.4
+        ]
+      },
+      {
+        "bbox": [
+          534.76,
+          185.77,
+          540.52,
+          248.91
+        ],
+        "components": [],
+        "id": "pilaster-04",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-04",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          537.62,
+          217.5
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -19.4,
+          1.5,
+          -10.0
+        ]
+      },
+      {
+        "bbox": null,
+        "components": [],
+        "id": "pilaster-05",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-05",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          19.4,
+          1.5,
+          -10.0
+        ]
+      },
+      {
+        "bbox": [
+          22.31,
+          177.62,
+          38.03,
+          262.59
+        ],
+        "components": [],
+        "id": "pilaster-06",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-06",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          30.28,
+          220.39
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          -19.4,
+          1.5,
+          10.0
+        ]
+      },
+      {
+        "bbox": null,
+        "components": [],
+        "id": "pilaster-07",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.5,
+            0.58,
+            0.66
+          ],
+          "emissive": [
+            0.02,
+            0.06,
+            0.08
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.25,
+          "texture": null
+        },
+        "name": "pilaster-07",
+        "parent": "",
+        "parent_id": "root",
+        "screen": null,
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          19.4,
+          1.5,
+          10.0
+        ]
+      },
+      {
+        "bbox": [
+          242.33,
+          310.88,
+          242.33,
+          310.88
+        ],
+        "components": [],
+        "id": "enemy-00",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.42,
+            0.12
+          ],
+          "emissive": [
+            1.0,
+            0.3,
+            0.04
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 64.0,
+          "specular": 0.8,
+          "texture": null
+        },
+        "name": "enemy-00",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          242.33,
+          310.88
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          1.1,
+          2.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-01",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-01",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-02",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-02",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-03",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-03",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-04",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-04",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-05",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-05",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-06",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-06",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-07",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-07",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-08",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-08",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-09",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-09",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-10",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-10",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-11",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-11",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-12",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-12",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-13",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-13",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-14",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-14",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-15",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-15",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-16",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-16",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-17",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-17",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-18",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-18",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-19",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-19",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-20",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-20",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-21",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-21",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-22",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-22",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "enemy-23",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.95,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.55,
+            0.18,
+            0.02
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "enemy-23",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 320,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          246.97,
+          66.11,
+          333.0
+        ],
+        "components": [],
+        "id": "tracer-00",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-00",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -352.34,
+          278.97
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.11,
+          1.502,
+          5.115
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-01",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-01",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-02",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-02",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-03",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-03",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-04",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-04",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-05",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-05",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-06",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-06",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-07",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-07",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-08",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-08",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-09",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-09",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-10",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-10",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-11",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-11",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-12",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-12",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-13",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-13",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-14",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-14",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "tracer-15",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.85,
+            0.3
+          ],
+          "emissive": [
+            0.9,
+            0.65,
+            0.15
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "tracer-15",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          292.08,
+          0.0,
+          306.84
+        ],
+        "components": [],
+        "id": "muzzle",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.95,
+            0.75
+          ],
+          "emissive": [
+            1.0,
+            0.9,
+            0.6
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "muzzle",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -993.99,
+          299.36
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.16,
+          1.5,
+          7.05
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          319.78,
+          0.0,
+          340.9
+        ],
+        "components": [],
+        "id": "viewmodel-body",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.36,
+            0.44,
+            0.56
+          ],
+          "emissive": [
+            0.04,
+            0.08,
+            0.14
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.55,
+          "texture": null
+        },
+        "name": "viewmodel-body",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -1203.95,
+          330.06
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.27,
+          1.41,
+          7.4
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          326.38,
+          0.0,
+          338.64
+        ],
+        "components": [],
+        "id": "viewmodel-barrel",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.36,
+            0.44,
+            0.56
+          ],
+          "emissive": [
+            0.04,
+            0.08,
+            0.14
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.55,
+          "texture": null
+        },
+        "name": "viewmodel-barrel",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -1108.03,
+          332.37
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.27,
+          1.385,
+          7.2
+        ]
+      },
+      {
+        "bbox": [
+          0.0,
+          340.52,
+          0.0,
+          371.49
+        ],
+        "components": [],
+        "id": "viewmodel-grip",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.36,
+            0.44,
+            0.56
+          ],
+          "emissive": [
+            0.04,
+            0.08,
+            0.14
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.55,
+          "texture": null
+        },
+        "name": "viewmodel-grip",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          -1234.76,
+          355.81
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": true,
+        "world": [
+          0.27,
+          1.31,
+          7.48
+        ]
+      },
+      {
+        "bbox": [
+          874.41,
+          290.65,
+          959.59,
+          348.06
+        ],
+        "components": [],
+        "id": "pickup:surge-pickup",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.25,
+            1.0,
+            0.45
+          ],
+          "emissive": [
+            0.1,
+            0.55,
+            0.2
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "surge-pickup",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          915.74,
+          317.96
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.5,
+          -6.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "pickup:surge-beam",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.25,
+            1.0,
+            0.45
+          ],
+          "emissive": [
+            0.1,
+            0.55,
+            0.2
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "surge-beam",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          443.98,
+          373.17,
+          518.49,
+          459.11
+        ],
+        "components": [],
+        "id": "pickup:surge-orb",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            0.25,
+            1.0,
+            0.45
+          ],
+          "emissive": [
+            0.1,
+            0.55,
+            0.2
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.35,
+          "texture": null
+        },
+        "name": "surge-orb",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 120,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          434.81,
+          361.1,
+          528.89,
+          465.57
+        ],
+        "components": [],
+        "id": "ammo-cache-0",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.68,
+            0.22
+          ],
+          "emissive": [
+            0.82,
+            0.38,
+            0.04
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "ammo-cache-0",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 24,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          434.81,
+          361.1,
+          528.89,
+          465.57
+        ],
+        "components": [],
+        "id": "ammo-cache-1",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.68,
+            0.22
+          ],
+          "emissive": [
+            0.82,
+            0.38,
+            0.04
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "ammo-cache-1",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 24,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          434.81,
+          361.1,
+          528.89,
+          465.57
+        ],
+        "components": [],
+        "id": "ammo-cache-2",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.68,
+            0.22
+          ],
+          "emissive": [
+            0.82,
+            0.38,
+            0.04
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "ammo-cache-2",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 24,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          434.81,
+          361.1,
+          528.89,
+          465.57
+        ],
+        "components": [],
+        "id": "ammo-cache-3",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.68,
+            0.22
+          ],
+          "emissive": [
+            0.82,
+            0.38,
+            0.04
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 48.0,
+          "specular": 0.5,
+          "texture": null
+        },
+        "name": "ammo-cache-3",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 24,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          433.56,
+          363.66,
+          530.36,
+          471.8
+        ],
+        "components": [],
+        "id": "warden-core",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.88,
+            0.55
+          ],
+          "emissive": [
+            1.0,
+            0.48,
+            0.08
+          ],
+          "metallic": 0.1,
+          "roughness": 0.4,
+          "shininess": 64.0,
+          "specular": 0.8,
+          "texture": {
+            "height": 16,
+            "name": "core-checker",
+            "sha256": "bf8a5b15f914b3e3a48742b7c8c4f128882e7195fc3bceda9cc936fb846cdb90",
+            "width": 16
+          }
+        },
+        "name": "warden-core",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 192,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "spawn-mark-0",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.35,
+            0.18
+          ],
+          "emissive": [
+            0.75,
+            0.12,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "spawn-mark-0",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "spawn-mark-1",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.35,
+            0.18
+          ],
+          "emissive": [
+            0.75,
+            0.12,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "spawn-mark-1",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "spawn-mark-2",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.35,
+            0.18
+          ],
+          "emissive": [
+            0.75,
+            0.12,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "spawn-mark-2",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "spawn-mark-3",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.35,
+            0.18
+          ],
+          "emissive": [
+            0.75,
+            0.12,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 32.0,
+          "specular": 0.4,
+          "texture": null
+        },
+        "name": "spawn-mark-3",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-0",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-0",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-1",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-1",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-2",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-2",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-3",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-3",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-4",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-4",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-5",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-5",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-6",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-6",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-7",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-7",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-8",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-8",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-9",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-9",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-10",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-10",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-11",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-11",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-12",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-12",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-13",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-13",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-14",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-14",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-15",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-15",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-16",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-16",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-17",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-17",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-18",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-18",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-19",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-19",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-20",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-20",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-21",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-21",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-22",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-22",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "bbox": [
+          414.55,
+          344.47,
+          553.51,
+          499.96
+        ],
+        "components": [],
+        "id": "slam-ring-23",
+        "layer": "default",
+        "material": {
+          "checker_scale": 0.0,
+          "color": [
+            1.0,
+            0.45,
+            0.15
+          ],
+          "emissive": [
+            0.8,
+            0.2,
+            0.03
+          ],
+          "metallic": 0.0,
+          "roughness": 0.7,
+          "shininess": 24.0,
+          "specular": 0.3,
+          "texture": null
+        },
+        "name": "slam-ring-23",
+        "parent": "",
+        "parent_id": "root",
+        "screen": [
+          480.0,
+          413.47
+        ],
+        "tags": [],
+        "triangles": 12,
+        "visible": false,
+        "world": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "post": {
+      "enabled": true
+    },
+    "shadows": {
+      "enabled": true,
+      "size": 1024
+    },
+    "sprites": {
+      "enabled": true
+    }
+  },
+  "schema": 11,
+  "stats": {
+    "content_bbox": [
+      0,
+      0,
+      959,
+      539
+    ],
+    "content_pixels": 368547,
+    "content_ratio": 0.7109,
+    "dominant_colors": [
+      {
+        "pixels": 163742,
+        "rgb": [
+          8,
+          8,
+          8
+        ]
+      },
+      {
+        "pixels": 45608,
+        "rgb": [
+          24,
+          24,
+          40
+        ]
+      },
+      {
+        "pixels": 28332,
+        "rgb": [
+          120,
+          88,
+          56
+        ]
+      },
+      {
+        "pixels": 24726,
+        "rgb": [
+          56,
+          216,
+          232
+        ]
+      },
+      {
+        "pixels": 23465,
+        "rgb": [
+          40,
+          40,
+          40
+        ]
+      }
+    ],
+    "grid_luma": [
+      [
+        36.26,
+        14.5,
+        8.19,
+        28.31,
+        28.74,
+        4.21,
+        35.02,
+        7.5
+      ],
+      [
+        6.55,
+        8.15,
+        6.66,
+        16.03,
+        15.46,
+        5.54,
+        46.27,
+        18.82
+      ],
+      [
+        25.96,
+        28.05,
+        26.97,
+        23.63,
+        25.3,
+        19.33,
+        42.96,
+        30.75
+      ],
+      [
+        68.02,
+        59.76,
+        60.91,
+        53.54,
+        82.95,
+        52.66,
+        50.53,
+        57.2
+      ],
+      [
+        63.68,
+        35.24,
+        45.04,
+        78.88,
+        126.82,
+        123.39,
+        84.62,
+        44.35
+      ],
+      [
+        36.04,
+        33.27,
+        33.45,
+        94.34,
+        178.76,
+        177.65,
+        171.13,
+        150.68
+      ],
+      [
+        30.22,
+        43.42,
+        50.89,
+        71.49,
+        132.36,
+        152.98,
+        124.96,
+        88.05
+      ],
+      [
+        49.63,
+        46.86,
+        37.86,
+        50.96,
+        66.68,
+        94.03,
+        89.77,
+        67.83
+      ]
+    ],
+    "mean_luma": 57.31,
+    "mean_rgb": [
+      43.31,
+      60.83,
+      63.66
+    ]
+  },
+  "ui": {
+    "buttons": [],
+    "labels": [
+      {
+        "color": [
+          0.95,
+          0.95,
+          0.97,
+          1.0
+        ],
+        "scale": 2,
+        "text": "WAVE 4  SCORE 7450",
+        "x": 373,
+        "y": 34
+      },
+      {
+        "color": [
+          1.0,
+          0.62,
+          0.2,
+          1.0
+        ],
+        "scale": 2,
+        "text": "STREAK X1  +10%",
+        "x": 391,
+        "y": 52
+      },
+      {
+        "color": [
+          0.55,
+          0.6,
+          0.68,
+          1.0
+        ],
+        "scale": 2,
+        "text": "BEST 7450",
+        "x": 427,
+        "y": 16
+      },
+      {
+        "color": [
+          1.0,
+          0.62,
+          0.2,
+          1.0
+        ],
+        "scale": 2,
+        "text": "CAMPAIGN COMPLETE",
+        "x": 379,
+        "y": 116
+      },
+      {
+        "color": [
+          1.0,
+          0.72,
+          0.25,
+          1.0
+        ],
+        "scale": 2,
+        "text": "KEYSTONE",
+        "x": 24,
+        "y": 20
+      },
+      {
+        "color": [
+          0.92,
+          0.94,
+          0.97,
+          1.0
+        ],
+        "scale": 2,
+        "text": "SHOOTER",
+        "x": 24,
+        "y": 38
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "HP 100 - PULSE 29/120",
+        "x": 24,
+        "y": 56
+      },
+      {
+        "color": [
+          1.0,
+          0.72,
+          0.25,
+          1.0
+        ],
+        "scale": 2,
+        "text": "FPS --",
+        "x": 734,
+        "y": 20
+      },
+      {
+        "color": [
+          0.92,
+          0.94,
+          0.97,
+          1.0
+        ],
+        "scale": 2,
+        "text": "FRAME 0",
+        "x": 734,
+        "y": 38
+      },
+      {
+        "color": [
+          0.92,
+          0.94,
+          0.97,
+          1.0
+        ],
+        "scale": 2,
+        "text": "TIME 0.0S",
+        "x": 734,
+        "y": 56
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "960X540",
+        "x": 734,
+        "y": 74
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "DRAW 5 TRI 182",
+        "x": 734,
+        "y": 92
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "SHADOW 35 PASS",
+        "x": 734,
+        "y": 110
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "POST GRADE",
+        "x": 734,
+        "y": 128
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "BLOOM GLOW",
+        "x": 734,
+        "y": 146
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "AUDIO 5 VOX",
+        "x": 734,
+        "y": 164
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "CULL 19 OFFSCREEN",
+        "x": 734,
+        "y": 182
+      },
+      {
+        "color": [
+          0.6,
+          0.66,
+          0.74,
+          1.0
+        ],
+        "scale": 2,
+        "text": "WASD MOVE  MOUSE LOOK  E/Q UP/DOWN",
+        "x": 24,
+        "y": 488
+      },
+      {
+        "color": [
+          0.92,
+          0.94,
+          0.97,
+          1.0
+        ],
+        "scale": 2,
+        "text": "P PAUSE  H HIDE UI  F1 CURSOR  ESC QUIT",
+        "x": 24,
+        "y": 506
+      }
+    ],
+    "paused": false,
+    "visible": true
+  }
+}

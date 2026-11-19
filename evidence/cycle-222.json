@@ -1,0 +1,30 @@
+{
+  "cycle": 222,
+  "area": "Testbed audit: arena bounds integrity",
+  "find": {
+    "report_claim": "the shared arena layout helper pins size/origin math, but no test checked that the authored player spawn, pickup and cover rectangles actually lie inside the 40x40 arena and do not poke through its walls",
+    "live_evidence": "spawn (0,8), pickup (0,-6) and all seven covers are inside the arena half-extent 20; the last cover at x=-15.5,w=6 just fits (18.5 <= 20)",
+    "consumer_evidence": "a new bounds test checks centres, positive extents and wall clearance for every cover"
+  },
+  "analyze": {
+    "killed": [
+      "re-pinning the layout math: cycles 184/191/193/196 already fixed that; this cycle protects the authored coordinates against the layout",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_data_integrity.py"
+    ],
+    "survivor": "one arena-bounds integrity test (centres inside, positive extents, covers clear of walls)"
+  },
+  "fix": {
+    "shooter": "tests/test_data_integrity.py gains the guard (now 17 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "widening the edge cover w 6->12 makes |x|+w/2 = 21.5 exceed the half-extent 20 and fails the guard while its centre stays inside; levels.json restored byte-identically (sha256 9a7777adc88a3f0a93401a46e39795a29a72664bf43b9bd34d248e3e71293d93)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "812 passed (811 + 1 new arena-bounds guard)",
+      "timing_note": "suite ran under light machine load (107 s standalone, 190 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

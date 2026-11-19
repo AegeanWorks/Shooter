@@ -1,0 +1,32 @@
+{
+  "cycle": 204,
+  "area": "Testbed usability: one aggregate report",
+  "find": {
+    "report_claim": "cycles 178-203 added many no-argument on-demand report methods with no single discovery point; an AI consumer had to know ~17 method names",
+    "live_evidence": "the README testbed matrix lists each consumer test, but there was no single call returning the whole testbed state",
+    "consumer_evidence": "testbed_report() returns eight families plus a schema in one ~8 KB JSON document"
+  },
+  "analyze": {
+    "killed": [
+      "changing any existing report: the aggregate is additive and each composed report keeps its own schema",
+      "including arg-taking reports (data_error_report needs an error): the aggregate composes only no-argument reports",
+      "caching the aggregate: it must reflect the current sim state on each call"
+    ],
+    "survivor": "a single testbed_report() composing engine, contracts, nav, animation, steering, picking, assets and bot families"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds testbed_report(); tests/test_testbed_report_mechanics.py (4 tests) pins family coverage, nested schemas, JSON safety/reproducibility and sim isolation; README documents the entry point and names the test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 4 new tests failed before the aggregate existed (ShooterGame has no testbed_report)",
+      "measured": "families engine, contracts, nav, animation, steering, picking, assets, bot; ~8198 JSON bytes; nav plan 14 steps; 10 asset digests; engine 0.45.0",
+      "mutation": "dropping the assets family fails 2 of 4 tests; game.py restored byte-identically (sha256 ee69e75067a3a13021fdac474f93c72c987e7945fa09c53617f2801ac20eb30f)",
+      "codebase_map": "regenerated after the new method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "787 passed (783 + 4 new aggregate tests)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

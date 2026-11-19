@@ -1,0 +1,30 @@
+{
+  "cycle": 226,
+  "area": "Testbed audit: spawn capacity and progression invariants",
+  "find": {
+    "report_claim": "max_alive was pinned only to an observable band (<=24) via the long-wave test, so lowering it to 2 would still pass that test while making full waves unspawnable; pickup_wave vs win_wave ordering was unpinned",
+    "live_evidence": "wave totals are 4/7/11/14/15, max_alive=24 covers the largest wave (15), and pickup_wave=2 precedes win_wave=4",
+    "consumer_evidence": "a new cross-field test checks max_alive >= every wave total and pickup_wave < win_wave"
+  },
+  "analyze": {
+    "killed": [
+      "re-pinning max_alive magnitude: cycle ~177 already bands it; this cycle protects the relationship to wave demand",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_data_integrity.py"
+    ],
+    "survivor": "one cross-field spawn-capacity and progression test"
+  },
+  "fix": {
+    "shooter": "tests/test_data_integrity.py gains the guard (now 18 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "lowering max_alive 24->2 fails the new guard while the existing long-wave cap test still passes, proving it was a genuine survivor; levels.json restored byte-identically (sha256 9a7777adc88a3f0a93401a46e39795a29a72664bf43b9bd34d248e3e71293d93)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "816 passed (815 + 1 new spawn-capacity guard)",
+      "timing_note": "suite ran under moderate machine load (130 s standalone, 189 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

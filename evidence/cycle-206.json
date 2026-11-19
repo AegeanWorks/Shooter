@@ -1,0 +1,41 @@
+{
+  "cycle": 206,
+  "area": "Testbed audit: the last unswept juice.json keys",
+  "find": {
+    "report_claim": "cycles 174/177 swept twelve juice constants; thirteen other keys had never been mutated",
+    "live_evidence": "a 13-case full-suite sweep found 8 survivors with all 788 tests green and 5 caught (low_hp_cue.hz, flash_scale, score_pop_s, hurt_cue_s, dry_fire_cd_s)",
+    "survivors": [
+      "reticle.hit_gap_px 4.0 -> 8.0",
+      "reticle.max_gap_px 40.0 -> 80.0",
+      "low_hp_cue.max_alpha 0.44 -> 0.88",
+      "death_fx_s 0.15 -> 0.3",
+      "pickup_fx_s 0.3 -> 0.6",
+      "killmark_s 0.18 -> 0.36",
+      "crosshair_hit_s 0.12 -> 0.24",
+      "hit_flinch_s 0.25 -> 0.5"
+    ]
+  },
+  "analyze": {
+    "killed": [
+      "adding a new test file: the README is 35,661 / 37,500 chars, so the seven new tests went into the already-listed test_juice_tuning.py and the budget did not move",
+      "pinning the literals: observable bands on gap sizes, alpha and timer values were used",
+      "passing a canvas class instead of the instance in the low-HP probe: the first draft did that and was corrected"
+    ],
+    "survivor": "seven behaviour tests covering the eight survivors (killmark and hitmark share one test)"
+  },
+  "fix": {
+    "shooter": "tests/test_juice_tuning.py grows from 7 to 14 tests; no production code changed and juice.json was restored byte-identically (sha256 0f5a961e3a944e39659610194418ac27c0713c40a53432995d94645fe5bb30a3)"
+  },
+  "proof": {
+    "shooter": {
+      "measured": "hit gap delta 4 px; capped wide-spread gap 40; low-HP peak alpha 0.44; death_t 0.15; pickup_fx_t 0.283 after one frame; killmark 0.18; hitmark 0.12; hit_t 0.25",
+      "mutation": "all eight survivors fail their targeted test when doubled; juice hash matches the pre-sweep value",
+      "readme_budget": "unchanged at 35,661 / 37,500 chars (1,839 left)",
+      "codebase_map": "regenerated after the new tests",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "795 passed (788 + 7 new tuning tests)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

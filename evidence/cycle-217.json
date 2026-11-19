@@ -1,0 +1,31 @@
+{
+  "cycle": 217,
+  "area": "Testbed audit: shipped cache crate mesh",
+  "find": {
+    "report_claim": "test_cache_asset pinned 24 triangles and file-backed registration, but the triangulated vertex count and the 0.6 body + 0.08 lid rim bounds were unasserted",
+    "live_evidence": "the shipped OBJ loads as 48 positions, 72 indices, 24 triangles, bounds low (-0.34, -0.30, -0.34) high (0.34, 0.38, 0.34)",
+    "consumer_evidence": "a new band test pins counts and bounds on the loaded mesh"
+  },
+  "analyze": {
+    "killed": [
+      "hardcoding vertices: design bands on counts and bounds allow a legitimate rim tweak while catching a mistyped coordinate",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_cache_asset.py"
+    ],
+    "survivor": "one mesh-shape and bound guard"
+  },
+  "fix": {
+    "shooter": "tests/test_cache_asset.py gains the guard (now 6 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "own_test_bug": "mesh.bounds() returns plain tuples, not Vec3; the first draft used .x/.y/.z and was corrected to indices",
+      "mutation": "moving a lid vertex from -0.34 to -0.44 fails the guard; cache_crate.obj restored byte-identically (sha256 a0de0a1c9b0f0c52557c996e1dae9e504f00805f558b77daefac00a8c2dd7ee5)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "806 passed (805 + 1 new mesh-shape guard)",
+      "timing_note": "suite ran under machine load (198 s standalone, 194 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

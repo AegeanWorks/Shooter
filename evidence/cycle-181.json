@@ -1,0 +1,39 @@
+{
+  "cycle": 181,
+  "area": "Keystone testbed: capture routes as reproducible proof artefacts",
+  "find": {
+    "report_claim": "keystone.evidence provides named Route/Checkpoint plans, capture_route, write_evidence and diff_evidence so before/after proof is a hashable artefact rather than a pair of ad-hoc filenames; the shooter had never imported it",
+    "live_evidence": "scripts/capture.py writes dozens of before/after PNG+report pairs by hand with bespoke route functions; no route summary or machine-readable diff existed",
+    "consumer_evidence": "capture_route only needs run(), capture() and scene, which the real headless Engine satisfies, so an isolated driver can own the evidence contract without changing the game"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/evidence.py: Route/Checkpoint validation, capture_route(), write_evidence(), diff_evidence()",
+      "scripts/capture.py:1-60 (existing engine setup and hand-written routes)",
+      "tests/test_readme_commands.py (only play.py commands are policy-checked)"
+    ],
+    "killed": [
+      "rewriting capture.py's 40 hand-written routes: far beyond one cycle and it would invalidate years of before/after evidence filenames",
+      "adding capture state to ShooterGame: a route driver is a script concern, not a game-frame concern, and would add GL work to every test",
+      "testing only a fake engine: the driver must also be exercised against the real headless Engine at least once"
+    ],
+    "survivor": "a small scripts/route_evidence.py driver that builds a named Route, captures through the real Engine, writes the summary atomically and can diff a baseline; tests use a tiny engine double for the deterministic contract"
+  },
+  "fix": {
+    "shooter": "scripts/route_evidence.py (new) exposes build_route(), run_route(), diff_summaries() and a --out/--compare CLI using keystone.evidence; tests/test_keystone_evidence_mechanics.py (5 tests) pins the shipped checkpoint plan, byte-reproducible capture, changed-checkpoint and missing/added-label diffs, and baseline file reads; README documents the script and the test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "with scripts/route_evidence.py temporarily moved away, the new test module failed collection with ModuleNotFoundError",
+      "own_test_bugs": "two first-draft assertions were wrong and fixed: route_hash is 32 chars (not 64) and diff_evidence sorts added labels alphabetically (frame-12 before frame-6)",
+      "mutation": "shrinking DEFAULT_CHECKPOINTS from (1,6,12) to (1,) fails 3 of 5 tests; route_evidence.py restored byte-identically (sha256 33eba7a13f479d47d28f5175c269f2fd17b1a19580902b0fc50d11f3d066d905)",
+      "real_engine": "python scripts/route_evidence.py --out <tmp>/shooter-route-181 wrote 3 PNG + 3 JSON reports + route-summary.json (schema 1, 12 frames, hash 2a96b8e6a5308395c80926acfea3d3ba); a second independent run produced the same hash and diff_evidence reported changed=false with all deltas 0.0",
+      "codebase_map": "regenerated after the new script and test module",
+      "tests": "678 passed (673 + 5 new evidence tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "process_note": "the plan checkpoint for this cycle omitted the PRINCIPLE-007 impact assessment; the ledger warned at completion and refuses to reopen a terminal task, so the gap is recorded openly in the cycle note instead of being hidden",
+  "timestamp": "2026-11-19"
+}

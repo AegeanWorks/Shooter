@@ -1,0 +1,37 @@
+{
+  "cycle": 187,
+  "area": "Keystone testbed: parameter-driven enemy animation states",
+  "find": {
+    "report_claim": "animation_state was one of 21 Keystone modules the testbed never imported; the shooter already ships idle clips and enemy HP but had no consumer of a JSON-authored, parameter-driven AnimationStateMachine",
+    "live_evidence": "the warden core uses StateMachineLibrary (cycle 89), a different module; the four idle clips were used for a blend space (185) and root motion (186) but never for state transitions",
+    "consumer_evidence": "a from_dict document with calm/alert/aggressive states and three threat transitions advances deterministically: threat 0.0 stays calm, 0.5 reaches alert, 0.9 reaches aggressive"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/animation_state.py: AnimationStateMachine.from_dict(), set_parameter(), advance(), report()",
+      "shooter/anim.py: shipped idle clips",
+      "shooter/data/enemies.json: HP values give a 0..1 threat scalar (hp / 600)"
+    ],
+    "killed": [
+      "reusing the game's live state machine controller: a preview must not advance the warden core or any scene node",
+      "hardcoding the active state: the transitions and the threat parameter must be authored and exercised",
+      "letting the threat scalar come from anything but alive enemies: the preview must describe the current run"
+    ],
+    "survivor": "an on-demand enemy_state_preview() that builds a fresh machine from a shipped-clip document, sets the live threat, advances it and reports state plus a JSON-safe pose"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports AnimationStateMachine and adds enemy_state_preview(threat=None, frames=30) with three states and three transitions; tests/test_keystone_animation_state_mechanics.py (5 tests) pins authored states/transitions, threat-driven active state, JSON pose, default parameter and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no enemy_state_preview)",
+      "measured": "threat 0.0 -> calm, 0.5 -> alert, 0.9 -> aggressive; report has 3 states, 3 transitions, clip warden_idle at t=0.483333 with an empty event list; default threat 0.0 with no enemies and 1.0 with a live warden",
+      "mutation": "inverting the alert->aggressive operator from greater to less fails 2 of 5 tests; game.py restored byte-identically (sha256 3fb0b4835fbdaf35d2f3f293577af1e9fa350598a97871c9e77e775d4699bef9)",
+      "codebase_map": "regenerated after the new import, method and test module",
+      "tests": "708 passed (703 + 5 new animation-state tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

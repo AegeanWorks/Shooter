@@ -1,0 +1,35 @@
+{
+  "cycle": 154,
+  "area": "game feature: a finished run can be restarted with Enter",
+  "find": {
+    "report_claim": "no prior cycle examined what the player does after a run ends; the debrief and the victory banner were both tested only as final frames",
+    "live_evidence": "a 60000-frame soak (16.7 min) ended in exactly the same state as a 20000-frame one -- wave 4, 30 kills, score 11560, hp 38, alive -- because seal_campaign sets spawn_t to infinity, so no further waves, kills or score can occur; a death leaves the same debrief up forever; internally clean (one profile save per run, worst frame 0.70 ms long after the end), so the gap is purely that the player has no way out except ESC and relaunch",
+    "consumer_evidence": "the engine's default keymap already binds Enter to 'confirm', and build_scene already resets the sim, run flags, cinematics and shake, so a restart needs no engine change and no new reset surface"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py update() event loop, draw_ui debrief and victory blocks, build_scene reset surface",
+      "shooter/sim.py seal_campaign",
+      "keystone/input.py DEFAULT_BINDINGS"
+    ],
+    "killed": [
+      "spawning post-victory waves: that would contradict seal_campaign and invalidate the recorded win outcome",
+      "auto-restarting after a timeout: a player reading the debrief should not be yanked into a new run",
+      "restarting on any key: movement keys are held during play, so a stray press at the death frame would skip the debrief"
+    ],
+    "survivor": "bind the restart to the engine's existing confirm action, allow it only when the run has ended and the victory banner has expired, and reuse build_scene so the reset surface stays single-sourced"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds _run_ended(), _restart_ready() and new_run(); update() returns early on a restart frame when the run has ended, the confirm action arrived and the four-second victory banner has expired; draw_ui shows 'PRESS ENTER FOR A NEW RUN' in the debrief extras and under the lasting CAMPAIGN COMPLETE label; tests/test_new_run.py (6 tests) covers restart after death and after victory, the profile keeping wins/history/runs across a restart, Enter ignored during the victory banner, Enter ignored mid-run, Enter on the death frame not skipping the debrief, and transient presentation state being cleared"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "551 passed, 2 xfailed in full suite",
+      "new_suite": "6 passed in 1.38s",
+      "visual": "evidence/c154_restart_prompt: 960x540 death screen showing 'PRESS ENTER FOR A NEW RUN' in amber inside the debrief panel, under RUNS 1 WINS 0",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; the bot never sends confirm, so recorded runs are unaffected)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

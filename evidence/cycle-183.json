@@ -1,0 +1,38 @@
+{
+  "cycle": 183,
+  "area": "Keystone testbed: content digests for the render assets",
+  "find": {
+    "report_claim": "keystone.content gives stable SHA-256 digests for mesh and material payloads so separately loaded equal assets share a render group; the shooter had never imported it even though cycle 138 retargeted its batching pins to content-keyed grouping",
+    "live_evidence": "build_scene registers dozens of meshes and materials with no stable content identity exposed to an AI/soak consumer; object identity differs between two registries of the same shipped asset",
+    "consumer_evidence": "mesh_digest(cube(1.0)) equals the digest of a separately built mesh.wall payload while their Python objects differ, and a different cube size produces a different digest"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/content.py: mesh_digest(), material_digest(), bounded identity cache",
+      "shooter/game.py:52 (constants), :422-472 (registered meshes and materials), :nav_plan_report (on-demand query pattern)",
+      "tests/test_keystone_batch_mechanics.py (content-keyed grouping established in cycle 138)"
+    ],
+    "killed": [
+      "using id(payload) as the identity: it changes between registries and would make the report useless for cross-run comparison",
+      "computing digests every frame: cycle 180 measured the cost of per-frame work; this stays a query",
+      "hashing whole asset files instead: the registry payloads, not the files on disk, are what the renderer groups"
+    ],
+    "survivor": "an on-demand asset_digest_report() over a fixed DIGEST_ASSETS list, using Keystone's mesh_digest/material_digest"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports mesh_digest/material_digest, defines DIGEST_ASSETS (5 meshes, 5 materials) and adds asset_digest_report() returning a schema-1 JSON digest map; tests/test_keystone_content_mechanics.py (5 tests) pins coverage, identity independence, content sensitivity, repeatability and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "the new test module failed at collection with ImportError: cannot import name 'DIGEST_ASSETS' from 'shooter.game'",
+      "measured": "10 digests, each 64 hex chars; e.g. mesh.wall 9cf2f3792db2c817f1a96d4dbc63ba26f5b93de7aec2a05d8e7332fe3894b1bb, material.floor c2f890627d9d3d67ef52543cf9119fec0d61faa298ee0909c48b3cfe779832ff",
+      "mutation": "replacing mesh_digest(payload) with str(id(payload)) fails 2 of 5 tests; game.py restored byte-identically (sha256 f0b7d1750d5b73ed2abe5b14d92805b8cb46d06cd0224ca4603fe89c9e520a4e)",
+      "codebase_map": "regenerated after the new imports, constant, method and test module",
+      "tests": "688 passed (683 + 5 new content tests), from the full-suite run started right after this change; a later re-run was blocked by a concurrent Keystone edit",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics) recorded before the external Keystone edit",
+      "external_blocker": "briefly, another worker left projects/keystone/keystone/web/server.py syntactically invalid (unterminated STATIC_FILES dict), breaking collection of five shooter web tests; this project did not touch that file. The Keystone worker finished, the file parses again, and the final full suite (688 passed) plus a fresh 5/5 aikit check both passed"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

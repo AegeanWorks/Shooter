@@ -62,6 +62,26 @@ def test_reward_stream_separate_and_reseedable():
     assert a.rng.getstate() == b.rng.getstate()
 
 
+def test_reseed_restores_a_played_sim_to_a_fresh_one():
+    """reseed(seed) must be a full reset, not just an rng rewind."""
+    from keystone.input import ActionState
+
+    played = Sim(seed=1)
+    for _ in range(30):
+        played.step(1.0 / 60.0, ActionState())
+    played.hp = 5
+    played.reseed(7)
+    fresh = Sim(seed=7)
+    assert played.snapshot() == fresh.snapshot()
+    assert played.rng.getstate() == fresh.rng.getstate()
+    assert played.reward_rng.getstate() == fresh.reward_rng.getstate()
+    future = [ActionState() for _ in range(20)]
+    for action in future:
+        played.step(1.0 / 60.0, action)
+        fresh.step(1.0 / 60.0, action)
+    assert played.snapshot() == fresh.snapshot()
+
+
 def test_stated_odds_match_coded_partition():
     s = Sim(seed=123)
     cfg = s._eng()

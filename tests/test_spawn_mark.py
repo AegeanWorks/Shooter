@@ -8,7 +8,7 @@ snapshot) and expires; level flow stays readable.
 from keystone.input import ActionState
 from keystone.math3d import Vec3
 
-from shooter.game import ShooterGame
+from shooter.game import MAX_SPAWN_MARKS, ShooterGame
 
 
 def _game() -> ShooterGame:
@@ -65,3 +65,35 @@ def test_spawn_mark_config_is_data_owned():
     g = _game()
     for key in ("life_s", "width", "height", "max"):
         assert key in g.sim.juice["spawn_mark"], key
+
+
+def _with_cap(cap: int) -> ShooterGame:
+    g = ShooterGame()
+    g.sim.juice["spawn_mark"]["max"] = cap
+    g.build_scene()
+    return g
+
+
+def test_the_data_cap_sizes_the_pool_and_bounds_the_spawn_path():
+    for cap in (2, 6):
+        g = _with_cap(cap)
+        assert len(g._spawn_nodes) == cap
+        for i in range(cap + 2):
+            g.sim.spawn_pos = Vec3(float(i), 0.5, -2.0)
+            g._play_event("spawn")
+        assert len(g.spawn_marks) == cap
+        g._sync_scene()
+        assert sum(1 for n in g._spawn_nodes if n.visible) == cap
+    g = ShooterGame()
+    g.sim.juice["spawn_mark"].pop("max")
+    g.build_scene()
+    assert len(g._spawn_nodes) == MAX_SPAWN_MARKS
+
+
+def test_the_summon_path_uses_the_same_data_cap():
+    g = _with_cap(2)
+    g.sim.summon_positions = [Vec3(float(i), 0.5, 2.0) for i in range(5)]
+    g._play_event("boss_summon")
+    assert len(g.spawn_marks) == 2, g.spawn_marks
+    g._sync_scene()
+    assert sum(1 for n in g._spawn_nodes if n.visible) == 2

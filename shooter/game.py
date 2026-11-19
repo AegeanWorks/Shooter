@@ -8,27 +8,61 @@ from __future__ import annotations
 
 import json
 import math
+import tempfile
 from dataclasses import dataclass, replace
 from pathlib import Path
 
+from keystone._version import __version__ as KEYSTONE_VERSION
 from keystone.animation import apply_pose
+from keystone.animation_blend import BlendSample, BlendSpace1D
+from keystone.animation_state import AnimationStateMachine
 from keystone.assets import AssetRegistry
 from keystone.audio import Mixer, noise, sine, square
+from keystone.audio_spatial import SoundSource, distance_gain, spatial_report
+from keystone.camera import PerspectiveCamera
+from keystone.camera_rig import CameraRig
+from keystone.character import CharacterBody, CharacterController
+from keystone.content import material_digest, mesh_digest
+from keystone.errors import KeystoneError
+from keystone.camera_shake import CameraShake, shake_report
+from keystone.camera_shaker import CameraShaker, camera_shaker_report
+from keystone.camera_path import (
+    CameraKey,
+    CameraPath,
+    CameraPathPlayer,
+    camera_path_player_report,
+)
+from keystone.camera_path_library import CameraPathLibrary
 from keystone.geometry import Material, MeshData
 from keystone.lifecycle import ComponentRuntime
 from keystone.material_graph import MaterialGraph
 from keystone.material_library import MaterialLibrary
 from keystone.math3d import Quat, Vec3
+from keystone.nav_agent import NavAgent, nav_agent_report
+from keystone.nav_authoring import grid_from_boxes
+from keystone.navigation import PathFollower, grid_path_points, navigation_report
+from keystone.pathfinding import NavGrid, find_path, path_report, smooth_path
+from keystone.persistence import VersionedStore
+from keystone.serialization import write_json_atomic
 from keystone.prefab_library import PrefabLibrary
+from keystone.physics import Ray
+from keystone.picking import hit_report, raycast_scene
 from keystone.primitives import cone, cube, plane, sphere
+from keystone.rng import RandomStream
+from keystone.root_motion import extract_root_motion, in_place_pose, root_motion_report
+from keystone.root_motion_body import RootMotionBody
+from keystone.root_motion_presenter import RootMotionPresenter, root_motion_presenter_report
 from keystone.scene import BloomSettings, ColorSettings, DirectionalLight, Node, PointLight, PostSettings, Scene, ShadowSettings, Transform
+from keystone.schema_diff import current_versions
 from keystone.state_machine_library import StateMachineLibrary
+from keystone.steering import Agent, arrive, seek, separation, steer, steering_report
 from keystone.texture import TextureData
+from keystone.tilemap import TileMap, tilemap_report
 from keystone.ui.font import text_width
 
-from .anim import EnemyAnimations
+from .anim import CLIP_NAMES, TYPES, EnemyAnimations
 from .asset_pipeline import CACHE_CRATE, register_cache_crate
-from .profile import ProfileStore, default_profile
+from .profile import SCHEMA, ProfileStore, _migrate_v0, _migrate_v1, _migrate_v2, default_profile
 from .sim import Sim
 from .ui import draw_shooter
 
@@ -36,6 +70,119 @@ MAX_ENEMIES = 24
 MAX_TRACERS = 16
 MAX_SPAWN_MARKS = 4
 MAX_CACHES = 4
+
+
+def _pose_json(pose: dict[str, Transform]) -> dict[str, dict]:
+    """One JSON-safe, six-decimal view of a sampled pose for AI reports."""
+    result: dict[str, dict] = {}
+    for key, transform in pose.items():
+        result[key] = {
+            "position": [round(transform.position.x, 6), round(transform.position.y, 6),
+                         round(transform.position.z, 6)],
+            "rotation": [round(transform.rotation.w, 6), round(transform.rotation.x, 6),
+                         round(transform.rotation.y, 6), round(transform.rotation.z, 6)],
+            "scale": [round(transform.scale.x, 6), round(transform.scale.y, 6),
+                      round(transform.scale.z, 6)],
+        }
+    return result
+
+# Fixed set of render assets whose content identity is exposed to AI/soak runs.
+DIGEST_ASSETS = (
+    "mesh.floor", "mesh.wall", "mesh.mite", "mesh.brute", "mesh.warden",
+    "material.floor", "material.wall", "material.mite", "material.warden",
+    "material.enemy_hit",
+)
+
+
+DEATH_CINEMATIC_DEFAULTS = {
+    "body_height": 0.85,
+    "start_forward": 4.0,
+    "start_fov": 75.0,
+    "keys": (
+        {"time": 0.7, "angle": 0.0, "radius": 2.0, "height_above_eye": 1.15, "height": None, "fov": 68.0},
+        {"time": 2.1, "angle": 0.9, "radius": 3.2, "height_above_eye": None, "height": 2.15, "fov": 58.0},
+        {"time": 3.4, "angle": 1.9, "radius": 4.6, "height_above_eye": None, "height": 2.65, "fov": 52.0},
+    ),
+}
+
+
+def _number(value: object, label: str, fallback: float, *, minimum: float = 0.0) -> float:
+    """Read one finite tuning number at or above ``minimum``, or fall back."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return fallback
+    number = float(value)
+    if not math.isfinite(number) or number < minimum:
+        return fallback
+    return number
+
+
+def _lens(value: object, label: str, fallback: float) -> float:
+    """Read one finite field of view strictly between 0 and 180 degrees."""
+    number = _number(value, label, fallback)
+    return number if 0.0 < number < 180.0 else fallback
+
+
+def _death_cinematic_tuning(juice: object) -> dict:
+    """Read the death-cinematic block from juice.json, falling back per field.
+
+    The path is procedural (anchored to where the run ended and which way the
+    player faced), so it is not a static .kpath document; its numbers are still
+    DATA. Every value a bad edit could make unusable -- a lens outside 0..180,
+    a zero look-ahead, a non-positive orbit radius, or key times that do not
+    strictly increase -- falls back to the built-in default, so a malformed
+    block can never raise inside CameraKey or CameraPath during the death
+    screen.
+    """
+    block = (juice or {}).get("death_cinematic") if isinstance(juice, dict) else None
+    if not isinstance(block, dict):
+        block = {}
+    defaults = DEATH_CINEMATIC_DEFAULTS
+    tuning = {
+        "body_height": _number(block.get("body_height"), "body_height", defaults["body_height"]),
+        "start_forward": _number(block.get("start_forward"), "start_forward", defaults["start_forward"], minimum=1e-3),
+        "start_fov": _lens(block.get("start_fov"), "start_fov", defaults["start_fov"]),
+        "keys": [],
+    }
+    raw_keys = block.get("keys")
+    if not isinstance(raw_keys, list) or not raw_keys:
+        raw_keys = []
+    fallback_keys = defaults["keys"]
+    for index, fallback in enumerate(fallback_keys):
+        raw = raw_keys[index] if index < len(raw_keys) and isinstance(raw_keys[index], dict) else {}
+        above = raw.get("height_above_eye")
+        height = raw.get("height")
+        key = {
+            "time": _number(raw.get("time"), "key time", fallback["time"]),
+            "angle": _number(raw.get("angle"), "key angle", fallback["angle"]),
+            "radius": _number(raw.get("radius"), "key radius", fallback["radius"], minimum=1e-3),
+            "height_above_eye": (
+                _number(above, "key height_above_eye", fallback["height_above_eye"])
+                if above is not None
+                else None
+            ),
+            "height": (
+                _number(height, "key height", fallback["height"])
+                if height is not None
+                else None
+            ),
+            "fov": _lens(raw.get("fov"), "key fov", fallback["fov"]),
+        }
+        if key["height"] is None and key["height_above_eye"] is None:
+            key["height_above_eye"] = fallback["height_above_eye"]
+            key["height"] = fallback["height"]
+        tuning["keys"].append(key)
+    # CameraPath requires strictly increasing key times and the builder opens
+    # with its own key at 0.0, so the first orbit key must be strictly after
+    # that. A bad custom time would raise there, so fall back to every
+    # authored default time at once.
+    times = [key["time"] for key in tuning["keys"]]
+    invalid = times[0] <= 0.0 or any(
+        later <= earlier for earlier, later in zip(times, times[1:])
+    )
+    if invalid:
+        for key, fallback in zip(tuning["keys"], fallback_keys):
+            key["time"] = fallback["time"]
+    return tuning
 
 
 @dataclass
@@ -188,6 +335,7 @@ class ShooterGame:
 
     def __init__(self, profile_path: str | Path | None = None) -> None:
         self.sim = Sim(seed=1)
+        self._presentation_rng = RandomStream(int(self.sim.seed)).fork("presentation")
         self.scene = Scene()
         self.assets = AssetRegistry()
         self.mixer = Mixer()
@@ -248,12 +396,51 @@ class ShooterGame:
         self._lifecycle: ComponentRuntime | None = None
         self.asset_reload_report: dict | None = None
         self._asset_reload_t = 0.0
+        self._death_camera: CameraPathPlayer | None = None
+        self.death_camera_report: dict | None = None
+        self._clear_camera: CameraPathPlayer | None = None
+        self.campaign_camera_report: dict | None = None
+        self._shake = CameraShake(
+            seed=0, amplitude=0.05, rotation_amplitude=0.012, frequency=18.0, decay=2.4
+        )
+        self._base_camera = PerspectiveCamera()
+        self._shaker = CameraShaker(self._base_camera, self._shake)
+        self.camera_shake_report: dict | None = None
+        self.camera_shaker_report: dict | None = None
         self._built = False
+
+    def _clear_shake_reports(self) -> None:
+        """One reset for trauma and both camera-shake reports.
+
+        build_scene and both cinematic starts must agree on this: a hit on the
+        killing blow must not leave a stale shake report behind a camera path.
+        """
+        self._shake.reset()
+        self.camera_shake_report = None
+        self.camera_shaker_report = None
+
+    def _reset_presentation_reports(self) -> None:
+        """Clear every presentation report when a new scene is built.
+
+        Camera paths and their reports, shake state and the spatial audio probe
+        must all start empty on a rebuild; shake has its own shared reset so
+        cinematics can reuse it.
+        """
+        self._death_camera = None
+        self.death_camera_report = None
+        self._clear_camera = None
+        self.campaign_camera_report = None
+        self._clear_shake_reports()
+        self.spatial_audio_report = None
 
     # ---- five-operation contract --------------------------------------
     def build_scene(self) -> Scene:
         self.sim.reset()
+        # Presentation variety gets its own forked stream: draws here can never
+        # advance the sim's combat or reward RNG, so the replay hash is stable.
+        self._presentation_rng = RandomStream(int(self.sim.seed)).fork("presentation")
         self.scene = Scene()
+        self._reset_presentation_reports()
         # Deliberate renderer adoption (grade.json as DATA, never inherited
         # by accident). Engine defaults are all-on; setting each flag here
         # proves the game wants them on with before/after evidence.
@@ -525,21 +712,24 @@ class ShooterGame:
         flash_mat = self.assets.require("material.flash").payload
         self._flash = Node("muzzle", id="muzzle", visible=False, mesh=flash_mesh, material=flash_mat)
         self.scene.add(self._flash)
-        # First-person viewmodel: two shared cubes follow the camera and tint
-        # with the active weapon; purely visual until _sync_scene moves them.
+        # First-person viewmodel: Keystone's CameraRig owns the camera-space
+        # attachment, so the parts are overlay-layer children that level
+        # geometry cannot cut through; _sync_scene sets their local offsets.
         gun_mesh = self.assets.require("mesh.wall").payload
         gun_mat = self.assets.require("material.gun_pulse").payload
-        self._view_body = Node("viewmodel-body", id="viewmodel-body", visible=True,
-                               mesh=gun_mesh, material=gun_mat)
-        self._view_barrel = Node("viewmodel-barrel", id="viewmodel-barrel", visible=True,
-                                 mesh=gun_mesh, material=gun_mat)
+        self._view_rig = CameraRig(self.scene.camera)
+        self._view_rig.attach_to(self.scene)
+        self._view_body = self._view_rig.attach(
+            "viewmodel-body", mesh=gun_mesh, material=gun_mat
+        )
+        self._view_barrel = self._view_rig.attach(
+            "viewmodel-barrel", mesh=gun_mesh, material=gun_mat
+        )
         # Grip under the receiver: the silhouette reads as a held weapon
         # instead of a bar floating above the floor. Presentation only.
-        self._view_grip = Node("viewmodel-grip", id="viewmodel-grip", visible=True,
-                               mesh=gun_mesh, material=gun_mat)
-        self.scene.add(self._view_body)
-        self.scene.add(self._view_barrel)
-        self.scene.add(self._view_grip)
+        self._view_grip = self._view_rig.attach(
+            "viewmodel-grip", mesh=gun_mesh, material=gun_mat
+        )
         pickup_mesh = self.assets.require("mesh.pickup").payload
         pickup_mat = self.assets.require("material.pickup").payload
         self._pickup_spot = self.sim.levels.get("pickup", {"x": 0.0, "y": 0.5, "z": -6.0})
@@ -608,7 +798,7 @@ class ShooterGame:
         )
         spawn_mat = self.assets.require("material.spawn_mark").payload
         self._spawn_nodes = []
-        for i in range(MAX_SPAWN_MARKS):
+        for i in range(self._spawn_mark_cap()):
             node = Node(f"spawn-mark-{i}", id=f"spawn-mark-{i}", visible=False,
                         mesh=wall_mesh, material=spawn_mat)
             self.scene.add(node)
@@ -704,23 +894,141 @@ class ShooterGame:
         self.asset_reload_report = report.describe()
         return report
 
+    def _start_death_camera(self) -> None:
+        """Build the death cinematic around where the run ended.
+
+        Presentation only: the pose never feeds `sim.eye()`, damage, RNG or the
+        snapshot, so the determinism hash is untouched. A one-shot path that
+        rises off the shoulder, orbits the body and settles wide gives the
+        debrief a readable final frame instead of a frozen first-person view.
+        """
+        tuning = _death_cinematic_tuning(self.sim.juice)
+        eye = self.sim.eye()
+        fwd = self.sim.forward()
+        body = Vec3(eye.x, tuning["body_height"], eye.z)
+        # ground-plane heading so the orbit does not tilt with look pitch
+        flat = Vec3(fwd.x, 0.0, fwd.z)
+        flat = flat.normalized() if flat.length_squared() > 1e-9 else Vec3(0.0, 0.0, -1.0)
+
+        def orbit(key: dict) -> CameraKey:
+            """One key on a circle around the body, measured from the heading."""
+            cos_a, sin_a = math.cos(key["angle"]), math.sin(key["angle"])
+            offset_x = flat.x * cos_a - flat.z * sin_a
+            offset_z = flat.z * cos_a + flat.x * sin_a
+            height = (
+                eye.y + key["height_above_eye"]
+                if key["height_above_eye"] is not None
+                else key["height"]
+            )
+            return CameraKey.look_at(
+                key["time"],
+                Vec3(
+                    body.x - offset_x * key["radius"],
+                    height,
+                    body.z - offset_z * key["radius"],
+                ),
+                body,
+                fov_y=key["fov"],
+            )
+
+        keys = (
+            # start exactly where the player was looking, so the cut is invisible
+            CameraKey.look_at(
+                0.0,
+                eye,
+                eye + fwd * tuning["start_forward"],
+                fov_y=tuning["start_fov"],
+            ),
+            *(orbit(key) for key in tuning["keys"]),
+        )
+        path = CameraPath(keys)
+        self._death_camera = CameraPathPlayer(path)
+        self.death_camera_report = camera_path_player_report(self._death_camera)
+        # A cinematic owns the camera, so no shake is applied while it runs;
+        # a hit on the killing blow must not leave a stale report behind it.
+        self._clear_shake_reports()
+
+    def _start_campaign_clear_camera(self) -> None:
+        """Play the authored victory fly-around from a shipped .kpath document.
+
+        The cinematic is DATA (``shooter/data/campaign_clear.kpath``), so it can
+        be re-authored without touching code. Presentation only: a missing or
+        corrupt document falls back to the first-person view and records why in
+        ``campaign_camera_report`` instead of breaking the victory screen.
+        """
+        try:
+            library = CameraPathLibrary(Path(__file__).parent / "data")
+            path = library.load("campaign_clear")
+        except (KeyError, OSError, TypeError, ValueError) as exc:
+            self._clear_camera = None
+            self.campaign_camera_report = {"error": str(exc)}
+            return
+        self._clear_camera = CameraPathPlayer(path)
+        self.campaign_camera_report = camera_path_player_report(self._clear_camera)
+        # Same rule as the death cinematic: the path owns the camera.
+        self._clear_shake_reports()
+
     def _play_clip(self, clip, gain: float) -> None:
         """Play one SFX clip, counting (never hiding) a mixer refusal.
 
         Audio must never crash gameplay, but a refusal used to vanish into
         `except ValueError: pass`. Counting drops keeps the failure visible
         to soak reports without changing the deterministic sim.
+
+        ``TypeError`` is caught as well as ``ValueError``: both are what
+        ``Mixer.play`` raises for a refusal (a non-clip, a mismatched sample
+        rate, a bad bus, gain or pitch). Catching only ``ValueError`` meant a
+        ``TypeError`` from the audio layer would have crashed the frame, which
+        is exactly what this docstring promises cannot happen.
         """
         if self._clip_hook is not None:
             self._clip_hook(clip, gain)
         try:
             self.mixer.play(clip, bus="sfx", gain=gain)
-        except ValueError:
+        except (TypeError, ValueError):
             self.dropped_sfx += 1
+
+    def _presentation_gain(self, gain: float) -> float:
+        """Bounded per-event gain variation from the presentation-only stream."""
+        return float(gain) * self._presentation_rng.uniform(0.95, 1.05)
+
+    def presentation_rng_report(self) -> dict:
+        """JSON-safe state of the presentation stream for reproducible AI runs."""
+        return {"schema": 1, "stream": self._presentation_rng.snapshot().to_dict()}
+
+    def _run_ended(self) -> bool:
+        """True when the current run is over: the player is down or the campaign sealed."""
+        return (not self.sim.alive) or bool(self.campaign_cleared)
+
+    def _restart_ready(self) -> bool:
+        """True when Enter should start a new run.
+
+        Both endings protect their last shot: the victory banner owns the screen
+        for its four seconds, and the death cinematic for its full run, so a
+        player mashing confirm while dying cannot skip the debrief that shows
+        the run's score and history. A death with no cinematic (a failed path
+        build) is restartable immediately.
+        """
+        if not self.sim.alive:
+            return self._death_camera is None or bool(self._death_camera.done)
+        return bool(self.campaign_cleared) and self.campaign_clear_t <= 0.0
+
+    def new_run(self) -> None:
+        """Start a fresh run after a death or a sealed campaign.
+
+        The profile persists (wins, history, bests); only the run's sim, scene
+        and presentation reset, which is exactly what build_scene does.
+        """
+        self.build_scene()
 
     def update(self, dt: float, actions) -> None:
         if not self._built:
             self.build_scene()
+        ended_before = self._run_ended()
+        pressed = set(getattr(actions, "pressed", frozenset()))
+        if ended_before and "confirm" in pressed and self._restart_ready():
+            self.new_run()
+            return
         events = self.sim.step(float(dt), actions)
         self._forfeit_cue_pending = False
         self._clutch_cue_pending = False
@@ -729,17 +1037,15 @@ class ShooterGame:
             self._play_event(e)
         if "died" in events:
             self._finish_run()
+            self._start_death_camera()
         elif "wave" in events:
             self._record_progress()
-        if (
-            not self.campaign_cleared
-            and self.sim.alive
-            and int(self.sim.wave) >= int(self.sim.levels.get("win_wave", 4))
-        ):
+        if self._campaign_win_reached():
             self.campaign_cleared = True
             self.campaign_clear_t = 4.0
             self.sim.seal_campaign()
             self._record_campaign_clear()
+            self._start_campaign_clear_camera()
         self.campaign_clear_t = max(0.0, self.campaign_clear_t - float(dt))
         self._pickup_fx_t = max(0.0, self._pickup_fx_t - float(dt))
         for entry in self.kill_feed:
@@ -793,6 +1099,19 @@ class ShooterGame:
         self.profile["wins"] = int(self.profile.get("wins", 0)) + 1
         self._record_run("win")
 
+    def _campaign_win_reached(self) -> bool:
+        """True when this frame seals the campaign.
+
+        One predicate, used by the update loop and by _record_progress, so the
+        victory frame cannot write the profile twice: the wave's bests and the
+        win run land in a single atomic save.
+        """
+        return (
+            not self.campaign_cleared
+            and bool(self.sim.alive)
+            and int(self.sim.wave) >= int(self.sim.levels.get("win_wave", 4))
+        )
+
     def _record_progress(self) -> None:
         """Persist a new best at wave clear, even if the player later quits."""
         if self.profile_disabled:
@@ -808,7 +1127,12 @@ class ShooterGame:
             if value > int(self.profile.get(key, 0)):
                 self.profile[key] = value
                 changed = True
-        if changed:
+        # A winning wave saves nothing here: _record_campaign_clear writes the
+        # same bests together with the win run in one atomic save, so the
+        # victory frame performs a single fsync-backed write instead of two.
+        # The window where the bests exist only in memory is the rest of this
+        # frame, and a crash there also loses the run record they belong to.
+        if changed and not self._campaign_win_reached():
             self._save_profile()
 
     def _record_run(self, outcome: str) -> None:
@@ -844,6 +1168,16 @@ class ShooterGame:
 
     def _finish_run(self) -> None:
         self._record_run("lose")
+
+    def _spawn_mark_cap(self) -> int:
+        """The DATA-owned marker cap; MAX_SPAWN_MARKS only when the key is absent.
+
+        One read for the node pool and both event paths, so raising the value in
+        juice.json really raises the visible cap instead of only growing a list
+        that has no nodes to draw it.
+        """
+        cfg = dict(self.sim.juice.get("spawn_mark", {}))
+        return max(1, int(cfg.get("max", MAX_SPAWN_MARKS)))
 
     def _play_event(self, event: str) -> None:
         """Map one sim event to its audio voice and on-screen caption."""
@@ -904,9 +1238,20 @@ class ShooterGame:
                     "x": float(pos.x), "z": float(pos.z),
                     "t": float(cfg.get("life_s", 0.7)),
                 })
-                cap = max(1, int(cfg.get("max", MAX_SPAWN_MARKS)))
-                self.spawn_marks = self.spawn_marks[:cap]
-            self._play_clip(self._clips["spawn"], 0.30)
+                self.spawn_marks = self.spawn_marks[:self._spawn_mark_cap()]
+            # Positional warning voice: the sim already publishes the spawn
+            # position, so Keystone's distance model attenuates the clip while
+            # the game's one Mixer keeps owning buses, pitch and the voice cap.
+            gain = 0.30
+            try:
+                source = SoundSource(position=pos, clip=self._clips["spawn"], gain=gain)
+                listener = self.sim.eye()
+                self.spatial_audio_report = spatial_report(listener, [source])
+                gain = source.gain * distance_gain(listener, source)
+            except (TypeError, ValueError):
+                # A bad position must never turn a warning into a crash.
+                self.spatial_audio_report = None
+            self._play_clip(self._clips["spawn"], gain)
             if self.sound_cue_t <= 0.0:
                 self._cue("HOSTILE INBOUND")
             return
@@ -920,7 +1265,7 @@ class ShooterGame:
                 {"pulse": "shoot", "scatter": "scatter", "lance": "lance", "surge": "shoot"}.get(w, "shoot"),
                 self._clips["shoot"],
             )
-            self._play_clip(clip, 0.7)
+            self._play_clip(clip, self._presentation_gain(0.7))
         elif event == "hit":
             self._play_clip(self._clips["hit"], 0.5)
         elif event == "kill":
@@ -956,12 +1301,12 @@ class ShooterGame:
             self._play_clip(self._clips["boss_summon"], 0.7)
             self._cue("WARDEN SUMMON", danger=True)
             cfg = dict(self.sim.juice.get("spawn_mark", {}))
-            for pos in list(getattr(self.sim, "summon_positions", []))[:MAX_SPAWN_MARKS]:
+            for pos in list(getattr(self.sim, "summon_positions", []))[:self._spawn_mark_cap()]:
                 self.spawn_marks.insert(0, {
                     "x": float(pos.x), "z": float(pos.z),
                     "t": float(cfg.get("life_s", 0.7)),
                 })
-            self.spawn_marks = self.spawn_marks[:MAX_SPAWN_MARKS]
+            self.spawn_marks = self.spawn_marks[:self._spawn_mark_cap()]
         elif event == "clutch":
             self._play_clip(self._clips["clutch"], 0.6)
             self._cue("CLUTCH CLEAR")
@@ -976,6 +1321,7 @@ class ShooterGame:
                 self._pickup_fx_t = float(self.sim.juice.get("pickup_fx_s", 0.30))
         elif event == "hurt":
             self._play_clip(self._clips["hurt"], 0.8)
+            self._shake.add(0.6)
         elif event == "reload":
             self._play_clip(self._clips["reload"], 0.45)
             self._cue("RELOADING")
@@ -1019,20 +1365,43 @@ class ShooterGame:
             self._boss_pose = self._boss_anim.advance(float(dt))
         cam = self.scene.camera
         eye = sim.eye()
-        hurt = float(getattr(sim, "hurt_t", 0.0))
-        if hurt > 0.0:
-            # Short deterministic jolt while the damage cue is live; the
-            # aim ray still starts at the sim eye, so this is presentation.
-            amp = min(1.0, hurt / 0.3) * 0.035
-            cam.position = Vec3(
-                eye.x + math.sin(sim.time * 55.0) * amp,
-                eye.y + math.cos(sim.time * 47.0) * amp * 0.6,
-                eye.z,
-            )
+        if self._death_camera is not None:
+            # Death cinematic: presentation only, so the aim ray keeps starting
+            # from the sim eye and the snapshot hash stays untouched. The path
+            # is one-shot and clamps on its final wide pose.
+            pose = self._death_camera.advance(float(dt))
+            cam.position = pose.position
+            cam.yaw = pose.yaw
+            cam.pitch = pose.pitch
+            cam.fov_y = pose.fov_y
+        elif self._clear_camera is not None:
+            # Victory fly-around from the authored .kpath document; same
+            # presentation-only rule as the death cinematic.
+            pose = self._clear_camera.advance(float(dt))
+            cam.position = pose.position
+            cam.yaw = pose.yaw
+            cam.pitch = pose.pitch
+            cam.fov_y = pose.fov_y
         else:
-            cam.position = eye
-        cam.yaw = sim.yaw
-        cam.pitch = max(-1.55, min(1.55, sim.pitch + sim.kick))
+            # Trauma-based shake: Keystone owns both the deterministic noise
+            # and the composition onto an immutable base pose. The sim eye is
+            # still the aim origin, so none of this reaches the snapshot.
+            self._shake.update(float(dt))
+            base = self._base_camera
+            base.position = eye
+            base.yaw = sim.yaw
+            base.pitch = max(-1.55, min(1.55, sim.pitch + sim.kick))
+            base.fov_y = cam.fov_y
+            posed = self._shaker.pose()
+            cam.position = posed.position
+            cam.yaw = posed.yaw
+            cam.pitch = posed.pitch
+            self.camera_shake_report = (
+                shake_report(self._shake) if self._shake.trauma > 0.0 else None
+            )
+            self.camera_shaker_report = (
+                camera_shaker_report(self._shaker) if self._shake.trauma > 0.0 else None
+            )
         if self.scene.point_light is not None:
             base = Vec3(eye.x, eye.y + 0.4, eye.z)
             boost = 1.2 if sim.flash_t > 0.0 else 0.4
@@ -1182,11 +1551,10 @@ class ShooterGame:
                     rotation=Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), spin),
                 )
         if self._view_body is not None and self._view_barrel is not None:
+            # The rig root carries the camera pose; each part declares only a
+            # camera-space offset, so there is no world basis math here.
             cfg = self.sim.juice.get("viewmodel", {})
-            forward = sim.forward()
-            right = Vec3(math.cos(sim.yaw), 0.0, math.sin(sim.yaw))
-            up = right.cross(forward)
-            eye = sim.eye()
+            self._view_rig.sync()
             recoil = min(1.0, abs(sim.kick) / math.radians(4.0))
             recoil_back = float(cfg.get("recoil_back", 0.0)) * recoil
             recoil_up = float(cfg.get("recoil_up", 0.0)) * recoil
@@ -1207,29 +1575,20 @@ class ShooterGame:
             phase = sim.time * float(cfg.get("bob_hz", 8.0))
             bob_right = float(cfg.get("bob_right", 0.0)) * bob * math.sin(phase)
             bob_up = float(cfg.get("bob_up", 0.0)) * bob * math.cos(phase)
-            rotation = (
-                Quat.from_axis_angle(Vec3(0.0, 1.0, 0.0), sim.yaw)
-                * Quat.from_axis_angle(Vec3(1.0, 0.0, 0.0), sim.pitch)
-            )
-
-            def gun_pos(forward_d: float, right_d: float, down_d: float) -> Vec3:
-                return Vec3(
-                    eye.x + forward.x * forward_d + right.x * right_d - up.x * down_d,
-                    eye.y + forward.y * forward_d + right.y * right_d - up.y * down_d,
-                    eye.z + forward.z * forward_d + right.z * right_d - up.z * down_d,
-                )
+            def gun_offset(forward_d: float, right_d: float, down_d: float) -> Vec3:
+                """Camera-space offset: +X right, +Y up, -Z forward."""
+                return Vec3(right_d, -down_d, -forward_d)
 
             self._view_body.visible = bool(sim.alive)
             self._view_barrel.visible = bool(sim.alive)
             self._view_grip.visible = bool(sim.alive)
             if sim.alive:
                 self._view_body.transform = Transform(
-                    position=gun_pos(
+                    position=gun_offset(
                         float(cfg.get("forward", 0.40)) - recoil_back - reload_back,
                         float(cfg.get("right", 0.18)) + bob_right,
                         float(cfg.get("down", 0.16)) - recoil_up + reload_drop - bob_up,
                     ),
-                    rotation=rotation,
                     scale=Vec3(
                         float(cfg.get("body_width", 0.07)),
                         float(cfg.get("body_height", 0.07)),
@@ -1237,12 +1596,11 @@ class ShooterGame:
                     ),
                 )
                 self._view_barrel.transform = Transform(
-                    position=gun_pos(
+                    position=gun_offset(
                         float(cfg.get("barrel_forward", 0.62)) - recoil_back - reload_back,
                         float(cfg.get("right", 0.18)) + bob_right,
                         float(cfg.get("barrel_down", 0.20)) - recoil_up + reload_drop - bob_up,
                     ),
-                    rotation=rotation,
                     scale=Vec3(
                         float(cfg.get("barrel_size", 0.035)),
                         float(cfg.get("barrel_size", 0.035)),
@@ -1250,12 +1608,11 @@ class ShooterGame:
                     ),
                 )
                 self._view_grip.transform = Transform(
-                    position=gun_pos(
+                    position=gun_offset(
                         float(cfg.get("grip_forward", 0.52)) - recoil_back - reload_back,
                         float(cfg.get("right", 0.18)) + bob_right,
                         float(cfg.get("grip_down", 0.30)) - recoil_up + reload_drop - bob_up,
                     ),
-                    rotation=rotation,
                     scale=Vec3(
                         float(cfg.get("grip_width", 0.05)),
                         float(cfg.get("grip_height", 0.11)),
@@ -1329,8 +1686,8 @@ class ShooterGame:
                 # beam disappears. Presentation only; no new node or draw.
                 duration = max(1e-6, float(sim.juice.get("pickup_fx_s", 0.30)))
                 k = max(0.0, min(1.0, 1.0 - fx_t / duration))
-                size = 1.0 + float(sim.juice.get("pickup_fx_scale", 3.0)) * k
-                rise = float(sim.juice.get("pickup_fx_rise", 1.2)) * k
+                size = 1.0 + float(sim.juice.get("pickup_fx_scale", 1.5)) * k
+                rise = float(sim.juice.get("pickup_fx_rise", 0.9)) * k
                 self._pickup_orb.transform = Transform(
                     position=Vec3(
                         float(self._pickup_spot["x"]),
@@ -1355,6 +1712,481 @@ class ShooterGame:
                 )
             else:
                 node.visible = False
+
+    def crosshair_pick(self) -> dict:
+        """JSON-safe answer to 'what world node is under the crosshair'.
+
+        A query rather than per-frame state: raycast_scene computes world bounds
+        for every visible mesh, so casting on every simulation frame made the
+        whole test gate roughly four times slower (cycle 180 measurement).
+        Keystone skips overlay and hidden nodes, so the camera-rig viewmodel
+        and the muzzle flash can never be reported as hits.
+        """
+        hit = raycast_scene(
+            self.scene,
+            Ray(self.sim.eye(), self.sim.forward(), 100.0),
+            ignore=("muzzle",),
+        )
+        return hit_report(hit)
+
+    def asset_digest_report(self) -> dict:
+        """Stable content digests for the registered render assets.
+
+        Keystone's digests describe payload content rather than object identity,
+        so an AI/soak consumer can compare two separately built registries.
+        """
+        digests: dict[str, str] = {}
+        for name in DIGEST_ASSETS:
+            payload = self.assets.require(name).payload
+            if isinstance(payload, MeshData):
+                digests[name] = mesh_digest(payload)
+            elif isinstance(payload, Material):
+                digests[name] = material_digest(payload)
+        return {"schema": 1, "count": len(digests), "digests": digests}
+
+    def testbed_report(self) -> dict:
+        """One JSON-safe view of every no-argument on-demand report.
+
+        AI/soak consumers can inspect the whole plug-in with one call; each
+        family keeps its own report untouched, so existing consumers are
+        unaffected. No sim or scene state is written.
+        """
+        return {
+            "schema": 1,
+            "engine": self.engine_version_report(),
+            "contracts": self.keystone_contract_report(),
+            "nav": {
+                "plan": self.nav_plan_report(),
+                "authoring": self.nav_authoring_report(),
+                "tiles": self.arena_tile_report(),
+            },
+            "animation": {
+                "blend": self.enemy_blend_report(),
+                "states": self.enemy_state_preview(),
+                "root_motion": self.idle_root_motion_report(),
+                "presenter": self.idle_presenter_preview(),
+            },
+            "steering": self.enemy_steering_report(),
+            "picking": self.crosshair_pick(),
+            "assets": self.asset_digest_report(),
+            "bot": self.bot_nav_preview(),
+            "storage": self.profile_store_probe(),
+            "presentation": self.presentation_rng_report(),
+            # Self-describing coverage: every no-arg report/probe is named here,
+            # so a reflective test can catch a future report added but not wired.
+            "sources": sorted((
+                "arena_tile_report", "asset_digest_report", "enemy_steering_report",
+                "engine_version_report", "keystone_contract_report", "nav_plan_report",
+                "presentation_rng_report", "profile_store_probe",
+            )),
+        }
+
+    def engine_version_report(self) -> dict:
+        """The authoritative Keystone version, as a JSON-safe AI/soak query."""
+        return {"schema": 1, "engine_version": KEYSTONE_VERSION}
+
+    def profile_store_probe(self) -> dict:
+        """Exercise the shipped profile contract in a throwaway directory.
+
+        Fresh load, save/reload, v0 migration and corrupt recovery all run
+        against a temporary VersionedStore, so the real player profile is never
+        read or written and the sim stays untouched.
+        """
+        migrations = {0: _migrate_v0, 1: _migrate_v1, 2: _migrate_v2}
+        with tempfile.TemporaryDirectory(prefix="shooter-profile-probe-") as directory:
+            path = Path(directory) / "profile.json"
+
+            def store() -> VersionedStore:
+                return VersionedStore(
+                    path, schema=SCHEMA, default=default_profile,
+                    migrations=migrations,
+                )
+
+            fresh = store().load()
+            saved = store().save(fresh.state)
+            reloaded = store().load()
+            write_json_atomic(path, {"schema": 0, "data": {"runs": 4, "wins": 1}})
+            old = store().load()
+            path.write_text("{broken", encoding="utf-8")
+            corrupt = store().load()
+        return {
+            "schema": 1,
+            "store_schema": SCHEMA,
+            "fresh": {"source": fresh.source, "schema": fresh.state["schema"]},
+            "saved": saved,
+            "reloaded": {"source": reloaded.source, "schema": reloaded.state["schema"]},
+            "old": {
+                "migrated": old.migrated,
+                "schema": old.state["schema"],
+                "runs": old.state["runs"],
+            },
+            "corrupt": {
+                "source": corrupt.source,
+                "quarantined": corrupt.quarantined,
+                "schema": corrupt.state["schema"],
+            },
+        }
+
+    def nav_authoring_report(self, clearance: float = 0.2) -> dict:
+        """NavGrid authored from the same collider authority as the route plan."""
+        width, _cell, _origin = self._arena_layout()
+        boxes = list(self.sim.colliders)
+        walls = [box for box in boxes if box.center.y + box.half_extents.y > 0.1]
+        grid = self._nav_grid(clearance)
+        plan = self.nav_plan_report()["pathfinding"]
+        start = (int(plan["start"][0]), int(plan["start"][1]))
+        goal = (int(plan["goal"][0]), int(plan["goal"][1]))
+        result = find_path(grid, start, goal, diagonal=True)
+        return {
+            "schema": 1,
+            "width": width,
+            "height": width,
+            "clearance": float(clearance),
+            "boxes": len(walls),
+            "floor_excluded": len(boxes) - len(walls),
+            "blocked": len(grid.blocked),
+            "start_open": grid.is_open(start),
+            "goal_open": grid.is_open(goal),
+            "path": path_report(result),
+        }
+
+    def idle_presenter_preview(self, frames: int = 12) -> dict:
+        """Step a local root-motion rig and report its container pose.
+
+        A tiny throwaway Scene holds the container and one animated child so
+        the presenter can apply the shipped clip's in-place pose. The game's
+        own scene, sim and replay hash are never involved.
+        """
+        scene = Scene()
+        container = Node("preview-container", id="preview-container")
+        scene.add(container)
+        Node("subject", id="subject", parent=container)
+        body = CharacterBody(
+            position=Vec3(0.0, 0.9, 0.0),
+            half_extents=Vec3(0.5, 0.9, 0.5),
+            velocity=Vec3(),
+            on_ground=True,
+        )
+        rig = RootMotionBody(
+            self._enemy_anim.clips["warden_idle"], "subject",
+            CharacterController(gravity=24.0), body,
+        )
+        presenter = RootMotionPresenter(rig, container)
+        before = root_motion_presenter_report(presenter)
+        pose: dict = {}
+        for _ in range(max(0, int(frames))):
+            pose, _motion = presenter.step(scene, 1.0 / 60.0)
+        return {
+            "schema": 1,
+            "container": before["container"],
+            "before": before,
+            "after": root_motion_presenter_report(presenter),
+            "updated": list(presenter.last_updated),
+            "pose_nodes": sorted(pose),
+        }
+
+    def bot_nav_preview(self, frames: int = 30) -> dict:
+        """Plan spawn -> pickup with a local NavAgent and advance it in isolation.
+
+        The grid and goal come from the same authoritative nav data as every
+        other route report, but the body, controller and agent are local objects.
+        Nothing is added to the scene and the sim's replay hash stays untouched.
+        """
+        width, cell, origin = self._arena_layout()
+        grid = self._nav_grid(0.0)
+        spawn = self.sim.levels["player"]["spawn"]
+        body = CharacterBody(
+            position=Vec3(float(spawn[0]), float(spawn[1]), float(spawn[2])),
+            half_extents=Vec3(0.35, 0.9, 0.35),
+            velocity=Vec3(),
+            on_ground=True,
+        )
+        agent = NavAgent(
+            grid, CharacterController(gravity=24.0), body,
+            cell_size=cell, origin=origin, speed=4.0,
+        )
+        goal = tuple(self.nav_plan_report()["pathfinding"]["goal"])
+        planned = agent.set_goal(goal)
+        before = nav_agent_report(agent)
+        after = before
+        for _ in range(max(0, int(frames))):
+            after = agent.step(1.0 / 60.0)
+        return {
+            "schema": 1,
+            "planned": planned,
+            "goal": [goal[0], goal[1]],
+            "blocked_cells": len(grid.blocked),
+            "before": before,
+            "after": after,
+        }
+
+    def data_error_report(self, error: KeystoneError) -> dict:
+        """JSON-safe view of a structured data failure, on demand."""
+        if not isinstance(error, KeystoneError):
+            raise TypeError("data_error_report needs a KeystoneError")
+        return {
+            "schema": 1,
+            "why": error.why,
+            "fix": error.fix,
+            "message": str(error),
+        }
+
+    def keystone_contract_report(self) -> dict:
+        """The Keystone contract versions this build is running against.
+
+        An on-demand query for AI/soak consumers: the values come from
+        Keystone's schema_diff module, never from a copy that could go stale.
+        """
+        return {
+            "schema": 1,
+            "versions": dict(sorted(current_versions().items())),
+        }
+
+    def enemy_steering_report(self) -> dict:
+        """AI-visible steering vectors for the first alive enemy, on demand.
+
+        Built from the live positions, enemy-definition radii/speeds and the
+        juice separation tuning. Pure query: no body is integrated and no sim
+        state changes.
+        """
+        alive = [enemy for enemy in self.sim.enemies if enemy.alive]
+        if not alive:
+            return {
+                "schema": 1, "subject": None, "neighbours": 0,
+                "seek": [], "arrive": [], "separation": [0.0, 0.0, 0.0],
+            }
+        tuning = self.sim.juice.get("enemy_separation", {})
+        strength = float(tuning.get("strength", 0.5))
+        margin = float(tuning.get("clearance", 0.02))
+
+        def as_agent(enemy) -> Agent:
+            definition = self.sim.enemy_defs[enemy.etype]
+            return Agent(
+                position=enemy.pos, velocity=Vec3(),
+                radius=float(definition["radius"]),
+                max_speed=float(definition["speed"]),
+            )
+
+        subject = as_agent(alive[0])
+        neighbours = [as_agent(enemy) for enemy in alive[1:]]
+        wish = seek(subject.position, self.sim.player_pos, subject.max_speed)
+        slowed = arrive(subject.position, self.sim.player_pos, subject.max_speed, 2.0)
+        push = separation(
+            subject.position, [(agent.position, agent.radius) for agent in neighbours],
+            subject.radius, strength=strength, margin=margin,
+        )
+        steered = steer(
+            subject, wish, neighbours, separation_weight=strength, margin=margin
+        )
+        return {
+            "schema": 1,
+            "subject": steering_report(subject, steered),
+            "neighbours": len(neighbours),
+            "seek": [wish.x, wish.y, wish.z],
+            "arrive": [slowed.x, slowed.y, slowed.z],
+            "separation": [push.x, push.y, push.z],
+        }
+
+    def enemy_state_preview(self, threat: float | None = None, frames: int = 30) -> dict:
+        """Parameter-driven enemy animation states, as a JSON preview.
+
+        The document is authored from shipped idle clips and a `threat` scalar;
+        each call builds a fresh machine, so nothing leaks into the game's live
+        animation controllers or the deterministic sim.
+        """
+        if threat is None:
+            peak = max(float(defn["hp"]) for defn in self.sim.enemy_defs.values())
+            threat = max(
+                (float(getattr(enemy, "hp", 0)) / peak for enemy in self.sim.enemies
+                 if getattr(enemy, "alive", True)),
+                default=0.0,
+            )
+        value = max(0.0, min(1.0, float(threat)))
+        clips = self._enemy_anim.clips
+        document = {
+            "schema": 1,
+            "states": [
+                {"name": "calm", "clip": clips["mite_idle"].to_dict()},
+                {"name": "alert", "clip": clips["brute_idle"].to_dict()},
+                {"name": "aggressive", "clip": clips["warden_idle"].to_dict()},
+            ],
+            "transitions": [
+                {"source": "calm", "target": "alert", "parameter": "threat",
+                 "operator": "greater", "value": 0.4, "duration": 0.1},
+                {"source": "alert", "target": "aggressive", "parameter": "threat",
+                 "operator": "greater", "value": 0.7, "duration": 0.1},
+                {"source": "aggressive", "target": "calm", "parameter": "threat",
+                 "operator": "less", "value": 0.3, "duration": 0.2},
+            ],
+            "parameters": {"threat": value},
+            "current": "calm",
+        }
+        machine = AnimationStateMachine.from_dict(document)
+        sampled: dict = {}
+        for _ in range(max(0, int(frames))):
+            sampled = machine.advance(1.0 / 60.0)
+        pose = _pose_json(sampled)
+        return {
+            "schema": 1,
+            "report": machine.report(),
+            "parameter": value,
+            "pose": pose,
+        }
+
+    def idle_root_motion_report(self, window: float = 0.3) -> dict:
+        """Subject root deltas of the shipped idle clips, as a JSON report.
+
+        Pure query: the extracted motion and the baked in-place pose are
+        reported for AI/soak consumers but never applied to a scene node.
+        """
+        clips = self._enemy_anim.clips
+        seconds = float(window)
+        reported = {
+            name: root_motion_report(
+                extract_root_motion(clips[name], "subject", 0.0, seconds)
+            )
+            for name in CLIP_NAMES
+        }
+        baked = in_place_pose(clips["wisp_idle"].sample(seconds), "subject")["subject"]
+        in_place = (
+            baked.position.x == 0.0 and baked.position.y == 0.0 and baked.position.z == 0.0
+            and baked.rotation.w == 1.0 and baked.scale.x == 1.0
+        )
+        return {
+            "schema": 1,
+            "window": seconds,
+            "clips": reported,
+            "in_place": in_place,
+        }
+
+    def enemy_blend_report(self, parameter: float | None = None, time: float = 0.0) -> dict:
+        """Shipped enemy idle clips as a 1D blend space keyed by enemy HP.
+
+        An on-demand AI/soak query: the pose is reported as JSON and never
+        written back to a scene node, the sim or the snapshot.
+        """
+        clips = self._enemy_anim.clips
+        samples = tuple(
+            BlendSample(clip=clips[name], threshold=float(self.sim.enemy_defs[etype]["hp"]))
+            for etype, name in TYPES.items()
+        )
+        blend = BlendSpace1D(samples)
+        if parameter is None:
+            parameter = max(
+                (float(getattr(enemy, "hp", 0)) for enemy in self.sim.enemies
+                 if getattr(enemy, "alive", True)),
+                default=0.0,
+            )
+        pose = blend.sample(float(parameter), float(time))
+        summary = _pose_json(pose)
+        return {
+            "schema": 1,
+            "blend": blend.report(),
+            "round_trip": BlendSpace1D.from_dict(blend.to_dict()) == blend,
+            "parameter": float(parameter),
+            "pose": summary,
+        }
+
+    def arena_tile_report(self) -> dict:
+        """The shipped arena as a Keystone TileMap document, on demand.
+
+        A pure authoring/AI query: the tile map's colliders and merged mesh are
+        reported but never added to the scene, so rendering and the sim hash
+        stay exactly as they were.
+        """
+        arena = self.sim.levels["arena"]
+        width, cell, origin = self._arena_layout()
+        solid: set[tuple[int, int]] = set()
+        for box in arena["covers"]:
+            cx, cz = float(box["x"]), float(box["z"])
+            half_w, half_d = float(box["w"]) / 2.0, float(box["d"]) / 2.0
+            x0 = max(0, int(math.floor((cx - half_w - origin.x) / cell)))
+            x1 = min(width - 1, int(math.ceil((cx + half_w - origin.x) / cell)))
+            z0 = max(0, int(math.floor((cz - half_d - origin.z) / cell)))
+            z1 = min(width - 1, int(math.ceil((cz + half_d - origin.z) / cell)))
+            solid.update((x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1))
+        tiles = TileMap(
+            width=width, height=width, tile_size=cell, origin=origin,
+            solid=frozenset(solid), wall_height=float(arena["wall_height"]),
+        )
+        mesh = tiles.mesh()
+        return {
+            "schema": 1,
+            "tiles": tilemap_report(tiles),
+            "solid_cells": [[x, z] for x, z in sorted(solid)],
+            "document": tiles.to_dict(),
+            "colliders": len(tiles.colliders()),
+            "mesh": {
+                "vertices": len(mesh.positions),
+                "triangles": len(mesh.indices) // 3,
+            },
+        }
+
+    def _arena_layout(self) -> tuple[int, float, Vec3]:
+        """The one grid layout shared by every arena-shaped report."""
+        size = float(self.sim.levels["arena"]["size"])
+        cell = 1.0
+        return int(size / cell), cell, Vec3(-size / 2.0, 0.0, -size / 2.0)
+
+    def _to_cell(self, x: float, z: float) -> tuple[int, int]:
+        """Clamp a world XZ point to the shared arena grid cell."""
+        width, cell, origin = self._arena_layout()
+        return (
+            max(0, min(width - 1, int(math.floor((x - origin.x) / cell)))),
+            max(0, min(width - 1, int(math.floor((z - origin.z) / cell)))),
+        )
+
+    def _nav_grid(self, clearance: float = 0.0) -> NavGrid:
+        """The authoritative arena nav grid, rasterized from collision boxes.
+
+        The arena floor is a full-size AABB and grid_from_boxes ignores vertical
+        extents, so floor-level boxes are excluded explicitly; otherwise every
+        cell would be blocked. Both nav reports share this one derivation.
+        """
+        width, cell, origin = self._arena_layout()
+        boxes = [
+            box for box in self.sim.colliders
+            if box.center.y + box.half_extents.y > 0.1
+        ]
+        return grid_from_boxes(
+            width, width, boxes, cell_size=cell,
+            origin=origin, clearance=float(clearance),
+        )
+
+    def nav_plan_report(self) -> dict:
+        """Arena route from spawn to the surge pickup as Keystone nav data.
+
+        An on-demand query for AI/soak consumers: the grid comes from the same
+        collider-derived authority as nav_authoring_report, and neither the
+        sim's movement nor its replay hash ever reads it.
+        """
+        levels = self.sim.levels
+        width, cell, origin = self._arena_layout()
+        grid = self._nav_grid(0.0)
+        spawn = levels["player"]["spawn"]
+        pickup = levels["pickup"]
+        start = self._to_cell(float(spawn[0]), float(spawn[2]))
+        goal = self._to_cell(float(pickup["x"]), float(pickup["z"]))
+        result = find_path(grid, start, goal, diagonal=True)
+        route = path_report(result)
+        if result.found:
+            points = grid_path_points(
+                smooth_path(grid, result.path),
+                cell_size=cell, origin=origin, height=0.0,
+            )
+        else:
+            points = ()
+        follower = PathFollower(points, speed=3.0)
+        return {
+            "schema": 1,
+            "grid": {
+                "width": width, "height": width, "cell_size": cell,
+                "blocked_cells": len(grid.blocked),
+            },
+            "pathfinding": route,
+            "waypoints": [[point.x, point.y, point.z] for point in points],
+            "navigation": navigation_report(follower, self.sim.eye()),
+        }
 
     def snapshot(self) -> dict:
         snap = self.sim.snapshot()
@@ -1442,6 +2274,11 @@ class ShooterGame:
                 int(state.width) // 2 - text_width(label, 2) // 2, 116,
                 label, (1.0, 0.62, 0.20, 1.0), 2,
             )
+            prompt = "PRESS ENTER FOR A NEW RUN"
+            canvas.text(
+                int(state.width) // 2 - text_width(prompt, 2) // 2, 140,
+                prompt, (0.95, 0.90, 0.80, 1.0), 2,
+            )
         if not self.sim.alive and self.last_run is not None:
             run = self.last_run
             width = int(state.width)
@@ -1475,6 +2312,7 @@ class ShooterGame:
             wins = int(self.profile.get("wins", 0))
             if runs > 0:
                 extras.append((f"RUNS {runs}  WINS {wins}", (0.55, 0.60, 0.68, 1.0)))
+            extras.append(("PRESS ENTER FOR A NEW RUN", (1.0, 0.62, 0.20, 1.0)))
             best_kills = int(self.profile.get("best_kills", 0))
             best_wave = int(self.profile.get("best_wave", 0))
             best_streak = int(self.profile.get("best_streak", 0))

@@ -1,0 +1,34 @@
+{
+  "cycle": 150,
+  "area": "project configuration: declare the headless mechanics contract the checker asked for",
+  "find": {
+    "report_claim": "aikit check shooter reported 'Game detected but .aikit/project.json has no mechanics contract; declare mechanics.core and mechanics.test for a headless AI-testable core'",
+    "live_evidence": "project.json had mechanics_required false and no mechanics block, even though the project is built around a headless deterministic core (shooter/sim.py) with seeded Sim instances and 537 passing tests",
+    "consumer_evidence": "without the contract an AI agent reading project.json cannot tell which files are the testable core or which command exercises them without a GL context, so it must read the whole suite to find out"
+  },
+  "analyze": {
+    "read": [
+      "scripts/project_registry.py mechanics_errors validation rules",
+      "scripts/project_gates.py gate ordering and the duplicate-command warning",
+      "shooter/tests to separate headless suites from engine/server ones"
+    ],
+    "killed": [
+      "pointing mechanics.test at the same command as gates.test: project_gates explicitly warns that this runs the suite twice",
+      "declaring the whole tests directory: it includes engine, server, capture and export suites that need a GL context or loopback sockets, so it would not be a headless core test",
+      "leaving mechanics_required false: the project genuinely is a headless-testable game, so the flag should state that rather than leave it ambiguous"
+    ],
+    "survivor": "declare core as the sim and bot modules, and mechanics.test as the five headless suites that need no engine, server or capture harness"
+  },
+  "fix": {
+    "shooter": ".aikit/project.json sets mechanics_required true and declares mechanics.core as [shooter/sim.py, shooter/bot.py] with mechanics.test running test_keystone_mechanics, test_hurt_shake, test_los_broadphase, test_death_camera_path and test_campaign_camera_path"
+  },
+  "proof": {
+    "shooter": {
+      "mechanics_command": "43 passed in 5.86s standalone; 8.3s as a gate",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics); the checker reports the mechanics gate as new and running, and the mechanics-contract advisory is gone",
+      "tests": "537 passed, 2 xfailed in the full suite",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (configuration only)"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

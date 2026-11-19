@@ -1,0 +1,38 @@
+{
+  "cycle": 158,
+  "area": "safety net: durable backup of uncommitted work; line-ending normalization attempted and reverted",
+  "find": {
+    "report_claim": "20 cycles (138-157) sat uncommitted in the working tree, and earlier in this session an external recovery process reset both projects to HEAD and destroyed all uncommitted work with no stash and no recoverable copy",
+    "live_evidence": "shooter had 51 uncommitted entries and no git ref protecting them; the only copy existed in the working tree, which is exactly what the earlier recovery destroyed",
+    "consumer_evidence": "a restore of the backup produced CRLF in every text file because neither project ships a .gitattributes while core.autocrlf=true"
+  },
+  "analyze": {
+    "read": [
+      "git plumbing for a snapshot that does not touch the worktree or the real index (GIT_INDEX_FILE + read-tree + add -A + write-tree + commit-tree + update-ref)",
+      "scripts/project_registry.py PROJECT_GITATTRIBUTES (AIKit's own template: text=auto eol=lf plus a ledger union merge)",
+      "git check-attr behaviour for text, eol and merge"
+    ],
+    "killed": [
+      "git stash: it mutates the working tree, which is the opposite of what a safety net should do",
+      "committing to the branch: not authorised by the user, and a commit is a delivery decision rather than a backup",
+      "a patch file in the repository: it duplicates the content, would need a README row, and can rot silently"
+    ],
+    "survivor": "write the working tree into a dangling commit through a temporary index and pin it with a refs/backups ref, then prove the snapshot by re-snapshotting and comparing tree hashes and by checking out the backup into a temp directory"
+  },
+  "fix": {
+    "shooter": "refs/backups/shooter-cycles-138-157 (74f839c) pins 417 files of uncommitted work outside the branch; tests/test_repo_line_endings.py (2 tests) guards the line-ending rule against the committed blobs and asserts git status never reports a modification git diff does not see; README tree row added"
+  },
+  "proof": {
+    "shooter": {
+      "backup_exactness": "a fresh snapshot written through another temporary index produced the identical tree hash (90c9e15d... then aa387b09...), so the backup captures the working tree exactly",
+      "restore": "backup captures 417 files; a fresh snapshot through a second temporary index produced the identical tree hash (90c9e15d...) both times the ref was written, and checkout-index into a temp directory restored all files with the expected paths present (143 test modules, campaign_clear.kpath, cycle-157.json)",
+      "line_endings": "line-ending normalization was attempted and REVERTED. Adding '* text=auto eol=lf' made .aikit/decisions.md -- whose committed blob contains 823 CR bytes -- permanently modified, because the clean filter normalizes it to LF while the stored blob is CRLF. Converting 338 tracked files to LF turned 328 of them into stat-only phantom modifications and one into a whole-file diff. The repository's committed content is genuinely mixed (decisions.md CRLF; sim.py, game.py, README.md and LICENSE LF), so pinning eol=lf requires a separate one-time renormalization commit that the user has not authorised; .gitattributes was removed and every touched file restored to its committed bytes, leaving 14 genuine modifications plus untracked files, which matches the pre-cycle state",
+      "tests": "565 passed, 2 xfailed",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "guard": "tests/test_repo_line_endings.py was strengthened twice. First version compared git status with git diff, which shares one stat cache and can agree while the tree is unchanged. Second version compared worktree bytes with the HEAD blob, which misses the case git actually cares about: a CRLF-only rewrite is normalised by the clean filter, so git reports it modified while hash-object still yields the committed blob. The final version compares git hash-object --path=<file> output with the HEAD blob. Probe: converting LICENSE to CRLF made status report 'M LICENSE' while the filtered hash equalled HEAD, and the guard failed naming LICENSE; restoring the committed bytes returned it to green. A reintroduced eol=lf .gitattributes also fails the other test, naming .aikit/decisions.md. Binary blobs are excluded by a NUL check (20 tracked blobs contain CR, 19 are PNGs).",
+      "subprocess_hygiene": "every git call in tests/test_repo_line_endings.py carries an explicit timeout (the AIKit gate forbids untimed subprocess calls), tightened from 60s to GIT_TIMEOUT=15 after review; the per-file `git cat-file` loop was replaced by one `git cat-file --batch` read, verified byte-exact against single-blob reads for all 363 tracked files (e.g. decisions.md 145347 B, game.py 72596 B, LICENSE 8392 B). Suite time 2.00s -> 1.53s; the remaining second is the batch read itself, not process spawns"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

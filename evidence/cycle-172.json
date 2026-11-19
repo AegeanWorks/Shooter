@@ -1,0 +1,38 @@
+{
+  "cycle": 172,
+  "area": "architecture: the largest method in the project is a 448-line, 50-attribute build, now covered and recorded",
+  "find": {
+    "report_claim": "PRINCIPLE-009 forbids a junk-drawer module and an oversized role, and the project's own gate reports it as clean",
+    "live_evidence": "shooter/game.py is 1769 lines holding one 1485-line class; build_scene alone is 448 lines and writes 50 distinct self attributes spanning clips, mixer, assets, scene, particles, kill feed, spawn marks and seven named scene nodes; _sync_scene is 364 lines and _play_event 161, against sim.step at 208 and ui.draw_shooter at 172",
+    "consumer_evidence": "nothing in .aikit/decisions.md or .aikit/cycles.md recorded this, so the next worker would rediscover it; and with 50 attributes reassigned in one method, a single missed reset leaks one run's scene state into the next, which is exactly what new_run() does on every restart"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py module and class structure (25 methods, grouped by responsibility)",
+      "the attribute write sets of build_scene (50) and _sync_scene (2), and the __init__ overlap",
+      "tests referencing build_scene and _sync_scene (214 matches)"
+    ],
+    "killed": [
+      "splitting build_scene now: a 448-line method with 50 outputs is a multi-cycle refactor, and doing it inside a testbed cycle would risk a regression with no gameplay benefit to justify it",
+      "dropping the parametrized sweep because two mutations survived it: it still catches a newly added attribute that one branch stops setting",
+      "asserting emptiness of a rebuilt pool: the tracer pool is deliberately repopulated with hidden nodes, so freshness rather than emptiness is the contract"
+    ],
+    "survivor": "record the size finding with evidence, and pin the property a future split must preserve: every attribute build_scene owns is reassigned on a rebuild, the scene object is replaced, and a restart does not inherit it"
+  },
+  "fix": {
+    "shooter": "tests/test_rebuild_isolation.py (54 tests) discovers build_scene's attribute set from the method's own AST, asserts each of those attributes exists after a build and is reassigned by one, checks a restart clears transient scene state and resets the sim clock, asserts the Scene object is replaced, and asserts a rebuild reproduces an equivalent scene fingerprint (camera pose, fov, fog, light count, node ids)"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "685 passed, 2 xfailed in full suite",
+      "new_suite": "54 passed in 59.8-73.2s (the parametrized rebuild is 50 cases, each doing a full scene build)",
+      "discovery": "build_scene writes 50 self attributes; only _pickup_spot and particles are initialised solely there, the other 48 are also set in __init__",
+      "test_bugs_found": "my first draft invented `_tracer_n` (the real field is `_tracer_nodes`), used a non-existent `scene.nodes`, and asserted an EMPTY tracer pool when the pool is deliberately rebuilt with hidden nodes",
+      "mutation": "removing the `_pickup_fx_t` reset from build_scene SURVIVED (init sets it too), and removing the `_pickup_spot` assignment also SURVIVED (it is reassigned elsewhere); both are documented inside the test as the boundary of what the sweep proves: reassignment, not correct values",
+      "gate": "the code-structure gate rejected 7 dotted private assignments in the new test (PRINCIPLE-009 R5, the same rule that caught cycles 141 and 157); rewritten with setattr/getattr since inspecting a rebuilt scene is the suite's whole purpose",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

@@ -1,0 +1,35 @@
+{
+  "cycle": 160,
+  "area": "testbed hardening: cycle 159's launcher tests were Windows-only despite a cross-platform README promise",
+  "find": {
+    "report_claim": "the README promises both entry points -- 'double-click start-shooter.cmd (Windows) or run ./start-shooter.sh (macOS/Linux)'",
+    "live_evidence": "tests/test_launchers.py ran `cmd /c` and `taskkill` unconditionally, so the suite would have failed on any macOS/Linux machine the README claims to support",
+    "consumer_evidence": "a suite that only passes on one platform silently narrows the project's stated support; the first person to run it on Linux would see a failure unrelated to their change"
+  },
+  "analyze": {
+    "read": [
+      "tests/test_launchers.py (cycle 159)",
+      "README platform claims",
+      "every subprocess call in tests/ via AST"
+    ],
+    "killed": [
+      "deleting the .cmd tests on non-Windows: the batch file is still part of the product, so its static contract must be asserted everywhere",
+      "leaving the suite unguarded and documenting 'Windows only': that contradicts the README rather than fixing the mismatch",
+      "guarding with pytest.mark.skip on the whole module: five of the seven tests are platform-neutral and must keep running on POSIX"
+    ],
+    "survivor": "guard only the two tests that spawn cmd.exe, keep the five static assertions unconditional, and pin the guard by simulating POSIX in a subprocess"
+  },
+  "fix": {
+    "shooter": "tests/test_launchers.py adds `WINDOWS = sys.platform == \"win32\"` and a `needs_cmd` skipif applied to exactly the two tests that execute cmd.exe; the module docstring now states which half runs where; both bare Popen call sites document that their bound comes from communicate(timeout=) plus taskkill, since Popen takes no timeout argument"
+  },
+  "proof": {
+    "shooter": {
+      "guard": "a subprocess that forces sys.platform = 'linux' before importing the module reported WINDOWS False and exactly two guarded tests, both with skip_when_not_windows True -- so on POSIX the five static tests run and the two cmd.exe tests skip",
+      "subprocess_audit": "an AST sweep over every tests/test_*.py found zero subprocess.run/call/check_output calls without timeout=, and two Popen calls whose bound comes from communicate(timeout=RUN_TIMEOUT) plus taskkill /F /T",
+      "tests": "572 passed, 2 xfailed in full suite",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

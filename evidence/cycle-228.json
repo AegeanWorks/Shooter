@@ -1,0 +1,30 @@
+{
+  "cycle": 228,
+  "area": "Testbed audit: HUD presentation-only contract",
+  "find": {
+    "report_claim": "shooter/ui.py declares 'Presentation-only, never sim' but no test asserted draw_shooter/reticle_gap leave the sim snapshot unchanged; a stray sim write would shift the determinism hash with every test green",
+    "live_evidence": "drawing a HUD (rects and texts) and querying the reticle leaves stable_hash(sim.snapshot()) identical",
+    "consumer_evidence": "a new purity test pins the contract and requires the HUD to actually draw"
+  },
+  "analyze": {
+    "killed": [
+      "re-testing reticle math: cycle reticle tests already pin gap values; this cycle protects the non-mutation contract",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_reticle.py"
+    ],
+    "survivor": "one HUD-purity test"
+  },
+  "fix": {
+    "shooter": "tests/test_reticle.py gains the guard (now 5 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "injecting sim.hits += 1 at the top of draw_shooter (hits is in the snapshot) fails the guard; ui.py restored byte-identically (sha256 57c4a31874a2da82fc1aa671b1ac8ee7f03bfe9bb79e8b21c7495e0c2d6c787b)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "818 passed (817 + 1 new HUD-purity guard)",
+      "timing_note": "suite ran under heavy machine load (253 s standalone, 272 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

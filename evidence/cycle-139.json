@@ -1,0 +1,35 @@
+{
+  "cycle": 139,
+  "area": "testbed adoption: the spatial-grid broadphase contract",
+  "find": {
+    "report_claim": "keystone.broadphase.SpatialGrid documents two guarantees that consumers depend on: 'cell size is a performance trade-off, not a correctness setting', and results come back in insertion order so output stays deterministic",
+    "live_evidence": "shooter imports SpatialGrid in shooter/sim.py:16 and builds it every wave at sim.py:236-238 for the wall colliders, but no shooter test imported the module directly; keystone's own suite asserts a fixed cell size only, so invariance across cell sizes was unproven",
+    "consumer_evidence": "the first draft of the cell-size test queried proxy centres only, and a centre-only registration mutation still passed it; only an edge-cell query at a small cell size exposes the multi-cell registration the module depends on"
+  },
+  "analyze": {
+    "read": [
+      "keystone/broadphase.py query/pairs/insert/_cells_for/_candidates",
+      "keystone/physics.py AABB (center + half extents, finite-validated)",
+      "shooter/sim.py grid construction and the existing test_keystone_mechanics grid assertions"
+    ],
+    "killed": [
+      "re-asserting keystone's own cases (overlap filtering, move/remove) at a single cell size: duplicates the module suite without adding a consumer guarantee",
+      "asserting results by centre-only queries: a centre-cell-only registration passes, which is exactly the bug multi-cell registration prevents",
+      "expecting a NaN box to reach the grid: AABB rejects it first, so that guard is defensive-only and cannot be a consumer test"
+    ],
+    "survivor": "assert identical query/point/pairs answers across cell sizes 0.05 to 1024, an edge-only query on a large proxy, insertion-order ranking that survives re-insert, the inclusive cell budget with its named limit, linear-scan degradation for an oversized query, and validation of both constructors"
+  },
+  "fix": {
+    "shooter": "tests/test_keystone_broadphase_mechanics.py (12 tests) covers cell-size invariance of query/query_point/pairs, edge-cell registration for a large proxy, insertion-order results and pairs, rank retention on update, stale-cell removal on re-insert, remove/clear/membership, empty and zero-extent proxies, cell_size validation, the inclusive MAX_PROXY_CELLS budget, oversized-query degradation, non-finite handling at the AABB boundary, and two-grid agreement; README testbed and tree rows added"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "494 passed, 2 xfailed in full suite",
+      "new_suite": "12 passed in 1.09s",
+      "mutation": "sorting candidates by a constant instead of insertion rank failed the ordering and re-rank tests; registering a proxy only in its centre cell failed 4 tests (cell-size invariance, edge cell, ordering, cell budget); keystone/broadphase.py restored byte-identically (sha256 match)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; the suite is read-only)"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

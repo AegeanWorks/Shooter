@@ -47,7 +47,7 @@ def test_plan_batches_groups_static_by_mesh_and_material():
                 material=material,
             )
         )
-    scene.add(Node("d", id="d", mesh=shared, material=Material()))
+    scene.add(Node("d", id="d", mesh=shared, material=Material(color=Vec3(1.0, 0.0, 0.0))))
     scene.add(Node("hidden", id="hidden", mesh=shared, visible=False))
     scene.add(Node("nom", id="nom"))
 
@@ -80,6 +80,8 @@ def test_plan_batches_groups_static_by_mesh_and_material():
         "skin_groups": 0,
         "skin_calls": 0,
         "skin_triangles": 0,
+        "overlay_calls": 0,
+        "overlay_triangles": 0,
     }
 
 
@@ -148,9 +150,11 @@ def test_merge_batches_static_world_space_and_exclude():
     assert group["count"] == 3
     assert group["triangles"] == 36
     assert group["mesh"].bounds() == ((-2.5, -0.5, -0.5), (2.5, 0.5, 0.5))
-    assert merged["plan"]["groups"] == 3
+    # content-keyed planning puts the three identical cube/material nodes in
+    # one group, so the unmerged plan reports a single group
+    assert merged["plan"]["groups"] == 1
     assert merged["plan"]["draw_calls"] == 3
-    assert merged["plan"]["saved_calls"] == 0
+    assert merged["plan"]["saved_calls"] == 2
     assert [node.name for node in scene.traverse()] == ["", "a", "b", "c"]
     assert all(node.mesh.triangle_count() == 12 for node in scene.traverse() if node.mesh)
 

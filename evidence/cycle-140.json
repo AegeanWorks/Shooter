@@ -1,0 +1,34 @@
+{
+  "cycle": 140,
+  "area": "game fix: enemy line-of-sight now uses the wave broadphase, ending the built-but-unqueried grid",
+  "find": {
+    "report_claim": "cycle 139 recorded that shooter/sim.py built the wall SpatialGrid every wave and never queried it, so the structure cost a rebuild for no gameplay effect",
+    "live_evidence": "three ray consumers scanned all 12 colliders linearly: _enemy_has_los (sim.py:349, called up to three times per enemy per tick), aim_target (sim.py:430) and _fire (sim.py:711)",
+    "consumer_evidence": "a per-segment micro-benchmark on the real arena measured 122.5 us for the full 12-box scan against 49.7 us for a grid query plus exact re-test, with the candidate set averaging 0.72 of 12 boxes"
+  },
+  "analyze": {
+    "read": [
+      "shooter/sim.py wall build, _enemy_has_los, aim_target, _fire",
+      "keystone/broadphase.py query ordering guarantee (insertion order)"
+    ],
+    "killed": [
+      "removing the grid: the structure is correct and the LOS path is hot, so the cheaper fix is to read it",
+      "routing aim_target and _fire through the grid: both cast unbounded rays, so bounding the query would make a distant wall invisible and change whether a target counts as blocked",
+      "claiming an end-to-end speedup: repeated kite replays on this machine ranged from 7.6s to 91.4s for the same build because another worker was active, so no wall-clock claim is defensible"
+    ],
+    "survivor": "prefilter only the bounded enemy-to-player segment, keep the exact ray_aabb decision, and prove equivalence against the previous full scan rather than trusting one replay hash"
+  },
+  "fix": {
+    "shooter": "shooter/sim.py adds _collider_by_key (built alongside the grid inserts) and _colliders_along(start, end) which queries the grid with the segment's AABB; _enemy_has_los iterates that candidate list, preserving the exact ray test, the length - 0.3 margin and the insertion order that decides the first blocking box; tests/test_los_broadphase.py (4 tests) proves the prefilter never drops a blocking box across 81 arena positions, matches the full-scan verdict across 200 swept positions, preserves collider build order, and can reach every wall"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "498 passed, 2 xfailed in full suite",
+      "equivalence": "test_los_broadphase.py: 4 passed in 1.12s; 81 positions checked for a dropped blocker, 200 swept positions for verdict parity, zero disagreements",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged); a 3000-frame --simulate run hashed identically (640c130c00ab6a48fd6ccadb0f02830b) on both the prefilter and the full-scan build",
+      "performance": "micro-benchmark on the shipped arena: 122.5 us -> 49.7 us per LOS segment (candidates 0.72/12); end-to-end timing rejected as unmeasurable under concurrent load (7.6s..91.4s spread)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

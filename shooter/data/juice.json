@@ -82,5 +82,15 @@
     "grip_width": 0.050,
     "grip_height": 0.11,
     "grip_length": 0.060
+  },
+  "death_cinematic": {
+    "body_height": 0.85,
+    "start_forward": 4.0,
+    "start_fov": 75.0,
+    "keys": [
+      {"time": 0.70, "angle": 0.0, "radius": 2.0, "height_above_eye": 1.15, "fov": 68.0},
+      {"time": 2.10, "angle": 0.9, "radius": 3.2, "height": 2.15, "fov": 58.0},
+      {"time": 3.40, "angle": 1.9, "radius": 4.6, "height": 2.65, "fov": 52.0}
+    ]
   }
 }

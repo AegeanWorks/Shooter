@@ -5,10 +5,6 @@ through the whole reload. A deterministic sine dip now lowers and pulls the
 gun back between reload start and completion, then returns it to rest.
 """
 
-import math
-
-from keystone.math3d import Vec3
-
 from shooter.game import ShooterGame
 
 
@@ -24,16 +20,9 @@ def _game() -> ShooterGame:
 
 
 def _offsets(g: ShooterGame) -> tuple[float, float]:
-    sim = g.sim
+    # Camera space: +Y is up and -Z is forward, so down/fwd are -y/-z.
     body = g._view_body.transform.position
-    eye = sim.eye()
-    forward = sim.forward()
-    right = Vec3(math.cos(sim.yaw), 0.0, math.sin(sim.yaw))
-    up = right.cross(forward)
-    dx, dy, dz = body.x - eye.x, body.y - eye.y, body.z - eye.z
-    down = -(dx * up.x + dy * up.y + dz * up.z)
-    fwd = dx * forward.x + dy * forward.y + dz * forward.z
-    return down, fwd
+    return -body.y, -body.z
 
 
 def test_reload_dips_the_viewmodel_down_and_back():

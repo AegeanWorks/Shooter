@@ -1,0 +1,37 @@
+{
+  "cycle": 184,
+  "area": "Keystone testbed: the arena as an authored TileMap document",
+  "find": {
+    "report_claim": "tilemap was one of 21 Keystone modules the shooter had never imported; it turns an immutable grid into exact AABB colliders, one merged mesh and a round-trippable document",
+    "live_evidence": "levels.json already publishes a 40 m arena with a wall height and seven cover boxes, so an authoring proof needs no renderer and no gameplay change",
+    "consumer_evidence": "the built TileMap has 143 solid cells, 143 colliders and a merged mesh of 9260 vertices / 4630 triangles; to_dict/from_dict reproduce an equal map"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/tilemap.py: TileMap, colliders(), mesh(), to_dict(), from_dict(), tilemap_report()",
+      "shooter/data/levels.json: arena size 40, wall_height 3, seven covers",
+      "shooter/game.py:nav_plan_report (on-demand query pattern from cycle 182)"
+    ],
+    "killed": [
+      "adding the tile colliders or mesh to the live scene: that would change physics and draw budget, i.e. the sim and its replay hash",
+      "authoring a separate tile JSON file: would duplicate levels.json and create two sources of truth",
+      "per-frame tile reports: cycle 180 measured the cost of per-frame queries; this stays on demand"
+    ],
+    "survivor": "an on-demand arena_tile_report() that derives a TileMap from the shipped covers and reports tile stats, a round-tripped document, collider count and merged-mesh size"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports TileMap/tilemap_report and adds arena_tile_report(); tests/test_keystone_tilemap_mechanics.py (5 tests) pins report shape, cover-cell mapping, document round-trip, collider/mesh counts and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no arena_tile_report)",
+      "measured": "40x40 tile map, tile_size 1.0, wall_height 3.0, 143 solid / 1457 free, bounds (-20,0,-20)..(20,3,20), 143 colliders, merged mesh 9260 vertices / 4630 triangles",
+      "mutation": "ignoring the cover boxes when marking solid cells fails 3 of 5 tests; game.py restored byte-identically (sha256 0624064e2b12acbb17b94c2786c3161d1f6a3c38f182d42b14f21afaac797d24)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "tests": "693 passed (688 + 5 new tilemap tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

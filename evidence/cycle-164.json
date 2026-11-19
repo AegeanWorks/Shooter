@@ -1,0 +1,36 @@
+{
+  "cycle": 164,
+  "area": "player-data safety: ProfileStore.save broke its bool contract on one path (fixed), and all failure modes are now pinned",
+  "find": {
+    "report_claim": "shooter/profile.py documents save(self, profile) -> bool and the game's _save_profile relies on it, catching OSError to raise 'PROFILE NOT SAVED' in the debrief rather than crashing the finish",
+    "live_evidence": "probing four failure modes showed three correct -- corrupt file without backup is quarantined and reset, corrupt file with a backup recovers best_score 777, a fresh lock refuses the save and writes nothing -- but a path whose PARENT could not be created (a file where the directory should be) raised FileExistsError out of save()",
+    "consumer_evidence": "the traceback pinned it to _acquire_lock: self.path.parent.mkdir(...) sat outside any try, so the exception escaped before save's own try block began; the game survived only because _save_profile also catches OSError, which means any other caller trusting the -> bool signature would not"
+  },
+  "analyze": {
+    "read": [
+      "shooter/profile.py save/_acquire_lock/write_json_atomic",
+      "shooter/game.py _save_profile and profile_save_failed reporting",
+      "the existing profile suites (21 tests)"
+    ],
+    "killed": [
+      "fixing it in the game instead of the store: the broken contract belongs to ProfileStore, and every future caller would inherit the bug",
+      "catching the exception inside save() only: mkdir runs in _acquire_lock, before the write try block, so the guard has to live there",
+      "weakening the test to 'does not crash': the contract is `is False`, not 'returns something falsy'"
+    ],
+    "survivor": "wrap the mkdir in _acquire_lock so an unusable parent reports no-lock, and pin every failure mode including the regression"
+  },
+  "fix": {
+    "shooter": "shooter/profile.py wraps self.path.parent.mkdir(parents=True, exist_ok=True) in try/except OSError returning None, so save() returns False for an uncreatable parent; tests/test_profile_safety.py (13 tests) covers that regression, round-trip plus .bak contents, quarantining a corrupt file without touching it, backup recovery, fresh-lock refusal without a partial write, stale-lock takeover and release, no lock left behind after repeated saves, five junk payloads all loading as usable profiles, and the game reporting PROFILE NOT SAVED while keeping last_run"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "597 passed, 2 xfailed in full suite",
+      "new_suite": "13 passed in 0.81s",
+      "existing_profile_suites": "21 passed in 3.83s (recovery, save retry, history, win history, backup restart, save error)",
+      "mutation": "reverting the mkdir guard reproduced the exact failure ('FileExistsError: [WinError 183] ... notadir') and failed only test_save_returns_false_when_the_parent_cannot_be_created; shooter/profile.py restored byte-identically (sha256 match).",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

@@ -1,0 +1,30 @@
+{
+  "cycle": 214,
+  "area": "Testbed audit: victory camera path bands",
+  "find": {
+    "report_claim": "test_campaign_camera_path pinned key count, times and camera-follows-pose, but the authored lens and altitude were only ever compared against the path's own samples",
+    "live_evidence": "the four shipped keys have fov 62/58/55/52 and heights 3.3/2.6/2.1/1.9, a deliberate tightening fly-around",
+    "consumer_evidence": "a new band test checks fov 50..65, height 1.5..4.0, monotonically decreasing fov and at least 5 degrees of tightening"
+  },
+  "analyze": {
+    "killed": [
+      "pinning exact key poses: design bands allow re-authoring while catching a doubled fov or a key moved off the arena",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_campaign_camera_path.py"
+    ],
+    "survivor": "one authored-geometry band test on the loaded document"
+  },
+  "fix": {
+    "shooter": "tests/test_campaign_camera_path.py gains the guard (now 13 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "changing the opening fov 62 to 90 fails the guard; campaign_clear.kpath restored byte-identically (sha256 959491bea9923e825e0ca9b845fe9f7c3746f9e0d8d5b8117df05461a797584a)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "803 passed (802 + 1 new camera-path guard)",
+      "timing_note": "suite ran under heavy machine load (499 s standalone, 294 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

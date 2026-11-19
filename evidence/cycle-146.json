@@ -1,0 +1,34 @@
+{
+  "cycle": 146,
+  "area": "game fix: cinematics clear live trauma instead of freezing it and reporting a phantom shake",
+  "find": {
+    "report_claim": "cycle 142 made CameraShake the single jolt source and exposed camera_shake_report while trauma is live; cycles 141 and 143 gave the camera two cinematic owners (death path, victory .kpath)",
+    "live_evidence": "the shake only advanced inside the non-cinematic camera branch, so a hit taken on the killing blow froze mid-decay: a reproduction held trauma at 0.86 through 120 frames of death cinematic while camera_shake_report still claimed the camera was shaking",
+    "consumer_evidence": "neither cinematic path reset trauma, so the AI-facing shake report described a shake no pixel showed, and the frozen value would survive any later resume of first-person rendering"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py _sync_scene camera precedence and the two cinematic starters",
+      "keystone/camera_shake.py update/sample/reset semantics"
+    ],
+    "killed": [
+      "continuing to update trauma during a cinematic: the offset is not applied, so decaying it silently would leave a report for a shake that never renders",
+      "leaving the report and letting it clear on the next first-person frame: the cinematic never ends (it clamps), so the stale value would persist for the whole debrief",
+      "resetting only in _sync_scene when a cinematic exists: that would re-reset every frame and hide the transition"
+    ],
+    "survivor": "reset trauma and clear the report at the moment each cinematic takes ownership of the camera, so the report always describes the frame being rendered"
+  },
+  "fix": {
+    "shooter": "shooter/game.py resets _shake and clears camera_shake_report at the end of _start_death_camera and _start_campaign_clear_camera; tests/test_hurt_shake.py gains two regression tests (death and victory) asserting the cinematic owns the camera, trauma is exactly 0.0, and no shake is reported"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "520 passed, 2 xfailed in full suite",
+      "hurt_suite": "6 passed in 1.34s",
+      "mutation": "removing only the death-cinematic reset failed test_a_cinematic_owns_the_camera_and_clears_live_trauma (trauma 0.86 != 0.0) and nothing else; removing the first reset failed the build_scene test; shooter/game.py restored byte-identically (sha256 match, CRLF preserved)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; presentation state only)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

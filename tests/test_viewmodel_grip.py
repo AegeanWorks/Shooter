@@ -15,20 +15,20 @@ def _game() -> ShooterGame:
     return game
 
 
-def _ndc(game: ShooterGame, node) -> object:
-    return game.scene.camera.view_projection(960.0 / 540.0).project_point(
-        node.transform.position
-    )
+def _offsets(game: ShooterGame, node) -> tuple[float, float]:
+    # The rig root owns the camera pose; parts carry camera-space x/y.
+    point = node.transform.position
+    return point.x, point.y
 
 
 def test_viewmodel_has_a_grip_below_the_receiver():
     game = _game()
     assert game._view_grip is not None
     assert game._view_grip.visible is True
-    body = _ndc(game, game._view_body)
-    grip = _ndc(game, game._view_grip)
-    assert grip.y < body.y - 0.1, (body.y, grip.y)
-    assert -1.0 < grip.x < 1.0 and -1.0 < grip.y < 1.0
+    body_x, body_y = _offsets(game, game._view_body)
+    grip_x, grip_y = _offsets(game, game._view_grip)
+    assert grip_y < body_y - 0.05, (body_y, grip_y)
+    assert -1.0 < grip_x < 1.0 and -1.0 < grip_y < 1.0
 
 
 def test_grip_tints_with_the_active_weapon():

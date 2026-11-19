@@ -1,0 +1,38 @@
+{
+  "cycle": 203,
+  "area": "Testbed audit: weapons and enemies tuning bands",
+  "find": {
+    "report_claim": "cycle 202 swept engagement.json and levels.json; weapons.json and enemies.json were the last tuning documents without a full sweep",
+    "live_evidence": "a 12-case full-suite sweep doubled one value per weapon/enemy: 7 were caught, 5 survived with all 778 tests green",
+    "survivors": [
+      "weapons.pulse.falloff_start 25.0 -> 50.0",
+      "weapons.scatter.pellets 8 -> 16",
+      "weapons.lance.dmg 55 -> 110",
+      "weapons.lance.pierce 2 -> 3",
+      "enemies.warden.attack_cd_s 3.0 -> 6.0"
+    ]
+  },
+  "analyze": {
+    "killed": [
+      "pinning raw literals: observable bands on tracers, HP loss, hit count, falloff damage and boss cooldown were used",
+      "aiming down the arena centre for the falloff probe: the cover at z=-10 blocked the ray; the probe uses a clear lane at x=15 from z=19 to z=-19 (38 m)",
+      "using a single enemy for the lance damage probe: hits sometimes landed on the second enemy in a line, so the probe reads the maximum HP drop across three aligned targets"
+    ],
+    "survivor": "tests/test_weapon_enemy_tuning_bands.py with five behaviour assertions"
+  },
+  "fix": {
+    "shooter": "five tests added; no production code changed. Both data files were restored byte-identically after every mutation (weapons sha256 cea4de98c6c3c375b42a7d3a4ad7025403029eae97583106ebf9b8fbae383b41, enemies sha256 fb38882f6b3da3f1ac7fafe7fe9cc736899fe8d9e35131bf69480a1a9446761a); README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "sweep": "12 mutations x full suite; caught: pulse.rof, pulse.mag, surge.duration_s, mite.speed, brute.windup_s, wisp.range, warden.summon_count",
+      "measured": "scatter 8 tracers; lance 55 damage and 2 hits through three enemies; pulse 9 damage at 38 m (falloff active); warden attack cooldown 3.0 s",
+      "mutation": "all five survivors now fail their targeted test when doubled; weapons and enemies hashes match the pre-sweep values",
+      "codebase_map": "regenerated after the new test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "783 passed (778 + 5 new tuning tests)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

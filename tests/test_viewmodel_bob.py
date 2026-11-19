@@ -5,8 +5,6 @@ and reload moved it. A small deterministic bob now follows horizontal speed
 and settles back to rest when the player stops.
 """
 
-import math
-
 from keystone.math3d import Vec3
 
 from shooter.game import ShooterGame
@@ -26,17 +24,9 @@ def _game() -> ShooterGame:
 
 
 def _offsets(g: ShooterGame) -> tuple[float, float]:
-    sim = g.sim
+    # The rig owns the camera pose, so the part's local x/y ARE right/up.
     body = g._view_body.transform.position
-    eye = sim.eye()
-    forward = sim.forward()
-    right = Vec3(math.cos(sim.yaw), 0.0, math.sin(sim.yaw))
-    up = right.cross(forward)
-    dx, dy, dz = body.x - eye.x, body.y - eye.y, body.z - eye.z
-    return (
-        dx * right.x + dy * right.y + dz * right.z,
-        dx * up.x + dy * up.y + dz * up.z,
-    )
+    return body.x, body.y
 
 
 def test_moving_viewmodel_sways_off_the_rest_pose():

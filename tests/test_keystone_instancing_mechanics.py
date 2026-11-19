@@ -46,7 +46,7 @@ def _shared_scene():
                 id=name,
                 transform=Transform(position=Vec3(x, 0.0, -5.0)),
                 mesh=mesh,
-                material=material if name != "c" else Material(),
+                material=material if name != "c" else Material(color=Vec3(1.0, 0.0, 0.0)),
             )
         )
     scene.add(
@@ -110,24 +110,23 @@ def test_group_instances_respects_frustum_planes():
 
 
 def test_group_ordering_is_deterministic():
-    shared_a = cube(1.0)
-    shared_b = cube(1.0)
     scene = Scene()
     for name in ("a2", "a1"):
-        scene.add(Node(name, id=name, mesh=shared_a))
-    for name in ("b3", "b1", "b2"):
-        scene.add(Node(name, id=name, mesh=shared_b))
-    for name in ("c1", "d1", "e1"):
         scene.add(Node(name, id=name, mesh=cube(1.0)))
+    for name in ("b3", "b1", "b2"):
+        scene.add(Node(name, id=name, mesh=cube(1.0)))
+    # A distinct material is what splits a group now that grouping is keyed on
+    # content digests rather than object identity: every cube(1.0) is the same
+    # mesh content, so only the material can separate the last three nodes.
+    accent = Material(color=Vec3(1.0, 0.0, 0.0))
+    for name in ("c1", "d1", "e1"):
+        scene.add(Node(name, id=name, mesh=cube(1.0), material=accent))
     first = [group["node_keys"] for group in group_instances(scene)]
     second = [group["node_keys"] for group in group_instances(scene)]
     assert first == second
     assert first == [
-        ["b1", "b2", "b3"],
-        ["a1", "a2"],
-        ["c1"],
-        ["d1"],
-        ["e1"],
+        ["a1", "a2", "b1", "b2", "b3"],
+        ["c1", "d1", "e1"],
     ]
 
 
@@ -160,6 +159,7 @@ def test_plan_instanced_counts_and_savings():
         "instances": 0,
         "triangles": 0,
         "batches": [],
+        "overlay_calls": 0,
     }
 
 

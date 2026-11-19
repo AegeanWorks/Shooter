@@ -1,0 +1,36 @@
+{
+  "cycle": 149,
+  "area": "testbed hardening: the victory-cinematic fallback proven against real corrupt documents",
+  "find": {
+    "report_claim": "cycle 143 recorded that a missing or corrupt campaign_clear.kpath 'falls back to first person and records why instead of breaking the victory screen', and cycle 143's evidence was cited as a robustness guarantee",
+    "live_evidence": "the only proof was a monkeypatched CameraPathLibrary.load that raised ValueError, which exercises one exception path and never touches real file parsing, so truncation, empty files, non-object JSON, an unsupported schema and a file with no keys were all unproven",
+    "consumer_evidence": "a designer hand-editing the .kpath (the reason it is DATA) can produce exactly those five shapes; the reader had to be exercised through its real JSON path to know the fallback holds"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py _start_campaign_clear_camera and its except tuple",
+      "keystone/camera_path_library.py load() and camera_path_from_dict validation",
+      "tests/test_campaign_camera_path.py existing fallback test"
+    ],
+    "killed": [
+      "trusting the monkeypatched test: it stubs the loader, so it cannot show that the loader's real failures are the ones the game catches",
+      "swapping the shipped file for a corrupt one in the repo data dir: it is an untracked authored asset with no git restore path, so a failed run could destroy the only copy",
+      "adding the corrupt cases to the shipped document's directory: it would leave debris next to a real asset"
+    ],
+    "survivor": "redirect the game's library to a temp directory of genuine files via a module-level factory, then drive the real reader over five corrupt shapes plus a missing directory"
+  },
+  "fix": {
+    "shooter": "tests/test_campaign_camera_path.py adds a _RedirectedLibrary factory and a parametrized test over truncated JSON, an empty file, a non-object document, an unsupported schema and a keyless document, plus a missing-library-directory case; each asserts the campaign still clears, no camera path engages, the report carries an error, and the camera stays on the player's eye"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "537 passed, 2 xfailed in full suite",
+      "campaign_suite": "12 passed in 1.79s",
+      "repro": "a direct probe of the five corrupt shapes and a missing directory showed every case recording 'could not load camera path' with no camera engaged and no exception",
+      "mutation": "narrowing the except tuple from (KeyError, OSError, TypeError, ValueError) to ZeroDivisionError failed 7 tests (the five corrupt shapes, the missing directory and the existing monkeypatched fallback); shooter/game.py restored byte-identically (sha256 match)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; tests only)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

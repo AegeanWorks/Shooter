@@ -29,6 +29,19 @@ def test_cache_crate_registers_from_obj_with_faces():
     )
 
 
+def test_the_shipped_crate_keeps_its_mesh_shape_and_bounds():
+    assets = AssetRegistry()
+    register_cache_crate(assets, DATA, cube(0.6))
+    mesh = assets.require(CACHE_CRATE).payload
+    assert len(mesh.positions) == 48
+    assert len(mesh.indices) == 72
+    low, high = mesh.bounds()
+    assert -0.36 <= low[0] <= -0.32 and -0.36 <= low[2] <= -0.32
+    assert -0.32 <= low[1] <= -0.28
+    assert 0.32 <= high[0] <= 0.36 and 0.32 <= high[2] <= 0.36
+    assert 0.36 <= high[1] <= 0.40, "the 0.08 lid rim must sit above the 0.6 body"
+
+
 def test_missing_obj_falls_back_to_the_old_cube(tmp_path):
     assets = AssetRegistry()
     fallback = cube(0.6)

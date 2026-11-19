@@ -124,6 +124,10 @@ class ProfileStore:
             raw = _migrate_v2(raw)
             schema = SCHEMA
         if schema != SCHEMA:
+            # Deliberate: a profile written by a NEWER build is not corrupt, so
+            # it must not be quarantined or overwritten. Refuse to interpret it
+            # and let the caller disable saving for the session; the player can
+            # go back to the newer build and keep every bit of progress.
             raise ValueError(f"unsupported profile schema {schema!r}; expected {SCHEMA}")
         return _normalize(raw)
 
@@ -170,7 +174,13 @@ class ProfileStore:
                 pass
 
     def _acquire_lock(self) -> Path | None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+        # A path whose parent cannot be created (for example a file sitting
+        # where the directory should be) must report "no lock" rather than
+        # raising: save() promises a bool, and callers rely on that.
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            return None
         lock = self.path.with_name(self.path.name + ".lock")
         for _ in range(2):
             try:

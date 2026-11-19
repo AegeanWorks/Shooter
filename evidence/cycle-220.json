@@ -1,0 +1,30 @@
+{
+  "cycle": 220,
+  "area": "Testbed audit: intermediate profile migrations",
+  "find": {
+    "report_claim": "test_profile covered unsupported-schema refusal and the v0 migration, but the v1->v3 and v2->v3 steps that add wins/history had no positive test",
+    "live_evidence": "a v1 document (runs 3, best_score 42) and a v2 document (plus wins 2) both load to schema 3 preserving progress and adding the missing defaults",
+    "consumer_evidence": "a parametrized test pins both intermediate steps"
+  },
+  "analyze": {
+    "killed": [
+      "mutating the v2 setdefault key: _normalize() fills the same default afterwards, so the public result is unchanged and the mutation proved nothing",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the tests went into the already-listed test_profile.py"
+    ],
+    "survivor": "two parametrized migration tests plus an observable mutation that drops preserved progress"
+  },
+  "fix": {
+    "shooter": "tests/test_profile.py gains two parametrized cases (now 11 items); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "replacing _migrate_v1's `dict(raw)` with `default_profile()` drops best_score and fails the v1 case; profile.py restored byte-identically (sha256 ea5d211471b362534a37213f84f6ffcafcad931bd49418dc2b3fc29910595769)",
+      "codebase_map": "regenerated after the new tests",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "810 passed (808 + 2 new migration cases)",
+      "timing_note": "suite ran under machine load (245 s standalone, 184 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

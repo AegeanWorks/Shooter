@@ -1,0 +1,36 @@
+{
+  "cycle": 168,
+  "area": "startup UX, part 2: valid JSON with the wrong shape still blamed the --game argument",
+  "find": {
+    "report_claim": "cycle 167 made missing and malformed data files raise an actionable Why:/Fix: message naming the file",
+    "live_evidence": "six wrong-shape documents -- valid JSON with the wrong contents -- still escaped as bare exceptions: '{\"wrong\": []}' gave KeyError: 'weapons', '{\"weapons\": 5}' gave TypeError: 'int' object is not iterable, an entry without an id gave KeyError: 'id', a bad levels.json gave KeyError: 'player', and a string juice.json gave AttributeError: 'str' object has no attribute 'get'",
+    "consumer_evidence": "end to end the player saw \"Keystone could not start. / Why: 'weapons' / Fix: pass a valid 'package.module:Factory' ...\" -- the same misleading message cycle 167 fixed for malformed JSON, still reachable one level deeper"
+  },
+  "analyze": {
+    "read": [
+      "shooter/sim.py _load and the four required documents",
+      "the actual shipped shapes of weapons.json, enemies.json, levels.json and juice.json"
+    ],
+    "killed": [
+      "validating every field of every entry: the game reads a handful of keys per record, and a strict schema would reject forward-compatible extra fields for no benefit",
+      "letting the bare KeyError through because 'the engine wraps it': the engine wraps it with the WRONG fix, which is the defect",
+      "guessing shapes from the loader code alone: the checks come from the shipped documents (weapons->list with id, enemies->list with id, levels->player dict, juice->viewmodel dict)"
+    ],
+    "survivor": "declare the required key and container type per document plus the field every list entry needs, and raise the same actionable message for a shape mismatch as for unreadable or malformed JSON"
+  },
+  "fix": {
+    "shooter": "shooter/sim.py adds DATA_SHAPES (weapons->list, enemies->list, levels->player dict, juice->viewmodel dict) and DATA_ENTRY_FIELDS (weapons/enemies entries need an id), and _load now raises ValueError for a non-object document, a missing key, a wrong container type and a malformed list entry; tests/test_data_integrity.py grows to 14 tests with a 7-case parametrized wrong-shape sweep plus a healthy-document check"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "620 passed, 2 xfailed in full suite",
+      "data_suite": "14 passed in 0.71-0.95s",
+      "healthy": "the shipped data still loads: 4 weapons, 4 enemies, 5 waves, viewmodel keys present",
+      "end_to_end": "with {\"wrong\": []} in weapons.json the player now sees \"shooter data file 'weapons.json' is missing its 'weapons' key. / Why: this build expects list in that file. / Fix: restore <path> from a fresh clone; a newer or older build may use a different shape.\"",
+      "mutation": "setting `shape = None` to disable the checks failed 5 of the parametrized cases; shooter/sim.py restored byte-identically (sha256 match)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

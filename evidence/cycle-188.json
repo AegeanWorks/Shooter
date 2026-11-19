@@ -1,0 +1,37 @@
+{
+  "cycle": 188,
+  "area": "Keystone testbed: enemy steering from live sim state",
+  "find": {
+    "report_claim": "a corrected coverage scan (fixing the earlier from-keystone-import blind spot) found nine unconsumed Keystone modules, including steering; the sim already carries enemy positions, radii, speeds and a juice separation block",
+    "live_evidence": "no shooter consumer turned those values into a wish vector; separation and steer were only exercised in Keystone's own synthetic tests",
+    "consumer_evidence": "with two mites 0.1 m apart the report shows a seek of (0,0.2795,4.1907), separation (-0.4068,0,0) and a clamped wish (-0.4049,0.2782,4.1712) at max_speed 4.2"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/steering.py: Agent, seek, arrive, separation, steer, steering_report",
+      "shooter/sim.py: enemy positions and enemy_defs radius/speed",
+      "shooter/data/juice.json: enemy_separation strength 0.5, clearance 0.02"
+    ],
+    "killed": [
+      "integrating the wish into a body: that would change the sim and its replay hash; the report is pure telemetry",
+      "hardcoding radius or speed: the values must come from enemy_defs so a data edit is reflected",
+      "testing arrive at the default 2 m radius: the shipped mite sits ~6 m from the eye, so the first draft was wrong and the test uses a 10 m radius to actually enter the slow band"
+    ],
+    "survivor": "an on-demand enemy_steering_report() that builds Agents from live state and DATA tuning and exposes seek/arrive/separation plus a clamped wish"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports the steering API and adds enemy_steering_report(); tests/test_keystone_steering_mechanics.py (5 tests) pins empty state, seek direction and speed cap, arrive slowdown, neighbour separation and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no enemy_steering_report)",
+      "own_test_bug": "the first arrive assertion used a 2 m slow radius while the test mite is ~6 m from the eye, so both vectors were full speed; corrected to a 10 m radius",
+      "mutation": "passing () instead of neighbours to steer fails the separation test; game.py restored byte-identically (sha256 0a62dfdd4270c550aaab4d0c44c1a5d16eebaccc11fa0141126cfe52011a17f4)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "tests": "713 passed (708 + 5 new steering tests); one suite run overlapped another and reported 3 transient failures, two subsequent clean sequential runs both passed 713",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

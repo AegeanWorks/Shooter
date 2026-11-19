@@ -1,0 +1,37 @@
+{
+  "cycle": 195,
+  "area": "Keystone testbed: authoritative engine version query",
+  "find": {
+    "report_claim": "_version is the single source of truth for Keystone's version and was the last module the corrected coverage scan found unconsumed",
+    "live_evidence": "the shooter's api-contract test checks keystone.__version__ is a string, but proof summaries and AI consumers had no query that returns the authoritative value from the module that owns it",
+    "consumer_evidence": "engine_version_report() returns {'schema': 1, 'engine_version': '0.45.0'} read directly from keystone._version"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/_version.py: __version__ = '0.45.0'",
+      "tests/test_keystone_api_contract_mechanics.py (string-version assertion)",
+      "shooter/game.py on-demand report pattern"
+    ],
+    "killed": [
+      "parsing pyproject.toml: that file exists for the build backend and is not the runtime source of truth",
+      "copying the literal into game.py: a monkeypatch test and the mutation check make that drift visible",
+      "changing sim state for a version string: this is an on-demand query"
+    ],
+    "survivor": "an on-demand engine_version_report() importing __version__ from keystone._version"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports KEYSTONE_VERSION from keystone._version and adds engine_version_report(); tests/test_keystone_version_mechanics.py (4 tests) pins authoritative parity, monkeypatched wiring, JSON stability and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 4 new tests failed before the consumer existed (ShooterGame has no engine_version_report)",
+      "measured": "{'schema': 1, 'engine_version': '0.45.0'}",
+      "mutation": "substituting a literal '0.0.0' fails the parity and wiring tests; game.py restored byte-identically (sha256 c423ba24da9ab5f792590e1882c2f8974f9f5a76192e9bd54570f8e7871732c8)",
+      "coverage": "the corrected scan now reports 75 of 75 Keystone top-level modules imported, with none unconsumed",
+      "codebase_map": "regenerated after the new import, method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

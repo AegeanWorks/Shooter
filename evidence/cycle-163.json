@@ -1,0 +1,36 @@
+{
+  "cycle": 163,
+  "area": "testbed hardening: cycle 162's Python-floor guard missed scripts/ and could not detect a new folder",
+  "find": {
+    "report_claim": "cycle 162 introduced tests/test_python_floor.py to enforce the README's 'Python 3.10+' promise on the shooter side",
+    "live_evidence": "the guard listed shooter/, tests/ and play.py explicitly and never scanned scripts/ -- six shipped files, capture.py alone over 100 kB, all documented in the README",
+    "consumer_evidence": "the coverage test compared that list with a second hardcoded folder list, so a brand-new top-level package escaped both; a probe with tools/probe.py (containing 'from typing import Self') passed all 8 tests"
+  },
+  "analyze": {
+    "read": [
+      "tests/test_python_floor.py as written in cycle 162",
+      "scripts/*.py (audio_probe, capture, keystone_manifest_asset_repro, play_run, record_bot, soak)",
+      "the README's mention of capture/soak/play_run as shipped tooling"
+    ],
+    "killed": [
+      "adding 'scripts' to the existing hardcoded list: it fixes today's gap and leaves the next folder unguarded",
+      "asserting `len(SOURCES) >= 150` alone: a count does not say which files are missing",
+      "walking the whole repo without an ignore list: .git, __pycache__, .venv and evidence folders would produce noise and false failures"
+    ],
+    "survivor": "derive SOURCES from a filesystem walk with an explicit ignore list, and make the coverage test compare that walk against itself so any unlisted Python file fails by name"
+  },
+  "fix": {
+    "shooter": "tests/test_python_floor.py replaces the hardcoded SOURCES list with _shipped_python_files(), a REPO.rglob walk that skips .git, .aikit, __pycache__, .pytest_cache, saves, evidence, assets, LICENSES, .venv, venv, node_modules, dist and build; the coverage test now asserts the scan equals the walk, so a new folder is covered the moment it appears"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "584 passed, 2 xfailed in full suite",
+      "floor_suite": "8 passed in 1.38-1.54s",
+      "scripts_audit": "all six scripts were scanned explicitly before the fix and are currently clean (no PEP 695, no post-3.10 stdlib), so the gap was latent rather than active",
+      "mutation": "creating tools/probe.py with 'from typing import Self' initially PASSED all 8 tests, which exposed the hardcoded-list weakness; after deriving SOURCES from the walk the same file fails the floor test with 'probe.py:1 imports typing.Self (needs 3.11)'. The probe folder was removed and the suite returned to green.",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

@@ -53,6 +53,9 @@ python -m keystone --game shooter.game:ShooterGame --describe
 python -m keystone --game shooter.game:ShooterGame --simulate --frames 600 --trace
 python -m keystone --game shooter.game:ShooterGame --verify-determinism --frames 1800
 python -m keystone --game shooter.game:ShooterGame --headless --frames 1 --size 960x540 --ui --out shot.png --report shot.json
+# Keystone capture route: hashed PNG/report summary, diffable across runs
+python scripts/route_evidence.py --out shots/route-proof
+python scripts/route_evidence.py --out shots/route-new --compare shots/route-proof/route-summary.json
 # campaign reference: clears the wave-3 warden and wins at wave 4
 python play.py --replay bot_campaign.json
 ```
@@ -72,6 +75,25 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `CommandLog`/`verify_log` + `TriggerTracker` + `ParticleSystem` + `plan_batches` + `SpatialGrid` | replay, trigger edges, particle bursts, batch plan, broadphase | `tests/test_keystone_mechanics.py` |
 | `AnimationLibrary` + `Track`/`AnimationController` + `apply_pose` | `.kanim` clips, sampling, crossfade, events, poses | `tests/test_keystone_animation_mechanics.py` |
 | `Mixer` + `AssetRegistry` | bus gain/mixdown/voice cap, dependencies/duplicates/hot reload | `tests/test_keystone_audio_assets.py` |
+| `audio_spatial.SoundSource` + `distance_gain` + `spatial_report` | spawn warning voice attenuates by distance, JSON report | `tests/test_keystone_audio_spatial_mechanics.py` |
+| `CameraShaker` + `camera_shaker_report` | damage jolt composed onto an immutable base camera pose, base-vs-pose report | `tests/test_keystone_camera_shaker_mechanics.py` |
+| `CameraRig` | viewmodel parts on the overlay layer with camera-space offsets, root follows the camera | `tests/test_keystone_camera_rig_mechanics.py` |
+| `rng.RandomStream` + `fork` | sim-isolated presentation gain variety, JSON-safe stream state | `tests/test_keystone_rng_mechanics.py` |
+| `picking.raycast_scene` + `hit_report` | scene-level crosshair probe, overlay nodes excluded, JSON hit report | `tests/test_keystone_picking_mechanics.py` |
+| `NavGrid`/`find_path`/`smooth_path` + `PathFollower` | spawn-to-pickup arena route and world waypoints, no sim coupling | `tests/test_keystone_navigation_mechanics.py` |
+| `content.mesh_digest` + `material_digest` | content identity for registered render assets as a JSON digest map | `tests/test_keystone_content_mechanics.py` |
+| `TileMap` + `tilemap_report` | shipped arena as a round-trippable tile document with colliders and merged mesh | `tests/test_keystone_tilemap_mechanics.py` |
+| `BlendSpace1D` + `BlendSample` | enemy idle clips blended by shipped HP, JSON report and sampled pose | `tests/test_keystone_animation_blend_mechanics.py` |
+| `extract_root_motion` + `in_place_pose` + `root_motion_report` | shipped idle clip subject deltas and in-place proof as JSON | `tests/test_keystone_root_motion_mechanics.py` |
+| `AnimationStateMachine` | shipped idle clips in an authored parameter-driven state preview | `tests/test_keystone_animation_state_mechanics.py` |
+| `steering.Agent`/`seek`/`arrive`/`separation`/`steer` | AI-visible enemy wish vectors from live state and DATA speeds | `tests/test_keystone_steering_mechanics.py` |
+| `schema_diff.current_versions` | live Keystone contract versions as a JSON query for AI/soak | `tests/test_keystone_schema_diff_mechanics.py` |
+| `errors.KeystoneError` | structured why/fix on data failures with the rendered player message | `tests/test_keystone_errors_mechanics.py` |
+| `NavAgent` + `nav_agent_report` | local spawn-to-pickup route plan and progress preview from the shipped arena | `tests/test_keystone_nav_agent_mechanics.py` |
+| `RootMotionPresenter` + `root_motion_presenter_report` | local container rig driven by a shipped clip, with applied-child report | `tests/test_keystone_root_motion_presenter_mechanics.py` |
+| `nav_authoring.grid_from_boxes` | NavGrid rasterized from live collision boxes with explicit floor exclusion | `tests/test_keystone_nav_authoring_mechanics.py` |
+| `persistence.VersionedStore` | profile schema, migrations and corrupt recovery probed in a throwaway store | `tests/test_keystone_persistence_mechanics.py` |
+| `_version.__version__` | authoritative engine version as a JSON query for evidence and AI | `tests/test_keystone_version_mechanics.py` |
 | `CharacterBody`/`CharacterController` + `FixedStepClock` | gravity, grounding, step-up, cover slide, catch-up | `tests/test_keystone_physics_mechanics.py` |
 | `Ray`/`ray_aabb`/`ray_sphere` + `SceneLibrary` | filtered hits, sphere pushout, `.kscene` round trip | `tests/test_keystone_raycast_scene_mechanics.py` |
 | `GameSession` editor actions | scene groups, layer visibility, lock/hide, prefab overrides/nesting | `tests/test_keystone_scene_editor_mechanics.py` |
@@ -105,6 +127,13 @@ The shooter is the living consumer for Keystone's runtime additions:
 | `AnimationLibrary` + `AnimationController` | enemy idle `.kanim` clips, sampling, crossfade, sim parity | `tests/test_enemy_animation.py` |
 | `bind_input` + digit keys | live slots/reload/overdrive/fire/jump, dead-key diagnostics | `tests/test_live_bindings.py` |
 | `asset_io` + `obj_loader` + `reload` | .obj crate, suffix inference, hot-reload rebinding | `tests/test_cache_asset.py` |
+| `broadphase.SpatialGrid` | cell-size-independent answers, edge-cell registration, insertion order, cell budget, degraded queries | `tests/test_keystone_broadphase_mechanics.py` |
+
+`ShooterGame.testbed_report()` returns every no-argument report above in one
+JSON-safe document (engine, contracts, nav, animation, steering, picking,
+assets, bot, storage, presentation) — the single entry point for AI and soak
+consumers. Its `sources` list names every composed report, and a reflective test
+fails if a new no-arg report is added without being wired in.
 
 ```powershell
 python play.py --describe
@@ -133,6 +162,7 @@ projects/shooter/
 │       ├── juice.json      <- tracer/flash, viewmodel, reticle, spawn mark, killmark, score pop, slam ring, death fx, particles, hitstop, flinch
 │       ├── engagement.json <- reward/streak/near-miss/overdrive tuning
 │       ├── grade.json      <- renderer flags adopted as DATA
+│       ├── campaign_clear.kpath <- authored victory fly-around (CameraPathLibrary)
 │       ├── warden_core.kstate <- keystone state machine: calm/charge core pulse
 │       ├── core_material.json <- keystone material graph: checker boss core
 │       ├── pickup_beacon.kprefab <- keystone multi-root prefab: pickup/beam/orb
@@ -150,6 +180,58 @@ projects/shooter/
 │   ├── test_cache_material_library.py <- keystone .kmaterial cache material
 │   ├── test_keystone_web_api.py <- GameSession describe/scene/editor/simulate
 │   ├── test_keystone_mechanics.py <- replay/triggers/particles/batching/broadphase
+│   ├── test_keystone_broadphase_mechanics.py <- cell-size invariance, edge cells, ordering, budget
+│   ├── test_keystone_audio_spatial_mechanics.py <- spawn warning voice uses Keystone distance attenuation
+│   ├── test_keystone_camera_shaker_mechanics.py <- base pose immutability and base-vs-shaken report
+│   ├── test_keystone_camera_rig_mechanics.py <- overlay-layer viewmodel, camera-space offsets, rig sync
+│   ├── test_keystone_rng_mechanics.py <- forked presentation stream, snapshot restore, sim isolation
+│   ├── test_keystone_picking_mechanics.py <- crosshair scene probe, overlay exclusion, sim isolation
+│   ├── test_keystone_evidence_mechanics.py <- named capture routes, reproducible hash, checkpoint diff
+│   ├── test_keystone_navigation_mechanics.py <- arena A* route, smoothed waypoints, follower report
+│   ├── test_keystone_content_mechanics.py <- content digests for shipped render assets
+│   ├── test_keystone_tilemap_mechanics.py <- arena tile document round-trip, colliders, merged mesh
+│   ├── test_keystone_animation_blend_mechanics.py <- enemy idle clips in an HP-keyed blend space
+│   ├── test_keystone_root_motion_mechanics.py <- idle clip root deltas and in-place pose proof
+│   ├── test_keystone_animation_state_mechanics.py <- authored idle state machine, threat-driven transitions
+│   ├── test_keystone_steering_mechanics.py <- enemy seek/arrive/separation and clamped wish vectors
+│   ├── test_keystone_schema_diff_mechanics.py <- live contract versions, no copied literals
+│   ├── test_keystone_errors_mechanics.py <- structured why/fix on data failures, message preserved
+│   ├── test_keystone_nav_agent_mechanics.py <- local NavAgent route plan and progress preview
+│   ├── test_keystone_root_motion_presenter_mechanics.py <- local rig container pose and applied child
+│   ├── test_keystone_nav_authoring_mechanics.py <- collision-box nav grid, floor exclusion, clearance
+│   ├── test_keystone_nav_unification_mechanics.py <- one authoritative nav grid for plan and authoring
+│   ├── test_keystone_arena_layout_mechanics.py <- shared arena layout and world-to-cell conversion
+│   ├── test_keystone_report_resets_mechanics.py <- one shake-reset path across rebuild and cinematics
+│   ├── test_keystone_bot_nav_grid_mechanics.py <- bot preview uses the authoritative nav grid
+│   ├── test_keystone_pose_json_mechanics.py <- one JSON-safe pose serializer for animation reports
+│   ├── test_keystone_presentation_resets_mechanics.py <- one rebuild reset for camera, shake and audio state
+│   ├── test_data_tuning_bands.py <- cache TTL, overdrive duration and alive cap pinned by behaviour
+│   ├── test_weapon_enemy_tuning_bands.py <- pellets, damage, pierce, falloff and boss cadence
+│   ├── test_testbed_report_mechanics.py <- one JSON entry point for all on-demand reports
+│   ├── test_keystone_persistence_mechanics.py <- profile store lifecycle probe in a throwaway dir
+│   ├── test_keystone_version_mechanics.py <- authoritative engine version as a JSON query
+│   ├── test_los_broadphase.py <- enemy LOS uses the wave grid, verdicts match a full scan
+│   ├── test_death_camera_path.py <- death cinematic drives the camera, snapshot untouched
+│   ├── test_campaign_camera_path.py <- victory fly-around loads a shipped .kpath, falls back cleanly
+│   ├── test_mechanics_contract.py <- declared core stays headless, seeded, one-way
+│   ├── test_new_run.py <- Enter restarts after death or victory, profile kept
+│   ├── test_new_run_integration.py <- real bot run, end, restart, second run
+│   ├── test_repo_line_endings.py <- lf rule vs committed blobs, no phantom modifications
+│   ├── test_launchers.py <- cmd/sh double-click entry points, arg forwarding, Why/Fix
+│   ├── test_readme_commands.py <- documented play.py commands run and verified
+│   ├── test_python_floor.py <- no 3.11+/3.12+ syntax or stdlib for the 3.10 promise
+│   ├── test_profile_safety.py <- save/lock/quarantine/backup failure modes
+│   ├── test_audio_resilience.py <- mixer refusals counted, never fatal
+│   ├── test_data_integrity.py <- broken data files name the file and the fix
+│   ├── test_data_defaults.py <- missing juice keys keep the shipped behaviour
+│   ├── test_cross_process_determinism.py <- same hash across processes and hash seeds
+│   ├── test_jump_feel.py <- jump apex and coyote window pinned
+│   ├── test_weapon_feel.py <- pulse reload duration and per-shot recoil pinned
+│   ├── test_juice_tuning.py <- juice.json presentation constants pinned by observable design bands
+│   ├── test_rebuild_isolation.py <- build_scene reassigns its 50-attribute surface
+│   ├── test_keystone_ui_menu_mechanics.py <- pause-menu model, closed engine dispatch
+│   ├── test_keystone_camera_path_editor_mechanics.py <- shipped .kpath save/list/preview/trash over HTTP
+│   ├── test_keystone_frame_report_hash_mechanics.py <- report hash covers the artifact path, not pixels only
 │   ├── test_keystone_animation_mechanics.py <- .kanim/sampling/crossfade/events/apply_pose
 │   ├── test_keystone_audio_assets.py <- mixer buses/mixdown, asset deps/hot reload
 │   ├── test_keystone_physics_mechanics.py <- gravity/step-up/cover slide/fixed-step clock
@@ -203,8 +285,8 @@ projects/shooter/
 │   ├── test_enemy_los.py   <- brute melee LOS; open-field attack parity
 │   ├── test_spawn_lane.py  <- clear spawn->pickup cover lane
 │   ├── test_boss_hp.py     <- numeric WARDEN HP readout
-│   ├── test_viewmodel.py   <- camera-follow gun, weapon tint, death hide
-│   ├── test_viewmodel_grip.py <- grip anchor, weapon tint, death hide
+│   ├── test_viewmodel.py   <- camera-rig gun, weapon tint, death hide
+│   ├── test_viewmodel_grip.py <- camera-space grip anchor, weapon tint, death hide
 │   ├── test_reload_cue.py  <- reload-completion voice/caption + ammo parity
 │   ├── test_history.py     <- schema-3 migration, capped run history, RECENT line
 │   ├── test_reticle.py     <- per-weapon hip-fire reticle gap; pulse reference
@@ -278,143 +360,9 @@ projects/shooter/
 │   ├── play_run.py    <- played-run routes (idle/kite/strafe/ambush/boss/slam/.../campaign)
 │   ├── audio_probe.py <- render cue voices to WAV + waveform/spectrogram evidence
 │   ├── capture.py     <- seeded screenshot routes (spawn/combat/pickup/boss/slam/.../death)
+│   ├── route_evidence.py <- Keystone capture route: hashed PNG/report summary + diff
 │   └── keystone_manifest_asset_repro.py <- minimal upstream repro: manifest-asset validation duplicate
-├── evidence/
-│   ├── cycle-01.json
-│   ├── cycle-02.json
-│   ├── cycle-03.json
-│   ├── cycle-04.json
-│   ├── cycle-05.json
-│   ├── cycle-06.json
-│   ├── cycle-07.json
-│   ├── cycle-08.json
-│   ├── cycle-09.json
-│   ├── cycle-10.json
-│   ├── cycle-11.json
-│   ├── cycle-12.json
-│   ├── cycle-13.json
-│   ├── cycle-14.json
-│   ├── cycle-15.json
-│   ├── cycle-16.json
-│   ├── cycle-17.json
-│   ├── cycle-18.json
-│   ├── cycle-19.json
-│   ├── cycle-20.json
-│   ├── cycle-21.json
-│   ├── cycle-22.json
-│   ├── cycle-23.json
-│   ├── cycle-24.json
-│   ├── cycle-25.json
-│   ├── cycle-26.json
-│   ├── cycle-27.json
-│   ├── cycle-28.json
-│   ├── cycle-29.json
-│   ├── cycle-30.json
-│   ├── cycle-31.json
-│   ├── cycle-32.json
-│   ├── cycle-33.json
-│   ├── cycle-34.json
-│   ├── cycle-35.json
-│   ├── cycle-36.json
-│   ├── cycle-37.json
-│   ├── cycle-38.json
-│   ├── cycle-39.json
-│   ├── cycle-40.json
-│   ├── cycle-41.json
-│   ├── cycle-42.json
-│   ├── cycle-43.json
-│   ├── cycle-44.json
-│   ├── cycle-45.json
-│   ├── cycle-46.json
-│   ├── cycle-47.json
-│   ├── cycle-48.json
-│   ├── cycle-49.json
-│   ├── cycle-50.json
-│   ├── cycle-51.json
-│   ├── cycle-52.json
-│   ├── cycle-53.json
-│   ├── cycle-54.json
-│   ├── cycle-55.json
-│   ├── cycle-56.json
-│   ├── cycle-57.json
-│   ├── cycle-58.json
-│   ├── cycle-59.json
-│   ├── cycle-60.json
-│   ├── cycle-61.json
-│   ├── cycle-62.json
-│   ├── cycle-63.json
-│   ├── cycle-64.json
-│   ├── cycle-65.json
-│   ├── cycle-66.json
-│   ├── cycle-67.json
-│   ├── cycle-68.json
-│   ├── cycle-69.json  <- improvement-cycle 69 proof: post-banner completion pair, campaign run
-│   ├── cycle-70.json  <- improvement-cycle 70 proof: ammo-cache pair, cache-bearing campaign run
-│   ├── cycle-71.json  <- improvement-cycle 71 proof: cache-drop cue pair, campaign clip count + WAV
-│   ├── cycle-72.json  <- improvement-cycle 72 proof: profile-reset pair, corrupt-profile run
-│   ├── cycle-73.json  <- improvement-cycle 73 proof: viewmodel-bob pair, same-hash strafe run
-│   ├── cycle-74.json  <- improvement-cycle 74 proof: brute-gap pair, brute_gap drill
-│   ├── cycle-75.json  <- improvement-cycle 75 proof: platform-base pair, same-hash platform run
-│   ├── cycle-76.json  <- improvement-cycle 76 proof: CRIT feed pair, same-hash kite run
-│   ├── cycle-77.json  <- improvement-cycle 77 proof: overdrive-glow pair, same-hash overdrive run
-│   ├── cycle-78.json  <- improvement-cycle 78 proof: clutch-cue pair, clutch drill + WAV
-│   ├── cycle-79.json  <- improvement-cycle 79 proof: save-retry pair, same-hash drill
-│   ├── cycle-80.json  <- improvement-cycle 80 proof: low-health pulse pair, clutch run
-│   ├── cycle-81.json  <- improvement-cycle 81 proof: warden-cover pair, LOS drill
-│   ├── cycle-82.json <- west-gap pair/drill
-│   ├── cycle-83.json <- boss-death pair/drill
-│   ├── cycle-84.json <- tracer pair/strafe
-│   ├── cycle-85.json <- overdrive pair/WAV
-│   ├── cycle-86.json <- backup pair/drill
-│   ├── cycle-87.json <- brute pair/slam
-│   ├── cycle-88.json <- spacing pair/crowd
-│   ├── cycle-89.json  <- .kstate core pair, slam run
-│   ├── cycle-90.json  <- lifecycle pad pair
-│   ├── cycle-91.json  <- material graph core pair
-│   ├── cycle-92.json  <- prefab pickup pair
-│   ├── cycle-93.json  <- cache material pair
-│   ├── cycle-94.json  <- GameSession describe/editor
-│   ├── cycle-95.json  <- replay/trigger/particles/broadphase
-│   ├── cycle-96.json  <- animation sampling/crossfade/poses
-│   ├── cycle-97.json  <- mixer buses, asset hot reload
-│   ├── cycle-98.json  <- character physics/fixed clock
-│   ├── cycle-99.json  <- raycasts, sphere pushout, scene round trip
-│   ├── cycle-100.json <- editor groups/layers/locks/overrides
-│   ├── cycle-101.json <- cycle 101 proof: undo/redo/play/materials/animation keys/diff
-│   ├── cycle-102.json <- skinning, glTF, sprite math
-│   ├── cycle-103.json <- input/UI/assets/merge
-│   ├── cycle-104.json <- HTTP routes/statuses
-│   ├── cycle-105.json <- manifests and export bundles
-│   ├── cycle-106.json <- engine loop, pause, CLI gates
-│   ├── keystone-manifest-asset-repro.md <- upstream report: manifest-asset validation duplicate
-│   ├── cycle-107.json <- component codecs, reproducer
-│   ├── cycle-108.json <- project CLI, self-clearing reproducer
-│   ├── cycle-109.json <- camera, frustum culling
-│   ├── cycle-110.json <- scene/prefab trash and restore
-│   ├── cycle-111.json <- frame stats, report/pixel diff
-│   ├── cycle-112.json <- action parsing, observe, audit
-│   ├── cycle-113.json <- asset loaders, fingerprints, reload
-│   ├── cycle-114.json <- mesh builder, matrix normals, skin
-│   ├── cycle-115.json <- atomic writes, backups, BOM
-│   ├── cycle-116.json <- primitive counts, bounds, normals, UVs
-│   ├── cycle-117.json <- instancing grouping, culling, ordering
-│   ├── cycle-118.json <- playtest canon/policies/transcripts/fairness
-│   ├── cycle-119.json <- scene queries, IDs, parenting, traversal, visibility
-│   ├── cycle-120.json <- history undo/redo, copy isolation, capacity
-│   ├── cycle-121.json <- scene snapshot nodes/assets/environment/restore
-│   ├── cycle-122.json <- scene diff nodes/sections/validation
-│   ├── cycle-123.json <- batch planning, world-space merges, exclusions
-│   ├── cycle-124.json <- PNG round trips, corruption, texture sha, checker
-│   ├── cycle-125.json <- OBJ normals/UVs, negative indices, quads, errors
-│   ├── cycle-126.json <- glTF prefab/registry saves, textures, re-import
-│   ├── cycle-127.json <- GLB/source, buffers, accessors, validation
-│   ├── cycle-128.json <- exports, schema versions, describe parity, determinism
-│   ├── cycle-129.json <- .kanim enemy idle clips, crossfade, sim parity
-│   ├── cycle-130.json <- .obj cache crate, hot reload report
-│   ├── cycle-131.json <- warden armor texture, boss capture pair, boss run
-│   ├── cycle-132.json <- viewmodel grip, spawn/reload/burst pairs, kite run
-│   ├── cycle-133.json <- boss ember death flash
-│   └── cycle-134.json <- live input bindings
+├── evidence/          <- cycle-NNN.json per cycle plus before/after capture pairs
 ├── saves/                   <- local player profile (git-ignored, created on first run)
 ├── play.py                 <- one-click launcher (path setup + game start, passes args through)
 ├── start-shooter.cmd       <- Windows double-click entry point (python/play.py)
@@ -462,7 +410,9 @@ projects/shooter/
     ├── guidelines.md    <- agent working agreement
     ├── project.json     <- project metadata
     ├── media.json       <- brand/media manifest
-    └── task_ledger.json <- disruption-recovery ledger
+    ├── task_ledger.json <- disruption-recovery ledger
+    ├── task_ledger_archive.jsonl <- archived ledger checkpoints
+    └── codebase_map.md  <- generated AST map (update_knowledge_base.py)
 ```
 
 ## Controls (live Engine bindings)

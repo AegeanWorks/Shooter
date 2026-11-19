@@ -1,0 +1,37 @@
+{
+  "cycle": 177,
+  "area": "data integrity: fallback defaults must match the shipped tuning",
+  "find": {
+    "report_claim": "cycle 174 recorded four sim/game fallback defaults that disagreed with the shipped juice.json, but recorded them rather than fixing them in that cycle",
+    "live_evidence": "the new guard failed before the fix with all four drifts visible: tracer_life 0.08 vs 0.15, flash_life 0.06 vs 0.10, orb_scale 2.5 vs 1.75 (pickup_fx_scale 3.0 vs 1.5), orb_y 4.05 vs 3.9 (pickup_fx_rise 1.2 vs 0.9)",
+    "consumer_evidence": "a missing key is a normal designer edit to a shipped JSON document; the fallback is the value the player actually gets, so a stale literal silently moves the feel while every test stays green"
+  },
+  "analyze": {
+    "read": [
+      "shooter/sim.py:930 (tracer_life_s), :936 (flash_life_s)",
+      "shooter/game.py:1630 (pickup_fx_scale), :1631 (pickup_fx_rise)",
+      "shooter/data/juice.json (shipped values), tests/test_data_integrity.py (temp data-dir pattern)"
+    ],
+    "killed": [
+      "making the four keys mandatory: that breaks the documented fallback contract and would turn a harmless edit into a startup failure",
+      "pinning the literals in a test: that restates both numbers and cannot tell which source is authoritative",
+      "moving the defaults into a new config document: more moving parts for four literals that already have one shipped home"
+    ],
+    "survivor": "align the four fallbacks with the shipped values and pin the relationship with an observable before/after test that deletes the keys from a temporary data copy"
+  },
+  "fix": {
+    "shooter": "sim.py tracer_life_s 0.08 -> 0.15 and flash_life_s 0.06 -> 0.10; game.py pickup_fx_scale 3.0 -> 1.5 and pickup_fx_rise 1.2 -> 0.9; tests/test_data_defaults.py (1 test) compares tracer life, flash life, orb scale and orb rise with the four keys present and removed; README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "the guard failed before the fix with exactly the four recorded drifts listed above",
+      "after": "the same guard passes: deleting all four keys leaves every observable identical",
+      "mutation": "reverting sim.py's two defaults fails the guard, and reverting game.py's two defaults fails it too; both files restored byte-identically (sha256 087d93e3bb7f... and 75105fc55623...)",
+      "structure_gate": "the first draft assigned g._pickup_fx_t directly and PRINCIPLE-009 R5 refused it; rewritten with setattr before the gate passed",
+      "tests": "659 passed (658 + 1 new guard)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

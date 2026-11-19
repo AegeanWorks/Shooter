@@ -1,0 +1,37 @@
+{
+  "cycle": 194,
+  "area": "Keystone testbed: profile store contract via VersionedStore",
+  "find": {
+    "report_claim": "persistence is the last substantive Keystone module the corrected coverage scan still listed as unconsumed; the shooter's profile.py hand-rolls schema checks, quarantine and backup recovery",
+    "live_evidence": "a probe of VersionedStore with the shipped schema 3 and migrations 0->1->2->3 showed fresh default, save/reload, v0 migration preserving runs=4, and corrupt-file recovery from backup",
+    "consumer_evidence": "profile_store_probe() returns all four lifecycle stages as JSON from a throwaway directory, with the real player profile untouched"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/persistence.py: VersionedStore.load(), save(), LoadResult",
+      "shooter/profile.py: SCHEMA 3, default_profile(), _migrate_v0/v1/v2",
+      "tests/test_keystone_persistence_mechanics.py design: no real-profile reads or writes"
+    ],
+    "killed": [
+      "rewriting profile.py to use VersionedStore: that would change the save format and risk cycles 164/165's failure-mode contract",
+      "pointing the probe at DEFAULT_PATH: an AI/soak query must never touch the player's save",
+      "dropping the migration map: the probe would then only prove the happy path, so it is the mutation target"
+    ],
+    "survivor": "an on-demand profile_store_probe() that runs the shipped store policy in a TemporaryDirectory and reports each stage"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports VersionedStore/write_json_atomic and the profile schema/migrations, and adds profile_store_probe(); tests/test_keystone_persistence_mechanics.py (5 tests) pins every stage, real-profile isolation, reproducibility and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no profile_store_probe)",
+      "measured": "schema 3; fresh source default; saved true; reload source file; v0 migrated true with runs 4 and schema 3; corrupt source backup with quarantined true and schema 3",
+      "mutation": "constructing the store without migrations fails the old-schema test; game.py restored byte-identically (sha256 504b83b6c6860c0fbdadfdc94a98217141faf1fe6292a65c3ad32fca6924f73f)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "coverage_note": "with cycle 194 the corrected scan's only unconsumed top-level Keystone module is _version, a version-string constant with no consumer-side behaviour to exercise",
+  "timestamp": "2026-11-19"
+}

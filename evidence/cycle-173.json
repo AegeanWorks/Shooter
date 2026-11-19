@@ -1,0 +1,37 @@
+{
+  "cycle": 173,
+  "area": "test performance and a circularity in cycle 172's own guard",
+  "find": {
+    "report_claim": "PRINCIPLE-010 caps a unit test at 50ms and cycle 172 added tests/test_rebuild_isolation.py to protect build_scene",
+    "live_evidence": "that suite was 54 tests taking 43s (0.8s per test) because each of 50 parametrized cases performed a full scene build; the project suite grew from 60s to 464-704s under the same machine, making the test gate the slowest thing in the loop",
+    "consumer_evidence": "slower feedback means the gate gets skipped; and worse, the parametrized design hid a circularity -- the checklist of attributes was discovered from the very file being tested, so deleting a build_scene assignment removed it from its own checklist (50 -> 49) and the test still passed"
+  },
+  "analyze": {
+    "read": [
+      "tests/test_rebuild_isolation.py as written in cycle 172",
+      "shooter/game.py:658 (_pickup_spot) and :402 (particles), the only attributes initialised solely in build_scene",
+      "the gate timing history: 60s before, 464-840s while the parametrized suite ran"
+    ],
+    "killed": [
+      "keeping 50 parametrized cases for a per-attribute failure message: one build plus one dirty pass plus one rebuild tests the identical property, and 43s of suite time is a real cost every gate pays",
+      "pinning the attribute list as a literal: it would drift from build_scene exactly like the stale contract pins did in cycle 138",
+      "treating the surviving mutation as a coverage gap in build_scene: the gap was in the test's own design, not in the code"
+    ],
+    "survivor": "collapse the 50 cases into one build/dirty/rebuild pass, and derive the expected attribute set from the COMMITTED file at HEAD so a deleted assignment cannot vanish from its own checklist"
+  },
+  "fix": {
+    "shooter": "tests/test_rebuild_isolation.py drops from 54 tests to 6: the attribute sweep now sets a sentinel on the whole surface and rebuilds once, and a new test_no_committed_scene_attribute_has_been_dropped compares build_scene's working attribute set against the one at HEAD from git, failing by name when an assignment is removed; the connectivity caveat (reassignment, not correct values) stays documented in the test"
+  },
+  "proof": {
+    "shooter": {
+      "speed": "tests/test_rebuild_isolation.py 43s -> 1.2-2.0s; full suite 704s -> 121s; the gate's test phase 464s -> 118s",
+      "tests": "637 passed, 2 xfailed (685 -> 637 is the consolidation: 54 tests folded into 6)",
+      "circularity_proved": "with the _pickup_spot assignment deleted, the discovered checklist shrank from 50 to 49 attributes and the old test passed; after comparing against HEAD the same deletion fails with \"build_scene no longer sets ['_pickup_spot'], which it set at HEAD\"",
+      "restore": "shooter/game.py was byte-identical (sha256) after every mutation",
+      "drift": "keystone's editor schema advanced 65 -> 66 (rename_camera_path, duplicate_camera_path) in commit fc6734e; the pin and the named-action list were updated from the actual schema.py diff rather than guessed",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

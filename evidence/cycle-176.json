@@ -1,0 +1,37 @@
+{
+  "cycle": 176,
+  "area": "Keystone testbed: camera_shaker composes the damage jolt",
+  "find": {
+    "report_claim": "cycle 142 adopted keystone.camera_shake for deterministic trauma noise and claimed the game composes the offset onto its own pose; the shooter as Keystone testbed should consume the module that owns that composition",
+    "live_evidence": "camera_shaker was one of 21 Keystone modules the shooter never imported; _sync_scene hand-wrote cam.position = eye + offset.position plus yaw and pitch composition",
+    "consumer_evidence": "CameraShaker.pose() returns a new PerspectiveCamera from an immutable base pose and camera_shaker_report exposes base vs shaken pose, both absent from the shooter"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/camera_shaker.py: CameraShaker.pose(), camera_shaker_report",
+      "shooter/game.py:355 (CameraShake), :878/:903 (cinematic resets), :1310 (hand composition)",
+      "tests/test_hurt_shake.py:74 (camera_shake_report schema and trauma key)"
+    ],
+    "killed": [
+      "replacing camera_shake_report: test_hurt_shake pins its trauma key, so the richer report must be additive",
+      "using the scene camera as the shaker base: the previous frame's jolt would feed back into the base every frame",
+      "keeping the hand composition alongside the shaker: two owners would drift silently"
+    ],
+    "survivor": "a separate base PerspectiveCamera refreshed from the sim pose each non-cinematic frame, CameraShaker.pose() for the rendered camera, and an additive camera_shaker_report"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports PerspectiveCamera/CameraShaker/camera_shaker_report, owns a base camera and shaker next to CameraShake, composes through the shaker, clears the new report on rebuild and on both cinematic starts, and keeps the existing camera_shake_report shape; tests/test_keystone_camera_shaker_mechanics.py (5 tests) pins pose equality, base immutability, the base-vs-pose report, sim isolation and the clears; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "caught_during_implementation": "the first run of test_build_scene_and_a_cinematic_clear_the_shaker_report failed with a live report behind the death cinematic; both cinematic starts were then taught to clear it",
+      "mutation": "reverting the shaker composition to the old hand-added offset fails test_the_rendered_camera_is_the_shaker_pose and test_the_base_pose_stays_on_the_sim_eye_across_frames; game.py restored byte-identically (sha256 284b49c1405f27e2d2608df047ed3dcab9653aff6cce3ebe1e23fc6b6ee8d682)",
+      "isolation": "sim snapshot hash unchanged across shaker pose sampling; cinematics still own the camera and clear all shake reports",
+      "codebase_map": "regenerated after the new Keystone imports",
+      "tests": "658 passed (653 + 5 new tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

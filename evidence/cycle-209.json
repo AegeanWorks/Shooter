@@ -1,0 +1,32 @@
+{
+  "cycle": 209,
+  "area": "Documentation integrity: README testbed matrix references",
+  "find": {
+    "report_claim": "the README testbed matrix names test files inline; the guidelines gate checks the directory tree but not these inline references, so a renamed test could leave silent doc drift",
+    "live_evidence": "a probe found 62 distinct tests/... references in README and all currently resolve, so this is a guard rather than a fix",
+    "consumer_evidence": "the new test extracts every backticked tests/*.py path and fails by name if any file is missing"
+  },
+  "analyze": {
+    "killed": [
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_readme_commands.py",
+      "relying on the tree gate: it validates inventory entries, not prose references in a Markdown table",
+      "changing production code: no defect was found, only a missing invariant check"
+    ],
+    "survivor": "a documentation guard asserting all 62 referenced test files exist"
+  },
+  "fix": {
+    "shooter": "tests/test_readme_commands.py gains the guard (now 5 tests); no production code or README content changed, so the budget stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "measured": "62 referenced test paths, 0 missing",
+      "mutation": "pointing one matrix reference at a nonexistent test fails the guard; README restored byte-identically (sha256 35f413ab5050ef56dfec3a3eb452f08e8df4a1e3924ed9574c39953ea339ba69)",
+      "timing_note": "one full-suite run took 325 s under machine load; two earlier runs in this cycle were 167 s and 80-150 s typical, all green",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "798 passed (797 + 1 new documentation guard)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

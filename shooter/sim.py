@@ -15,6 +15,7 @@ from pathlib import Path
 
 from keystone.broadphase import SpatialGrid
 from keystone.character import CharacterBody, CharacterController
+from keystone.errors import KeystoneError
 from keystone.math3d import Vec3
 from keystone.particles import Emitter, ParticleSystem
 from keystone.physics import AABB, Ray, aabb_overlap, ray_aabb
@@ -33,8 +34,90 @@ BUFFER_S = 0.12
 PITCH_LIMIT = 1.45
 
 
+# Which key each required document must expose, and what that key must hold.
+# List documents whose entries must each carry this field.
+DATA_ENTRY_FIELDS: dict[str, str] = {
+    "weapons.json": "id",
+    "enemies.json": "id",
+}
+
+DATA_SHAPES: dict[str, tuple[str, type]] = {
+    "weapons.json": ("weapons", list),
+    "enemies.json": ("enemies", list),
+    "levels.json": ("player", dict),
+    "juice.json": ("viewmodel", dict),
+}
+
+
+class ShooterDataError(KeystoneError):
+    """A data failure with structured why/fix and the rendered player message."""
+
+    def __init__(self, message: str, why: str, fix: str) -> None:
+        super().__init__(why=why, fix=fix)
+        self.message = message
+
+    def __str__(self) -> str:
+        return self.message
+
+
+def _data_error(name: str, headline: str, why: str, fix: str) -> ShooterDataError:
+    """Build the exact legacy text while keeping the structured fields."""
+    message = f"shooter data file {name!r} {headline}\nWhy: {why}\nFix: {fix}"
+    return ShooterDataError(message, f"{name}: {why}", fix)
+
+
 def _load(name: str) -> dict:
-    return json.loads((DATA_DIR / name).read_text(encoding="utf-8"))
+    """Read one data file, naming the file and the fix when it cannot be used.
+
+    Missing, unreadable, malformed and wrongly shaped data all raise the same
+    actionable message: the engine otherwise reports a bare KeyError and tells
+    the player to fix their `--game` argument, which is never the real problem.
+    """
+    path = DATA_DIR / name
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise _data_error(
+            name, "could not be read.", str(exc),
+            f"restore {path} from a fresh clone; it ships with the game.",
+        ) from exc
+    try:
+        document = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise _data_error(
+            name, "is not valid JSON.", str(exc),
+            f"restore {path} from a fresh clone, or repair the JSON at that line.",
+        ) from exc
+    if not isinstance(document, dict):
+        raise _data_error(
+            name, "must hold a JSON object.", f"found {type(document).__name__}",
+            f"restore {path} from a fresh clone.",
+        )
+    shape = DATA_SHAPES.get(name)
+    if shape is not None:
+        key, expected = shape
+        if key not in document:
+            raise _data_error(
+                name, f"is missing its {key!r} key.",
+                f"this build expects {expected.__name__} in that file.",
+                f"restore {path} from a fresh clone; a newer or older build may use a different shape.",
+            )
+        if not isinstance(document[key], expected):
+            raise _data_error(
+                name, f"has the wrong type for {key!r}.",
+                f"expected {expected.__name__}, found {type(document[key]).__name__}.",
+                f"restore {path} from a fresh clone.",
+            )
+        entry_field = DATA_ENTRY_FIELDS.get(name)
+        if entry_field is not None and isinstance(document[key], list):
+            for index, entry in enumerate(document[key]):
+                if not isinstance(entry, dict) or entry_field not in entry:
+                    raise _data_error(
+                        name, f"has a malformed entry at index {index}.",
+                        f"every entry needs a {entry_field!r} field.",
+                        f"restore {path} from a fresh clone.",
+                    )
+    return document
 
 
 @dataclass
@@ -234,8 +317,11 @@ class Sim:
             for c in self.levels["arena"]["covers"]
         ]
         self.grid.clear()
+        self._collider_by_key = {}
         for i, b in enumerate(self.colliders):
-            self.grid.insert(f"wall:{i}", b)
+            key = f"wall:{i}"
+            self.grid.insert(key, b)
+            self._collider_by_key[key] = b
         self.particles.clear()
         self.tracker = TriggerTracker()
 
@@ -346,6 +432,20 @@ class Sim:
                 return True
         return False
 
+    def _colliders_along(self, start: Vec3, end: Vec3) -> list:
+        """Wall/cover boxes whose bounds meet the segment's box, in build order.
+
+        A broadphase prefilter for a bounded ray: any box the segment can touch
+        overlaps the segment's own AABB, so the exact ``ray_aabb`` test still
+        decides. ``query`` returns proxies in insertion order, which is the
+        collider order the full scan used, so callers see the same first hit.
+        """
+        low_x, low_y, low_z = min(start.x, end.x), min(start.y, end.y), min(start.z, end.z)
+        high_x, high_y, high_z = max(start.x, end.x), max(start.y, end.y), max(start.z, end.z)
+        center = Vec3((low_x + high_x) / 2.0, (low_y + high_y) / 2.0, (low_z + high_z) / 2.0)
+        half = Vec3((high_x - low_x) / 2.0, (high_y - low_y) / 2.0, (high_z - low_z) / 2.0)
+        return [self._collider_by_key[key] for key in self.grid.query(AABB(center, half))]
+
     def _enemy_has_los(self, enemy: _Enemy) -> bool:
         """True when no wall/cover intersects enemy chest -> player eye."""
         src = Vec3(enemy.pos.x, enemy.pos.y + 0.3, enemy.pos.z)
@@ -355,7 +455,7 @@ class Sim:
         if length <= 1e-6:
             return True
         ray = Ray(src, vec.normalized(), t_max=length)
-        for box in self.colliders:
+        for box in self._colliders_along(src, target):
             distance = ray_aabb(ray, box)
             if distance is not None and distance < length - 0.3:
                 return False
@@ -836,13 +936,13 @@ class Sim:
                     "x1": origin.x + direction.x * end_dist,
                     "y1": origin.y + direction.y * end_dist,
                     "z1": origin.z + direction.z * end_dist,
-                    "life": float(self.juice.get("tracer_life_s", 0.08)),
+                    "life": float(self.juice.get("tracer_life_s", 0.15)),
                     # Presentation telemetry: which gun fired this beam.
                     "weapon": self.weapon,
                 }
             )
             self.tracers = self.tracers[:16]
-        self.flash_t = float(self.juice.get("flash_life_s", 0.06))
+        self.flash_t = float(self.juice.get("flash_life_s", 0.10))
         # Offset the flash down-right of the aim line so it never hides the
         # target; distance/size are presentation DATA.
         fwd_d = float(self.juice.get("flash_forward", 0.95))

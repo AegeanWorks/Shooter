@@ -1,0 +1,38 @@
+{
+  "cycle": 171,
+  "area": "test-suite effectiveness, part 2: weapon feel numbers were unprotected, and two loopback tests were load-fragile",
+  "find": {
+    "report_claim": "cycle 170's mutation sweep found two unprotected gameplay constants and fixed them; the sweep covered sim constants but not the weapon/enemy DATA a designer edits",
+    "live_evidence": "a data sweep over weapons.json and enemies.json caught every outcome number (pulse damage 12->20, mite hp 30->45, mite damage 8->20, mite score 10->500) but two FEEL numbers survived: pulse kick_deg 0.6->1.2 and pulse reload_s 1.1->2.4",
+    "consumer_evidence": "existing coverage cannot catch them because it reads the value back out of the same data: test_reload_dip.py computes half the reload as reload_s / 2.0 (correct at any duration) and test_viewmodel_recoil.py asserts sim.kick > 0.0 (true at any magnitude)"
+  },
+  "analyze": {
+    "read": [
+      "shooter/data/weapons.json and enemies.json balance tables",
+      "tests/test_reload_dip.py, tests/test_viewmodel_recoil.py, tests/test_reload_cue.py",
+      "the loopback fixtures in the two keystone HTTP suites"
+    ],
+    "killed": [
+      "asserting kick_deg or reload_s as constants: it restates the data instead of asserting what the player experiences",
+      "asserting an exact frame count for the reload: a one-frame rounding difference would fail for no design reason",
+      "leaving the 5s loopback timeouts: a loaded machine is an order of magnitude slower, so those bounds turn contention into false failures"
+    ],
+    "survivor": "assert the observable result -- frames until the magazine refills, degrees the camera tilts per shot -- inside a design band, and give loopback requests a bound sized for a loaded machine while keeping the server-thread join tight"
+  },
+  "fix": {
+    "shooter": "tests/test_weapon_feel.py (4 tests) asserts a pulse reload completes in 58-74 frames (designed 66), one shot tilts the camera 0.45-0.75 degrees (designed 0.6), recoil decays back to exactly 0, and the magazine refills to its declared size; both keystone HTTP suites replace the hardcoded timeout=5 with REQUEST_TIMEOUT=60 and keep the server-thread join at JOIN_TIMEOUT=10 so a real hang still fails fast"
+  },
+  "proof": {
+    "shooter": {
+      "data_sweep": "5 outcome mutations caught, 2 feel mutations survived before the fix",
+      "after": "both feel mutations are caught: kick by test_one_shot_tilts_the_camera_by_under_a_degree, pulse reload by test_a_pulse_reload_takes_about_one_second",
+      "mutation_method_bug": "my first reload check reported SURVIVED because I patched 'reload_s': 1.6 -- which is LANCE's value, not pulse's 1.1 -- so the mutation never touched the weapon under test; anchoring on pulse's own block made the test fail as intended, and the data file was byte-identical afterwards",
+      "flaky_under_load": "under the concurrent worker's load the gate's test run failed two loopback tests that pass in isolation (7.4s and 10.1s alone), because urlopen had a 5s bound while the whole suite ran 10x slower",
+      "after_timeout_fix": "the same gate run under the same load passed 5/5, with the test phase at 470s and mechanics at 91s",
+      "tests": "631 passed, 2 xfailed",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

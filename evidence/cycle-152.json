@@ -1,0 +1,35 @@
+{
+  "cycle": 152,
+  "area": "testbed hardening: enforce the declared mechanics contract instead of only declaring it",
+  "find": {
+    "report_claim": "cycle 150 declared mechanics.core = [shooter/sim.py, shooter/bot.py] and a mechanics.test command so an agent could find the headless AI-testable core from configuration alone",
+    "live_evidence": "nothing enforced that the declared files stay headless: a future import of keystone.gpu, a wall-clock read, an unseeded random.Random() or a core-to-presentation import would break the promise silently while project.json kept claiming it",
+    "consumer_evidence": "the contract is the only machine-readable statement that the mechanics core runs without a GL context, so its accuracy is what lets an agent trust it instead of reading 543 tests"
+  },
+  "analyze": {
+    "read": [
+      ".aikit/project.json mechanics block",
+      "scripts/project_registry.py mechanics_errors rules",
+      "shooter/sim.py and shooter/bot.py import graphs and RNG construction sites"
+    ],
+    "killed": [
+      "replacing random.Random with keystone.rng.RandomStream: SplitMix64 draws a different sequence, so every recorded bot campaign, fairness figure and evidence hash would change -- a behaviour change disguised as a portability cleanup",
+      "asserting the properties by grepping source text: an import inside a function or a differently-spelled call would slip through",
+      "banning 'time' as a name: sim.py legitimately has a self.time field, so the check must look at imported modules and attribute calls, not identifiers"
+    ],
+    "survivor": "parse the AST of the declared core and assert no GL/app/web/presentation imports, no clock or entropy modules, no unseeded RNG construction, a one-way dependency with the presentation layer, and a working headless seeded run"
+  },
+  "fix": {
+    "shooter": "tests/test_mechanics_contract.py (6 tests) validates the contract shape and that the test command names existing files, forbids GL/app/web/presentation imports in the core, forbids time/datetime/secrets/multiprocessing plus clock and entropy names, requires every random.Random construction in the core to be explicitly seeded and forbids SystemRandom, proves two Seed-7 Sim instances agree after 300 headless steps, and asserts the dependency direction (game may import the core; the core may import no shooter module). The suite is added to mechanics.test and to the README tree"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "543 passed, 2 xfailed in full suite",
+      "contract_suite": "6 passed in 0.67-1.00s",
+      "mutation": "inserting 'import time' into sim.py failed only the wall-clock test; removing the seed from one random.Random() call failed only the seeded-RNG test; pointing mechanics.test at tests/test_does_not_exist.py failed only the well-formed-contract test; sim.py and project.json were each restored byte-identically (sha256 match)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics); the mechanics gate now includes the contract suite",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

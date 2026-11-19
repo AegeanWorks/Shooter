@@ -1,0 +1,39 @@
+{
+  "cycle": 175,
+  "area": "Keystone testbed: positional audio via audio_spatial",
+  "find": {
+    "report_claim": "the README calls the shooter the living consumer for Keystone's runtime additions; a coverage scan of all 103 Keystone modules found 21 the shooter had never imported, including audio_spatial",
+    "live_evidence": "_play_event('spawn') played HOSTILE INBOUND at a fixed 0.30 gain regardless of distance, while the sim already publishes spawn_pos as presentation telemetry (used for spawn marks since cycle 26)",
+    "consumer_evidence": "distance_gain is exactly 1 inside the near radius and 0 at the far radius; the shooter's existing Mixer already owns bus gains, pitch resampling and the 8-voice cap, so only the attenuation layer was missing"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/audio_spatial.py: SoundSource validation, distance_gain linear falloff, spatial_mix, spatial_report",
+      "shooter/game.py:898 (_play_clip), :1154 (spawn branch), :362 (build_scene resets)",
+      "tests/test_audio.py:81 (clip hook observes gains), tests/test_spawn_cue.py (spawn voice)"
+    ],
+    "killed": [
+      "calling spatial_mix: it builds a second Mixer and would duplicate the bus/voice-cap path the game already owns, for one short warning clip",
+      "playing every spawn at full volume: the position is already available and the module exists precisely to turn it into attenuation",
+      "letting a NaN spawn position raise: audio must never crash gameplay (the cycle 166 invariant), so the source construction is guarded and falls back to the old fixed gain"
+    ],
+    "survivor": "use SoundSource + distance_gain for the played gain and spatial_report for the AI-visible summary, through the existing mixer, with a recorded fallback"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports SoundSource/distance_gain/spatial_report, builds a positional source on the spawn event, scales the clip gain by distance, exposes spatial_audio_report, resets it in build_scene, and falls back to gain 0.30 on TypeError/ValueError; tests/test_keystone_audio_spatial_mechanics.py (5 tests) pins falloff, report geometry, the NaN fallback, rebuild reset and sim isolation; README testbed matrix and tree names the consumer and its test"
+  },
+  "proof": {
+    "shooter": {
+      "before": "fixed 0.30 gain at every distance; the module was never imported by the shooter",
+      "after": "2 m -> 0.2875, 18 m -> 0.0875, 40 m -> 0.0 under the shipped 1..25 m range; report schema 1 with one source matches distance_gain and the listener geometry",
+      "mutation": "replacing 'gain = source.gain * distance_gain(listener, source)' with 'gain = source.gain' fails test_spawn_voice_gain_falls_off_with_distance with (0.3, 0.3); game.py restored byte-identically (sha256 31481c862c487e31bd2051e505be6e098a622afbdff44c201bcdc350f8c132a1)",
+      "isolation": "snapshot hash unchanged across the spawn event; no sim or snapshot fields added",
+      "codebase_map": "regenerated after the new Keystone import",
+      "tests": "653 passed, no xfails (646 + 5 new + 2 former xfails now passing)",
+      "keystone_drift": "the two runtime pytest.xfail tripwires in test_keystone_project_export_mechanics.py (manifest assets double-registered) now pass because Keystone landed 93e4639 fix(project): restore assets on failed glTF reimport",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

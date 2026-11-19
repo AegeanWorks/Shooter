@@ -1,11 +1,9 @@
 """Graphics proofs: the first-person gun follows the camera and weapon.
 
-The baseline had no viewmodel: the crosshair and floating muzzle flash were
-the only weapon presence. These tests pin the two gun nodes, camera follow,
-weapon tint and the death hide.
+The viewmodel is now a Keystone CameraRig: the gun parts hold camera-space
+offsets and the rig root carries the camera pose. These tests pin the three
+parts, rig follow, weapon tint and the death hide.
 """
-
-from keystone.math3d import Vec3
 
 from shooter.game import ShooterGame
 
@@ -16,18 +14,27 @@ def _game() -> ShooterGame:
     return g
 
 
-def test_viewmodel_exists_and_follows_camera():
+def test_viewmodel_exists_and_the_rig_follows_camera():
     g = _game()
     assert g._view_body is not None and g._view_body.visible is True
     assert g._view_barrel is not None and g._view_barrel.visible is True
-    eye = g.sim.eye()
     body = g._view_body.transform.position
-    assert 0.2 < Vec3(body.x - eye.x, body.y - eye.y, body.z - eye.z).length() < 1.0
-    before = body
+    assert 0.2 < body.length() < 1.0, body
+    local = (body.x, body.y, body.z)
+    root = g._view_rig.root.transform
+    camera = g.scene.camera
+    assert (root.position.x, root.position.y, root.position.z) == (
+        camera.position.x, camera.position.y, camera.position.z
+    )
     g.sim.yaw = 1.5707963267948966
     g._sync_scene()
     after = g._view_body.transform.position
-    assert after.x > before.x + 0.1, (before, after)
+    assert (after.x, after.y, after.z) == local, "camera-space offsets must not move with yaw"
+    moved = g._view_rig.root.transform
+    assert (moved.position.x, moved.position.y, moved.position.z) == (
+        camera.position.x, camera.position.y, camera.position.z
+    )
+    assert moved.rotation != root.rotation
 
 
 def test_viewmodel_tints_with_active_weapon():

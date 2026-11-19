@@ -1,0 +1,36 @@
+{
+  "cycle": 153,
+  "area": "game performance: the victory frame wrote the profile twice; now once",
+  "find": {
+    "report_claim": "cycles 141-152 all claimed determinism was untouched, and the soak harness reports per-chunk frame timings; nobody had looked at whether any single frame exceeded a sane budget",
+    "live_evidence": "a 20000-frame soak showed one chunk peaking at 10.98 ms against a 0.28 ms mean; per-frame timing pinned it to frame 2485, exactly the victory frame, and instrumentation counted TWO ProfileStore.save calls on that frame (4.63 ms + 4.85 ms), while sim.step was 0.68 ms and _sync_scene 0.16 ms",
+    "consumer_evidence": "the two writes were _record_progress (wave bests, triggered by the wave event) and _record_campaign_clear (the win run) firing in the same update, so the most celebratory moment of a run paid two fsync-backed atomic saves out of a 16.7 ms frame budget"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py update() event loop, _record_progress, _record_campaign_clear, _record_run, _save_profile",
+      "shooter/profile.py ProfileStore.save (temp + fsync + atomic replace under an advisory lock)",
+      "tests/test_history.py and tests/test_win_history.py for direct _finish_run expectations"
+    ],
+    "killed": [
+      "deferring all saves to the end of update() with a dirty flag: several tests call _finish_run() directly and then reload the file, so a deferred save would break the durability contract they encode",
+      "skipping the campaign-clear save instead: that is the write that must not be lost",
+      "dropping the fsync or the atomic replace: that would trade durability for latency on player data"
+    ],
+    "survivor": "extract the win condition into _campaign_win_reached(), use it in both the update loop and _record_progress, and let the progress save defer to the run record that follows in the same frame so the two mutations land in one atomic save"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds _campaign_win_reached() as the single predicate for sealing the campaign, uses it in update() and in _record_progress(), and _record_progress now saves only when the campaign is not about to clear; tests/test_win_history.py gains a test that drives the real bot run to the victory frame and asserts exactly one profile write, plus the win run and bests in the saved file, and a second test that a non-winning wave still saves immediately"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "545 passed, 2 xfailed in full suite",
+      "saves": "victory frame 2 -> 1 ProfileStore.save; whole run 4 -> 3",
+      "soak": "20000 frames, identical determinism hash 55c614b52c4888b58212fb81e2e3c8c3 before and after (wave 4, 30 kills, score 11560, hp 38, alive, dropped_sfx 0); victory chunk [2400,3000] max step 10.98 ms -> 6.78 ms; worst chunk overall now frames 600-1200 at 7.89 ms instead of the victory frame",
+      "mutation": "restoring the unconditional save in _record_progress made the new test report 'the victory frame performed 2 profile writes, expected 1'; shooter/game.py restored byte-identically (sha256 match)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

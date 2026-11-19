@@ -1,0 +1,34 @@
+{
+  "cycle": 205,
+  "area": "Testbed audit: reflective coverage of the aggregate report",
+  "find": {
+    "report_claim": "cycle 204's testbed_report hardcoded eight families and its test asserted the same hardcoded list, so two older no-arg reports were silently omitted",
+    "live_evidence": "introspection of ShooterGame found nine no-arg *_report/*_probe methods (excluding testbed_report itself); only six were named by the aggregate: profile_store_probe and presentation_rng_report were missing",
+    "consumer_evidence": "after the fix the aggregate has ten families plus a sources list naming all eight composed no-arg reports, and a reflective test fails if a future one is not wired in"
+  },
+  "analyze": {
+    "killed": [
+      "extending the hardcoded family list again: that is exactly the blind spot that let the two reports through",
+      "removing the parameterized reports (enemy_blend_report etc.) from the composition: they are still present via explicit family calls and only the sources list tracks no-arg methods",
+      "caching the reflective discovery: it must see additions at test time"
+    ],
+    "survivor": "add storage/presentation families, publish a self-describing sources list, and introspect ShooterGame in the test"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds profile_store_probe and presentation_rng_report to testbed_report plus a sorted sources list; tests/test_testbed_report_mechanics.py gains the reflective coverage test (now 5 tests); README documents the two new families and the guard"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "the new reflective test failed with KeyError: 'sources' while the four hardcoded tests passed — direct evidence of the blind spot",
+      "own_test_bugs": "two first-draft assertions were wrong: sources is a list, not a report dict, and some families are containers without their own schema; both were corrected",
+      "measured": "sources = arena_tile_report, asset_digest_report, enemy_steering_report, engine_version_report, keystone_contract_report, nav_plan_report, presentation_rng_report, profile_store_probe; ~8787 JSON bytes",
+      "mutation": "dropping profile_store_probe from sources fails the reflective test; game.py restored byte-identically (sha256 8fb027cf7ab0463476ac850da540ed5f4618e4c7411085e50169138af3e1d947)",
+      "readme_budget": "README is 35,661 of 37,500 chars (1,839 left); the guidelines gate passes but future cycles should monitor this limit",
+      "codebase_map": "regenerated after the change",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "788 passed (787 + 1 new reflective test)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

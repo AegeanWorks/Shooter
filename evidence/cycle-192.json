@@ -1,0 +1,36 @@
+{
+  "cycle": 192,
+  "area": "Keystone testbed: root-motion presentation on a local rig",
+  "find": {
+    "report_claim": "root_motion_presenter was one of five Keystone modules the corrected coverage scan still listed as unconsumed; it owns the presentation half of root motion that the shooter otherwise hand-composes in anim.py",
+    "live_evidence": "cycle 186 extracted root deltas with pure functions, but no consumer had exercised RootMotionBody + RootMotionPresenter driving a container node and applying an in-place pose to a child",
+    "consumer_evidence": "12 local steps move the container from [0,0.9,0] yaw 0 to [0,0.38,0] yaw 0.019999 and apply the pose to the child named 'subject'"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/root_motion_presenter.py: RootMotionPresenter.step(), root_motion_presenter_report()",
+      "projects/keystone/keystone/root_motion_body.py: RootMotionBody(clip, node_id, controller, body)",
+      "projects/keystone/keystone/animation.py:apply_pose traverses the scene and updates nodes by id/name"
+    ],
+    "killed": [
+      "using the game's live scene: a preview must not move any viewmodel or enemy node",
+      "reporting only the pure RootMotion delta: cycle 186 already did that; this cycle needs the presenter's container and applied-child contract",
+      "using a nonexistent animated node: Keystone rejects it, so the mutation check proves the test would catch a wrong name"
+    ],
+    "survivor": "an on-demand idle_presenter_preview() with a throwaway Scene, container + subject child, a local RootMotionBody and the presenter's before/after report"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports RootMotionBody/RootMotionPresenter/root_motion_presenter_report and adds idle_presenter_preview(frames=12); tests/test_keystone_root_motion_presenter_mechanics.py (5 tests) pins report shape, container follow/turn, applied child, zero-frame stability and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no idle_presenter_preview)",
+      "measured": "before position [0.0,0.9,0.0] yaw 0.0; after 12 steps position [0.0,0.38,0.0] yaw 0.019999 with motion yaw 0.001667; updated ['subject'], pose_nodes ['subject']",
+      "mutation": "pointing the rig at a nonexistent 'missing' node fails all 5 tests with Keystone's in-place-pose error; game.py restored byte-identically (sha256 62274a3c421287b09ec62b4b69f735fa2082de203b6204ef4b890ef455e2c66b)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

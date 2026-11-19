@@ -46,6 +46,24 @@ def test_profile_round_trip_and_backup(tmp_path):
     assert not (tmp_path / "profile.json.lock").exists()
 
 
+@pytest.mark.parametrize(
+    "raw, expected_wins",
+    [
+        ({"schema": 1, "runs": 3, "best_score": 42}, 0),
+        ({"schema": 2, "runs": 3, "best_score": 42, "wins": 2}, 2),
+    ],
+    ids=["v1-to-v3", "v2-to-v3"],
+)
+def test_intermediate_schemas_migrate_without_losing_progress(tmp_path, raw, expected_wins):
+    path = tmp_path / "profile.json"
+    path.write_text(json.dumps(raw), encoding="utf-8")
+    profile = ProfileStore(path).load()
+    assert profile["schema"] == 3
+    assert profile["runs"] == 3 and profile["best_score"] == 42
+    assert profile["wins"] == expected_wins
+    assert profile["history"] == []
+
+
 def test_unsupported_schema_is_refused_without_touching_the_file(tmp_path):
     path = tmp_path / "profile.json"
     path.write_text('{"schema": 99, "best_score": 1}', encoding="utf-8")

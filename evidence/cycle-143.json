@@ -1,0 +1,35 @@
+{
+  "cycle": 143,
+  "area": "game feature: data-driven victory cinematic loaded from a shipped .kpath via Keystone CameraPathLibrary",
+  "find": {
+    "report_claim": "keystone commit 7a1345e added .kpath documents (camera_path_to_dict/from_dict, CAMERA_PATH_SCHEMA 1) and CameraPathLibrary: an atomic, name-validated, trash-backed directory of authored camera paths; the library entry model is documented at ADR level but has no game consumer",
+    "live_evidence": "shooter's victory screen still showed the player's frozen first-person eye while the CAMPAIGN COMPLETE banner drew over it, and the only cinematic in the game (death) was authored in code, so no path was ever stored as data",
+    "consumer_evidence": "the campaign_clear capture route produced identical camera metadata before and after the wave: fov 75, position [0.0, 1.62, 8.0], yaw 0, pitch 0"
+  },
+  "analyze": {
+    "read": [
+      "keystone/camera_path.py new document functions and CAMERA_PATH_SCHEMA",
+      "keystone/camera_path_library.py save/load/entry/trash and the atomic write policy",
+      "shooter/game.py campaign-clear block, camera precedence and data-loading convention"
+    ],
+    "killed": [
+      "authoring the victory path in code like the death cinematic: the new library exists precisely so a path is DATA that can be re-authored without a code change and validated by name",
+      "failing the victory screen when the document is missing or corrupt: a cinematic is presentation, so the game must fall back to first person and record why",
+      "looping the victory path behind the debrief: a one-shot that clamps on its last key keeps the final frame stable"
+    ],
+    "survivor": "ship the path as shooter/data/campaign_clear.kpath, load it through CameraPathLibrary at campaign seal, drive the camera while keeping the snapshot untouched, and fall back with a recorded error if the document cannot load"
+  },
+  "fix": {
+    "shooter": "adds shooter/data/campaign_clear.kpath (schema 1, 4 keys at 0.0/1.2/2.4/3.5 s, one-shot, orbit radius 7.2->5.0 m, height 3.3->1.9 m, fov 62->52) authored through CameraPathLibrary.save; game.py loads it in _start_campaign_clear_camera on campaign seal, drives position/yaw/pitch/fov_y from CameraPathPlayer, exposes campaign_camera_report, falls back to first person with an error report on any KeyError/OSError/TypeError/ValueError, and clears it on build_scene; tests/test_campaign_camera_path.py (6 tests) covers the document shape, load, engagement, pose following, one-shot clamping, absence of leakage into the snapshot, graceful fallback and rebuild clearing"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "513 passed, 2 xfailed in full suite",
+      "new_suite": "6 passed in 1.31s",
+      "visual": "evidence/c143_campaign_camera: 960x540 before/after campaign_complete captures. Camera moved from [0.0, 1.62, 8.0] fov 75 yaw 0 pitch 0 to [4.698, 1.9, 1.71] fov 52 yaw -1.2217 pitch -0.1096; diff 295194 changed pixels (56.94% of frame), max delta 248",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; the document drives camera fields only)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

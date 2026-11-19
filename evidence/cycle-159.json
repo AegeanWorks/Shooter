@@ -1,0 +1,40 @@
+{
+  "cycle": 159,
+  "area": "delivery proof: the double-click launchers now have tests, and the tests cannot hang",
+  "find": {
+    "report_claim": "no suite covered start-shooter.cmd or start-shooter.sh, the entry points a new player double-clicks first",
+    "live_evidence": "both launchers were verified by hand before writing anything: `start-shooter.cmd --simulate --frames 60` forwarded its arguments and exited 0 with '\"tick\": 60'; `start-shooter.cmd --help` printed the engine usage; running the launcher with a PATH containing neither `python` nor `py` printed 'Shooter could not start. / Why: no Python found on PATH. / Fix: install Python 3.10+ ...' and exited 1",
+    "consumer_evidence": "a launcher that loses its own-directory cd, stops forwarding %*, or drops the Why/Fix text fails only for a player on a cold machine with no terminal open, which is precisely the case nobody can debug at the time"
+  },
+  "analyze": {
+    "read": [
+      "start-shooter.cmd and start-shooter.sh",
+      "play.py argument pass-through",
+      "AIKit's Why:/Fix: error-message convention"
+    ],
+    "killed": [
+      "testing the shell script by running it: there is no POSIX shell on this build machine, so its contract is asserted statically (shebang, quoted self-directory, exec, \"$@\") instead of pretending it ran",
+      "asserting the literal positions of 'where python' and 'where py' with str.index: 'where python' is a substring of 'where py', so both report the same offset and the check passes vacuously -- it compares line numbers now",
+      "leaving the launcher tests unbounded: the first mutation attempt showed a broken launcher opens the real game window and the command blocked until an external 900s timeout killed it"
+    ],
+    "survivor": "run the .cmd for real with bounded, tree-killed subprocesses, assert argument forwarding through the observable tick count, exercise the missing-python path with stdin closed, and check the shell script's contract statically"
+  },
+  "fix": {
+    "shooter": "tests/test_launchers.py (7 tests) covers both entry points existing and sharing play.py as the single entry, the shell script's shebang/self-directory/exec/quoted-args contract, the .cmd forwarding --simulate --frames 30 from an unrelated working directory and reporting tick 30, the missing-python path printing Why:/Fix: and exiting 1, the python-before-py fallback order by line number, and both launchers appearing in the README tree"
+  },
+  "incident": {
+    "what": "while mutation-testing, dropping %* made the launcher open the real game window; the test's subprocess inherited the pipe and the command blocked until the harness killed it at 900s",
+    "cleanup": "the stray GUI process (PID 20468) was identified by command line and killed individually; two pre-existing http.server processes (8108, 30464) were left running",
+    "hardening": "_run_bounded launches with Popen, waits RUN_TIMEOUT=30s, and on expiry runs taskkill /F /T to take the whole tree, so a regression now fails with 'the launcher did not exit within 30s: arguments were probably dropped' in ~31s"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "572 passed, 2 xfailed in full suite",
+      "new_suite": "7 passed in 1.09s",
+      "mutation": "dropping %* failed the forwarding test in 30.81s with a clear message and left no stray process; replacing 'Why: no Python found on PATH.' with 'Could not start.' failed the missing-python test in 1.07s; start-shooter.cmd restored byte-identically (sha256 match) after each",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

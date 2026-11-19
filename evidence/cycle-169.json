@@ -1,0 +1,36 @@
+{
+  "cycle": 169,
+  "area": "determinism: the in-process gate has a structural blind spot; cross-process check added",
+  "find": {
+    "report_claim": "the README documents `--verify-determinism --frames 1800` as the canonical regression shield, and game.snapshot() feeds the hash it compares",
+    "live_evidence": "keystone/testing.py verify_determinism runs `factory()` twice INSIDE ONE PROCESS, so both passes share a PYTHONHASHSEED and any ordering derived from set or dict-of-strings iteration is identical in both; the gate therefore cannot detect hash-seed-dependent nondeterminism",
+    "consumer_evidence": "injecting `self.weapon = next(iter({\"pulse\", \"scatter\", \"lance\", \"surge\"}))` left `--verify-determinism` reporting ok:true, while separate processes produced 3bf71e94 vs 03b51121 -- so a replay recorded in one session would not reproduce in the next, and the canonical gate said everything was fine"
+  },
+  "analyze": {
+    "read": [
+      "keystone/testing.py verify_determinism and run_script",
+      "shooter/sim.py snapshot (a progress record, not a full state hash)",
+      "play.py documented commands"
+    ],
+    "killed": [
+      "treating the snapshot's omitted fields (spawn_t, RNG state, player velocity, enemy cooldowns) as a bug: keystone's GameModule contract only requires snapshot() to return a dict, and nothing claims it is an exhaustive state record -- calling that a defect would repeat cycle 165's error",
+      "changing keystone's verify_determinism to fork processes: another worker owns that tree and it would slow every engine user's gate",
+      "claiming the snapshot is the problem: the omission matters only if it hides divergence, and the cross-process test shows the real risk was the gate's structure, not the payload"
+    ],
+    "survivor": "run the same simulation in separate processes with different PYTHONHASHSEED values and assert one hash, which is what a player replaying a saved transcript actually does"
+  },
+  "fix": {
+    "shooter": "tests/test_cross_process_determinism.py (3 tests) runs `play.py --simulate --frames 120` under PYTHONHASHSEED 0/1/424242 and asserts a single hash, checks a fixed game seed is reproducible while a different seed differs (via the playtest runner, since --seed belongs to it), and replays bot_campaign.json in a fresh process with PYTHONHASHSEED 31337 asserting it still wins at wave 4"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "623 passed, 2 xfailed in full suite",
+      "new_suite": "3 passed in 6.85-6.99s",
+      "baseline": "the shipped game is cross-process deterministic today: seeds 0, 1 and 12345 all produce 7e4b602e029d12d68672790318d119cd over 120 frames",
+      "mutation": "injecting a hash-seed-dependent starting weapon left the in-process gate green but failed BOTH the cross-seed test (3bf71e94 / 03b51121 / 770aaa8b) and the replay test; shooter/sim.py was restored byte-identically (sha256 match).",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

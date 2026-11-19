@@ -57,8 +57,8 @@ def test_public_exports_resolve_and_engine_lazy_load():
 
 def test_schema_versions_and_editor_actions():
     assert schema.WEB_API_VERSION == 1
-    assert schema.SCENE_SCHEMA_VERSION == 2
-    assert schema.EDITOR_SCHEMA_VERSION == 59
+    assert schema.SCENE_SCHEMA_VERSION == 5
+    assert schema.EDITOR_SCHEMA_VERSION == 66
     assert schema.PREFAB_SCHEMA_VERSION == 2
     assert len(schema.EDITOR_ACTIONS) == len(set(schema.EDITOR_ACTIONS))
     assert len(schema.EDITOR_ACTIONS) >= 80
@@ -74,6 +74,15 @@ def test_schema_versions_and_editor_actions():
         "build_project",
         "undo",
         "redo",
+        "save_camera_path",
+        "delete_camera_path",
+        "restore_camera_path",
+        "preview_camera_path",
+        "load_camera_path",
+        "set_camera_path_key",
+        "remove_camera_path_key",
+        "rename_camera_path",
+        "duplicate_camera_path",
     ):
         assert action in schema.EDITOR_ACTIONS
 

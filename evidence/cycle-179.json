@@ -1,0 +1,37 @@
+{
+  "cycle": 179,
+  "area": "Keystone testbed: an isolated RandomStream for presentation variety",
+  "find": {
+    "report_claim": "rng is a Keystone module for deterministic SplitMix64 streams with safe forking and snapshot/restore, and was one of 21 modules the shooter had never imported",
+    "live_evidence": "the sim deliberately owns two random.Random streams (combat and rewards) seeded from the run seed; replacing either would move the replay hash, and the shoot voice played at a fixed 0.7 gain on every shot",
+    "consumer_evidence": "a forked stream gives per-shot gain variety without advancing either sim stream, and its RandomStreamState can be reported as JSON so an AI/soak run can reproduce the exact presentation sequence"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/rng.py: RandomStream.fork(), uniform(), snapshot(), from_snapshot(), RandomStreamState.to_dict()",
+      "shooter/sim.py:143-144 (rng and reward_rng)",
+      "shooter/game.py:1201 (fixed shoot gain), tests/test_audio.py:81 (clip hook observes gains)"
+    ],
+    "killed": [
+      "replacing the sim's random.Random streams: the 1800-frame replay hash is the project's regression shield and must not move",
+      "using a module-level random.Random for presentation: Python's random is not a stability contract and the stream would not be restorable from JSON",
+      "jittering every clip: test_audio pins the boss_windup gain at 0.8, so only the shoot voice is varied"
+    ],
+    "survivor": "a RandomStream forked with label 'presentation' from each run seed, a bounded uniform(0.95, 1.05) gain multiplier on the shoot voice, and a JSON-safe state report"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports RandomStream, seeds a forked presentation stream in __init__ and again in build_scene, adds _presentation_gain() and presentation_rng_report(), and uses the jittered gain only for the shoot clip; tests/test_keystone_rng_mechanics.py (5 tests) pins reproducibility, seed dependence, sim isolation, snapshot restore and the shoot event draw; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed with AttributeError before the consumer existed",
+      "mutation": "replacing the uniform multiplier with a plain return fails 3 of the 5 tests; game.py restored byte-identically (sha256 9011ed717c5f880b478e34e23329d69c06a11d3f97ef68db7c51a9ee5ad9ad20)",
+      "isolation": "200 presentation draws leave the sim snapshot hash unchanged and equal to a game that drew nothing",
+      "codebase_map": "regenerated after the new import, methods and test module",
+      "tests": "668 passed (663 + 5 new rng tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

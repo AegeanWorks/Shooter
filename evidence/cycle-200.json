@@ -1,0 +1,36 @@
+{
+  "cycle": 200,
+  "area": "Testbed audit: one JSON-safe pose serializer",
+  "find": {
+    "report_claim": "enemy_state_preview and enemy_blend_report each carried the same nine-line position/rotation/scale rounding block to make sampled poses JSON-safe",
+    "live_evidence": "grep found the identical channel block at two sites; a future channel or precision change would need two synchronized edits and could drift",
+    "consumer_evidence": "after extraction both reports call _pose_json, which keeps position 3 floats, rotation 4 and scale 3 at six decimals"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py:enemy_state_preview and enemy_blend_report pose loops",
+      "tests/test_keystone_pose_json_mechanics.py design: monkeypatch the shared function to prove both callers use it",
+      "cycle 176/196/197/198/199 audit pattern of extracting repeated state handling"
+    ],
+    "killed": [
+      "leaving two copies: a future channel addition could be applied to only one report",
+      "changing rounding precision: that would alter published report values for no reason",
+      "wrapping reports in a new class: a single pure function keeps the change small and testable"
+    ],
+    "survivor": "a module-level _pose_json(pose) helper used by both animation reports"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds _pose_json() and replaces both duplicated serialization loops; tests/test_keystone_pose_json_mechanics.py (4 tests) pins channel coverage, monkeypatched wiring in both callers, JSON safety and sim isolation; README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "the new test module failed at collection with ImportError: cannot import name '_pose_json'",
+      "measured": "six-decimal rounding preserved: position 0.123457, scale 1.055556, rotation 4 components",
+      "mutation": "dropping the scale channel from the helper fails the channel-coverage test; game.py restored byte-identically (sha256 a8f7fe33e756726fbc39e4bcab4571e19b35f5e1db499a3722af76642e48ce0c)",
+      "codebase_map": "regenerated after the new helper and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

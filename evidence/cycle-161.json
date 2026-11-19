@@ -1,0 +1,35 @@
+{
+  "cycle": 161,
+  "area": "documentation proof: the commands the README tells a player to run are now executed and checked",
+  "find": {
+    "report_claim": "the README makes concrete, checkable claims: the launchers start the game, `--describe` describes it, `--simulate` ticks the requested frames, and bot_campaign.json 'clears the wave-3 warden and wins at wave 4'",
+    "live_evidence": "before writing any test, the documented commands were run by hand: `--describe` exited 0 with a capabilities block, `--simulate --frames 120` reported tick 120 and a hash, and `--replay bot_campaign.json` exited 0 with ok true, outcome 'win', wave 4, 30 kills, score 11560 -- so the README's campaign claim was TRUE",
+    "consumer_evidence": "documentation drifts silently: a renamed flag or a changed campaign outcome is invisible until a player runs a command that no longer does what the page says"
+  },
+  "analyze": {
+    "read": [
+      "README.md setup, test and play.py sections",
+      "play.py argument pass-through to the keystone CLI",
+      "the simulate and replay payload shapes"
+    ],
+    "killed": [
+      "changing the README's decorative emoji headings: a strict UTF-8 decode proved the file is valid and the earlier 'mojibake' was only the cp1254 console rendering, so there was nothing to fix",
+      "asserting a top-level `tick` on simulate output: that field does not exist; the engine reports `frames` at top level and `tick` on the final snapshot",
+      "scanning only 'python play.py ...' commands: my first regex missed the 'python projects/shooter/play.py ...' form, which is exactly why a renamed flag survived the first mutation"
+    ],
+    "survivor": "run each documented command through play.py and assert its observable result, including the campaign win taken from the replay's own outcome field rather than the prose"
+  },
+  "fix": {
+    "shooter": "tests/test_readme_commands.py (4 tests) runs --describe and asserts a game name plus a capabilities block, runs the documented --simulate example and asserts both `frames` and the final snapshot's `tick` equal it, replays bot_campaign.json and asserts outcome 'win' / wave 4 / kills > 0, and extracts every documented play.py command in both path forms and checks each flag still appears in --help"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "576 passed, 2 xfailed in full suite",
+      "new_suite": "4 passed in 5.37s",
+      "mutation": "changing 'wins at wave 4' to 'wins at wave 7' failed the campaign test. Renaming a documented flag initially SURVIVED because the regex only matched the short 'python play.py' form while my replace hit the 'python projects/shooter/play.py' line; after widening the regex to both forms the same rename fails with \"the README documents '--describe-now', which the engine no longer accepts\". README.md restored byte-identically (sha256) after each mutation.",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

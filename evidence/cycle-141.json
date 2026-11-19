@@ -1,0 +1,35 @@
+{
+  "cycle": 141,
+  "area": "game feature: death cinematic built on Keystone's CameraPath, and testbed coverage for it",
+  "find": {
+    "report_claim": "Keystone added keystone.camera_path (CameraKey, CameraPath, CameraPathPlayer, JSON reports) at 2ab963e, with a thorough 21-test module suite",
+    "live_evidence": "on death shooter left the camera frozen at the last first-person pose, so the debrief panel drew over a static eye-level view of the same arena corner every run; the game imported no camera path code at all",
+    "consumer_evidence": "the module suite proves the interpolation math, so the testbed's value is consumption: whether a game can drive a real camera from a path without disturbing the deterministic snapshot"
+  },
+  "analyze": {
+    "read": [
+      "keystone/camera_path.py CameraKey.look_at, CameraPath validation, CameraPathPlayer.advance, both report builders",
+      "keystone/tests/test_camera_path.py (21 tests) to avoid duplicating interpolation coverage",
+      "shooter/game.py _sync_scene camera block, update() event loop, build_scene reset"
+    ],
+    "killed": [
+      "re-asserting spline/slerp/loop math: keystone's own suite already covers it, and a copy would not tell a consumer anything",
+      "a looping path: a death is one-shot, and a loop would spin forever behind the debrief",
+      "driving the sim from the cinematic: that would change combat, RNG and the determinism hash, so the path may only write camera presentation fields"
+    ],
+    "survivor": "author a one-shot four-key orbit that opens exactly at the eye, clamp on its final wide pose, and prove the snapshot and hash are untouched"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports CameraKey/CameraPath/CameraPathPlayer/camera_path_player_report, builds a one-shot orbit in _start_death_camera (keys at 0.0/0.7/2.1/3.4 s, fov 75->52, radius 2.0->4.6, height rising above the eye), starts it from the 'died' event, drives only camera position/yaw/pitch/fov_y while it runs, exposes death_camera_report, and clears both on build_scene; tests/test_death_camera_path.py (7 tests) covers engagement, the report shape (schema, four key times, fov ramp, opening key equal to the eye), camera-follows-pose, one-shot clamping, widening orbit above the ground, trajectory determinism and snapshot isolation"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "505 passed, 2 xfailed in full suite",
+      "new_suite": "7 passed in 2.22s",
+      "visual": "evidence/c140_death_camera: before/after 960x540 death captures; camera metadata moved from (0.0, 1.62, 8.0) fov 75 pitch 0 yaw 0 to (-3.3, 2.276, 8.819) fov 55.54 pitch -0.3806 yaw 1.3109; diff 407874 changed pixels (78.68% of frame), max delta 239",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; the path writes camera fields only)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

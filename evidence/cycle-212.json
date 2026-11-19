@@ -1,0 +1,30 @@
+{
+  "cycle": 212,
+  "area": "Testbed audit: core material graph bands",
+  "find": {
+    "report_claim": "test_core_material_graph pinned the texture name/size and two emissive channels, but the evaluated material's colour channels, emissive.z, metallic and roughness had no magnitude assertions",
+    "live_evidence": "the shipped graph evaluates to color (1.0, 0.88, 0.55), emissive (1.0, 0.48, 0.08), metallic 0.1 and roughness 0.4",
+    "consumer_evidence": "a new band test samples the evaluated Material and fails by field if a designer value drifts"
+  },
+  "analyze": {
+    "killed": [
+      "pinning exact floats: design bands permit a legitimate look tweak while catching a doubled value",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_core_material_graph.py"
+    ],
+    "survivor": "one band test covering the six previously unprotected fields"
+  },
+  "fix": {
+    "shooter": "tests/test_core_material_graph.py gains the band guard (now 4 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "changing metallic 0.1 to 0.5 fails the guard; core_material.json restored byte-identically (sha256 37b29e75b11f14c3769dea43e9bb42e97e36da7d695981b2ecf4b1b64d207f28)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "801 passed (800 + 1 new material-band guard)",
+      "timing_note": "gates and suite ran under heavy machine load (196.4 s test phase, 363 s standalone run); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

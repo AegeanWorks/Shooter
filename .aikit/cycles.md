@@ -2773,7 +2773,8 @@ ode.mesh re-point from _sync_scene(), and add
 - **VISUAL PROOF**: cache_visual before/after pair diffed with
   keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True).
 - **PLAY PROOF**: play_run.py kite 300 runs 300 frames to wave 2 with 5 kills,
-  score 900, hp 100 and identical hash 6c94bcea4d950c4ca286707abe57665.
+  score 900, hp 100 and identical hash
+6c94bcea4d950c4ca286707abe57665.
 - **Gates**: shooter 482 passed, 2 xfailed; determinism 1800 ok
   (hash 25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
 - **Evidence file**: evidence/cycle-135.json.
@@ -2793,6 +2794,824 @@ ode.mesh re-point from _sync_scene(), and add
 - **IMPLEMENT**: update 	est_keystone_mechanics.py to use ssert_scene_budget and scene_fingerprint, add 	est_scene_budget_invariants_pass_with_presentation_node, and convert exact node counts to invariant ranges in 	est_keystone_http_server_mechanics.py.
 - **VISUAL PROOF**: 
 oute_spawn before/after pair diffed with keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True).
-- **PLAY PROOF**: play_run.py kite 300 runs 300 frames to wave 2 with 5 kills, score 900, hp 100 and identical hash 6c94bcea4d950c4ca286707abe57665.
+- **PLAY PROOF**: play_run.py kite 300 runs 300 frames to wave 2 with 5 kills, score 900, hp 100 and identical hash
+6c94bcea4d950c4ca286707abe57665.
 - **Gates**: shooter 484 passed, 2 xfailed; determinism 1800 ok (hash 25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
 - **Evidence file**: evidence/cycle-137.json.
+
+## Cycle 138 - Testbed repair: retarget stale pins to Keystone schema 5 and content-keyed batching
+- **FIND**: `shooter` HEAD `4f4c75c` was pushed as green (cycles 135-137), but the testbed had been red since Keystone landed scene schema 5 (2026-11-12 05:58) and content-keyed batch/instancing grouping (2026-11-12 00:24). On a clean tree 9 tests failed in four files, and `aikit check shooter` reported 2/4 gates: the test gate failed on those tests and the guidelines gate listed 19 README tree omissions with `.aikit/codebase_map.md` absent.
+- **ANALYZE**: The failures were stale contract pins, not game bugs: api_contract pinned scene 2 / editor 59 (actual 5 / 62), http_server pinned `scene_schema` 2 three times, and batch/instancing built *separate but equal* `Material()` objects expecting separate groups. Deleting the assertions would remove the guarantee, and forcing object identity would assert a property the planner no longer reads, so the honest fix is to pin the current contract and give split-group nodes genuinely different material content.
+- **IMPLEMENT**:
+  1. `test_keystone_api_contract_mechanics.py`: scene schema 2 -> 5, editor 59 -> 62.
+  2. `test_keystone_http_server_mechanics.py`: `scene_schema` 2 -> 5 at `/api/health`, `/api/scene` and `/api/inspector`.
+  3. `test_keystone_batch_mechanics.py`: node `d` gets `Material(color=(1,0,0))`; the empty plan gains `overlay_calls`/`overlay_triangles`; the merge plan is asserted content-keyed (1 group, 3 draws, 2 saved).
+  4. `test_keystone_instancing_mechanics.py`: node `c` gets a distinct material, the empty plan gains `overlay_calls`, and the ordering test now splits groups by material content instead of object identity.
+  5. README tree lists cycles 135-138, the before/after/diff capture files, `task_ledger_archive.jsonl` and `codebase_map.md`; `.aikit/codebase_map.md` regenerated (148 modules).
+- **PLAY PROOF**: 1800-frame determinism verified bit-exact identical hash `b25db52005e7aeb8a241f86d27b4d049`; only assertions and documentation moved.
+- **Gates**: shooter 482 passed, 2 xfailed (100% pass rate); determinism 1800 ok; aikit check shooter 4/4 passed.
+
+## Cycle 139 - Testbed coverage for the spatial-grid broadphase (and a dead-weight finding)
+- **FIND**: `keystone.broadphase.SpatialGrid` documents two consumer guarantees: cell size is a performance trade-off rather than a correctness setting, and results are returned in insertion order so output stays deterministic. Shooter imports it in `shooter/sim.py:16` and rebuilds it every wave (`sim.py:236-238`) from the wall colliders, but no shooter test imported the module; Keystone's own suite asserts a single cell size, so invariance was unproven. Separately: **the game inserts the wall proxies and never queries them** -- the only `query`/`pairs` calls in the whole project are in `tests/test_keystone_mechanics.py`.
+- **ANALYZE**: Re-asserting Keystone's overlap/move/remove cases would duplicate the module suite without adding a consumer guarantee. The properties worth pinning are the ones a consumer can silently break: identical answers across cell sizes, an edge-only query finding a large proxy (a centre-cell-only registration passes a centre-only test), insertion-rank stability across re-inserts, the inclusive cell budget, and linear-scan degradation for oversized queries. A NaN box cannot reach the grid at all because `AABB` validates finiteness in its own constructor, so that guard is defensive-only.
+- **IMPLEMENT**:
+  1. Created `tests/test_keystone_broadphase_mechanics.py` (12 tests): cell-size invariance from 0.05 to 1024 for `query`/`query_point`/`pairs`, edge-cell registration on a ±2.5 proxy at three cell sizes, insertion-order results and pair ordering, rank retention on `update`, stale-cell removal on re-insert, `remove`/`clear`/membership, empty and zero-extent proxies, `cell_size` validation, the inclusive `MAX_PROXY_CELLS` budget with its named limit, oversized-query degradation, non-finite handling at the `AABB` boundary, and two-grid agreement.
+  2. Updated the README testbed matrix and directory tree.
+- **MUTATION CHECK**: sorting candidates by a constant instead of insertion rank failed the ordering and re-rank tests; registering a proxy only in its centre cell failed 4 tests (cell-size invariance, edge cell, ordering, cell budget). `keystone/broadphase.py` restored byte-identically (sha256 match).
+- **DEAD WEIGHT**: the sim maintains a broadphase it never consults. Either query it from the projectile/cover path (what a broadphase is for) or drop the per-wave build; a structure that is written and never read costs a wave rebuild for no gameplay effect.
+- **PLAY PROOF**: 1800-frame determinism verified bit-exact identical hash `b25db52005e7aeb8a241f86d27b4d049`; the suite is read-only.
+- **Gates**: shooter 494 passed, 2 xfailed (100% pass rate); determinism 1800 ok; aikit check shooter 4/4 passed.
+
+## Cycle 140 - Enemy line-of-sight reads the wave broadphase (dead-weight grid resolved)
+- **FIND**: Cycle 139 recorded that `shooter/sim.py` built the wall `SpatialGrid` every wave and never queried it. Three consumers scanned all 12 colliders linearly: `_enemy_has_los` (`sim.py:349`, called up to three times per enemy per tick), `aim_target` (`sim.py:430`) and `_fire` (`sim.py:711`). A micro-benchmark on the shipped arena measured 122.5 us for the full scan versus 49.7 us for a grid query plus exact re-test, with candidates averaging 0.72 of 12 boxes.
+- **ANALYZE**: Removing the grid would drop a correct structure from the one hot path that can use it. Routing `aim_target` and `_fire` through the grid is *not* safe: both cast unbounded rays, so bounding the query would make a distant wall invisible and silently change whether a target counts as blocked. An end-to-end speed claim is also indefensible here - repeated kite replays of the same build ranged from 7.6s to 91.4s while another worker was active.
+- **IMPLEMENT**:
+  1. `shooter/sim.py`: `_collider_by_key` is built alongside the grid inserts, and `_colliders_along(start, end)` queries the grid with the segment's AABB and maps keys back to boxes in insertion order.
+  2. `_enemy_has_los` iterates that candidate list; the exact `ray_aabb` test, the `length - 0.3` margin and the first-blocking-box order are untouched.
+  3. `tests/test_los_broadphase.py` (4 tests) proves the prefilter never drops a box the full scan would block on (81 arena positions), that the verdict matches the full scan across 200 swept positions, that collider build order survives the grid round trip, and that every wall is reachable through the grid.
+- **EQUIVALENCE**: zero disagreements across 200 swept positions; a 3000-frame `--simulate` run hashed identically (`640c130c00ab6a48fd6ccadb0f02830b`) on both the prefilter and full-scan builds, and the 1800-frame determinism hash is unchanged (`b25db52005e7aeb8a241f86d27b4d049`).
+- **PERFORMANCE**: micro-benchmark only - 122.5 us -> 49.7 us per LOS segment, candidates 0.72/12. No end-to-end figure is reported because the concurrent worker made wall-clock measurement unreliable.
+- **Gates**: shooter 498 passed, 2 xfailed (100% pass rate); determinism 1800 ok; aikit check shooter 4/4 passed.
+
+## Cycle 141 - Death cinematic on Keystone's CameraPath
+- **FIND**: Keystone added `keystone.camera_path` (commit 2ab963e) with `CameraKey`, `CameraPath`, `CameraPathPlayer` and JSON reports, plus a thorough 21-test module suite. Shooter imported none of it, so on death the camera stayed frozen at the last first-person pose and the debrief panel drew over the same eye-level arena corner every run.
+- **ANALYZE**: Re-asserting spline/slerp/loop math would duplicate Keystone's own suite and tell a consumer nothing; the testbed's job is consumption. A looping path is wrong for a death, and driving the *sim* from the cinematic would change combat, RNG and the determinism hash, so the path may write camera presentation fields only.
+- **IMPLEMENT**:
+  1. `shooter/game.py` imports `CameraKey`/`CameraPath`/`CameraPathPlayer`/`camera_path_player_report`.
+  2. `_start_death_camera()` authors a one-shot four-key orbit: key 0 opens exactly at the eye with the player's fov (75), then keys at 0.7/2.1/3.4 s orbit the body from radius 2.0 to 4.6 while rising from eye height to 2.65 m, with the lens tightening 68 -> 58 -> 52. It starts on the `died` event and the pose (position/yaw/pitch/fov_y) drives the camera in `_sync_scene`.
+  3. `death_camera_report` exposes the player report; `build_scene()` clears both so a restart is a clean first-person view.
+  4. `tests/test_death_camera_path.py` (7 tests): engagement and report shape (schema, key times, fov ramp, opening key equal to the eye), camera-follows-pose, one-shot clamping past the duration, widening orbit that stays above the ground, trajectory determinism across two deaths, and snapshot isolation.
+- **VISUAL PROOF**: `evidence/c140_death_camera/` holds before/after 960x540 captures. Camera metadata moved from `(0.0, 1.62, 8.0)` fov 75 pitch 0 yaw 0 to `(-3.3, 2.276, 8.819)` fov 55.54 pitch -0.3806 yaw 1.3109; `diff_images` reports 407874 changed pixels (78.68% of frame), max delta 239.
+- **ISOLATION**: the path writes camera fields only, so `snapshot()` gains no keys and the 1800-frame determinism hash is unchanged (`b25db52005e7aeb8a241f86d27b4d049`, ok).
+- **Gates**: shooter 505 passed, 2 xfailed (100% pass rate); determinism 1800 ok; aikit check shooter 4/4 passed.
+
+## Cycle 142 - Damage jolt moved onto Keystone CameraShake
+- **FIND**: `keystone.camera_shake` is a deterministic trauma model -- seeded sine phases, trauma clamped to 1 and decayed linearly, `sample()` returning a position plus yaw/pitch offset without touching any camera, and a JSON `shake_report`. Shooter imported none of it and hand-rolled the same feature inside `_sync_scene` (`amp = min(1, hurt_t / 0.3) * 0.035`, sine on x, cosine on y, no rotation, no decay model).
+- **ANALYZE**: Keeping both models would have two shake sources fighting over one camera. Driving the sim from trauma would change combat, RNG and the determinism hash, so the shake may only compose onto the pose. The old test's "camera returns to the eye" check also had to compare the *live* eye, because an idle player's eye drifts a fraction of a millimetre.
+- **IMPLEMENT**:
+  1. `shooter/game.py` owns one `CameraShake` (seed 0, amplitude 0.05, rotation 0.012, frequency 18, decay 2.4), adds 0.6 trauma on the `hurt` event, advances and samples it in `_sync_scene`, and composes `position`/`yaw`/`pitch` onto the sim pose. The hand-rolled sine jolt and its now-unused `hurt_t` local are gone.
+  2. `camera_shake_report` exposes `shake_report` while trauma is live; `build_scene()` resets the shake so a restart starts still.
+  3. `tests/test_hurt_shake.py` retargeted to the new mechanism with its intent preserved: damage jolts the camera, the jolt composes exactly onto the sim pose, the sim hash is untouched, and a rebuild clears trauma.
+- **VISUAL PROOF**: `evidence/c142_hurt_shake/` holds 960x540 before/after first-hit captures (trauma disabled for "before"). Camera moved from `[0.0, 1.62, 8.0]` yaw 0 pitch 0 to `[-0.004, 1.619, 7.994]` yaw -0.0022 pitch -0.0005; `diff_images` reports 14425 changed pixels (2.78% of frame), max delta 188, bbox y 236..539.
+- **ISOLATION**: trauma writes camera fields only, so the 1800-frame determinism hash is unchanged (`b25db52005e7aeb8a241f86d27b4d049`, ok).
+- **Gates**: shooter 507 passed, 2 xfailed (100% pass rate); determinism 1800 ok; aikit check shooter 4/4 passed.
+
+## Cycle 143 - Victory cinematic authored as a shipped .kpath document
+- **FIND**: Keystone commit 7a1345e added `.kpath` documents (`camera_path_to_dict`/`from_dict`, `CAMERA_PATH_SCHEMA` 1) and `CameraPathLibrary` -- an atomic, name-validated, trash-backed directory of authored paths. Shooter's victory screen still showed the player's frozen first-person eye under the CAMPAIGN COMPLETE banner, and its only cinematic (death) was authored in code, so no path existed as data.
+- **ANALYZE**: Authoring the victory path in code would repeat the death-cinematic pattern and ignore the reason the library exists: a path is DATA that can be re-authored without a code change and is validated by name. A cinematic is presentation, so a missing or corrupt document must fall back to first person and record why rather than failing the victory screen. A one-shot path that clamps keeps the final frame stable behind the debrief.
+- **IMPLEMENT**:
+  1. `shooter/data/campaign_clear.kpath` (schema 1, 4 keys at 0.0/1.2/2.4/3.5 s, one-shot, orbit radius 7.2 -> 5.0 m, height 3.3 -> 1.9 m, fov 62 -> 52), authored through `CameraPathLibrary.save`.
+  2. `shooter/game.py` loads it in `_start_campaign_clear_camera()` when the campaign seals, drives position/yaw/pitch/fov_y from `CameraPathPlayer`, exposes `campaign_camera_report`, and falls back to first person with a recorded error on `KeyError`/`OSError`/`TypeError`/`ValueError`. `build_scene()` clears it.
+  3. `tests/test_campaign_camera_path.py` (6 tests): document shape and load, engagement on seal, the camera following the document pose, one-shot clamping, no leakage into the snapshot, graceful fallback for a broken document, and rebuild clearing.
+- **VISUAL PROOF**: `evidence/c143_campaign_camera/` holds 960x540 before/after `campaign_complete` captures (library load disabled for "before"). Camera moved from `[0.0, 1.62, 8.0]` fov 75 yaw 0 pitch 0 to `[4.698, 1.9, 1.71]` fov 52 yaw -1.2217 pitch -0.1096; `diff_images` reports 295194 changed pixels (56.94% of frame), max delta 248.
+- **ISOLATION**: the document drives camera fields only, so the 1800-frame determinism hash is unchanged (`b25db52005e7aeb8a241f86d27b4d049`, ok).
+- **Gates**: shooter 513 passed, 2 xfailed (100% pass rate); determinism 1800 ok; aikit check shooter 4/4 passed.
+
+## Cycle 144 - Testbed catches editor schema 63 and the camera-path editor actions
+- **FIND**: Keystone's in-flight editor work added four camera-path actions (`save/delete/restore/preview_camera_path`) and bumped `EDITOR_SCHEMA_VERSION` 62 -> 63. The shooter testbed failed with `assert 63 == 62` because it pinned the previous contract and did not name the new actions. Keystone's own suite refers to the constant symbolically, so it cannot detect a consumer that pins a stale literal -- only the testbed can.
+- **ANALYZE**: Deleting the pin would remove the guarantee, and asserting against the imported constant on both sides would pass even through a breaking change. Relaxing to `>= 62` would silently accept a rollback and would not name what the editor gained, so the honest fix is to pin 63 literally and require the four new actions by name.
+- **IMPLEMENT**: `tests/test_keystone_api_contract_mechanics.py` pins `EDITOR_SCHEMA_VERSION == 63` and adds `save_camera_path`, `delete_camera_path`, `restore_camera_path` and `preview_camera_path` to the required action list.
+- **NOTE**: this drift came from Keystone's *uncommitted* working tree, which another worker is actively editing. Pinning the live contract is deliberate: the testbed tracks what Keystone publishes, and if the value moves again the suite will say so.
+- **Gates**: shooter 513 passed, 2 xfailed (100% pass rate); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); aikit check shooter 4/4 passed.
+
+## Cycle 145 - The shipped victory path is a first-class editor asset
+- **FIND**: Keystone committed `f2bf541` with camera-path editor actions (`save/delete/restore/preview/load_camera_path`), a `CameraPathLibrary` wired into the web session, and a `camera_path_preview` document carrying source, time and a rounded pose. The game ships `shooter/data/campaign_clear.kpath` and loads it at runtime, but nothing proved that same document is *editable*: no shooter test touched the camera-path editor actions or the preview endpoint. Keystone's own editor test uses a synthetic two-key path, so it cannot show a real shipped document round-trips.
+- **ANALYZE**: Restating the synthetic-path test would add no consumer meaning, and asserting only `200 OK` would pass even if the preview sampled the wrong time. The property that matters is that the pose an author previews equals the pose the game plays, so the suite compares the wire values against `CameraPath.sample` at the same time. The transport rounds to 6 decimals, so tolerances must match the wire precision rather than default relative tolerance.
+- **IMPLEMENT**: Created `tests/test_keystone_camera_path_editor_mechanics.py` (5 tests): save the shipped document into a live library over `/api/editor`, list its keys/duration/loop, preview at 1.2 s and at every authored key with sampler parity, delete-to-trash and restore with the restored file still parsing as the game's path, rejection of a malformed document without polluting the listing, and the name-or-path exclusivity rule.
+- **MUTATION CHECK**: forcing the preview to sample `0.0` instead of the requested time failed both preview tests (the 1.2 s request returned the key-0 pose: y 3.3 instead of 2.6). `keystone/web/server.py` was restored byte-identically (sha256 match) and keystone's own camera-path web tests still pass.
+- **RISK NOTE**: the mutation ran against Keystone's live tree while another worker was editing it. The restore was verified, but future mutation checks should run against a temporary copy of the module rather than the shared working tree.
+- **Gates**: shooter 518 passed, 2 xfailed (100% pass rate); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); aikit check shooter 4/4 passed.
+
+## Cycle 146 - Cinematics clear live trauma instead of freezing it
+- **FIND**: Cycles 141/143 gave the camera two cinematic owners (death path, victory `.kpath`) and cycle 142 made `CameraShake` the single jolt source with an exposed `camera_shake_report`. The shake only advanced inside the *non-cinematic* camera branch, so a hit taken on the killing blow froze mid-decay: a reproduction held trauma at 0.86 through 120 frames of death cinematic while `camera_shake_report` still claimed the camera was shaking.
+- **ANALYZE**: Continuing to decay trauma during a cinematic would still leave a report for an offset that is never applied, and letting it clear "on the next first-person frame" never happens because a cinematic clamps rather than ends -- so the stale value would persist for the whole debrief. Resetting inside `_sync_scene` whenever a cinematic exists would re-reset every frame and hide the transition. The correct point is the moment each cinematic takes ownership.
+- **IMPLEMENT**: `shooter/game.py` resets `_shake` and clears `camera_shake_report` at the end of `_start_death_camera` and `_start_campaign_clear_camera`. `tests/test_hurt_shake.py` gains two regression tests asserting, for death and victory, that the cinematic owns the camera, trauma is exactly `0.0`, and no shake is reported.
+- **MUTATION CHECK**: removing only the death-cinematic reset failed `test_a_cinematic_owns_the_camera_and_clears_live_trauma` (trauma 0.86 != 0.0) and nothing else; removing the first reset failed the `build_scene` test. `shooter/game.py` was restored byte-identically (sha256 match, CRLF preserved).
+- **TOOLING NOTE**: two attempts to mutate via PowerShell string replacement silently did nothing because `$`-anchored regex and `\n`-only literals do not match CRLF; a Python round-trip appeared to flatten line endings, but byte inspection showed every one of the 1609 newlines was still CRLF and the diff stayed at 118 insertions / 13 deletions. Line endings were verified before and after the mutation.
+- **Gates**: shooter 520 passed, 2 xfailed (100% pass rate); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); aikit check shooter 4/4 passed.
+
+## Cycle 147 - Death-cinematic tuning moved into juice.json, and the report-hash contract
+- **FIND**: `shooter/game.py`'s own docstring says "All tuning in `shooter/data/*.json`, never hardcoded one-offs", and `juice.json` is the established source for viewmodel offsets, death-FX timing and every other feel constant. The death cinematic from cycle 141 nevertheless hardcoded its angles, radii, heights, key times and fov ramp. Both cinematics should be authorable; because the death path is procedural (anchored to where the run ended and which way the player faced), its numbers belong in `juice.json`, not in a static `.kpath`.
+- **ANALYZE**: A `.kpath` document stores absolute poses, so using one for death would require translation plus yaw rebasing -- more machinery than the tuning problem needs. Re-serialising `juice.json` through `json.dumps` silently rewrote trailing zeros on 12 unrelated lines, so the block was inserted as text in the file's own style. While proving the refactor changed nothing, the before/after report hashes disagreed; the cause is a contract, not a bug: `analyze_frame` hashes the `image` block **including its path**.
+- **IMPLEMENT**:
+  1. `shooter/data/juice.json` gains a 10-line `death_cinematic` block (`body_height`, `start_forward`, `start_fov`, and three keys with `time`/`angle`/`radius`/`height_above_eye`/`height`/`fov`), inserted without reformatting anything else.
+  2. `shooter/game.py` adds `DEATH_CINEMATIC_DEFAULTS` plus `_number()` and `_death_cinematic_tuning()` with per-field validated fallbacks (wrong type, non-finite, negative, out-of-range fov), and `_start_death_camera` now composes its keys from that tuning.
+  3. Created `tests/test_keystone_frame_report_hash_mechanics.py` (4 tests) pinning the discovered contract: renamed captures hash differently while `png_sha256`/`rgba_sha256`/stats/nodes match; the same path hashes identically; node placement and pixels both change the hash; a pathless report still hashes the frame.
+- **PIXEL PROOF**: `evidence/c147_death_tuning/` holds before/after death frames with identical camera metadata (`[-3.3, 2.276, 8.819]`, fov 55.538..., yaw 1.3109, pitch -0.3806) and `diff_images` reporting **0 changed pixels, ratio 0.0, max delta 0**.
+- **HASH NOTE**: two captures of the same frame under different filenames produced different report hashes (`4538a25c` vs `9cd530ff`) while every content field matched; the only differing field was `image.path`. Consumers must compare `image.png_sha256` for pixels and the report hash only for whole artifacts.
+- **DISCIPLINE NOTE**: no keystone mutation was run for the hash suite, following the cycle-145 rule that mutation checks must not touch the shared working tree; the evidence is the observed renamed-capture difference instead.
+- **Gates**: shooter 524 passed, 2 xfailed (100% pass rate); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); aikit check shooter 4/4 passed.
+
+## Cycle 148 - The death-cinematic fallback claim was false; now enforced and tested
+- **FIND**: Cycle 147 shipped `_death_cinematic_tuning` with the claim that a malformed block "can never break the death screen". No test covered the reader at all. Probing it directly found **five probes across four input classes** that raise: `start_fov` 0 and 400 (`CameraKey` rejects a lens outside 0..180), `start_forward` 0 (`CameraKey` cannot look at its own position), non-monotonic key times, and a first orbit key at time 0 (both rejected by `CameraPath`, the second because it collides with the builder's implicit key at 0.0). The claim was load-bearing: the failure mode was a `ValueError` inside the death screen rather than a graceful fallback.
+- **ANALYZE**: Trusting the earlier claim was the whole bug -- a six-block probe disproved it in one run. Clamping `start_fov` into range was rejected because a designer who types 400 wants the authored default, not a silently different lens, and sorting bad key times was rejected because it would silently reorder an authored beat order, which is a creative decision the code should not make.
+- **IMPLEMENT**:
+  1. `shooter/game.py`: `_number()` gains a `minimum=` parameter and a `_lens()` helper is added. `start_forward` and every orbit `radius` must be strictly positive; `start_fov` and every key `fov` must satisfy 0 < value < 180; the time list falls back to all authored defaults when the first orbit key is not strictly after 0.0 or any neighbouring pair is not strictly increasing.
+  2. `tests/test_death_camera_path.py` gains 7 tuning tests: missing/garbage block, per-field (not wholesale) fallback, lens-range fallback, a valid override being honoured, a key with no height of either kind, a hostile-block sweep over all four failure classes, and an end-to-end malformed-`juice.json` death that still builds a 3.4 s cinematic.
+- **MUTATION CHECK**: replacing the `start_fov` `_lens` guard with `_number` (which restored the raise) failed the lens-range and hostile-block tests; setting the monotonic check to `invalid = False` failed the hostile-block test. `shooter/game.py` was restored byte-identically (sha256 match).
+- **NO RENDER CHANGE**: a fresh death capture diffed against `evidence/c147_death_tuning/after_c147_death_tuning_death.png` reports **0 changed pixels**, so the hardening altered nothing visible.
+- **Gates**: shooter 531 passed, 2 xfailed (100% pass rate); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); aikit check shooter 4/4 passed.
+
+## Cycle 149 - The victory fallback proven against real corrupt documents
+- **FIND**: Cycle 143 recorded that a missing or corrupt `campaign_clear.kpath` falls back to first person instead of breaking the victory screen, and cited it as a robustness guarantee. The only proof was a monkeypatched `CameraPathLibrary.load` that raised `ValueError` -- one exception path, never the real JSON reader. Truncation, empty files, non-object JSON, an unsupported schema and a keyless document were all unproven, and a designer hand-editing the `.kpath` (the reason it is DATA) can produce exactly those shapes.
+- **ANALYZE**: The monkeypatched test cannot show that the loader's *real* failures are the ones the game catches, which is the whole claim. Corrupting the shipped file in place was rejected: it is an untracked authored asset with no `git restore` path, so one failed run could destroy the only copy. Writing debris next to a real asset was rejected for the same reason.
+- **IMPLEMENT**: `tests/test_campaign_camera_path.py` gains a `_RedirectedLibrary` factory (module-level patch, not another object's private attribute) that points the game's library at a temp directory of genuine files, then a parametrized test over truncated JSON, an empty file, a non-object document, an unsupported schema and a keyless document, plus a missing-library-directory case. Each asserts the campaign still clears, no path engages, the report carries an error, and the camera stays on the player's eye.
+- **PROBE**: driving the five corrupt shapes and a missing directory through the real reader recorded "could not load camera path ..." for every case, with no camera engaged and no exception escaping.
+- **MUTATION CHECK**: narrowing the `except` tuple from `(KeyError, OSError, TypeError, ValueError)` to `ZeroDivisionError` failed 7 tests -- the five corrupt shapes, the missing directory and the existing monkeypatched fallback -- confirming the fallback, not the stub, is what saves them. `shooter/game.py` restored byte-identically (sha256 match).
+- **SIDE CHECK**: `hurt_t` is still read by the HUD damage vignette (`ui.py:112-124`) and the snapshot, so removing it from the jolt in cycle 142 left no dead sim state.
+- **Gates**: shooter 537 passed, 2 xfailed (100% pass rate); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); aikit check shooter 4/4 passed.
+
+## Cycle 150 - The headless mechanics contract is declared
+- **FIND**: `aikit check shooter` warned "Game detected but `.aikit/project.json` has no mechanics contract; declare `mechanics.core` and `mechanics.test` for a headless AI-testable core." The project is built around a headless deterministic core -- `shooter/sim.py` with seeded `Sim` instances -- yet `project.json` said `mechanics_required: false` with no contract, so an agent reading the config could not tell which files are the testable core or which command exercises them without a GL context.
+- **ANALYZE**: Pointing `mechanics.test` at the same command as `gates.test` is explicitly rejected by `project_gates.py` because it runs the suite twice. Declaring the whole `tests` directory was rejected because five suites need an engine, a web server or the capture harness. Leaving the flag false was rejected: the project genuinely is headless-testable, so the config should say so.
+- **IMPLEMENT**: `.aikit/project.json` sets `mechanics_required: true` and declares `mechanics.core` as `["shooter/sim.py", "shooter/bot.py"]` with `mechanics.test` running the five headless suites: `test_keystone_mechanics`, `test_hurt_shake`, `test_los_broadphase`, `test_death_camera_path` and `test_campaign_camera_path`.
+- **PROOF**: the mechanics command runs 43 tests in 5.86s standalone and 8.3s as a gate; the checker reports the `mechanics` gate as new and running, and the contract advisory is gone.
+- **Gate detail**: `aikit check shooter` now reports **5/5** (hygiene, guidelines, secrets, test, mechanics).
+- **Gates**: shooter 537 passed, 2 xfailed (100% pass rate); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 151 - Generated evidence subtree collapsed so the README stops growing per cycle
+- **FIND**: PRINCIPLE-005's tree rule requires each tracked or pending file in an *expanded* directory to appear in `README.md`. The advisory warned the file sat at 35,781 of 37,500 chars with ~1,700 left, because `evidence/` was one row plus **170 child rows** (cycle-01 .. cycle-150 JSON plus before/after/diff captures) -- about 10.7 kB. Every cycle added another row, so the hard limit was roughly twenty cycles away.
+- **ANALYZE**: Listing only the cycle summaries and collapsing the captures would leave the directory expanded, so the same drift class returns with the next capture pair. Renaming or deleting evidence files was rejected because other cycles cite them by name, and raising the character limit was rejected as changing the rule to fit the document. The checker's own `audit_readme` only requires a directory's top-level segment when that directory has no children listed, so a collapsed row is the supported convention.
+- **IMPLEMENT**: `README.md` replaces the 170 evidence child rows with a single descriptive row: `evidence/ <- cycle-NNN.json per cycle plus before/after capture pairs`. The authoritative per-cycle index remains `.aikit/cycles.md` and every evidence file still exists on disk.
+- **PROOF BOTH WAYS**:
+  1. Wrote a throwaway `evidence/cycle-151.json`; the guidelines gate still reported OK, so a new cycle now costs no README change.
+  2. Wrote a throwaway `tests/test_zz_probe_new_file.py`; the gate failed with "README.md tree omits new file 'tests/test_zz_probe_new_file.py'", proving the requirement was not weakened.
+  3. Both probes were removed.
+- **RESULT**: 35,781 -> 27,619 chars; headroom 1,719 -> 9,881.
+- **Gates**: `aikit check shooter` **5/5** (hygiene, guidelines, secrets, test, mechanics); shooter 537 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 152 - The declared mechanics contract is now enforced
+- **FIND**: Cycle 150 declared `mechanics.core = [shooter/sim.py, shooter/bot.py]` and a `mechanics.test` command so an agent could find the headless AI-testable core from configuration alone. Nothing enforced that the declared files *stay* headless: a future `keystone.gpu` import, a wall-clock read, an unseeded `random.Random()` or a core-to-presentation import would break the promise silently while `project.json` kept claiming it.
+- **ANALYZE**: Replacing `random.Random` with `keystone.rng.RandomStream` was considered and rejected -- SplitMix64 draws a different sequence, so every recorded bot campaign, fairness figure and evidence hash would change; that is a behaviour change disguised as a portability cleanup. Grepping source text was rejected because an import inside a function or a differently-spelled call would slip through, and banning the identifier `time` was rejected because `sim.py` legitimately has a `self.time` field.
+- **IMPLEMENT**: `tests/test_mechanics_contract.py` (6 tests) parses the AST of the declared core and asserts:
+  1. the contract shape is valid and its test command names files that exist;
+  2. no `OpenGL`/`keystone.gpu`/`keystone.app`/`keystone.web` or presentation imports;
+  3. no `time`/`datetime`/`secrets`/`multiprocessing` modules and no clock or entropy names;
+  4. every `random.Random(...)` in the core passes a seed and no `SystemRandom` appears;
+  5. two `Sim(seed=7)` instances agree after 300 headless steps (snapshot and hash);
+  6. the dependency runs one way -- `game.py` imports the core, the core imports no shooter module.
+  The suite is part of `mechanics.test` and listed in the README tree.
+- **MUTATION CHECK**: `import time` in `sim.py` failed only the wall-clock test; an unseeded `random.Random()` failed only the seeded-RNG test; a missing file in `mechanics.test` failed only the contract-shape test. `shooter/sim.py` and `.aikit/project.json` were each restored byte-identically (sha256 match).
+- **NOTE**: the direction test initially failed because `game.py` uses a relative import (`from .sim import Sim`), which the first AST helper ignored; the helper now keeps absolute and relative modules apart so relative imports are checked rather than silently skipped.
+- **Gates**: `aikit check shooter` **5/5** (hygiene, guidelines, secrets, test, mechanics); shooter 543 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 153 - The victory frame wrote the profile twice; now once
+- **FIND**: A 20000-frame soak showed one chunk peaking at **10.98 ms** against a 0.28 ms mean. Per-frame timing pinned it to frame 2485 -- exactly the victory frame -- and instrumentation counted **two `ProfileStore.save` calls on that frame** (4.63 ms + 4.85 ms), while `sim.step` was 0.68 ms and `_sync_scene` 0.16 ms. The cause: `_record_progress` (wave bests, on the wave event) and `_record_campaign_clear` (the win run) fire in the same `update`, so the most celebratory moment of a run paid two fsync-backed atomic saves out of a 16.7 ms budget.
+- **ANALYZE**: Deferring every save to the end of `update()` with a dirty flag was rejected -- several tests call `_finish_run()` directly and then reload the file, so deferral would break the durability contract they encode. Skipping the campaign-clear save was rejected because that is the write that must not be lost, and dropping the fsync or atomic replace would trade player-data durability for latency.
+- **IMPLEMENT**: `shooter/game.py` gains `_campaign_win_reached()` as the single predicate for sealing the campaign, used by both the update loop and `_record_progress()`, which now saves only when the campaign is **not** about to clear. The wave's bests and the win run therefore land in one atomic save. `tests/test_win_history.py` gains a test that drives the real bot run to the victory frame and asserts exactly one profile write (plus the win run and bests in the saved file), and a second test that a non-winning wave still saves immediately.
+- **RESULT**: victory frame 2 -> 1 save; whole run 4 -> 3.
+- **SOAK, HONESTLY**: the 20000-frame soak hash is **identical before and after** (`55c614b52c4888b58212fb81e2e3c8c3`: wave 4, 30 kills, score 11560, hp 38, alive, `dropped_sfx` 0), so behaviour did not move. The victory chunk's max step fell **10.98 ms -> 6.78 ms**, and the worst single frame in the run moved off the victory frame to a wave-2 transition (7.89 ms). The remaining ~6.8 ms is dominated by the single fsync, which measured 3.5-8.8 ms run to run on this machine, so no tighter millisecond claim is defensible without changing the durability policy.
+- **TEST-QUALITY NOTE**: the first version of the new test set `sim.wave` directly and passed **even with the fix reverted**, because setting the wave emits no `wave` event and therefore never reached the duplicate path. It was rewritten to drive the real bot run; the mutation then correctly reported "the victory frame performed 2 profile writes, expected 1".
+- **Gates**: `aikit check shooter` **5/5** (hygiene, guidelines, secrets, test, mechanics); shooter 545 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 154 - A finished run can be restarted with Enter
+- **FIND**: No prior cycle examined what the player does *after* a run ends -- the debrief and victory banner were only ever tested as final frames. A 60000-frame soak (16.7 min) ended in exactly the same state as a 20000-frame one (wave 4, 30 kills, score 11560, hp 38, alive), because `seal_campaign` sets `spawn_t` to infinity: no further waves, kills or score can occur. A death leaves the same debrief up forever. Internally the end state is clean (one profile save per run, 0.70 ms worst frame long after the end), so the gap was purely that the player had no way out except ESC and relaunching.
+- **ANALYZE**: Spawning post-victory waves was rejected -- it contradicts `seal_campaign` and would invalidate the recorded win. Auto-restarting on a timer was rejected because a player reading the debrief should not be yanked into a new run. Restarting on any key was rejected because movement keys are held during play, so a stray press on the death frame would skip the debrief. The engine already binds Enter to `confirm`, and `build_scene` already resets the sim, run flags, cinematics and shake, so no engine change and no second reset surface were needed.
+- **IMPLEMENT**: `shooter/game.py` adds `_run_ended()`, `_restart_ready()` and `new_run()`; `update()` returns early on a restart frame when the run has ended, `confirm` arrived, and the four-second victory banner has expired. `draw_ui` shows "PRESS ENTER FOR A NEW RUN" in the debrief extras and beneath the lasting CAMPAIGN COMPLETE label.
+- **TESTS** (`tests/test_new_run.py`, 6): restart after death, restart after victory, the profile keeping wins/history/runs across a restart, Enter ignored during the victory banner, Enter ignored mid-run, Enter on the death frame not skipping the debrief, and transient presentation state cleared.
+- **VISUAL PROOF**: `evidence/c154_restart_prompt/` is a 960x540 death screen showing the amber prompt inside the debrief panel under `RUNS 1 WINS 0`.
+- **TWO TEST BUGS FOUND AND FIXED WHILE WRITING THEM**: the restart frame steps nothing, so `tick` is 0, not 1 (my first assertion was wrong); and my death helper marked the player dead *before* the update instead of during it, so the death-frame test never exercised the intake path it named.
+- **DETERMINISM**: the bot never sends `confirm`, so recorded runs are untouched -- 1800-frame hash still `b25db52005e7aeb8a241f86d27b4d049`.
+- **Gates**: `aikit check shooter` **5/5**; shooter 551 passed, 2 xfailed.
+
+## Cycle 155 - Pause-menu contract covered; two negative findings recorded
+- **FIND**: `keystone.ui.menu` was on the uncovered list: `PauseMenu` (items/index/wrap) and `Engine.apply_ui_action` had no consumer test. A probe confirmed dispatch knows exactly four actions (`pause`, `resume`, `toggle_ui`, `quit`) and returns `False` for anything else, and that `GameModule`'s only optional hook is `bind_input` -- so **a game cannot add a RESTART item to the pause menu**. That is why cycle 154 put the restart on Enter during play rather than in the menu, and it is now recorded instead of being rediscovered later.
+- **NEGATIVE FINDING 1**: I suspected restarting would keep the old run's in-memory bests and make NEW BEST unreachable. Probed both directions: after a victory at 5000, a restart run scoring 3000 correctly reports `run_new_best` False, and a run scoring 8000 correctly reports True with the profile best rising to 8000. **The suspicion was wrong; no change was made.**
+- **NEGATIVE FINDING 2**: the top-centre `BEST` label reads `profile['best_score']` (`game.py:1667`), not the run score, so it correctly shows the all-time best across restarts.
+- **ANALYZE**: Testing `apply_ui_action` by assigning private attributes on a `__new__` instance was rejected -- the code-structure gate forbids assigning another object's private state, and the fake would test the fake. Building a GL `Engine` for one assertion was rejected as paying a GL context for something keystone's own suite covers. Proposing a keystone change to open dispatch to games was rejected: it alters engine behaviour for every game while another worker owns that tree, beyond a safe reversible step.
+- **IMPLEMENT**: `tests/test_keystone_ui_menu_mechanics.py` (7 tests) pins the default RESUME/HIDE HUD/QUIT items and order, selection wrap in both directions plus multi-step equivalence, rejection of bool and non-integer deltas, the non-empty-item rule and single-item wrap, `MenuItem` immutability and value equality, a custom item list keeping its order, and the model carrying no rendering state.
+- **Gates**: `aikit check shooter` **5/5**; shooter 558 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 156 - The restart proven end-to-end on real runs
+- **FIND**: Cycle 154 recorded the Enter restart as working, but every test in `test_new_run.py` injects a synthetic `"died"` event or sets `sim.wave` directly -- no test ever played a run to a real end and restarted from it. That synthetic path cannot catch a restart that resets the wrong state or records a phantom run, because it never passes through the real death and victory handler orderings.
+- **PROBED FIRST, MANUALLY**: a bot run cleared the campaign at frame 2486 (score 11560), the banner was allowed to expire, Enter restarted at tick 0 / wave 1 / score 0, and a further 1500 bot frames reached wave 3, 19 kills, score 3995, hp 88 with the profile still showing 1 run and 1 win. A second probe stood still until a real death at frame 539; Enter restarted, and the saved file kept the lose entry.
+- **ANALYZE**: Extending the synthetic suite was rejected because the gaps targeted are exactly the production orderings a synthetic event skips. Driving death by setting `hp`/`alive` directly was rejected -- an earlier cycle's probe (cycle 154) found that a direct assignment never reaches the damage/event/finish-run path. Recording only one end path was rejected because victory and death share `new_run` but differ in what must survive.
+- **IMPLEMENT**: `tests/test_new_run_integration.py` (3 tests): win -> restart -> second run progresses (wave 3+, kills, first run still the only record in memory and on disk); a real death restarting into a live second run with the lose entry preserved; and two consecutive deaths producing exactly three runs and three history entries.
+- **MUTATION CHECK**: deleting the restart block from `update()` failed **7 tests** -- all three integration tests plus four synthetic ones -- so the two layers are complementary rather than redundant. `shooter/game.py` restored byte-identically (sha256 match).
+- **Gates**: `aikit check shooter` **5/5**; shooter 561 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); the mechanics gate now runs the integration suite (10.4s).
+
+## Cycle 157 - Enter skipped the death cinematic and the debrief
+- **FIND**: Cycle 154 gated the restart on the run having ended and on the four-second victory banner expiring, but left the death debrief immediately restartable. A probe pressing confirm one frame after a real death returned True from `_restart_ready` and restarted at once -- **skipping the entire 3.4 s death cinematic and the debrief** that shows score, kills and history. The two endings disagreed about whether their last shot may be dismissed, and a player holding or mashing confirm while firing would never see the run summary.
+- **ANALYZE**: A separate death-debrief delay in seconds was rejected -- the cinematic already defines the window, and a second constant would drift from the authored 3.4 s. Blocking restart whenever a cinematic object exists was rejected because a finished path stays referenced, so the guard must read `done`, not existence. Leaving the inconsistency and documenting it was rejected: both endings should protect their last shot the same way.
+- **IMPLEMENT**: `_restart_ready()` now requires `_death_camera is None or _death_camera.done` while the player is down, and its docstring states the rule. `tests/test_new_run.py` gains `_finish_death_cinematic` plus two tests -- confirm ignored across 30 frames of the cinematic then accepted after it, and a death with no cinematic restartable immediately -- and the three tests that restarted straight from death, plus both integration tests, now advance the cinematic first.
+- **MUTATION CHECK**: replacing the guard with `return True` failed **exactly** `test_enter_during_the_death_cinematic_is_ignored`; `shooter/game.py` restored byte-identically (sha256 match).
+- **GATE NOTE**: my first version of the no-cinematic test assigned `game._death_camera`, which the code-structure gate rejects (PRINCIPLE-009 R5) -- the same rule that caught me in cycle 141. Rewritten to `monkeypatch.setattr` on the class, which patches the builder rather than reaching into another object's state.
+- **Gates**: `aikit check shooter` **5/5**; shooter 563 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 158 - Safety net: durable backup of uncommitted work (line-ending change reverted)
+- **FIND**: Twenty cycles (138-157) sat uncommitted with **no git ref protecting them**, and earlier in this session an external recovery process reset both projects to HEAD and destroyed all uncommitted work with no stash and no recoverable copy. The only copy existed in the working tree -- exactly what that recovery destroyed.
+- **IMPLEMENT**: `refs/backups/shooter-cycles-138-157` (74f839c) pins 417 files of uncommitted work outside the branch, written through a temporary index (`GIT_INDEX_FILE` + `read-tree` + `add -A` + `write-tree` + `commit-tree`) so the worktree, the real index and HEAD were never touched. `git stash` was rejected because it mutates the worktree; committing to the branch was rejected as a delivery decision the user has not authorised; a patch file in the repo was rejected as duplicated content that rots silently.
+- **PROOF**: a fresh snapshot through a second temporary index reproduced the identical tree hash (90c9e15d...), and `checkout-index` into a temp directory restored every file, including `tests/test_new_run.py`, `shooter/data/campaign_clear.kpath` and `evidence/cycle-157.json`.
+- **ATTEMPTED AND REVERTED**: adding `.gitattributes` with `* text=auto eol=lf`, `*.png binary` and a ledger union merge, to make restores byte-identical. It cannot be done safely in one step here: `.aikit/decisions.md` has a **CRLF committed blob** (823 CR bytes) while `sim.py`, `game.py`, `README.md` and `LICENSE` are LF, so pinning `eol=lf` makes every CRLF-blob file permanently modified. Converting 338 tracked files to LF produced 328 phantom stat-only modifications and one whole-file diff.
+- **RECOVERY**: `.gitattributes` removed, every touched file restored to its committed bytes, and a stat-cache refresh re-staged only content-identical files. A full re-snapshot then differed from the cycle-157 backup by exactly four records (`.aikit/cycles.md`, `task_ledger.json`, `task_ledger_archive.jsonl`, `README.md`) plus the new `evidence/cycle-158.json` -- so the experiment left no residue.
+- **GUARD ADDED**: `tests/test_repo_line_endings.py` (2 tests) asserts that an `eol=lf` rule may only be pinned when no committed text blob contains CR (binary blobs are excluded by a NUL check), and that `git status` never reports a modification whose filtered hash still equals the committed blob. That second check needed two corrections: comparing status with diff shares one stat cache and can agree while the tree is unchanged, and comparing raw bytes misses the CRLF-only rewrite that git normalises away. The final form compares `git hash-object --path=<file>` with the HEAD blob. Probes: converting LICENSE to CRLF made status report M while the filtered hash equalled HEAD and the guard failed naming LICENSE; a reintroduced `eol=lf` rule fails the other test naming `.aikit/decisions.md`. Re-creating a `.gitattributes` with `eol=lf` made the guard fail naming `.aikit/decisions.md`; removing it returned the suite to green.
+- **PERF/HYGIENE PASS**: every git call in the guard carries an explicit timeout (the AIKit gate forbids untimed subprocess use) -- tightened from 60s to 15s; the per-file `git cat-file` loop was replaced by a single `git cat-file --batch` read, verified byte-exact against single-blob reads for all 363 tracked files, cutting the suite from 2.00s to 1.53s. Both failure probes were re-run after the refactor: a reintroduced `eol=lf` rule and a CRLF-converted `LICENSE` each still fail their guard.
+- **RECOMMENDATION**: pinning line endings needs a separate, authorised one-time renormalization commit that rewrites the CRLF blobs; it should not ride along with feature work.
+- **Gates**: `aikit check shooter` **5/5**; shooter 563 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 159 - The double-click launchers are covered, and the tests cannot hang
+- **FIND**: No suite covered `start-shooter.cmd` or `start-shooter.sh` -- the entry points a new player double-clicks first. Both were verified by hand before any test was written: `--simulate --frames 60` forwarded its arguments and exited 0 with `"tick": 60`; `--help` printed the engine usage; and a PATH containing neither `python` nor `py` printed `Shooter could not start. / Why: no Python found on PATH. / Fix: install Python 3.10+ ...` and exited 1.
+- **ANALYZE**: The shell script cannot be run here (no POSIX shell on this machine), so its contract is asserted statically -- shebang, quoted self-directory, `exec`, `"$@"` -- rather than pretending it executed. My first fallback-order check used `str.index("where python") < str.index("where py")`, which passes **vacuously** because `"where python"` is a substring of `"where py"`; it compares line numbers now.
+- **IMPLEMENT**: `tests/test_launchers.py` (7 tests): both entry points exist and share `play.py` as the single entry; the shell contract; the `.cmd` forwarding `--simulate --frames 30` **from an unrelated working directory** and reporting tick 30; the missing-python path printing `Why:`/`Fix:` and exiting 1; the python-before-py fallback order; and both launchers appearing in the README tree.
+- **INCIDENT AND HARDENING**: while mutation-testing, dropping `%*` made the launcher open the **real game window**; the test's subprocess inherited the pipe and the command blocked until the harness killed it at 900s. I identified the stray GUI by command line (PID 20468) and killed only that process, leaving two pre-existing `http.server` processes (8108, 30464) untouched. The tests now use `_run_bounded`: `Popen` + a 30s wait + `taskkill /F /T` on expiry, so the same regression fails in ~31s with "the launcher did not exit within 30s: arguments were probably dropped, so play.py opened the game".
+- **MUTATION CHECK**: dropping `%*` fails the forwarding test in 30.81s and leaves no stray process; replacing the `Why:` line fails the missing-python test in 1.07s. `start-shooter.cmd` was restored byte-identically (sha256) after each.
+- **Gates**: `aikit check shooter` **5/5**; shooter 572 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 160 - The launcher tests were Windows-only despite a cross-platform promise
+- **FIND**: The README promises both entry points -- "double-click `start-shooter.cmd` (Windows) or run `./start-shooter.sh` (macOS/Linux)" -- but cycle 159's `tests/test_launchers.py` ran `cmd /c` and `taskkill` **unconditionally**, so the suite would have failed on any macOS/Linux machine the project claims to support. A suite that only passes on one platform silently narrows the stated support, and the first person to run it on Linux would see a failure unrelated to their change.
+- **ANALYZE**: Deleting the `.cmd` tests on non-Windows was rejected -- the batch file is part of the product, so its static contract belongs in the suite everywhere. Documenting "Windows only" was rejected because it contradicts the README instead of fixing the mismatch. Skipping the whole module was rejected because five of the seven tests are platform-neutral.
+- **IMPLEMENT**: `WINDOWS = sys.platform == "win32"` plus a `needs_cmd` skipif applied to exactly the two tests that spawn `cmd.exe`; the docstring now says which half runs where. Both bare `Popen` sites also document that their bound comes from `communicate(timeout=RUN_TIMEOUT)` and `taskkill /F /T`, since `Popen` accepts no `timeout` argument.
+- **GUARD PROVEN, NOT ASSUMED**: a subprocess that forces `sys.platform = "linux"` before importing the module reported `WINDOWS False` and exactly **two** guarded tests, both with `skip_when_not_windows True` -- so on POSIX the five static tests run and the two `cmd.exe` tests skip.
+- **SUBPROCESS AUDIT**: an AST sweep over every `tests/test_*.py` found **zero** `subprocess.run`/`call`/`check_output` calls without `timeout=`, and two `Popen` calls whose bound is `communicate(timeout=)` plus `taskkill`. An earlier line-window grep had flagged several call sites as untimed; reading them and then confirming with the AST sweep showed those were false positives.
+- **Gates**: `aikit check shooter` **5/5**; shooter 572 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 161 - The README's commands are now run and checked
+- **FIND**: The README makes concrete, checkable claims: the launchers start the game, `--describe` describes it, `--simulate` ticks, and `bot_campaign.json` "clears the wave-3 warden and wins at wave 4". Before writing any test I ran the documented commands by hand: `--describe` exited 0 with a capabilities block; `--simulate --frames 120` reported tick 120 and a hash; `--replay bot_campaign.json` exited 0 with `ok: true`, **outcome `win`**, wave 4, 30 kills, score 11560. The README's campaign claim was **true**.
+- **FALSE ALARM, RECORDED**: the README looked to contain mojibake (`â€”` for an em dash). A strict UTF-8 decode proved the file is valid -- the garbling was only my cp1254 console. The two emoji headings are hand-written decoration, not tool output, and changing them would be cosmetic churn, so nothing was altered.
+- **IMPLEMENT**: `tests/test_readme_commands.py` (4 tests) runs `--describe` and asserts a game name plus a capabilities block; runs the documented `--simulate` example and asserts both `frames` and the final snapshot's `tick` equal it; replays `bot_campaign.json` and asserts outcome `win` / wave 4 / kills > 0; and extracts **every** documented `play.py` command, in both `python play.py ...` and `python projects/shooter/play.py ...` forms, checking each flag still appears in `--help`.
+- **MUTATION CHECK, WITH A SURVIVOR**: changing "wins at wave 4" to "wins at wave 7" failed the campaign test. Renaming a documented flag **initially survived** -- my regex only matched the short form while the edited line was the long form -- so the guard was green for the wrong reason. After widening the regex, the same rename fails with "the README documents '--describe-now', which the engine no longer accepts". `README.md` restored byte-identically (sha256) after each.
+- **TEST BUG FIXED**: my first simulate assertion looked for a top-level `tick`, which the payload never has; the engine reports `frames` at top level and `tick` on the final snapshot.
+- **Gates**: `aikit check shooter` **5/5**; shooter 576 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 162 - The "Python 3.10+" promise is now enforced
+- **FIND**: The README states Python 3.10+ and Keystone's `pyproject.toml` declares `requires-python = ">=3.10"`. All four pinned versions match what is installed exactly (numpy 2.5.3, PyOpenGL 3.1.10, glfw 2.11.0, pytest 9.1.1) -- but the build machine runs **Python 3.14.7**, so nothing would notice a 3.11+/3.12+ construct breaking a 3.10 user. That is the "works on my machine" form of a floor regression: the supported interpreter fails at parse or import while CI stays green.
+- **ANALYZE**: Installing 3.10 to run the suite was rejected -- the host has no 3.10 toolchain and a static check answers the same question on any interpreter. Pinning the check to `sys.version_info` was rejected because it would assert the build machine's version instead of the code's requirements. `itertools.pairwise` was deliberately **allowed**: it exists in exactly 3.10, so it is legal at the floor.
+- **IMPLEMENT**: `tests/test_python_floor.py` (7 tests) parses all **155** source files, rejects PEP 695 type parameters, rejects post-3.10 stdlib imports and calls (`typing.Self`/`override`/`Required`/`NotRequired`/`assert_type`/`TypeVarTuple`, `itertools.batched`, `datetime.UTC`, `asyncio.TaskGroup`, `tomllib`), checks the README and Keystone's pyproject agree on the floor, and imports the three core modules.
+- **CURRENT STATE**: the full sweep of 155 files found **zero** PEP 695 constructs and **zero** post-3.10 stdlib usages, so the promise holds today.
+- **MUTATION CHECK**: `class Sim:` -> `class Sim[T]:` failed with "PEP 695 type parameters need Python 3.12 ... [sim.py:56]"; adding `from typing import Self` failed with "sim.py:13 imports typing.Self (needs 3.11)". `shooter/sim.py` restored byte-identically (sha256) after each.
+- **Gates**: `aikit check shooter` **5/5**; shooter 583 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 163 - The Python-floor guard missed scripts/, and could not see a new folder
+- **FIND**: Cycle 162's `tests/test_python_floor.py` listed `shooter/`, `tests/` and `play.py` explicitly and never scanned **`scripts/`** -- six shipped files, `capture.py` alone over 100 kB, all documented in the README. Worse, the coverage test compared that list against a *second* hardcoded folder list, so a brand-new top-level package escaped both: a probe with `tools/probe.py` containing `from typing import Self` passed **all 8 tests**.
+- **ANALYZE**: Adding `"scripts"` to the existing list fixes today's gap and leaves the next folder unguarded. Asserting `len(SOURCES) >= 150` alone does not say *which* files are missing. Walking the repo without an ignore list pulls in `.git`, `__pycache__`, `.venv` and evidence folders, producing noise and false failures.
+- **IMPLEMENT**: `SOURCES` is now derived from `_shipped_python_files()`, a `REPO.rglob("*.py")` walk that skips `.git`, `.aikit`, `__pycache__`, `.pytest_cache`, `saves`, `evidence`, `assets`, `LICENSES`, `.venv`, `venv`, `node_modules`, `dist` and `build`. The coverage test asserts the scan equals the walk, so any unlisted Python file fails **by name**.
+- **SCRIPTS AUDIT**: all six scripts were scanned explicitly before the change and are currently clean (no PEP 695, no post-3.10 stdlib), so the gap was latent rather than active.
+- **MUTATION CHECK**: `tools/probe.py` with `from typing import Self` passed all tests before the fix and fails after it with "probe.py:1 imports typing.Self (needs 3.11)". The probe folder was removed and the suite returned to green.
+- **Gates**: `aikit check shooter` **5/5**; shooter 584 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 164 - ProfileStore broke its bool contract on one path; all failure modes now pinned
+- **FIND**: `shooter/profile.py` documents `save(self, profile) -> bool`, and `_save_profile` relies on it -- catching `OSError` to show "PROFILE NOT SAVED" in the debrief instead of crashing the finish. Probing four failure modes, three were correct: a corrupt file without a backup is **quarantined and reset**, one *with* a backup recovers `best_score 777`, and a fresh lock refuses the save while writing nothing. The fourth broke the contract: a path whose **parent could not be created** (a file where the directory should be) raised `FileExistsError` out of `save()`.
+- **ROOT CAUSE**: the traceback pinned it to `_acquire_lock`, where `self.path.parent.mkdir(...)` sat **outside any try**, so the exception escaped before `save`'s own try block began. The game survived only because `_save_profile` also catches `OSError` -- any other caller trusting the `-> bool` signature would not.
+- **ANALYZE**: Fixing it in the game was rejected because the broken contract belongs to `ProfileStore` and every future caller would inherit it. Catching inside `save()` alone was rejected because `mkdir` runs in `_acquire_lock`, before the write try block. Weakening the test to "does not crash" was rejected: the contract is `is False`.
+- **IMPLEMENT**: `_acquire_lock` wraps the `mkdir` in `try/except OSError` returning `None`. `tests/test_profile_safety.py` (13 tests) pins the regression, round-trip plus `.bak` contents, quarantine without deletion, backup recovery, fresh-lock refusal without a partial write, stale-lock takeover and release, no lock left behind after repeated saves, five junk payloads all loading as usable profiles, and the game reporting `PROFILE NOT SAVED` while keeping `last_run`.
+- **MUTATION CHECK**: reverting the guard reproduced the exact `FileExistsError: [WinError 183] ... notadir` and failed **only** the regression test. `shooter/profile.py` was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter 597 passed, 2 xfailed; the 21 pre-existing profile tests still pass; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 165 - A deliberate refusal I nearly "fixed", and two more profile paths pinned
+- **FIND**: Cycle 164 fixed one `ProfileStore` contract violation; the newer-schema path was unexamined. Probes showed two more paths correct -- a corrupt `.bak` does not spoil a valid live profile, and when **both** copies are broken the live file is quarantined -- and one behaving **by design**: a schema-99 profile raises `ValueError` from `load()`, the game catches it, sets `profile_disabled`, and leaves the file byte-identical for the session.
+- **I CHANGED IT, THEN FOUND MY MISTAKE**: I rewrote that raise to quarantine-and-reset, ran the profile suites, and hit two **pre-existing** tests asserting the opposite intention -- `test_unsupported_schema_is_refused_without_touching_the_file` and `test_unsupported_profile_disables_saves_without_overwrite`. The behaviour was deliberate, not an oversight: a profile written by a **newer build** is not corrupt, so quarantining it would reset the player's progress instead of preserving it until they return to the newer build.
+- **ANALYZE**: Keeping my change would have violated PRINCIPLE-014 (weakening a test needs user approval and an ADR) **and** been worse for the player. Deleting the old tests as "stale" was rejected for the same reason. Leaving the intent undocumented was rejected -- that is precisely why I almost broke it.
+- **IMPLEMENT**: `shooter/profile.py` keeps the `ValueError` refusal and now states **why** inline. `tests/test_profile_safety.py` grows to 17 tests, adding: a corrupt backup not spoiling a valid profile, both-copies-broken quarantining the live file, a newer-schema profile being refused and left intact, and a game-level test proving a schema-99 profile survives a whole session byte-identical.
+- **MUTATION CHECK**: replacing the refusal with `_recover()` failed **both** my new test (`DID NOT RAISE ValueError`) and the pre-existing `test_profile.py:53`, so the intent is now doubly pinned. `shooter/profile.py` was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter 601 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 166 - An audio refusal could crash the frame, against its own invariant
+- **FIND**: `_play_clip`'s docstring states "Audio must never crash gameplay" and counts refusals in `dropped_sfx` so soak reports can see them. Probing the mixer with each exception type showed `ValueError` caught (survived, `dropped_sfx 1`) but **`TypeError` fatal** -- "CRASHED with TypeError: device refused". `Mixer.play` raises `TypeError` for a non-`AudioClip` and `ValueError` for a sample-rate, bus, gain or pitch refusal, so the guard covered only half of what the audio layer can raise. A crash in a combat or finish frame loses the run to a sound problem.
+- **ANALYZE**: `except Exception` was rejected -- it would also hide programming errors like `AttributeError` in game code, which must stay loud. A missing audio device was ruled out: Keystone's mixer documents "No playback device or third-party dependency is required", so there is no device failure to handle. Voice exhaustion was ruled out too: `Mixer.play` appends rather than refusing, so there is no cap.
+- **IMPLEMENT**: `_play_clip` catches `(TypeError, ValueError)` with a docstring recording why both count as refusals. `tests/test_audio_resilience.py` (5 tests) makes the mixer raise each type through the public `update` path, asserts the drop is counted **and the shot still resolved**, proves the counter never enters the deterministic sim record, checks a healthy mixer counts nothing, and checks `dropped_sfx` is surfaced in the snapshot for soak reports.
+- **MUTATION CHECK**: reverting to `except ValueError` failed exactly `test_a_mixer_refusal_is_counted_and_the_frame_survives[TypeError]`. `shooter/game.py` was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter 606 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 167 - Broken gameplay data blamed the --game argument
+- **FIND**: `play.py` follows the `Why:`/`Fix:` convention for every startup failure it handles (old Python, missing Keystone, missing package, import error), so a player always gets something actionable. But copying the project, corrupting `shooter/data/weapons.json` and running it produced:
+  ```
+  Keystone could not start.
+  Why: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+  Fix: pass a valid 'package.module:Factory' with build_scene, update, snapshot, ...
+  ```
+  An actionable message pointing at **entirely the wrong thing** -- the player is told to fix their `--game` argument when a data file is broken.
+- **ROOT CAUSE**: `sim._load` had no handling for its four **required** data files (`weapons`, `enemies`, `levels`, `juice`), while the optional `engagement.json` did have a fallback. Keystone's `_start_failure_hint` then blames the game factory for any load failure because it cannot tell what failed.
+- **ANALYZE**: Patching keystone's hint to sniff for file errors was rejected -- another worker owns that tree, and string-sniffing is worse than the caller knowing its own cause. Silent fallbacks for required files were rejected: a missing `weapons.json` means a broken install, and inventing defaults would hide it *and* change gameplay. Leaving the traceback was rejected: the engine already converts exceptions, so the message was actionable but wrong.
+- **IMPLEMENT**: `_load` wraps `read_text` and `json.loads`, raising `ValueError` whose message carries `Why:` and `Fix:` naming the file and where a good copy comes from. The engine already prints such messages verbatim. `tests/test_data_integrity.py` (6 tests): missing file, corrupt file, all four required files named individually, optional `engagement.json` still falling back, a healthy dir loading, and no traceback in the message.
+- **END TO END**: the same broken install now prints "shooter data file 'weapons.json' is not valid JSON. / Why: ... / Fix: restore <path>/shooter/data/weapons.json from a fresh clone, or repair the JSON at that line."
+- **MUTATION CHECK**: reverting `_load` to the bare one-liner failed **4 of 6** tests. `shooter/sim.py` was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter 612 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 168 - Valid JSON with the wrong shape still blamed the --game argument
+- **FIND**: Cycle 167 made missing and malformed data files raise an actionable `Why:`/`Fix:`. But **wrong-shape** documents -- valid JSON with the wrong contents -- still escaped as bare exceptions:
+  | file | payload | exception |
+  |---|---|---|
+  | weapons.json | `{"wrong": []}` | `KeyError: 'weapons'` |
+  | weapons.json | `{"weapons": 5}` | `TypeError: 'int' object is not iterable` |
+  | weapons.json | `{"weapons": [{"name": "x"}]}` | `KeyError: 'id'` |
+  | levels.json | `{"levels": []}` | `KeyError: 'player'` |
+  | juice.json | `"text"` | `AttributeError: 'str' object has no attribute 'get'` |
+
+  End to end the player saw `Why: 'weapons'` and `Fix: pass a valid 'package.module:Factory'` -- the same misleading message cycle 167 fixed, still reachable one level deeper.
+- **ANALYZE**: Validating every field of every entry was rejected -- the game reads a handful of keys per record, and a strict schema would reject forward-compatible extra fields for no benefit. Letting the bare `KeyError` through "because the engine wraps it" was rejected: the engine wraps it with the *wrong* fix, which is the defect. The shapes were taken from the **shipped documents**, not guessed: `weapons`/`enemies` lists whose entries carry `id`, `levels.player` as a dict, `juice.viewmodel` as a dict.
+- **IMPLEMENT**: `DATA_SHAPES` and `DATA_ENTRY_FIELDS` added to `shooter/sim.py`; `_load` now raises the same actionable `ValueError` for a non-object document, a missing key, a wrong container type and a malformed list entry. `tests/test_data_integrity.py` grows to **14** tests with a 7-case parametrized wrong-shape sweep plus a healthy-document check.
+- **END TO END**: `{"wrong": []}` now reports "shooter data file 'weapons.json' is missing its 'weapons' key. / Why: this build expects list in that file. / Fix: restore <path> from a fresh clone; a newer or older build may use a different shape."
+- **HEALTHY DATA UNAFFECTED**: 4 weapons, 4 enemies, 5 waves, viewmodel keys present.
+- **MUTATION CHECK**: `shape = None` to disable the checks failed **5 of the parametrized cases**. `shooter/sim.py` was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter 620 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 169 - The in-process determinism gate has a structural blind spot
+- **FIND**: `--verify-determinism` is the documented regression shield, but `keystone/testing.py` runs `factory()` twice **inside one process**, so both passes share a `PYTHONHASHSEED`. Any ordering derived from set or dict-of-strings iteration is identical in both passes, so the gate cannot detect hash-seed-dependent nondeterminism.
+- **PROVEN, NOT ARGUED**: injecting `self.weapon = next(iter({"pulse", "scatter", "lance", "surge"}))` left the gate reporting **`ok: true`** while separate processes produced `3bf71e94` vs `03b51121` (and `770aaa8b` for a third seed). A replay recorded in one session would not reproduce in the next, and the canonical gate said everything was fine.
+- **WHAT I DID NOT CALL A BUG** (cycle 165's lesson): `snapshot()` omits `spawn_t`, RNG state, player velocity and enemy cooldowns. Keystone's `GameModule` contract only requires `snapshot()` to return a dict, and nothing claims it is an exhaustive state record, so that is a progress record by design rather than a defect.
+- **ANALYZE**: Forking inside keystone's `verify_determinism` was rejected -- another worker owns that tree, and it would slow every engine user's gate. The honest fix is on the shooter side, where the testbed can run what a player actually does: the same code in a **fresh process**.
+- **IMPLEMENT**: `tests/test_cross_process_determinism.py` (3 tests) runs `--simulate --frames 120` under `PYTHONHASHSEED` 0/1/424242 asserting one hash; checks a fixed game seed reproduces while a different seed differs (via the playtest runner, since `--seed` belongs to it); and replays `bot_campaign.json` in a fresh process with `PYTHONHASHSEED` 31337 asserting it still wins at wave 4.
+- **BASELINE**: the shipped game is cross-process deterministic today -- seeds 0, 1 and 12345 all produce `7e4b602e029d12d68672790318d119cd` over 120 frames.
+- **MUTATION CHECK**: the injection failed **both** the cross-seed test and the replay test. `shooter/sim.py` was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter 623 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 170 - A mutation sweep found two gameplay constants nothing protected
+- **FIND**: The suite is the canonical regression shield (627 tests, 5/5 gates), and the README calls `test_shooter.py` the "move/shoot/hit/kill/die/score/determinism/budget" coverage. To test that claim rather than trust it, I ran a **mutation sweep** over six realistic sim constants against the core sim subset: walk speed, jump speed, score award, enemy damage, player hp and the coyote window. Four were caught. **Two survived with every test green**:
+  - `JUMP_SPEED 7.2 -> 8.0` -- the apex moves **1.020 m -> 1.267 m (+24 %)** while covers start at **1.2 m**, so a mistyped constant silently changes which surfaces are reachable.
+  - `COYOTE_S 0.12 -> 0.24` -- the grace period doubles from ~7 frames to ~14.
+- **WHY IT SURVIVED**: `test_levels_platform.py` proves the 0.7 m platform *can* be reached, which stays true for a taller jump. Nothing asserted the apex itself, and nothing at all referenced the coyote constant.
+- **ANALYZE**: Pinning `JUMP_SPEED` as a number would restate a constant instead of asserting what it is *for*, and asserting the apex to three decimals would fail a legitimate feel tweak. Testing cover landability by walking into a cover was abandoned after my harness could not land on the 0.7 m platform either -- the probe was invalid, not the game.
+- **IMPLEMENT**: `tests/test_jump_feel.py` (4 tests) asserts the rise stays within 0.98-1.06 m, that the apex **clears the 0.7 m platform while staying under the 1.2 m cover tops** (the design invariant), that a jump 4 frames after leaving the ground fires while one 10 frames after does not, and that `COYOTE_S` is 6-9 frames at 60 Hz.
+- **HARNESS BUG FOUND AND FIXED**: my first coyote probe started the player at y=1.4, so it **landed inside the window**, re-armed the timer and falsely reported "still jumps at 14 frames". Starting at y=40 fixed it; the boundary also moved from 14 to 10 frames so the *behaviour* test discriminates rather than only the arithmetic one.
+- **DRIFT**: keystone's editor schema advanced 64 -> 65 mid-cycle (`set_camera_path_key`, `remove_camera_path_key`); the pin and the named-action list were updated rather than loosened.
+- **Gates**: `aikit check shooter` **5/5**; shooter 627 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); `sim.py` byte-identical after every mutation.
+
+## Cycle 171 - Weapon feel numbers were unprotected, and two loopback tests were load-fragile
+- **FIND**: Extending cycle 170's mutation sweep to the **data** a designer edits caught every *outcome* number -- pulse damage 12->20, mite hp 30->45, mite damage 8->20, mite score 10->500 -- but two *feel* numbers survived: pulse `kick_deg` 0.6->1.2 and pulse `reload_s`. The reload one later turned out to be my mutation's fault, not a coverage gap (see below).
+- **WHY IT SURVIVED**: existing coverage reads the value back out of the data it is testing. `test_reload_dip.py` computes half the reload as `reload_s / 2.0` (correct at any duration) and `test_viewmodel_recoil.py` asserts `sim.kick > 0.0` (true at any magnitude). Neither can see a doubled number.
+- **IMPLEMENT**: `tests/test_weapon_feel.py` (4 tests) asserts the observable result inside a design band -- a pulse reload completes in **58-74 frames** (designed 66), one shot tilts the camera **0.45-0.75 degrees** (designed 0.6), recoil decays back to exactly 0, and the magazine refills to its declared size.
+- **MY OWN MUTATION WAS WRONG**: the first reload check reported SURVIVED because I patched `"reload_s": 1.6` -- which is **lance's** value, not pulse's 1.1 -- so the mutation never touched the weapon under test. Anchoring on pulse's own block made the test fail as intended. A mutation that misses its target proves nothing.
+- **SECOND FINDING -- LOAD FRAGILITY**: under the concurrent worker's load the gate's test run failed two loopback tests that pass in isolation (7.4 s and 10.1 s alone), because `urlopen` had a hardcoded **5 s** bound while the whole suite ran ~10x slower. Fixed with `REQUEST_TIMEOUT = 60` for requests, while keeping the server-thread `JOIN_TIMEOUT = 10` tight so a real hang still fails fast rather than waiting a minute.
+- **RESULT**: the same gate under the same load now passes **5/5** (test phase 470 s, mechanics 91 s).
+- **Gates**: shooter 631 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`); data files byte-identical after every mutation.
+
+## Cycle 172 - The largest method in the project is now covered and on record
+- **FIND**: `shooter/game.py` is **1769 lines** holding one 1485-line class. `build_scene` alone is **448 lines** and writes **50 distinct `self` attributes** spanning clips, mixer, assets, scene, particles, kill feed, spawn marks and seven named scene nodes; `_sync_scene` is 364 lines and `_play_event` 161. Nothing in `.aikit/decisions.md` or `.aikit/cycles.md` recorded this, so the next worker would rediscover it.
+- **WHY IT MATTERS**: with 50 attributes assigned in one method, a single missed reset leaks one run's scene state into the next -- and `new_run()` rebuilds on every restart, so that path is hit constantly.
+- **ANALYZE**: Splitting `build_scene` was rejected for this cycle: a 448-line method with 50 outputs is a multi-cycle refactor, and doing it inside a testbed cycle would risk a regression with no gameplay benefit. Dropping the parametrized sweep because two mutations survived was rejected too -- it still catches a newly added attribute that one branch stops setting.
+- **IMPLEMENT**: `tests/test_rebuild_isolation.py` (54 tests) discovers `build_scene`'s attribute set from the method's **own AST** so it cannot drift from the code it protects, asserts each attribute exists after a build and is reassigned by one, checks a restart clears transient scene state and resets the sim clock, asserts the `Scene` object is replaced, and asserts a rebuild reproduces an equivalent scene fingerprint (camera pose, fov, fog, light count, node ids).
+- **HONEST LIMIT, DOCUMENTED IN THE TEST**: the sweep proves each attribute is **reassigned**, not that it is reassigned to the *correct* value. Two mutations confirmed the boundary -- deleting the `_pickup_fx_t` reset survived because `__init__` sets it too, and deleting the `_pickup_spot` assignment survived because it is set elsewhere. The docstring says so rather than implying a full reset proof.
+- **THREE OF MY OWN TEST BUGS**: I invented `_tracer_n` (the real field is `_tracer_nodes`), used a non-existent `scene.nodes`, and asserted an empty tracer pool when the pool is deliberately rebuilt with hidden nodes.
+- **GATE**: the code-structure gate rejected 7 dotted private assignments in the new test (PRINCIPLE-009 R5, the same rule that caught cycles 141 and 157). Rewritten with `setattr`/`getattr`, since inspecting a rebuilt scene is the suite's entire purpose.
+- **Gates**: `aikit check shooter` **5/5**; shooter 685 passed, 2 xfailed; determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 173 - My own guard was slow and circular; both fixed
+- **FIND**: Cycle 172's `tests/test_rebuild_isolation.py` was **54 tests taking 43 s** (0.8 s each) because each of the 50 parametrized cases performed a full scene build. The project suite grew from ~60 s to **464-704 s**, making the test gate the slowest thing in the loop -- and slow feedback gets skipped (PRINCIPLE-010 caps a unit test at 50 ms).
+- **WORSE, AND THE REAL BUG**: the attribute checklist was discovered from **the very file being tested**, so deleting a `build_scene` assignment removed it from its own checklist. Proof: deleting the `_pickup_spot` line shrank the discovered set **50 -> 49** and the suite still passed. The guard was circular.
+- **IMPLEMENT**:
+  1. Collapsed the 50 parametrized cases into **one build + one dirty pass + one rebuild** -- the identical property with no per-attribute message.
+  2. Added `test_no_committed_scene_attribute_has_been_dropped`, which reads `build_scene`'s attribute set from **`git show HEAD:shooter/game.py`** and fails by name when the working version stops setting one. That makes the reference independent of the file under test.
+- **RESULT**: the suite drops 54 -> 6 tests, 43 s -> **1.2-2.0 s**; the full suite 704 s -> **121 s**; the gate's test phase 464 s -> **118 s**.
+- **MUTATION CHECK**: with the `_pickup_spot` assignment deleted, the new test fails with "build_scene no longer sets ['_pickup_spot'], which it set at HEAD". `shooter/game.py` restored byte-identically (sha256).
+- **DRIFT**: keystone's editor schema advanced 65 -> 66 (`rename_camera_path`, `duplicate_camera_path`) in `fc6734e`; the pin and the action list were taken from the actual `schema.py` diff rather than guessed.
+- **Gates**: `aikit check shooter` **5/5**; shooter 637 passed, 2 xfailed (the 685 -> 637 drop *is* the consolidation); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+
+## Cycle 174 - A juice.json sweep found nine unprotected numbers, and one was not even wired
+- **FIND**: extending cycles 170/171's mutation method to the presentation DATA, I doubled twelve `juice.json` constants and ran the full suite for each. **Nine survived**: `slam_ring.width`, `slam_ring.height`, `spawn_mark.width`, `spawn_mark.height`, `spawn_mark.max`, `pad_pulse.amplitude`, `impact_burst`, `kill_burst`, `flash_life_s`. Three were caught (`pad_pulse.base`, `hitstop_ticks`, `tracer_life_s`).
+- **THE DEEPER DEFECT**: `spawn_mark.max` was not just untested, it was not data-owned. Probe with `max=2`: the spawn path kept 2 marks but `boss_summon` kept **4**, and `build_scene` still built **4** marker nodes. With `max=6`: the list grew to 6 while only 4 nodes existed, so the player still saw 4. `MAX_SPAWN_MARKS = 4` leaked into the pool (`game.py:724`), the spawn cap (`:1150`) and both summon truncations (`:1202`, `:1207`).
+- **ANALYZE**: pinning raw literals would restate the data (cycle 138's stale-pin lesson). Raising the module constant would leave the summon path broken; letting the list outgrow the node pool would make the cap look honoured in state but not on screen. Survivor: one DATA read for all three sites, then design-band tests on the observable result rather than the number.
+- **IMPLEMENT**: `ShooterGame._spawn_mark_cap()` reads `juice.spawn_mark.max` once (`max(1, ...)`, `MAX_SPAWN_MARKS` only when absent) and drives the pool and both event paths; `tests/test_spawn_mark.py` grows by 2 tests (pool sizing, summon cap, missing-key fallback); `tests/test_juice_tuning.py` (7 tests) pins the other survivors by observable result — ring/marker bar bands, pulse peak, impact/kill particle counts, flash lifetime window.
+- **MUTATION CHECKS**: all nine survivors now fail a targeted test when doubled (**9/9 caught**, survivors: none). Reverting the three wiring reads to `MAX_SPAWN_MARKS` fails both new cap tests with the old 4-vs-2 values; `shooter/game.py` restored byte-identically (sha256).
+- **RECORDED, NOT FIXED**: four fallback defaults disagree with the shipped data — `tracer_life_s` 0.08 vs 0.15, `flash_life_s` 0.06 vs 0.10, `pickup_fx_scale` 3.0 vs 1.5, `pickup_fx_rise` 1.2 vs 0.9. A missing key would silently change feel; that is a defaults-vs-data problem, not the wiring problem fixed here.
+- **Gates**: `aikit check shooter` **5/5**; shooter **646 passed, 2 xfailed** (637 + 9 new tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-174.json`.
+
+## Cycle 175 - Keystone testbed: the spawn warning voice goes positional
+- **FIND**: a scan of all 103 Keystone modules found **21 the shooter had never imported**, including `audio_spatial`. The sim already publishes `spawn_pos` as presentation telemetry (spawn marks since cycle 26), yet `_play_event("spawn")` played HOSTILE INBOUND at a fixed **0.30** gain whether the spawn was 2 m or 40 m away.
+- **ANALYZE**: `spatial_mix` was rejected because it builds a second `Mixer` and would duplicate the bus/voice-cap path the game already owns for one short clip; the honest consumer is `SoundSource` + `distance_gain` for the gain and `spatial_report` for the AI-visible summary, fed through the existing `_play_clip`. Letting a NaN position raise was rejected: audio must never crash gameplay (cycle 166's invariant), so source construction is guarded and falls back to the old fixed gain.
+- **IMPLEMENT**: `shooter/game.py` imports the three `audio_spatial` exports, builds a positional source on the spawn event, scales the clip gain by distance, exposes `spatial_audio_report`, resets it in `build_scene`, and records `None` on a `TypeError`/`ValueError` fallback. `tests/test_keystone_audio_spatial_mechanics.py` (5 tests) pins the falloff (2 m > 18 m > 40 m = silent), the report geometry, the NaN fallback, rebuild reset and sim isolation. The README testbed matrix and tree name the consumer and its test.
+- **MUTATION CHECK**: replacing `gain = source.gain * distance_gain(listener, source)` with `gain = source.gain` fails `test_spawn_voice_gain_falls_off_with_distance` with `(0.3, 0.3)` — exactly the old behaviour. `shooter/game.py` restored byte-identically (sha256).
+- **ISOLATION**: the snapshot hash is unchanged across the spawn event; no sim field was added. Determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **KEYSTONE DRIFT (GOOD NEWS)**: the suite went from 646 passed + 2 xfailed to **653 passed** with no xfails. Both runtime `pytest.xfail` tripwires in `test_keystone_project_export_mechanics.py` (manifest assets double-registered by `validate_project` / `export_project`) now pass because Keystone landed `93e4639 fix(project): restore assets on failed glTF reimport`. The testbed's tripwire did its job: it noticed the upstream fix instead of silently going stale.
+- **Gates**: `aikit check shooter` **5/5**; shooter **653 passed** (646 + 5 new tests + 2 xfails now passing upstream); determinism 1800 ok.
+- **Evidence file**: `evidence/cycle-175.json`.
+
+## Cycle 176 - Keystone testbed: camera_shaker owns the jolt composition
+- **FIND**: `camera_shaker` was among the 21 Keystone modules the shooter had never imported. Cycle 142 adopted `CameraShake` for deterministic trauma noise, but `_sync_scene` still hand-added the sampled offset to the sim eye (`cam.position = eye + offset.position`, and the yaw/pitch pair) — exactly the composition `CameraShaker` exists to own. The module also exposes `camera_shaker_report` (base pose vs shaken pose), which the game had no way to report.
+- **ANALYZE**: keeping both composition paths would let them drift; letting the shaker mutate the scene camera would feed the previous frame's jolt back into the base each frame. Replacing the old `camera_shake_report` was rejected because `test_hurt_shake.py` pins its `trauma` key — the richer report is additive. The base camera is a separate `PerspectiveCamera` refreshed from the sim pose each non-cinematic frame, so the aim ray still starts at the sim eye.
+- **IMPLEMENT**: `shooter/game.py` imports `PerspectiveCamera`, `CameraShaker` and `camera_shaker_report`, owns a base camera plus shaker alongside `CameraShake`, composes the rendered pose through `self._shaker.pose()`, and exposes `camera_shaker_report` alongside the unchanged `camera_shake_report`. `tests/test_keystone_camera_shaker_mechanics.py` (5 tests) pins pose equality, base immutability across frames, report base-vs-pose, sim isolation and rebuild/cinematic clearing. The cinematic-start methods had to clear the new report too — the first test run caught that omission before it shipped.
+- **MUTATION CHECK**: replacing the shaker composition with the old hand-added offset fails `test_the_rendered_camera_is_the_shaker_pose` and `test_the_base_pose_stays_on_the_sim_eye_across_frames`; `shooter/game.py` restored byte-identically (sha256 284b49c1405f27e2d2608df047ed3dcab9653aff6cce3ebe1e23fc6b6ee8d682).
+- **Gates**: `aikit check shooter` **5/5**; shooter **658 passed** (653 + 5 new tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-176.json`.
+
+## Cycle 177 - Fallback defaults now match the shipped DATA
+- **FIND**: cycle 174 recorded four drifted fallbacks but did not fix them. A new guard failed before the change with all four visible: tracer life **0.08 vs 0.15**, flash life **0.06 vs 0.10**, collection-pop orb scale **2.5 vs 1.75**, orb rise **4.05 vs 3.9**. A designer deleting a key would silently change the feel while every test stayed green.
+- **ANALYZE**: making the keys mandatory would turn a harmless edit into a startup failure and break the documented fallback contract; pinning the literals would restate both numbers without saying which source is authoritative; a new config document adds machinery for four literals that already have one shipped home. Survivor: align the fallbacks and pin the *relationship* with an observable before/after test.
+- **IMPLEMENT**: `sim.py` uses 0.15/0.10 for `tracer_life_s`/`flash_life_s`; `game.py` uses 1.5/0.9 for `pickup_fx_scale`/`pickup_fx_rise`. `tests/test_data_defaults.py` copies the data dir to a temp folder, deletes all four keys and compares tracer life, flash life, orb scale and orb rise against the shipped build. The structure gate rejected a direct private assignment; `setattr` fixed it before the gate passed.
+- **MUTATION CHECK**: reverting either pair of defaults fails the guard; both files restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **659 passed** (658 + 1 new guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-177.json`.
+
+## Cycle 178 - Keystone testbed: the viewmodel becomes a CameraRig
+- **FIND**: `camera_rig` exists precisely for camera-attached content (overlay layer, camera-space local offsets, a root that follows the lens) and was one of the 21 Keystone modules the shooter had never imported. `_sync_scene` hand-computed every gun part's world position from the eye and the camera basis with `gun_pos`, and added the three nodes to the level layer where geometry can cut through them.
+- **ANALYZE**: keeping the world-space nodes plus a token rig would leave two owners and prove nothing; pinning the old batch counts would hide the intended overlay behaviour, so those pins had to be *retargeted with a reason*, not loosened. Survivor: one `CameraRig` in `build_scene`, declarative camera-space offsets, `sync()` each frame, and the five viewmodel tests rewritten to read local right/up/forward.
+- **IMPLEMENT**: `game.py` imports `CameraRig`, attaches body/barrel/grip as overlay children, replaces `gun_pos` with `gun_offset(right, -down, -forward)` and drops the hand-built rotation quaternion. `tests/test_keystone_camera_rig_mechanics.py` (4 tests) pins overlay parenting, root-follows-camera, a visibly stale rig without sync, and sim isolation. The five existing viewmodel test files now assert camera-space offsets.
+- **STALE PINS RETARGETED**: the first full check failed three exact pins with the measured new values: static batch groups **8 -> 7** and merged groups **7 -> 6** (the viewmodel's shared-cube group is no longer a level batch once it is on `OVERLAY_LAYER`), and scene nodes **36 -> 37** (the rig root). Each literal was retargeted with an inline comment naming cycle 178, then 5/5 gates passed.
+- **MUTATION CHECK**: deleting `self._view_rig.sync()` fails `test_viewmodel_exists_and_the_rig_follows_camera` with root `(0,0,0)` vs camera `(0,1.6202,8)`; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **663 passed** (659 + 4 new rig tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-178.json`.
+
+## Cycle 179 - Keystone testbed: an isolated presentation RNG
+- **FIND**: `rng` was one of the 21 Keystone modules the shooter had never imported. The sim already owns two `random.Random` streams for combat and rewards — replacing either would move the replay hash — while the shoot voice played at a fixed 0.7 gain every time.
+- **ANALYZE**: a module-level `random.Random` would be neither a stability contract nor restorable from JSON; jittering every clip would break `test_audio`'s pinned 0.8 boss-windup gain. Survivor: `RandomStream(seed).fork("presentation")`, a bounded `uniform(0.95, 1.05)` multiplier on the shoot voice only, and a JSON-safe `RandomStreamState` report.
+- **IMPLEMENT**: `game.py` imports `RandomStream`, seeds the forked stream in `__init__` and again in `build_scene`, adds `_presentation_gain()` and `presentation_rng_report()`, and draws one value per shoot voice. `tests/test_keystone_rng_mechanics.py` (5 tests) pins reproducibility, seed dependence, 200-draw sim isolation, JSON state restore and the actual shoot-event draw.
+- **MUTATION CHECK**: removing the uniform multiplier (plain `return float(gain)`) fails 3 of the 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **668 passed** (663 + 5 new rng tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-179.json`.
+
+## Cycle 180 - Keystone testbed: scene picking answers the crosshair question
+- **FIND**: `picking` was one of the 21 Keystone modules the shooter had never imported. The game casts sim rays for combat but had no scene-level answer to "what world node is under the crosshair"; cycle 178's overlay-layer viewmodel gave the module a real exclusion case.
+- **ANALYZE**: reusing the sim's combat ray would couple a presentation report to gameplay and would not describe the rendered scene. A *stored per-frame* report was tried and rejected on measurement: casting `raycast_scene` inside `_sync_scene` took the gate's test phase from ~145 s to **547 s** because it recomputes world bounds for every visible mesh every frame. The survivor is an on-demand query.
+- **IMPLEMENT**: `game.py` imports `Ray`/`hit_report`/`raycast_scene` and exposes `crosshair_pick()`, which casts one eye-forward ray and returns a JSON-safe hit with the muzzle ignored; Keystone skips overlay and hidden nodes, so the camera-rig viewmodel can never be picked. `tests/test_keystone_picking_mechanics.py` (5 tests) pins world hits (cover-5 @ 17.5 m), aim following (wall-e, floor), a clean sky miss, overlay exclusion and sim isolation. After the query rewrite the same gate took **97 s**.
+- **MUTATION CHECK**: replacing the raycast with `hit_report(None)` fails 3 of 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **673 passed** (668 + 5 new picking tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-180.json`.
+
+## Cycle 181 - Keystone testbed: capture routes become reproducible proof
+- **FIND**: `evidence` was one of the 21 Keystone modules the shooter had never imported. The project wrote dozens of before/after PNG+report pairs by hand in `scripts/capture.py`, with no route summary and no machine-readable diff.
+- **ANALYZE**: rewriting those 40 routes would invalidate years of evidence filenames; adding capture state to `ShooterGame` would put GL work in every test. Survivor: an isolated `scripts/route_evidence.py` driver — `capture_route` only needs `run()`, `capture()` and `scene`, all on the real headless Engine — with a tiny engine double for the fast contract tests.
+- **IMPLEMENT**: the new driver builds a named Route (`shooter-spawn`, checkpoints 1/6/12), captures through the real Engine, writes the summary with `write_evidence`, and diffs a baseline with `diff_evidence`. `tests/test_keystone_evidence_mechanics.py` (5 tests) pins the checkpoint plan, byte-reproducible capture, changed/missing/added diffs and baseline file reads. Two first-draft test bugs were corrected: `route_hash` is 32 chars, and added labels sort alphabetically.
+- **REAL RUN**: two independent headless captures produced the same hash `2a96b8e6a5308395c80926acfea3d3ba` and `changed=false` with every delta 0.0; each wrote 3 PNG + 3 JSON reports + a schema-1 summary.
+- **MUTATION CHECK**: shrinking `DEFAULT_CHECKPOINTS` to `(1,)` fails 3 of 5 tests; the driver was restored byte-identically (sha256).
+- **PROCESS NOTE**: I wrote this cycle's plan checkpoint without the PRINCIPLE-007 impact assessment (--why/--benefits/--risks/--mitigation); the ledger correctly warned when the task completed and refuses to reopen a terminal task, so the gap is on record rather than papered over. Later cycles record the assessment on the first plan checkpoint.
+- **Gates**: `aikit check shooter` **5/5**; shooter **678 passed** (673 + 5 new evidence tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-181.json`.
+
+## Cycle 182 - Keystone testbed: the arena gets a nav plan
+- **FIND**: `pathfinding` and `navigation` were two of the 21 Keystone modules the shooter had never imported, although `levels.json` already publishes the arena size, seven covers, the spawn and the surge pickup. Wiring a route into movement would move the replay hash, so the consumer must stay a query.
+- **ANALYZE**: per-frame nav work was rejected after cycle 180's measured cost of scene queries; a hardcoded route would defeat the point (a designer edits the covers). Survivor: an on-demand `nav_plan_report()` deriving a 1 m `NavGrid` from the shipped covers, diagonal A* from spawn to pickup, `smooth_path` into world waypoints and both `path_report` and `navigation_report` in the result.
+- **IMPLEMENT**: `game.py` imports `NavGrid`/`find_path`/`smooth_path`/`path_report` and `PathFollower`/`grid_path_points`/`navigation_report`; `tests/test_keystone_navigation_mechanics.py` (5 tests) pins route shape, blocked covers, endpoint waypoints, a blocked-goal not-found result and sim isolation. One first-draft assertion was wrong: smoothing legitimately collapsed 15 cells into 2 waypoints, so the test now asserts `0 < n <= cells`.
+- **MEASURED**: 40x40 grid, 143 blocked cells, A* found in 14 steps / cost 14.0 / 15 expansions, smoothed to `(0.5,0,8.5)` and `(0.5,0,-5.5)`.
+- **MUTATION CHECK**: marking no covers as blocked fails 2 of 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **683 passed** (678 + 5 new nav tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-182.json`.
+
+## Cycle 183 - Keystone testbed: content identity for the render assets
+- **FIND**: `content` was one of the 21 Keystone modules the shooter had never imported, despite cycle 138's pins being retargeted to content-keyed batching. Two registries hold the same shipped asset in different Python objects and there was no stable identity to compare.
+- **ANALYZE**: `id(payload)` changes between registries; hashing files would describe disk bytes rather than the payloads the renderer groups; per-frame digests would repeat cycle 180's measured cost. Survivor: an on-demand `asset_digest_report()` using Keystone's `mesh_digest`/`material_digest` over a fixed `DIGEST_ASSETS` list.
+- **IMPLEMENT**: `game.py` imports the two digest functions, defines `DIGEST_ASSETS` (5 meshes, 5 materials) and returns a schema-1 JSON digest map. `tests/test_keystone_content_mechanics.py` (5 tests) pins coverage, identity independence, content sensitivity, repeatability and sim isolation.
+- **MEASURED**: 10 64-char digests; `mesh.wall` `9cf2f379…` is identical across two separately built games while the payload objects differ; `cube(1.0)` and `cube(2.0)` differ.
+- **MUTATION CHECK**: substituting `str(id(payload))` for `mesh_digest(payload)` fails 2 of 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**, shooter **688 passed** (683 + 5 new content tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **EXTERNAL EDIT (RESOLVED)**: briefly, an unrelated concurrent Keystone edit left `keystone/web/server.py` with an unterminated `STATIC_FILES` dict, failing collection of five shooter web tests. This project did not touch that file; the Keystone worker finished, and final re-runs were green: **688 passed** and `aikit check shooter` **5/5**. Recorded in `evidence/cycle-183.json`.
+- **Evidence file**: `evidence/cycle-183.json`.
+
+## Cycle 184 - Keystone testbed: the arena as an authored TileMap
+- **FIND**: `tilemap` was one of 21 Keystone modules the shooter had never imported, although `levels.json` already publishes a 40 m arena with a wall height and seven cover boxes — everything an authoring proof needs without a renderer.
+- **ANALYZE**: adding the tile colliders or mesh to the live scene would change physics and draw budget (and the replay hash); a separate tile JSON would duplicate levels.json; per-frame reports repeat cycle 180's measured cost. Survivor: an on-demand `arena_tile_report()`.
+- **IMPLEMENT**: `game.py` imports `TileMap`/`tilemap_report` and derives a 1 m tile map from the shipped covers, returning tile stats, a `to_dict`/`from_dict` round-trip proof, collider count and merged-mesh size. `tests/test_keystone_tilemap_mechanics.py` (5 tests) pins shape, cover cells, round-trip equality, collider/mesh counts and sim isolation.
+- **MEASURED**: 40x40 map, 143 solid / 1457 free, 143 colliders, merged mesh 9260 vertices / 4630 triangles, bounds (-20,0,-20)..(20,3,20).
+- **MUTATION CHECK**: ignoring the cover boxes fails 3 of 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **693 passed** (688 + 5 new tilemap tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-184.json`.
+
+## Cycle 185 - Keystone testbed: enemy idle clips in a real blend space
+- **FIND**: `animation_blend` was one of 21 Keystone modules the shooter had never imported, despite shipping four `.kanim` idle clips and every enemy's HP in `enemies.json`. No consumer could ask for a blended pose describing the current alive threat.
+- **ANALYZE**: writing the pose to a scene node would introduce per-call state and risk the hash; score thresholds would describe reward, not threat (used as the mutation target). A first-draft test bug was informative: all four idle clips are identity at t=0, so distinctness must be sampled at t=0.7 where the poses actually differ.
+- **IMPLEMENT**: `game.py` imports `BlendSample`/`BlendSpace1D` and `TYPES`, and adds `enemy_blend_report(parameter=None, time=0.0)` — clips anchored at HP thresholds 20/30/120/600, default parameter from the highest alive enemy HP, document round-trip and a JSON-safe pose. `tests/test_keystone_animation_blend_mechanics.py` (5 tests) pins thresholds, exact endpoints, mid-blend difference, threat default and sim isolation.
+- **MEASURED**: sample at parameter 75 / time 0.7 gives rotation `[0.999808, 0, -0.019624, 0]` and scale `1.033313`; `round_trip` True.
+- **MUTATION CHECK**: keying thresholds by score instead of HP fails 3 of 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **698 passed** (693 + 5 new blend tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-185.json`.
+
+## Cycle 186 - Keystone testbed: root motion of the shipped idle clips
+- **FIND**: `root_motion` was one of 21 Keystone modules the testbed never imported, although the four shipped idle clips animate a rotating `subject` node. A full-loop delta would be identity, so a short window is needed to expose real motion.
+- **ANALYZE**: applying the extracted delta to a scene node would change state and risk the hash; accepting a missing root silently would hide a mistake (Keystone raises, used as the mutation). Survivor: an on-demand `idle_root_motion_report(window=0.3)` with a measured delta and an in-place pose proof.
+- **IMPLEMENT**: `game.py` imports `extract_root_motion`/`in_place_pose`/`root_motion_report` and `CLIP_NAMES`, and returns a JSON report for all four clips plus `in_place`. `tests/test_keystone_root_motion_mechanics.py` (5 tests) pins shape, measured yaw bands, loop closure, in-place proof and sim isolation.
+- **MEASURED**: 0.3 s window yaws — wisp 1.570796, mite 0.096, brute 0.052502, warden 0.03, all positions zero; a 2 s window closes every clip to ~0; `in_place` true.
+- **MUTATION CHECK**: extracting from a nonexistent `root` node fails all 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **703 passed** (698 + 5 new root-motion tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-186.json`.
+
+## Cycle 187 - Keystone testbed: parameter-driven animation states
+- **FIND**: `animation_state` was one of 21 Keystone modules the testbed never imported. The warden core uses `StateMachineLibrary` (cycle 89), a different module; the shipped idle clips had been used for a blend space and root motion, but never for authored state transitions.
+- **ANALYZE**: a preview must not advance the live controller or a scene node; hardcoding the state would not exercise transitions; the threat scalar must come from alive enemies. Survivor: an on-demand `enemy_state_preview()` that builds a fresh machine from a shipped-clip document, sets the live threat, advances it and reports state plus JSON pose.
+- **IMPLEMENT**: `game.py` imports `AnimationStateMachine`; the preview has calm/alert/aggressive states with three threat transitions. `tests/test_keystone_animation_state_mechanics.py` (5 tests) pins authored states/transitions, threat-driven active state, JSON pose, default parameter and sim isolation.
+- **MEASURED**: threat 0.0 -> calm, 0.5 -> alert, 0.9 -> aggressive; report has 3 states, 3 transitions, clip `warden_idle` at t=0.483333; default threat 0.0 with no enemies and 1.0 with a live warden.
+- **MUTATION CHECK**: inverting a transition operator fails 2 of 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **708 passed** (703 + 5 new animation-state tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-187.json`.
+
+## Cycle 188 - Keystone testbed: enemy steering from live state
+- **FIND**: a corrected coverage scan (fixing the earlier `from keystone import X` blind spot) found nine unconsumed Keystone modules, including `steering`. The sim already carries enemy positions, radii, speeds and a juice separation block, but nothing turned them into a wish vector.
+- **ANALYZE**: integrating the wish would change the sim and hash; hardcoded radii/speeds would ignore data edits. A first-draft arrive test was wrong — the shipped mite sits ~6 m from the eye, so a 2 m slow radius never engaged; the test uses 10 m. Survivor: an on-demand `enemy_steering_report()`.
+- **IMPLEMENT**: `game.py` imports the steering API and builds `Agent`s from live state and DATA tuning, exposing seek, arrive, separation and a clamped wish. `tests/test_keystone_steering_mechanics.py` (5 tests) pins empty state, seek direction/cap, arrive slowdown, neighbour separation and sim isolation.
+- **MEASURED**: two mites 0.1 m apart → seek `(0,0.2795,4.1907)`, separation `(-0.4068,0,0)`, clamped wish `(-0.4049,0.2782,4.1712)` at max speed 4.2.
+- **MUTATION CHECK**: passing no neighbours to `steer` fails the separation test; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **713 passed** (708 + 5 new steering tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`). One suite run overlapped another and showed 3 transient failures; two clean sequential re-runs both passed 713.
+- **Evidence file**: `evidence/cycle-188.json`.
+
+## Cycle 189 - Keystone testbed: live contract versions as an AI query
+- **FIND**: `schema_diff` was one of nine Keystone modules a corrected coverage scan found unconsumed. The shooter pins web_api 1 / scene 5 / editor 66 / prefab 2 in its api-contract test but had no runtime query describing what this build sees.
+- **ANALYZE**: `history()` shells out to git and is too slow for an AI query; copying the literals would repeat cycle 138's stale-pin lesson; the existing contract test must stay so drift still fails loudly. Survivor: an on-demand `keystone_contract_report()` built directly from `schema_diff.current_versions()`.
+- **IMPLEMENT**: `game.py` imports `current_versions` and returns a schema-1 sorted version map. `tests/test_keystone_schema_diff_mechanics.py` (5 tests) pins shape, parity with the live module, monkeypatched wiring (proving no copied literal), JSON stability and sim isolation.
+- **MEASURED**: `{editor: 66, prefab: 2, scene: 5, web_api: 1}` — exactly the module's live values.
+- **MUTATION CHECK**: replacing the module call with a copied literal fails the wiring test; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **718 passed** (713 + 5 new schema-diff tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-189.json`.
+
+## Cycle 190 - Keystone testbed: structured Why/Fix errors for broken data
+- **FIND**: `errors` was one of nine Keystone modules the corrected coverage scan found unconsumed. Cycles 167/168 embedded Why:/Fix: prose in `ValueError` messages, so an AI had to parse prose to recover the action.
+- **ANALYZE**: changing the rendered text would break the player contract and 14 existing assertions; a non-ValueError type would break the engine handler; a structured `why` containing only the parser detail would not name the file. Survivor: `ShooterDataError(KeystoneError)` with a preserved `__str__`, one `_data_error()` builder for all six sites, and an on-demand JSON report.
+- **IMPLEMENT**: `sim.py` routes all six data failures through Keystone's structured error; `game.py` adds `data_error_report()` returning why/fix/message. `tests/test_keystone_errors_mechanics.py` (8 items) pins the fields, the unchanged message, JSON safety and sim isolation. All existing `test_data_integrity` cases still pass.
+- **MUTATION CHECK**: dropping the `KeystoneError` base fails all 8 new items; `sim.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **726 passed** (718 + 8 new items); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-190.json`.
+
+## Cycle 191 - Keystone testbed: a local NavAgent route preview
+- **FIND**: `nav_agent` was one of six Keystone modules the corrected coverage scan still listed as unconsumed. It is the integration layer over pathfinding, smoothing, following and steering, and the shooter already publishes the arena grid and spawn-to-pickup cells.
+- **ANALYZE**: using the live body would move the player; passing the sim's wall colliders to the controller pushed the preview body away from its first waypoint in a probe, so this is explicitly a bare route-following preview with no obstacles (the vertical drop is expected and is not a gameplay claim). The goal must come from the shipped nav plan, not a literal.
+- **IMPLEMENT**: `game.py` imports `CharacterBody`/`CharacterController`/`NavAgent`/`nav_agent_report` and adds `bot_nav_preview()`. `tests/test_keystone_nav_agent_mechanics.py` (5 tests) pins plan shape and goal, horizontal progress, zero-frame stability, reproducibility and sim isolation.
+- **MEASURED**: planned true, goal `[20,14]`, before position `[0.0,0.9,8.0]` with 2 waypoints / remaining distance 14.707107; after 30 frames the body moved +0.478 on x and z toward the first waypoint.
+- **MUTATION CHECK**: hardcoding the goal to `(0,0)` fails the plan-shape test; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **731 passed** (726 + 5 new nav-agent tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-191.json`.
+
+## Cycle 192 - Keystone testbed: root motion on a local presenter rig
+- **FIND**: `root_motion_presenter` was one of five Keystone modules the corrected coverage scan still listed as unconsumed. Cycle 186 extracted root deltas with pure functions; no consumer had exercised the presenter that drives a container and applies an in-place pose to a child.
+- **ANALYZE**: the game's live scene must not be touched; a pure-delta report would duplicate cycle 186; a nonexistent animated node is rejected by Keystone and makes a clear mutation target. Survivor: an on-demand preview with a throwaway Scene, container + `subject` child, local `RootMotionBody` and presenter report.
+- **IMPLEMENT**: `game.py` imports the presenter APIs and adds `idle_presenter_preview(frames=12)`. `tests/test_keystone_root_motion_presenter_mechanics.py` (5 tests) pins report shape, container follow/turn, applied child, zero-frame stability and sim isolation.
+- **MEASURED**: before `[0.0,0.9,0.0]` yaw 0; after 12 steps `[0.0,0.38,0.0]` yaw 0.019999, motion yaw 0.001667, updated `['subject']`.
+- **MUTATION CHECK**: a nonexistent animated node fails all 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **736 passed** (731 + 5 new presenter tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-192.json`.
+
+## Cycle 193 - Keystone testbed: nav grid from the live collision boxes
+- **FIND**: `nav_authoring` was one of the Keystone modules the corrected coverage scan still listed as unconsumed. A probe showed the naive consumer fails: passing every `sim.colliders` AABB to `grid_from_boxes` blocks all 1600 cells because the arena floor spans the grid and vertical extents are ignored.
+- **ANALYZE**: dropping floor-level boxes (top at y<=0.1) leaves 11 wall/cover boxes; hardcoded cells would drift from the level; the existing nav plan stays authoritative and this report is additive.
+- **IMPLEMENT**: `game.py` imports `grid_from_boxes` and adds `nav_authoring_report(clearance=0.2)`. `tests/test_keystone_nav_authoring_mechanics.py` (5 tests) pins shape, floor exclusion, clearance widening, reproducibility and sim isolation.
+- **MEASURED**: 40x40, 11 boxes, 1 floor excluded, 244 blocked at clearance 0.2 (268 at 0.5), spawn (20,28) and goal (20,14) open, route found in 14 steps.
+- **MUTATION CHECK**: including the floor blocks all 1600 cells and fails all 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **741 passed** (736 + 5 new nav-authoring tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-193.json`.
+
+## Cycle 194 - Keystone testbed: profile contract via VersionedStore
+- **FIND**: `persistence` was the last substantive Keystone module the corrected coverage scan still listed as unconsumed; `profile.py` hand-rolls schema checks, quarantine and backup recovery that VersionedStore provides.
+- **ANALYZE**: rewriting profile.py would change the save format and risk cycles 164/165's failure-mode contract; pointing at DEFAULT_PATH would touch the player's save; dropping the migrations would only prove the happy path, so it became the mutation target. Survivor: a throwaway-directory probe of the shipped store policy.
+- **IMPLEMENT**: `game.py` imports `VersionedStore`/`write_json_atomic` plus the profile schema and migrations, and adds `profile_store_probe()`. `tests/test_keystone_persistence_mechanics.py` (5 tests) pins every stage, real-profile isolation, reproducibility and sim isolation.
+- **MEASURED**: schema 3; fresh `default`; saved true; reload `file`; v0 migrated true with runs 4 / schema 3; corrupt `backup` with quarantined true / schema 3.
+- **MUTATION CHECK**: constructing the store without migrations fails the old-schema test; `shooter/game.py` restored byte-identically (sha256).
+- **COVERAGE NOTE**: the corrected scan's only unconsumed Keystone module is now `_version`, a version constant with no consumer-side behaviour to exercise.
+- **Gates**: `aikit check shooter` **5/5**; shooter **746 passed** (741 + 5 new persistence tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-194.json`.
+
+## Cycle 195 - Keystone testbed: the last unconsumed module
+- **FIND**: `_version` is the single source of truth for Keystone's version and was the last module the corrected coverage scan found unconsumed. Proof summaries and AI consumers had no query for the authoritative value.
+- **ANALYZE**: parsing pyproject.toml would target the build backend's copy; a copied literal would drift, which the wiring test and mutation check make visible. Survivor: an on-demand `engine_version_report()` importing `__version__` from `keystone._version`.
+- **IMPLEMENT**: `game.py` imports `KEYSTONE_VERSION` and adds the report. `tests/test_keystone_version_mechanics.py` (4 tests) pins authoritative parity, monkeypatched wiring, JSON stability and sim isolation.
+- **MEASURED**: `{'schema': 1, 'engine_version': '0.45.0'}`.
+- **MUTATION CHECK**: substituting a literal version fails the parity and wiring tests; `shooter/game.py` restored byte-identically (sha256).
+- **COVERAGE MILESTONE**: the corrected scan now reports **75 of 75** Keystone top-level modules imported, with none unconsumed.
+- **Gates**: `aikit check shooter` **5/5**; shooter **750 passed** (746 + 4 new version tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-195.json`.
+
+## Cycle 196 - Testbed audit: one authoritative nav grid
+- **FIND**: cycles 182 and 193 built two different nav grids from the same shipped level. Measured before the fix: `nav_plan_report` reported 143 blocked cells (cover-only rasterization) while `nav_authoring_report` reported 244 (collider authoring including walls) — two sources of truth for one arena.
+- **ANALYZE**: keeping both would drift silently when a wall moves; loosening the parity assertion would hide that drift; editing Keystone or the sim's colliders was out of scope. Survivor: a private `_nav_grid(clearance)` helper using `grid_from_boxes` with floor filtering, shared by both reports.
+- **IMPLEMENT**: the duplicated cover rasterization was removed; both reports now call the helper. `tests/test_keystone_nav_unification_mechanics.py` (4 tests) pins blocked-set parity, route parity, helper authority and sim isolation.
+- **MEASURED**: both reports and the helper now report 244 blocked cells, the same start `(20,28)`, goal `(20,14)` and a 14-step route.
+- **MUTATION CHECK**: restoring cover-only rasterization fails 2 of 4 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **754 passed** (750 + 4 new consistency tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-196.json`.
+
+## Cycle 197 - Testbed audit: one shared arena layout
+- **FIND**: four on-demand reports each recomputed the same `size / 1.0 / -size/2` math and two copies of the floor-based world-to-cell conversion. A level-size edit would need four synchronized changes.
+- **ANALYZE**: leaving four copies invites desynchronisation; changing tile cover bounds would alter shipped output for no reason. A mutation probe was especially useful: hardcoding grid width 40 while the report still said 20 passed the first tests, so the assertion was strengthened to check the grid's real `width`.
+- **IMPLEMENT**: `game.py` adds `_arena_layout()` and `_to_cell()` and routes `arena_tile_report`, `_nav_grid`, `nav_plan_report` and `nav_authoring_report` through them; all existing values are preserved. `tests/test_keystone_arena_layout_mechanics.py` (4 tests) pins the layout, endpoint cells, resized-arena propagation and sim isolation.
+- **MUTATION CHECK**: hardcoding width in `_nav_grid` now fails the resized-arena test; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **758 passed** (754 + 4 new consistency tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-197.json`.
+
+## Cycle 198 - Testbed audit: one shake-reset path
+- **FIND**: the trauma reset plus `camera_shake_report`/`camera_shaker_report` clears appeared three times — build_scene and both cinematic starts. Cycle 176 already caught a missing clear in this pattern, so a future shake field could be forgotten at one caller.
+- **ANALYZE**: leaving three copies invites that drift; changing reset semantics would break the published contract. Survivor: one `_clear_shake_reports()` helper called from rebuild, death and victory cinematics.
+- **IMPLEMENT**: the three reset blocks were replaced with the helper; a grep now finds the three lines exactly once. `tests/test_keystone_report_resets_mechanics.py` (5 tests) pins helper behaviour, all three callers, idempotence and sim isolation. The three caller tests already passed before the helper, confirming behaviour is preserved.
+- **MUTATION CHECK**: removing one report clear from the helper fails 3 of 5 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **763 passed** (758 + 5 new consistency tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-198.json`.
+
+## Cycle 199 - Testbed audit: the bot preview's grid
+- **FIND**: cycle 196 unified the route and authoring reports at 244 blocked cells, but `bot_nav_preview` still built a 143-cell cover-only grid from `arena_tile_report` while taking its goal from the unified grid — one local agent planning on two level models.
+- **ANALYZE**: leaving three nav derivations repeats the two-source-of-truth problem; changing the TileMap report would alter a different authoring artefact; removing the NavAgent preview would drop the cycle 191 consumer. Survivor: use `_arena_layout()` + `_nav_grid(0.0)` and expose `blocked_cells` for parity testing.
+- **IMPLEMENT**: the tile-derived grid was replaced. `tests/test_keystone_bot_nav_grid_mechanics.py` (4 tests) pins blocked-set parity, endpoint agreement, resized-arena propagation and sim isolation.
+- **MEASURED**: bot preview 244 blocked cells, goal `[20,14]` — identical to `_nav_grid` and `nav_plan_report`.
+- **MUTATION CHECK**: restoring the cover-only grid fails 2 of 4 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **767 passed** (763 + 4 new consistency tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-199.json`.
+
+## Cycle 200 - Testbed audit: one JSON-safe pose serializer
+- **FIND**: `enemy_state_preview` and `enemy_blend_report` each carried the same nine-line position/rotation/scale rounding block to make sampled poses JSON-safe.
+- **ANALYZE**: leaving two copies risks a future channel change reaching only one report; changing precision would alter published values. Survivor: one module-level `_pose_json()` helper, with a monkeypatch test proving both callers use it.
+- **IMPLEMENT**: both duplicated loops were replaced. `tests/test_keystone_pose_json_mechanics.py` (4 tests) pins channel coverage, wiring in both callers, JSON safety and sim isolation.
+- **MEASURED**: six-decimal rounding preserved — position `0.123457`, scale `1.055556`, rotation 4 components.
+- **MUTATION CHECK**: dropping the scale channel fails the coverage test; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **771 passed** (767 + 4 new consistency tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-200.json`.
+
+## Cycle 201 - Testbed audit: one rebuild reset for presentation state
+- **FIND**: build_scene cleared two camera paths, two camera reports, both shake reports and the spatial audio report one line at a time. Cycle 198 unified only the shake triple, so the rest could drift.
+- **ANALYZE**: a cinematic must not call the full reset because it would discard the report it just created; semantics must stay identical. Survivor: `_reset_presentation_reports()` for build_scene, delegating shake state to the cycle 198 helper.
+- **IMPLEMENT**: build_scene now calls the helper. `tests/test_keystone_presentation_resets_mechanics.py` (4 tests) pins complete clearing, wiring via spy, rebuild after a cinematic and sim isolation. The rebuild test already passed before the helper, confirming behaviour preservation; two spy-signature mistakes in the first draft were corrected.
+- **MUTATION CHECK**: forgetting the spatial audio clear fails 3 of 4 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **775 passed** (771 + 4 new consistency tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-201.json`.
+
+## Cycle 202 - Testbed audit: engagement and levels tuning bands
+- **FIND**: a 10-case full-suite sweep doubled values across `engagement.json` and `levels.json`. Seven were caught; three survived with everything green: `cache_expire_s`, `overdrive.duration_s` and `max_alive`.
+- **OWN TEST BUG**: the first cache test hardcoded `cache_expire_s: 8.0` in its setup, so the 8->16 mutation still passed. It now forces only `cache_p` and reads the TTL from the shipped document — the mutation check then failed all three survivors.
+- **IMPLEMENT**: `tests/test_data_tuning_bands.py` (3 tests) pins cache TTL 6..10 s with expiry, overdrive 6..10 s with decay to zero, and a positive alive-enemy cap <= 24 over 1600 frames. No production code changed; both data files were restored byte-identically after every mutation (hashes in the evidence file).
+- **MEASURED**: 10 sweep runs, 7 caught / 3 pinned; final recheck 3 failed / 0 passed.
+- **Gates**: `aikit check shooter` **5/5**; shooter **778 passed** (775 + 3 new tuning tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-202.json`.
+
+## Cycle 203 - Testbed audit: weapons and enemies tuning bands
+- **FIND**: a 12-case full-suite sweep of the last two tuning documents doubled one value per weapon/enemy. Seven were caught; five survived with all 778 tests green: pulse `falloff_start`, scatter `pellets`, lance `dmg` and `pierce`, and warden `attack_cd_s`.
+- **PROBE CORRECTIONS**: the centre lane was blocked by the z=-10 cover, so the falloff probe uses a clear x=15 lane over 38 m; the lance damage probe reads the maximum drop across three aligned enemies because hits sometimes land on the second one.
+- **IMPLEMENT**: `tests/test_weapon_enemy_tuning_bands.py` (5 tests) pins 6-12 tracers, 45-70 lance damage, exactly 2 pierced enemies, 8-11 falloff damage at range and a 2-4 s warden cooldown. No production code changed; both data files were restored byte-identically after every mutation (hashes in the evidence file).
+- **MUTATION CHECK**: all five survivors fail their targeted test when doubled.
+- **Gates**: `aikit check shooter` **5/5**; shooter **783 passed** (778 + 5 new tuning tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-203.json`.
+
+## Cycle 204 - Testbed usability: one aggregate report
+- **FIND**: cycles 178-203 added many no-argument report methods with no single discovery point; an AI consumer had to know ~17 names.
+- **ANALYZE**: the aggregate is additive and composes only no-argument reports (data_error_report needs an error); it must reflect current state, so nothing is cached.
+- **IMPLEMENT**: `ShooterGame.testbed_report()` returns eight families — engine, contracts, nav, animation, steering, picking, assets, bot — in one JSON-safe document. `tests/test_testbed_report_mechanics.py` (4 tests) pins family coverage, nested schemas, JSON safety/reproducibility and sim isolation; README documents the entry point.
+- **MEASURED**: ~8198 JSON bytes, nav plan 14 steps, 10 asset digests, engine 0.45.0.
+- **MUTATION CHECK**: dropping the assets family fails 2 of 4 tests; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **787 passed** (783 + 4 new aggregate tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-204.json`.
+
+## Cycle 205 - Testbed audit: reflective report coverage
+- **FIND**: cycle 204's aggregate hardcoded eight families and the test asserted the same list, so two older no-arg reports — `profile_store_probe` and `presentation_rng_report` — were silently omitted.
+- **EVIDENCE OF THE BLIND SPOT**: the new reflective test failed with KeyError 'sources' while all four hardcoded tests passed.
+- **IMPLEMENT**: `testbed_report()` gains storage and presentation families and a self-describing `sources` list; the test now introspects every no-arg `*_report`/`*_probe` method on ShooterGame and compares it with that list, so a future report cannot be forgotten. Two first-draft assertion bugs (sources is a list; container families have no own schema) were corrected.
+- **MEASURED**: 8 composed no-arg reports, ~8787 JSON bytes.
+- **MUTATION CHECK**: dropping one source fails the reflective test; `shooter/game.py` restored byte-identically (sha256).
+- **BUDGET NOTE**: README is 35,661 / 37,500 chars (1,839 left); gates pass, but future cycles must watch the limit.
+- **Gates**: `aikit check shooter` **5/5**; shooter **788 passed** (787 + 1 new test); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-205.json`.
+
+## Cycle 206 - Testbed audit: the last juice.json keys
+- **FIND**: cycles 174/177 swept twelve juice constants; a 13-case sweep of the rest found 8 survivors with all 788 tests green and caught 5 (low_hp_cue.hz, flash_scale, score_pop_s, hurt_cue_s, dry_fire_cd_s).
+- **IMPLEMENT**: seven behaviour tests were added to the already-listed `test_juice_tuning.py` (now 14 tests), so the README budget stayed at 35,661 / 37,500 chars. No production code changed; juice.json was restored byte-identically after every mutation.
+- **MEASURED**: hit gap delta 4 px; capped wide-spread gap 40; low-HP peak alpha 0.44; death_t 0.15; pickup_fx_t 0.283; killmark 0.18; hitmark 0.12; hit_t 0.25.
+- **MUTATION CHECK**: all eight survivors fail their targeted test when doubled.
+- **Gates**: `aikit check shooter` **5/5**; shooter **795 passed** (788 + 7 new tuning tests); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-206.json`.
+
+## Cycle 207 - Cross-process determinism of the testbed report
+- **FIND**: cycle 169 proved the sim is stable across PYTHONHASHSEED values, but the on-demand reports used as AI/soak evidence had never been checked across processes.
+- **MEASURED**: `testbed_report()` hashes identically (`99a985cd…`) under seeds 0, 1 and 424242, so this is a guard rather than a production fix.
+- **IMPLEMENT**: a fourth test in the already-listed `test_cross_process_determinism.py` runs the aggregate report in a fresh interpreter per seed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: replacing `sorted(sources)` with `list(set(sources))` makes the hash seed-dependent and fails the test; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **796 passed** (795 + 1 new cross-process test); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-207.json`.
+
+## Cycle 208 - Testbed audit: read-only report contract
+- **FIND**: cycles 178-207 added many on-demand reports whose promise is that they never touch sim state, but nothing stopped a future report from assigning `self.sim.*`. A durations run showed the suite healthy (slowest 12.14 s), so this is a hardening cycle rather than a regression fix.
+- **IMPLEMENT**: an AST guard in the already-listed `test_testbed_report_mechanics.py` walks every `*_report`/`*_probe`/`*_preview` method plus `crosshair_pick` and fails by method name on a sim write. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: adding `self.sim.hp = 0` to `engine_version_report` fails the guard; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **797 passed** (796 + 1 new guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-208.json`.
+
+## Cycle 209 - Documentation integrity: testbed matrix references
+- **FIND**: the README testbed matrix names test files inline; the guidelines gate checks the directory tree but not those references, so a renamed test could leave silent doc drift. A probe found 62 distinct references, all currently valid.
+- **IMPLEMENT**: a guard in the already-listed `test_readme_commands.py` extracts every backticked `tests/*.py` path and fails by name on a missing file. No production code or README content changed; budget stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: pointing one matrix reference at a nonexistent test fails the guard; README restored byte-identically (sha256).
+- **TIMING NOTE**: one full-suite run took 325 s under machine load; earlier runs this cycle were faster and all green.
+- **Gates**: `aikit check shooter` **5/5**; shooter **798 passed** (797 + 1 new documentation guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-209.json`.
+
+## Cycle 210 - Testbed audit: renderer flags
+- **FIND**: no game test asserted the four renderer flags adopted from grade.json. The first full-suite mutation (shadows true->false) left all 798 tests green; the remaining cases were cut short by a 15-minute sweep timeout under heavy machine load.
+- **INCIDENT AND RECOVERY**: the killed sweep left grade.json with srgb false and CRLF drift. The exact HEAD blob bytes were restored; final sha256 a50877b5… matches the pre-sweep baseline and git is clean for that file.
+- **IMPLEMENT**: one guard in the already-listed test_graphics.py asserts scene.shadow/color/post/bloom are all enabled. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: flipping each of the four flags fails the guard; the file was restored byte-identically after every flip.
+- **Gates**: `aikit check shooter` **5/5**; shooter **799 passed** (798 + 1 new flag guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **LEDGER TOOL NOTE**: `disruption_recovery.py --checkpoint` crashed with `NameError: interrupt is not defined` while recording the Phase 4 checkpoint, so the task has phase 2 and completed checkpoints but no phase 4 entry; `--complete` succeeded. This is a kit tool bug, not a game defect, and the ledger was not hand-edited. The canonical `aikit check shooter` gate passed 5/5 and backs the verification claim.
+- **Evidence file**: `evidence/cycle-210.json`.
+
+## Cycle 211 - Testbed audit: idle clip presentation bands
+- **FIND**: the four shipped .kanim clips had determinism/uniformity assertions but no magnitude band, so a mistyped breathe scale could change enemy feel with every test green. Samples at t=0.5: mite 1.06, brute 1.021875, wisp 1.0, warden 1.02.
+- **IMPLEMENT**: a band guard in the already-listed `test_enemy_animation.py` asserts uniform scale 1.0..1.12, |rotation.y| <= 1.0 and at least one visible breathe. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: changing mite_idle's 1.06 key to 1.2 fails the guard; the clip was restored byte-identically (sha256).
+- **LEDGER TOOL FOLLOW-UP**: cycle 210's `NameError: interrupt is not defined` could not be reproduced — `record_checkpoint` accepts `interrupt`, a fresh temporary-workspace repro succeeded, and this cycle's Phase 2 checkpoint succeeded. The ledger was not hand-edited; the canonical 5/5 gate backs verification.
+- **Gates**: `aikit check shooter` **5/5**; shooter **800 passed** (799 + 1 new clip-band guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-211.json`.
+
+## Cycle 212 - Testbed audit: core material graph bands
+- **FIND**: `test_core_material_graph` pinned the texture name/size and two emissive channels, but the evaluated material's colour channels, emissive.z, metallic and roughness had no magnitude assertions.
+- **IMPLEMENT**: a band guard in the already-listed `test_core_material_graph.py` samples the evaluated Material and checks colour (1.0, 0.88, 0.55), emissive.z 0.08, metallic 0.1 and roughness 0.4 within design bands. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: changing metallic 0.1 to 0.5 fails the guard; the data file was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **801 passed** (800 + 1 new material-band guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-212.json`.
+
+## Cycle 213 - Testbed audit: warden core state-machine contract
+- **FIND**: `test_boss_anim_state` pinned state count, clip targets and pulse peaks, but the shipped .kstate transition operators, threshold, durations and loop/speed had no magnitude assertions.
+- **IMPLEMENT**: a band guard in the already-listed `test_boss_anim_state.py` checks calm->charge (windup greater 0.5, duration 0.08) and charge->calm (windup less 0.5, duration 0.12) plus loop=true and speed=1.0 for both states. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: changing the calm->charge duration 0.08 to 0.5 fails the guard; the data file was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **802 passed** (801 + 1 new state-machine guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-213.json`.
+
+## Cycle 214 - Testbed audit: victory camera path bands
+- **FIND**: `test_campaign_camera_path` pinned key count, times and camera-follows-pose, but the authored lens and altitude were only compared against the path's own samples. Shipped keys: fov 62/58/55/52, heights 3.3/2.6/2.1/1.9.
+- **IMPLEMENT**: a band guard in the already-listed `test_campaign_camera_path.py` checks fov 50..65, height 1.5..4.0, monotonically decreasing fov and at least 5 degrees of tightening. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: changing the opening fov 62 to 90 fails the guard; the document was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **803 passed** (802 + 1 new camera-path guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-214.json`.
+
+## Cycle 215 - Testbed audit: cache material surface bands
+- **FIND**: `test_cache_material_library` pinned colour, emissive, specular, shininess and texture, but metallic, roughness and checker_scale were unasserted. The shipped file loads metallic 0.0, roughness 0.7, checker_scale 0.0.
+- **IMPLEMENT**: a surface-field band guard in the already-listed `test_cache_material_library.py` (now 4 tests). No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: changing roughness 0.7 to 0.1 fails the guard; the data file was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **804 passed** (803 + 1 new material-surface guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-215.json`.
+
+## Cycle 216 - Testbed audit: pickup prefab document contract
+- **FIND**: `test_pickup_prefab` pinned root names and instantiated meshes but not schema, root ids, layer, visibility, identity transforms, or whether its pickup position agrees with levels.json.
+- **IMPLEMENT**: a document test in the already-listed `test_pickup_prefab.py` pins schema 2, the three root ids, default layer, hidden state, identity rotation/scale, and asserts the pickup root position equals the sim's shipped spot read from levels.json. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: moving the prefab pickup z from -6.0 to -7.0 fails the guard; the document was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **805 passed** (804 + 1 new prefab-document guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-216.json`.
+
+## Cycle 217 - Testbed audit: shipped cache crate mesh
+- **FIND**: `test_cache_asset` pinned 24 triangles and file-backed registration, but the triangulated vertex count and the 0.6 body + 0.08 lid rim bounds were unasserted.
+- **IMPLEMENT**: a guard in the already-listed `test_cache_asset.py` pins 48 positions, 72 indices and bounds low (-0.34,-0.30,-0.34) high (0.34,0.38,0.34) within bands. First draft used Vec3 attributes on tuple bounds and was corrected. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: moving a lid vertex -0.34 to -0.44 fails the guard; the OBJ was restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **806 passed** (805 + 1 new mesh-shape guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-217.json`.
+
+## Cycle 218 - Testbed audit: audio cue manifest
+- **FIND**: the game builds 34 named clips but no test pinned the manifest, so a dropped cue could remove a voice/caption path silently.
+- **IMPLEMENT**: an exact-name-set guard with positive durations in the already-listed `test_audio.py` (now 6 tests). First draft wrongly chained `._clips` off `build_scene()`'s Scene return and was corrected. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **PROBE INCIDENT**: an exploratory `--help` probe of shipped scripts showed several treat it as a positional argument; audio_probe created a `--help/` directory and capture.py overwrote tracked `shot_fix_*` files. The directory was deleted and all ten files git-restored; no script was changed.
+- **MUTATION CHECK**: removing the `wisp_bolt` registration fails the manifest test; `shooter/game.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **807 passed** (806 + 1 new audio-manifest guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-218.json`.
+
+## Cycle 219 - Testbed audit: shipped rosters
+- **FIND**: no test asserted the exact weapon and enemy rosters or that each record's id matches its dict key.
+- **IMPLEMENT**: a guard in the already-listed `test_data_integrity.py` pins both exact sets (pulse/scatter/lance/surge and mite/brute/wisp/warden) and id/key agreement. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: renaming the surge weapon id to surge2 fails the guard; weapons.json restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **808 passed** (807 + 1 new roster guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-219.json`.
+
+## Cycle 220 - Testbed audit: intermediate profile migrations
+- **FIND**: `test_profile` covered unsupported-schema refusal and the v0 migration, but the v1->v3 and v2->v3 steps had no positive test.
+- **IMPLEMENT**: two parametrized cases in the already-listed `test_profile.py` prove runs/best_score are preserved and wins/history defaults are added. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION LESSON**: mutating v2's setdefault key proved nothing because `_normalize()` fills the same default; the observable mutation replaces `_migrate_v1`'s `dict(raw)` with `default_profile()`, which drops progress and fails the v1 case. `profile.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **810 passed** (808 + 2 new migration cases); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-220.json`.
+
+## Cycle 221 - Testbed audit: wave/roster cross-document integrity
+- **FIND**: no test checked that every enemy key named in `levels.json` waves exists in the shipped enemy roster, or that win_wave/pickup_wave index real waves; a `wisp`->`wisps` typo would silently spawn nothing.
+- **IMPLEMENT**: a cross-document guard in the already-listed `test_data_integrity.py` (now 16 tests) checks wave keys are a subset of the loaded roster, every wave is non-empty, and win/pickup wave indices are in range. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: renaming a wave key `wisp`->`wisps` fails the guard; `levels.json` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **811 passed** (810 + 1 new cross-document guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-221.json`.
+
+## Cycle 222 - Testbed audit: arena bounds integrity
+- **FIND**: the shared arena layout helper pins size/origin math, but no test checked that the authored spawn, pickup and cover rectangles lie inside the 40x40 arena and clear its walls.
+- **IMPLEMENT**: a bounds guard in the already-listed `test_data_integrity.py` (now 17 tests) checks centres are inside, extents are positive, and covers do not poke through the walls. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: widening the edge cover w 6->12 makes it poke through the wall while its centre stays inside, failing the guard; `levels.json` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **812 passed** (811 + 1 new arena-bounds guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-222.json`.
+
+## Cycle 223 - Testbed audit: weapon shape invariants
+- **FIND**: only pulse falloff was pinned behaviourally; a falloff_start beyond a weapon's range would silently disable falloff, and non-positive pellets/mag/pierce would break firing.
+- **IMPLEMENT**: a cross-weapon structural guard in the already-listed `test_weapon_enemy_tuning_bands.py` (now 6 tests) checks 0 < falloff_start < range and positive pellets/mag/pierce/non-negative reload for every weapon. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: pushing pulse falloff_start 25->70 past its range 60 fails the guard; `weapons.json` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **813 passed** (812 + 1 new weapon-shape guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-223.json`.
+
+## Cycle 224 - Testbed audit: enemy shape invariants
+- **FIND**: no test checked that enemy hp/speed/radius are positive, that height >= body diameter, or that the warden's summon cadence is coherent; a zero speed or fat radius would make an enemy inert or uncollidable.
+- **IMPLEMENT**: a structural guard in the already-listed `test_weapon_enemy_tuning_bands.py` (now 7 tests) pins positive core fields, height >= 2*radius, and warden summon_first < summon_cd with positive count/clearance/cd/windup. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: inflating warden radius 1.0->1.5 makes its diameter exceed its height and fails the guard; `enemies.json` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **814 passed** (813 + 1 new enemy-shape guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-224.json`。
+
+## Cycle 225 - Testbed audit: death FX cap coverage
+- **FIND**: `game.py` looks up death_fx_scale with `death_caps.get(etype, 1.0)`, so a misspelled or missing enemy key silently renders a full-size kill burst.
+- **IMPLEMENT**: a cross-document guard in the already-listed `test_juice_tuning.py` (now 15 tests) checks exact key coverage against the roster, caps in (0,1] and warden as the smallest. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: renaming the warden cap key to `wardenx` fails the guard; `juice.json` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **815 passed** (814 + 1 new death-FX cap guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-225.json`。
+
+## Cycle 226 - Testbed audit: spawn capacity and progression invariants
+- **FIND**: `max_alive` was pinned only to an observable band (<=24), so lowering it to 2 would still pass the long-wave test while making full waves unspawnable; pickup_wave vs win_wave ordering was unpinned.
+- **IMPLEMENT**: a cross-field guard in the already-listed `test_data_integrity.py` (now 18 tests) checks max_alive >= every wave total (4/7/11/14/15 vs 24) and pickup_wave(2) < win_wave(4). No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: lowering max_alive 24->2 fails the new guard while the existing long-wave cap test STILL PASSES, proving a genuine survivor; `levels.json` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **816 passed** (815 + 1 new spawn-capacity guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-226.json`。
+
+## Cycle 227 - Testbed audit: headless bot purity contract
+- **FIND**: `kite_step` is documented as a pure function of sim state but no test asserted it is repeatable or non-mutating; a stray sim write or RNG call would break replay determinism.
+- **IMPLEMENT**: a guard in the already-listed `test_shooter.py` (now 18 tests) pins exact script lengths and that `kite_step`/`overdrive_step` are repeatable and leave `stable_hash(sim.snapshot())` unchanged. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: injecting `sim.tick += 1` at the top of `kite_step` (tick is in the snapshot) fails the guard; `bot.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **817 passed** (816 + 1 new bot-purity guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-227.json`。
+
+## Cycle 228 - Testbed audit: HUD presentation-only contract
+- **FIND**: `shooter/ui.py` declares 'Presentation-only, never sim' but no test asserted `draw_shooter`/`reticle_gap` leave the sim snapshot unchanged.
+- **IMPLEMENT**: a purity guard in the already-listed `test_reticle.py` (now 5 tests) checks `stable_hash(sim.snapshot())` is unchanged after drawing and that the HUD actually draws rects/texts. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION CHECK**: injecting `sim.hits += 1` at the top of `draw_shooter` fails the guard; `ui.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **818 passed** (817 + 1 new HUD-purity guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-228.json`。
+
+## Cycle 229 - Testbed audit: Sim.reseed full-state contract
+- **FIND**: only partial reseed behaviour (rng streams) was tested; an incomplete reseed would make replays diverge from fresh runs.
+- **IMPLEMENT**: a guard in the already-listed `test_engagement.py` (now 13 tests) proves reseed(7) restores a played Sim to a fresh Sim(seed=7) in full snapshot, combat rng, reward rng and 20-step future trajectory. No production code changed; README stayed at 35,661 / 37,500 chars.
+- **MUTATION LESSON**: removing the reward_rng line was masked by `reset()`; the observable mutation changes reseed's `self.seed` to `int(seed)+1`, failing the guard. `sim.py` restored byte-identically (sha256).
+- **Gates**: `aikit check shooter` **5/5**; shooter **819 passed** (818 + 1 new reseed guard); determinism 1800 ok (`b25db52005e7aeb8a241f86d27b4d049`).
+- **Evidence file**: `evidence/cycle-229.json`。

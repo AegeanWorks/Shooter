@@ -19,7 +19,7 @@
   ],
   "gates": {},
   "ui_required": false,
-  "mechanics_required": false,
+  "mechanics_required": true,
   "created": "2026-11-06",
   "has_ui": false,
   "ui_kind": "cli",
@@ -35,5 +35,12 @@
   "ui_checked_at": "2026-11-06",
   "ui_source": "detected",
   "topics_source": "manual",
-  "topics_reviewed_at": "2026-11-06"
+  "topics_reviewed_at": "2026-11-06",
+  "mechanics": {
+    "core": [
+      "shooter/sim.py",
+      "shooter/bot.py"
+    ],
+    "test": "python -m pytest -q tests/test_keystone_mechanics.py tests/test_hurt_shake.py tests/test_los_broadphase.py tests/test_death_camera_path.py tests/test_campaign_camera_path.py tests/test_mechanics_contract.py tests/test_new_run_integration.py"
+  }
 }

@@ -1,0 +1,38 @@
+{
+  "cycle": 170,
+  "area": "test-suite effectiveness: a mutation sweep found two gameplay constants nothing protected",
+  "find": {
+    "report_claim": "the suite is the canonical regression shield (627 tests, 5/5 gates) and the README describes tests/test_shooter.py as covering move/shoot/hit/kill/die/score/determinism/budget",
+    "live_evidence": "a mutation sweep over six realistic sim constants, run against the core sim subset (test_shooter, test_engagement, test_keystone_mechanics, test_boss), caught four and let two survive: JUMP_SPEED 7.2 -> 8.0 and COYOTE_S 0.12 -> 0.24 both left every test green",
+    "consumer_evidence": "the apex moved from 1.020 m to 1.267 m (+24%) while covers start at 1.2 m, so a mistyped jump constant silently changes which surfaces are reachable; the existing platform test only proves the 0.7 m platform CAN be reached, which stays true for a taller jump"
+  },
+  "analyze": {
+    "read": [
+      "shooter/sim.py constants and the jump/coyote block (buffer, coyote decay, jump gate)",
+      "tests/test_levels_platform.py (jumpable platform and landing proof)",
+      "shooter/data/levels.json arena covers (heights 0.7, 1.2, 1.5, 2.0)"
+    ],
+    "killed": [
+      "pinning JUMP_SPEED as a number only: it restates a constant instead of asserting what it is for",
+      "asserting the exact apex to three decimals: a legitimate feel tweak would fail for no design reason",
+      "testing cover landability by walking into a cover: my harness could not land on the 0.7 m platform either, so the probe was invalid rather than the game"
+    ],
+    "survivor": "assert the design invariant (the jump clears the 0.7 m platform but stays under the 1.2 m cover tops) plus a tight apex band, and pin the coyote grace in frames so a doubled window is refused"
+  },
+  "fix": {
+    "shooter": "tests/test_jump_feel.py (4 tests) asserts the standing-jump rise stays within 0.98-1.06 m, that the apex clears the platform and stays under the lowest cover, that a jump 4 frames after leaving the ground fires while one 10 frames after does not, and that COYOTE_S is 6-9 frames at 60 Hz; tests/test_keystone_api_contract_mechanics.py retargeted to editor schema 65 with the two new camera-path key actions"
+  },
+  "proof": {
+    "shooter": {
+      "sweep": "6 mutations: walk speed (caught), jump speed (SURVIVED), score award (caught), enemy damage (caught), player hp (caught), coyote window (SURVIVED)",
+      "after": "with the new suite both survivors are caught: jump by test_the_standing_jump_rises_about_one_metre and test_the_jump_clears_the_platform_but_stays_under_the_lowest_cover; coyote by test_the_coyote_window_is_short_but_not_zero and test_the_coyote_window_matches_its_declared_seconds",
+      "harness_bug": "the first coyote probe started the player at y=1.4, so it landed inside the window, re-armed the timer and reported a false 'still jumps at 14 frames'; starting at y=40 fixed it, and the boundary moved from 14 to 10 frames so the behaviour test discriminates on its own rather than only the constant-arithmetic test",
+      "restore": "shooter/sim.py was byte-identical (sha256) after every mutation",
+      "drift": "keystone's editor schema advanced 64 -> 65 mid-cycle with set_camera_path_key and remove_camera_path_key; the testbed pin and the named-action list were updated rather than loosened",
+      "tests": "627 passed, 2 xfailed",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics); the run took 148s and mechanics 127s against a normally ~60s/10s baseline because another worker was loading the machine"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

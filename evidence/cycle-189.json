@@ -1,0 +1,36 @@
+{
+  "cycle": 189,
+  "area": "Keystone testbed: live contract versions as an AI query",
+  "find": {
+    "report_claim": "schema_diff was one of nine Keystone modules a corrected coverage scan found unconsumed; it exposes current_versions() so consumers need not re-read schema.py",
+    "live_evidence": "the shooter pins web_api 1, scene 5, editor 66 and prefab 2 in its api-contract test but had no runtime query describing what this build sees",
+    "consumer_evidence": "keystone_contract_report() returns exactly those four live values from the module and is JSON round-trip safe"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/schema_diff.py: current_versions(), history()",
+      "tests/test_keystone_api_contract_mechanics.py:58-64 (existing literal pins)",
+      "shooter/game.py on-demand report pattern established in cycles 178-188"
+    ],
+    "killed": [
+      "calling history(): it shells out to git and would be far too slow for a per-run AI query",
+      "copying the version literals into game.py: cycle 138's stale-pin lesson says the source must stay authoritative",
+      "replacing the api-contract test with this report: the test still needs to fail loudly on a pin drift"
+    ],
+    "survivor": "an on-demand keystone_contract_report() built directly from schema_diff.current_versions()"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports current_versions and adds keystone_contract_report(); tests/test_keystone_schema_diff_mechanics.py (5 tests) pins shape, parity with the live module, monkeypatched wiring, JSON stability and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no keystone_contract_report)",
+      "measured": "versions {editor: 66, prefab: 2, scene: 5, web_api: 1}, matching schema_diff.current_versions() exactly",
+      "mutation": "replacing the current_versions() call with a copied literal fails the monkeypatch wiring test; game.py restored byte-identically (sha256 44be3630c601ff3846bbd5f127f92cb6dfebee5ae4136b5198802053f71b1372)",
+      "codebase_map": "regenerated after the new import, method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

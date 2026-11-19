@@ -1,0 +1,30 @@
+{
+  "cycle": 221,
+  "area": "Testbed audit: wave/roster cross-document integrity",
+  "find": {
+    "report_claim": "no test checked that every enemy key named in levels.json waves exists in the shipped enemy roster, or that win_wave/pickup_wave index real waves; a typo like wisp->wisps would silently spawn nothing with every test green",
+    "live_evidence": "levels.json authors five waves using only the four roster keys (mite/brute/wisp/warden); win_wave=4 and pickup_wave=2 are valid indices",
+    "consumer_evidence": "a new cross-document test checks wave keys against the loaded roster, non-empty waves, and valid wave indices"
+  },
+  "analyze": {
+    "killed": [
+      "re-pinning individual roster sets: cycle 219 already fixed those; this cycle protects the references between documents",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_data_integrity.py"
+    ],
+    "survivor": "one cross-document integrity test (wave keys subset of roster, non-empty waves, valid win/pickup indices)"
+  },
+  "fix": {
+    "shooter": "tests/test_data_integrity.py gains the guard (now 16 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "renaming a wave key wisp->wisps in levels.json fails the guard; levels.json restored byte-identically (sha256 9a7777adc88a3f0a93401a46e39795a29a72664bf43b9bd34d248e3e71293d93)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "811 passed (810 + 1 new cross-document guard)",
+      "timing_note": "suite ran under machine load (272 s standalone, 185 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

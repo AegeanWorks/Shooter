@@ -1,0 +1,36 @@
+{
+  "cycle": 166,
+  "area": "game fix: an audio refusal could crash the frame, contradicting _play_clip's own invariant",
+  "find": {
+    "report_claim": "_play_clip's docstring states 'Audio must never crash gameplay' and counts refusals in dropped_sfx so soak reports can see them",
+    "live_evidence": "probing the mixer with each exception type showed ValueError caught (survived, dropped_sfx 1) but TypeError fatal ('CRASHED with TypeError: device refused'). Mixer.play raises TypeError for a non-AudioClip and ValueError for a sample-rate, bus, gain or pitch refusal, so the guard covered only half of what the audio layer can raise",
+    "consumer_evidence": "a crash in the finish or combat frame is the worst kind of audio bug: the player loses the run to a sound problem, which is exactly what the docstring promises cannot happen"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py _play_clip and its ~30 call sites",
+      "keystone/audio.py Mixer.play and its raise sites",
+      "the clip table built from sine/noise/square in build_scene"
+    ],
+    "killed": [
+      "widening to 'except Exception': it would hide programming errors such as AttributeError in game code, which should fail loudly",
+      "treating the missing audio device as the risk: Keystone's mixer documents 'No playback device or third-party dependency is required', so there is no device failure to handle",
+      "fixing voice exhaustion: Mixer.play never refuses for a full voice list, it appends; there is no cap to guard"
+    ],
+    "survivor": "catch exactly the two refusal types the mixer documents (TypeError, ValueError), keep every other exception loud, and pin both with tests"
+  },
+  "fix": {
+    "shooter": "shooter/game.py _play_clip catches (TypeError, ValueError) and its docstring records why both are refusals; tests/test_audio_resilience.py (5 tests) makes the mixer raise each type through the public update path, asserts the drop is counted and the shot still resolved, proves the counter never enters the deterministic sim record, checks a healthy mixer counts nothing, and checks dropped_sfx is surfaced in the snapshot for soak reports"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "606 passed, 2 xfailed in full suite",
+      "new_suite": "5 passed in 0.96s",
+      "repro": "the same probe now reports 'mixer raising ValueError: survived, dropped_sfx=1' and 'mixer raising TypeError: survived, dropped_sfx=1'",
+      "mutation": "reverting to 'except ValueError' failed exactly test_a_mixer_refusal_is_counted_and_the_frame_survives[TypeError] with 'TypeError: device refused'; shooter/game.py was restored byte-identically (sha256 match).",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

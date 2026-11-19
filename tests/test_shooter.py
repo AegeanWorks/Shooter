@@ -17,6 +17,33 @@ from shooter.sim import _Enemy, Sim
 DATA = Path(__file__).parent.parent / "shooter" / "data"
 
 
+def test_the_headless_bot_is_pure_and_its_scripts_are_exactly_n_actions():
+    """kite_step claims purity; a stray RNG/sim write would break replay."""
+    from keystone.replay import stable_hash
+
+    from shooter.bot import (
+        fire_clicks, idle, kite_step, look_spin, overdrive_step, strafe_fire,
+    )
+
+    for n in (0, 1, 7):
+        assert len(idle(n)) == n
+        assert len(move_forward(n)) == n
+        assert len(fire_hold(n)) == n
+        assert len(fire_clicks(n)) == n
+        assert len(look_spin(n)) == n
+        assert len(strafe_fire(n)) == n
+        assert len(assault(n, n)) == 2 * n
+
+    sim = Sim(seed=1)
+    sim.streak = 3  # make overdrive_step take its "press" branch too
+    for step in (kite_step, overdrive_step):
+        before = stable_hash(sim.snapshot())
+        first = step(sim)
+        after = stable_hash(sim.snapshot())
+        assert before == after, f"{step.__name__} mutated the sim"
+        assert step(sim) == first, f"{step.__name__} is not repeatable"
+
+
 def _aimed_game() -> ShooterGame:
     from keystone.math3d import Vec3
 

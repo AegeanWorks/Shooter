@@ -1,0 +1,36 @@
+{
+  "cycle": 196,
+  "area": "Testbed consistency: one authoritative nav grid",
+  "find": {
+    "report_claim": "cycles 182 and 193 built two different nav grids from the same shipped level; an AI consumer asking the route report and the authoring report got different blocked sets",
+    "live_evidence": "measured before the fix: nav_plan_report blocked_cells 143 (cover-only rasterization) versus nav_authoring_report blocked 244 (collider authoring including walls); both still found a 14-step route",
+    "consumer_evidence": "after the fix both reports and the shared helper report 244 blocked cells with the same start, goal and 14-step route"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py:nav_plan_report cover rasterization from cycle 182",
+      "shooter/game.py:nav_authoring_report grid_from_boxes derivation from cycle 193",
+      "tests/test_keystone_navigation_mechanics.py and test_keystone_nav_authoring_mechanics.py (no exact cell pins, so unification was safe)"
+    ],
+    "killed": [
+      "keeping both derivations: two sources of truth for one level would silently diverge when a wall moves",
+      "loosening the new parity assertion: that would hide the very drift this cycle is about; the old derivations were restored in a mutation instead",
+      "changing grid_from_boxes or sim.colliders: the engine module is not ours to edit and the colliders are the sim's physics truth"
+    ],
+    "survivor": "a private _nav_grid(clearance) helper using Keystone's grid_from_boxes with floor filtering, used by both nav_plan_report and nav_authoring_report"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds ShooterGame._nav_grid(), routes nav_plan_report and nav_authoring_report through it, and drops the duplicated cover rasterization; tests/test_keystone_nav_unification_mechanics.py (4 tests) pins blocked-set parity, route parity, helper authority and sim isolation; README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "3 of 4 new tests failed before the helper existed (AttributeError: no _nav_grid), plus the blocked-set parity mismatch 143 vs 244",
+      "measured": "both reports now 244 blocked cells, same start (20,28), goal (20,14), 14-step route; helper reported 244",
+      "mutation": "restoring cover-only rasterization in nav_plan_report fails 2 of 4 tests; game.py restored byte-identically (sha256 a90cfb5a837cda09d54a8b7f7ab54d3181bd2cb711962a9f5a1b6f156d068734)",
+      "codebase_map": "regenerated after the helper and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

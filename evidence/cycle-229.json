@@ -1,0 +1,30 @@
+{
+  "cycle": 229,
+  "area": "Testbed audit: Sim.reseed full-state contract",
+  "find": {
+    "report_claim": "only partial reseed behaviour (rng streams) was tested; a reseed that forgot transient state or the reward stream would make replays diverge from fresh runs with every test green",
+    "live_evidence": "after reseed(7) a played Sim is identical to a fresh Sim(seed=7) in full snapshot, combat rng and reward rng, and both follow identical 20-step trajectories",
+    "consumer_evidence": "a new test pins full-state reseed restoration and identical future trajectories"
+  },
+  "analyze": {
+    "killed": [
+      "removing the reward_rng line in reseed proved nothing because reset() re-fills it (same masking lesson as cycle 220)",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_engagement.py"
+    ],
+    "survivor": "observable mutation: reseed self.seed = int(seed)+1 diverges the whole state from a fresh Sim"
+  },
+  "fix": {
+    "shooter": "tests/test_engagement.py gains the guard (now 13 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "changing reseed's self.seed to int(seed)+1 fails the guard; sim.py restored byte-identically (sha256 9048242395af94f1746276b8ce125517feb05c267b847287196d6b2ce7dc3d05)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "819 passed (818 + 1 new reseed guard)",
+      "timing_note": "suite ran under machine load (193 s standalone, 289 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

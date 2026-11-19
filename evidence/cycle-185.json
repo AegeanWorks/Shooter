@@ -1,0 +1,38 @@
+{
+  "cycle": 185,
+  "area": "Keystone testbed: enemy idle clips in an HP-keyed blend space",
+  "find": {
+    "report_claim": "animation_blend was one of 21 Keystone modules the shooter had never imported, while it already ships four .kanim idle clips and publishes every enemy's HP in enemies.json",
+    "live_evidence": "the game sampled one fixed idle clip per enemy type; no AI/soak consumer could ask for a blended pose representing the current alive threat",
+    "consumer_evidence": "BlendSpace1D orders the shipped clips at thresholds 20/30/120/600 (wisp/mite/brute/warden), samples by max alive enemy HP and reports a JSON-safe pose; to_dict/from_dict reproduce an equal space"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/animation_blend.py: BlendSample, BlendSpace1D.sample()/report()/to_dict()/from_dict()",
+      "shooter/anim.py: TYPES and four loaded idle clips",
+      "shooter/data/enemies.json: hp 20/30/120/600"
+    ],
+    "killed": [
+      "writing the blended pose to a scene node: that would change presentation state per call and risk the sim hash; the report stays pure JSON",
+      "thresholds from score instead of HP: score is a reward value, not threat; used as the mutation target to prove the test catches a wrong field",
+      "comparing clips at time 0: all four idle clips are identity at t=0, so the distinctness tests sample at t=0.7 where the poses actually differ"
+    ],
+    "survivor": "an on-demand enemy_blend_report() keyed by shipped HP, with boundary sampling, document round-trip and a JSON pose summary"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports BlendSample/BlendSpace1D and TYPES, and adds enemy_blend_report(parameter=None, time=0.0) with a default parameter from the highest alive enemy HP; tests/test_keystone_animation_blend_mechanics.py (5 tests) pins thresholds, exact endpoint clips, mid-blend difference, threat-driven default and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no enemy_blend_report)",
+      "own_test_bugs": "two first-draft assertions compared a nested pose key incorrectly and sampled all clips at t=0 where every idle pose is identity; corrected to compare ['pose']['subject'] at t=0.7",
+      "measured": "thresholds [20,30,120,600], sample at 75/0.7 gives rotation [0.999808,0,-0.019624,0] and scale 1.033313; round_trip True",
+      "mutation": "using score instead of HP for thresholds fails 3 of 5 tests; game.py restored byte-identically (sha256 089c17ba5fc2f9584d8f09eb8c243cc711d792e3723b25e39292fb2a7a1cfe34)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "tests": "698 passed (693 + 5 new blend tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

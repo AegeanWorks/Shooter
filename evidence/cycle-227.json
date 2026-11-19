@@ -1,0 +1,30 @@
+{
+  "cycle": 227,
+  "area": "Testbed audit: headless bot purity contract",
+  "find": {
+    "report_claim": "kite_step is documented as a pure function of sim state (no RNG, no wall-clock) but no test asserted it is repeatable or non-mutating; a stray sim write or RNG call would break replay determinism with every test green",
+    "live_evidence": "kite_step and overdrive_step return equal ActionStates on repeated calls and leave stable_hash(sim.snapshot()) unchanged; the scripted helpers emit exactly n actions (assault n+m)",
+    "consumer_evidence": "a new test pins script lengths and the purity/repeatability of both feedback steps"
+  },
+  "analyze": {
+    "killed": [
+      "auditing bot aiming/range behaviour: cycles around replay already cover that; this cycle protects the stated purity contract",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_shooter.py"
+    ],
+    "survivor": "one bot-purity and script-length test"
+  },
+  "fix": {
+    "shooter": "tests/test_shooter.py gains the guard (now 18 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "injecting sim.tick += 1 at the top of kite_step (which appears in Sim.snapshot) fails the guard; bot.py restored byte-identically (sha256 7945c8bdacd0d1c45476a762adca435cdd0cabaddc17e9ebf6a5b33f8c472a18)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "817 passed (816 + 1 new bot-purity guard)",
+      "timing_note": "suite ran under machine load (178 s standalone, 186 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

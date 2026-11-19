@@ -1,0 +1,36 @@
+{
+  "cycle": 148,
+  "area": "game fix: the death-cinematic tuning fallback claim was false for four input classes, now enforced and tested",
+  "find": {
+    "report_claim": "cycle 147 shipped _death_cinematic_tuning with the claim that a malformed block 'can never break the death screen', and cycle 147 recorded that claim in cycles.md and evidence/cycle-147.json",
+    "live_evidence": "no test covered the tuning reader at all; probing it directly found five probes across four input classes that raise: start_fov 0 and start_fov 400 (CameraKey rejects a lens outside 0..180), start_forward 0 (CameraKey cannot look at its own position), non-monotonic key times, and a first orbit key at time 0 (both rejected by CameraPath, the second because it collides with the builder's implicit key at 0.0)",
+    "consumer_evidence": "the claim was load-bearing for a designer editing juice.json by hand: the failure mode was a ValueError inside the death screen, not a graceful first-person fallback"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py _number/_death_cinematic_tuning/_start_death_camera",
+      "keystone/camera_path.py CameraKey.__post_init__, look_at and CameraPath.__init__ validation"
+    ],
+    "killed": [
+      "trusting the earlier claim: a probe of six hostile blocks proved four of them raise",
+      "clamping start_fov into range instead of falling back: a designer who typed 400 wants the authored default, not a silently different lens",
+      "sorting bad key times: it would silently reorder an authored beat order, which is a creative decision the code should not make"
+    ],
+    "survivor": "fall back per field for lenses, look-ahead and radius, and fall back to the whole authored time list when the sequence cannot be strictly increasing after the opening key"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds a minimum= parameter to _number and a _lens() helper; start_forward and radius require a strictly positive value, start_fov and every key fov require 0 < fov < 180, and the time list falls back to all defaults when the first orbit key is not strictly after 0.0 or any pair is not strictly increasing; tests/test_death_camera_path.py gains 7 tuning tests (missing/garbage block, per-field fallbacks, lens range, valid override honoured, no-height key, a hostile-block sweep over all four failure classes, and an end-to-end malformed-juice death that still builds a 3.4 s cinematic)"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "531 passed, 2 xfailed in full suite",
+      "death_suite": "14 passed in 1.86s",
+      "repro": "probe of six hostile blocks: before the fix start_fov 0/400, start_forward 0, non-monotonic times and a key at time 0 all raised ValueError; after the fix all six build a cinematic",
+      "mutation": "replacing the start_fov _lens guard with _number failed the lens-range and hostile-block tests; disabling the monotonic guard failed the hostile-block test; shooter/game.py restored byte-identically (sha256 match)",
+      "pixel_identity": "a fresh death capture diffed against evidence/c147_death_tuning/after_c147_death_tuning_death.png reports 0 changed pixels, so the hardening changed no rendering",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

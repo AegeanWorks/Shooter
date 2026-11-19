@@ -12,6 +12,12 @@ import urllib.request
 
 import pytest
 
+# Loopback calls are fast, but a loaded machine can be an order of
+# magnitude slower; a tight 5s bound turns contention into false failures.
+REQUEST_TIMEOUT = 60
+# A server thread that will not stop is a real hang, so keep this tight.
+JOIN_TIMEOUT = 10
+
 from keystone.web.server import create_server
 
 from shooter.game import ShooterGame
@@ -27,7 +33,7 @@ def base_url():
     finally:
         server.shutdown()
         server.server_close()
-        thread.join(timeout=5)
+        thread.join(timeout=JOIN_TIMEOUT)
 
 
 def _request(base: str, path: str, method: str = "GET", payload=None, raw=None):
@@ -38,7 +44,7 @@ def _request(base: str, path: str, method: str = "GET", payload=None, raw=None):
     if data is not None:
         request.add_header("Content-Type", "application/json")
     try:
-        with urllib.request.urlopen(request, timeout=5) as response:
+        with urllib.request.urlopen(request, timeout=REQUEST_TIMEOUT) as response:
             return response.status, response.headers, response.read()
     except urllib.error.HTTPError as exc:
         return exc.code, exc.headers, exc.read()
@@ -55,7 +61,7 @@ def test_get_health_describe_and_scene(base_url):
     assert headers["Access-Control-Allow-Origin"] == "*"
     assert health["ok"] is True
     assert health["game"] == "shooter"
-    assert health["scene_schema"] == 2
+    assert health["scene_schema"] == 5
 
     status, _, describe = _json(base_url, "/api/describe")
     assert status == 200
@@ -66,7 +72,7 @@ def test_get_health_describe_and_scene(base_url):
 
     status, _, scene = _json(base_url, "/api/scene")
     assert status == 200
-    assert scene["schema"] == 2
+    assert scene["schema"] == 5
     assert scene["game"] == "shooter"
     assert 100 <= scene["node_count"] <= 150
     ids = {node["id"] for node in scene["nodes"]}
@@ -78,11 +84,13 @@ def test_get_inspector_reports_batches_and_merged(base_url):
     assert status == 200
     assert inspector["game"] == "shooter"
     assert 100 <= inspector["node_count"] <= 150
-    assert inspector["batches"]["groups"] == 8
+    # Cycle 178: the overlay-layer CameraRig removes the viewmodel from the
+    # static batch plan, so both group counts drop by one (8->7, 7->6).
+    assert inspector["batches"]["groups"] == 7
     assert inspector["batches"]["draw_calls"] <= 50
-    assert inspector["merged"]["groups"] == 7
+    assert inspector["merged"]["groups"] == 6
     assert inspector["merged"]["saved_calls"] >= 20
-    assert inspector["scene_schema"] == 2
+    assert inspector["scene_schema"] == 5
 
 
 def test_post_simulate_matches_the_cli_hash(base_url):

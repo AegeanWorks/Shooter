@@ -1,0 +1,36 @@
+{
+  "cycle": 202,
+  "area": "Testbed audit: engagement and levels tuning bands",
+  "find": {
+    "report_claim": "cycles 170/174 swept sim constants and juice.json; the two remaining tuning documents had never been swept",
+    "live_evidence": "a 10-case full-suite sweep doubled values in engagement.json and levels.json: 7 were caught, 3 survived with all 775 tests green",
+    "survivors": [
+      "engagement.reward.cache_expire_s 8.0 -> 16.0",
+      "engagement.overdrive.duration_s 8.0 -> 16.0",
+      "levels.max_alive 24 -> 48"
+    ]
+  },
+  "analyze": {
+    "killed": [
+      "pinning the literals: design bands on observable TTL, timer and spawn cap were used instead",
+      "hardcoding cache_expire_s in the test setup: the first draft did exactly that, so the 8->16 mutation still passed; the test was corrected to force only cache_p and read the TTL from the shipped document",
+      "changing the data values: the point is to protect a designer's edit, not to edit the values"
+    ],
+    "survivor": "tests/test_data_tuning_bands.py pins cache TTL 6..10 s with expiry, overdrive 6..10 s with decay to zero, and a positive alive-enemy cap <= 24 over 1600 frames"
+  },
+  "fix": {
+    "shooter": "three tests added; no production code changed. Both data files were restored byte-identically after every mutation (engagement sha256 04c9935876e4aab5c327eb39ff03b1fb52bf37ae5ca24a4c913735ab2d2d410c, levels sha256 9a7777adc88a3f0a93401a46e39795a29a72664bf43b9bd34d248e3e71293d93); README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "sweep": "10 mutations x full suite; caught: cache_reserve, near_miss.hp_frac, near_miss.bonus_reserve, overdrive.cost_reserve, streak.per_kill, spawn_interval_s, enemy_separation.strength",
+      "mutation": "all three survivors now fail their targeted test when doubled; after fixing the cache test's own hardcoding, the recheck reported 3 failed / 0 passed",
+      "note": "the hash recorded for engagement.json immediately after launching the sweep was actually the first mutated state; the final restored hash above is the true original, verified by reading the values (12, 8.0, 30, 8.0)",
+      "codebase_map": "regenerated after the new test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "778 passed (775 + 3 new tuning tests)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

@@ -1,0 +1,36 @@
+{
+  "cycle": 165,
+  "area": "player-data safety, part 2: a deliberate refusal I nearly 'fixed', plus the backup/newer-schema paths now pinned",
+  "find": {
+    "report_claim": "cycle 164 fixed one ProfileStore contract violation and pinned four failure modes; the newer-schema path had not been examined",
+    "live_evidence": "probes showed two more paths behave correctly (a corrupt .bak does not spoil a valid live profile; when both copies are broken the live file is quarantined) and one behaves by design: a schema-99 profile raises ValueError from load(), the game catches it, sets profile_disabled, and leaves the file byte-identical for the session",
+    "consumer_evidence": "I changed that raise to quarantine-and-reset, ran the profile suites, and found two EXISTING tests asserting the opposite intention -- 'unsupported schema is refused without touching the file' and 'unsupported profile disables saves without overwrite' -- so the behaviour was deliberate, not an oversight"
+  },
+  "analyze": {
+    "read": [
+      "shooter/profile.py load/_recover and the schema ladder",
+      "shooter/game.py profile loading (except ValueError -> default_profile + profile_disabled)",
+      "tests/test_profile.py lines 48-55 and 184-191 (the pre-existing schema-99 tests)"
+    ],
+    "killed": [
+      "keeping my quarantine change: it would have violated PRINCIPLE-014 (weakening a test needs user approval and an ADR), and it is genuinely worse for the player -- quarantining a newer profile resets their progress instead of preserving it",
+      "deleting the pre-existing tests as 'stale': they encode a real design decision about downgrades",
+      "documenting the behaviour only in my notes: the intent belonged in the source, where the next reader would look"
+    ],
+    "survivor": "restore the refusal, add a comment stating WHY a newer profile must not be quarantined, and pin the backup and newer-schema paths with tests so both stay deliberate"
+  },
+  "fix": {
+    "shooter": "shooter/profile.py restores the ValueError refusal and documents the reason inline (a newer profile is not corrupt; refusing it and disabling saves preserves the player's data for when they return to the newer build); tests/test_profile_safety.py grows to 17 tests adding a corrupt-backup test, a both-copies-broken test, a newer-schema refusal test, and a game-level test proving a schema-99 profile survives a whole session byte-identical"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "601 passed, 2 xfailed in full suite",
+      "profile_safety_suite": "17 passed in 0.78s",
+      "existing_profile_suite": "22 passed (test_profile.py plus profile safety)",
+      "mutation": "replacing the refusal with _recover() failed BOTH the new newer-schema test ('DID NOT RAISE ValueError') and the pre-existing test_profile.py:53 test, confirming the intent is doubly pinned; shooter/profile.py was restored byte-identically (sha256 match).",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

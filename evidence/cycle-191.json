@@ -1,0 +1,36 @@
+{
+  "cycle": 191,
+  "area": "Keystone testbed: local NavAgent route preview",
+  "find": {
+    "report_claim": "nav_agent was one of six Keystone modules the corrected coverage scan still listed as unconsumed; it is the integration layer over pathfinding, smoothing, following and steering",
+    "live_evidence": "the shooter publishes an arena nav grid (cycle 182) and a spawn-to-pickup cell route (cycle 182), but no consumer had exercised NavAgent with that real level data",
+    "consumer_evidence": "a local NavAgent plans from cell (20,28) to (20,14) with plan_found true and 2 smoothed waypoints, then advances its own CharacterBody toward the first waypoint"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/nav_agent.py: NavAgent.__init__, set_goal, step, nav_agent_report",
+      "shooter/game.py:arena_tile_report and nav_plan_report (reused as authoritative grid and goal)",
+      "probe of spawn -> pickup planning and 30-frame advance"
+    ],
+    "killed": [
+      "using the game's live CharacterController/body: a preview must not move the player or the sim",
+      "passing the sim's wall colliders: a probe showed the controller's obstacle push-out moved the preview body away from the first waypoint, so this is explicitly a bare route-following preview with no obstacles (vertical drop under gravity is expected and not a gameplay claim)",
+      "hardcoding the goal cell: it must come from the shipped level's nav plan"
+    ],
+    "survivor": "an on-demand bot_nav_preview() that builds a local NavGrid/NavAgent from the shipped reports, plans the pickup cell and reports before/after progress"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports CharacterBody/CharacterController/NavAgent/nav_agent_report and adds bot_nav_preview(frames=30); tests/test_keystone_nav_agent_mechanics.py (5 tests) pins plan shape, goal, horizontal progress, zero-frame stability, reproducibility and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no bot_nav_preview)",
+      "measured": "planned true, goal [20,14], before position [0.0,0.9,8.0] with 2 waypoints and remaining_distance 14.707107; after 30 frames horizontal movement (+0.478,+0.478) toward the first waypoint",
+      "mutation": "replacing the goal with (0,0) fails the plan-shape test; game.py restored byte-identically (sha256 d0c44f9f21b72cdd61acfff4e2b531f419254f0dec5fe2fb2c971400f8e72c8f)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

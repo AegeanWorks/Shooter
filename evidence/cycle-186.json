@@ -1,0 +1,37 @@
+{
+  "cycle": 186,
+  "area": "Keystone testbed: root motion of the shipped idle clips",
+  "find": {
+    "report_claim": "root_motion was one of 21 Keystone modules the testbed never imported; the shooter ships four .kanim idle clips whose subject node rotates, so their real root delta is a meaningful AI/soak report",
+    "live_evidence": "over a 0.3 s window the four idle clips have distinct subject yaws: wisp 1.570796, mite 0.096, brute 0.052502, warden 0.03; over a full 2 s loop each closes to identity",
+    "consumer_evidence": "extract_root_motion raises when the animated node is absent, so a wrong root name is not silently reported as a motionless clip; in_place_pose returns a copy with the root reset to identity"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/root_motion.py: extract_root_motion(), in_place_pose(), root_motion_report()",
+      "shooter/anim.py: CLIP_NAMES and the four loaded idle clips",
+      "probe of clip samples at t=0.0 (all identity) vs t=0.3 (distinct yaws)"
+    ],
+    "killed": [
+      "applying the extracted delta to a scene node: that would change presentation state per call and risk the hash; the report stays pure JSON",
+      "reporting full-loop deltas only: every idle loop closes to identity, so the report would look like a motionless game; the default window is 0.3 s",
+      "silently accepting a missing root node: Keystone raises, and the mutation check uses that to prove the tests see a wrong name"
+    ],
+    "survivor": "an on-demand idle_root_motion_report() over the shipped clips with a measured-window delta and an in-place pose proof"
+  },
+  "fix": {
+    "shooter": "shooter/game.py imports extract_root_motion/in_place_pose/root_motion_report and CLIP_NAMES, and adds idle_root_motion_report(window=0.3); tests/test_keystone_root_motion_mechanics.py (5 tests) pins report shape, measured yaw bands, loop closure, in-place proof and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 5 new tests failed before the consumer existed (ShooterGame has no idle_root_motion_report)",
+      "measured": "window 0.3: wisp yaw 1.570796, mite 0.096, brute 0.052502, warden 0.03, all positions zero; window 2.0: all yaws ~0 (loops close); in_place true",
+      "mutation": "changing the extracted node from 'subject' to 'root' fails all 5 tests with the module's missing-node error; game.py restored byte-identically (sha256 cb6c00100a082f050521d8dc0ea3b27f69a3c768eca0325197bf422357806864)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "tests": "703 passed (698 + 5 new root-motion tests)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

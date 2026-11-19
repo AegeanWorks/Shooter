@@ -1,0 +1,36 @@
+{
+  "cycle": 190,
+  "area": "Keystone testbed: structured Why/Fix errors for broken data",
+  "find": {
+    "report_claim": "errors was one of nine Keystone modules the corrected coverage scan found unconsumed; cycles 167/168 embedded Why:/Fix: prose in ValueError messages so AI consumers had to parse prose to recover the action",
+    "live_evidence": "sim._load raised six plain ValueErrors with hand-built messages; KeystoneError carries structured why/fix while remaining a ValueError subclass",
+    "consumer_evidence": "a broken juice.json now raises ShooterDataError with .why 'juice.json: Expecting property name...' and .fix 'restore ... from a fresh clone, or repair the JSON at that line', and data_error_report() exposes both as JSON"
+  },
+  "analyze": {
+    "read": [
+      "projects/keystone/keystone/errors.py: KeystoneError(why, fix)",
+      "shooter/sim.py:51-111 (six data failure sites)",
+      "tests/test_data_integrity.py (message contract: filename, Why:, Fix:, no --game blame)"
+    ],
+    "killed": [
+      "changing the rendered message: the player-facing contract and 14 existing assertions depend on the exact text",
+      "replacing ValueError with a non-ValueError type: the engine's error handler catches ValueError",
+      "letting the structured why be only the JSON parser detail: it would not name the file on its own, so _data_error prefixes the filename"
+    ],
+    "survivor": "ShooterDataError(KeystoneError) with a preserved __str__ message, one _data_error builder for all six sites, and an on-demand data_error_report() JSON view"
+  },
+  "fix": {
+    "shooter": "sim.py imports KeystoneError, adds ShooterDataError and _data_error(), and routes all six data failure sites through it; game.py adds data_error_report(error) returning schema 1 with why/fix/message; tests/test_keystone_errors_mechanics.py (8 items) pins structured fields, preserved messages, JSON safety and sim isolation; README testbed matrix and tree name the consumer and test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "the new module failed 7 of 8 items before the consumer existed (the unchanged-message test already passed)",
+      "regression": "all existing test_data_integrity cases still pass, proving the rendered message contract survived the refactor",
+      "mutation": "changing ShooterDataError's base from KeystoneError to ValueError fails all 8 new items; sim.py restored byte-identically (sha256 9048242395af94f1746276b8ce125517feb05c267b847287196d6b2ce7dc3d05)",
+      "codebase_map": "regenerated after the new imports, method and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

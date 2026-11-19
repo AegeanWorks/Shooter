@@ -1,0 +1,36 @@
+{
+  "cycle": 157,
+  "area": "game fix: Enter skipped the death cinematic and the debrief it precedes",
+  "find": {
+    "report_claim": "cycle 154 gated the restart on a run having ended and on the four-second victory banner having expired, and its notes treated the death debrief as immediately restartable",
+    "live_evidence": "a probe pressed confirm one frame after a real death: _restart_ready returned True because sim.alive was false, so the game restarted immediately -- skipping the entire 3.4 s death cinematic AND the debrief showing score, kills and history. The victory path was protected for 4 s, so the two endings disagreed about whether their last shot may be dismissed",
+    "consumer_evidence": "a player holding or mashing confirm while dying (common when firing) would never see the debrief, which is the only place the run's score, history and NEW BEST are reported"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py _restart_ready and the update early return",
+      "keystone/camera_path.py CameraPathPlayer.done",
+      "tests/test_new_run.py and tests/test_new_run_integration.py restart expectations"
+    ],
+    "killed": [
+      "a fixed death-debrief delay in seconds: the cinematic already defines the window, and a second constant would drift from the authored 3.4 s",
+      "blocking restart whenever a cinematic object exists: a finished path stays referenced, so the guard must read done rather than existence",
+      "leaving the inconsistency and documenting it: the victory and death endings should treat their last shot the same way"
+    ],
+    "survivor": "require the death cinematic to have finished (or to be absent, when its build fell back) before confirm can start a new run, and update the tests that encoded the immediate-restart behaviour"
+  },
+  "fix": {
+    "shooter": "shooter/game.py _restart_ready now returns _death_camera is None or _death_camera.done when the player is down, with the docstring stating that both endings protect their last shot; tests/test_new_run.py gains _finish_death_cinematic and two tests (confirm ignored for 30 frames during the cinematic then accepted after it; a death with no cinematic is restartable immediately), and the three tests that restarted straight from death plus both integration tests now advance the cinematic first"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "563 passed, 2 xfailed in full suite",
+      "restart_suites": "11 passed in 5.59s across test_new_run.py and test_new_run_integration.py",
+      "repro": "the same probe now reports 'debrief was skipped: False' and the death path still runs its full cinematic",
+      "mutation": "replacing the guard with 'return True' failed exactly test_enter_during_the_death_cinematic_is_ignored; shooter/game.py restored byte-identically (sha256 match)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; presentation and input gating only)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

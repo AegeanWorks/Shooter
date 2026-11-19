@@ -1,0 +1,35 @@
+{
+  "cycle": 156,
+  "area": "testbed hardening: the restart proven end-to-end on real runs instead of synthetic events",
+  "find": {
+    "report_claim": "cycle 154 recorded the Enter restart as working, but every test in test_new_run.py injects a synthetic 'died' event or sets sim.wave directly, so no test ever played a run to a real end and restarted from it",
+    "live_evidence": "two manual end-to-end probes were run first: a bot run cleared the campaign at frame 2486 (score 11560), the banner was allowed to expire, Enter restarted at tick 0 / wave 1 / score 0, and a further 1500 bot frames reached wave 3, 19 kills, score 3995, hp 88 with the profile still showing 1 run and 1 win; a second probe stood still until a real death at frame 539, Enter restarted, and the saved file kept the lose entry",
+    "consumer_evidence": "the synthetic path cannot catch a restart that resets the wrong state or records a phantom run, because it never passes through the real death and victory handlers orderings"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py _run_ended/_restart_ready/new_run and the update early return",
+      "shooter/profile.py ProfileStore load/save",
+      "tests/test_new_run.py synthetic helpers"
+    ],
+    "killed": [
+      "extending test_new_run.py with more synthetic variations: the gaps being targeted are exactly the production orderings a synthetic event skips",
+      "driving the death path by setting hp/alive directly: a real death goes through the damage, event and finish-run ordering, and the first probe showed a direct assignment never reaches it",
+      "recording only one of the two end paths: victory and death share new_run but differ in what must survive (a win record vs a lose record)"
+    ],
+    "survivor": "play the shipped bot to a real campaign seal and stand idle to a real death, restart with the engine's confirm action, then assert the second run progresses and the saved profile holds exactly one record per finished run"
+  },
+  "fix": {
+    "shooter": "tests/test_new_run_integration.py (3 tests) covers win-then-restart-then-play (second run reaches wave 3+ with kills, first run still the only record in memory and on disk), a real death restarting into a live second run with the lose entry preserved, and two consecutive deaths producing exactly three runs and three history entries; the suite is added to mechanics.test and the README tree"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "561 passed, 2 xfailed in full suite",
+      "new_suite": "3 passed in 4.19s (slowest 2.43s)",
+      "mutation": "deleting the restart block from update() failed 7 tests (all three integration tests plus four synthetic ones); shooter/game.py restored byte-identically (sha256 match)",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; tests only)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics); the mechanics gate now runs the integration suite in 10.4s"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

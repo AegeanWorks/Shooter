@@ -1,0 +1,30 @@
+{
+  "cycle": 223,
+  "area": "Testbed audit: weapon shape invariants",
+  "find": {
+    "report_claim": "only pulse falloff was pinned behaviourally; a designer setting any weapon's falloff_start beyond its range would silently disable falloff, and non-positive pellets/mag/pierce would break firing, with every test green",
+    "live_evidence": "all four shipped weapons have 0 < falloff_start < range and positive pellets/mag/pierce/non-negative reload",
+    "consumer_evidence": "a new cross-weapon structural test pins falloff-inside-range and positive counts for every weapon"
+  },
+  "analyze": {
+    "killed": [
+      "pinning raw literals again: cycles 202/203 swept values; this cycle protects the relationship between fields, not their magnitudes",
+      "adding a new test file: README is 35,661 / 37,500 chars, so the guard went into the already-listed test_weapon_enemy_tuning_bands.py"
+    ],
+    "survivor": "one cross-weapon structural-invariant test"
+  },
+  "fix": {
+    "shooter": "tests/test_weapon_enemy_tuning_bands.py gains the guard (now 6 tests); no production code changed and README stayed at 35,661 / 37,500 chars"
+  },
+  "proof": {
+    "shooter": {
+      "mutation": "pushing pulse falloff_start 25->70 (past its range 60) fails the guard; weapons.json restored byte-identically (sha256 cea4de98c6c3c375b42a7d3a4ad7025403029eae97583106ebf9b8fbae383b41)",
+      "codebase_map": "regenerated after the new test",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)",
+      "tests": "813 passed (812 + 1 new weapon-shape guard)",
+      "timing_note": "suite ran under moderate machine load (155 s standalone, 126 s gate test phase); all green"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

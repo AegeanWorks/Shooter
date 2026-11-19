@@ -1,0 +1,39 @@
+{
+  "cycle": 155,
+  "area": "testbed coverage: pause-menu contract, the closed UI dispatch, and two negative findings",
+  "find": {
+    "report_claim": "cycle 154 gave the shooter an Enter restart and reasoned it belonged outside the pause menu; no suite covered keystone.ui.menu, and the engine's UI dispatch was never exercised from the testbed",
+    "live_evidence": "ui.menu was in the uncovered list: PauseMenu (items/index/wrap) and Engine.apply_ui_action had no consumer test. A probe confirmed dispatch knows exactly four actions (pause, resume, toggle_ui, quit) and returns False for anything else, and that GameModule's only optional hook is bind_input -- so a game cannot add a RESTART item, which is why Enter-during-play was the right place for cycle 154's restart",
+    "consumer_evidence": "a game that assumed it could extend the pause menu would ship a dead button; a testbed must record that the extension point is closed rather than let the next cycle rediscover it"
+  },
+  "analyze": {
+    "read": [
+      "keystone/ui/menu.py MenuItem and PauseMenu",
+      "keystone/ui/overlay.py menu rendering and hit testing",
+      "keystone/app.py apply_ui_action dispatch and plugin.py GameModule protocol"
+    ],
+    "killed": [
+      "testing Engine.apply_ui_action by assigning its private attributes on an instance made with __new__: the code-structure gate forbids assigning another object's private state, and the fake would test the fake",
+      "constructing a full GL Engine for one dispatch assertion: keystone's own suite already covers apply_ui_action, and the testbed would pay a GL context for it",
+      "proposing a keystone change to make dispatch game-extensible: it alters engine behaviour for every game while another worker owns that tree, which is beyond a safe reversible step"
+    ],
+    "survivor": "cover the pure selection model completely (defaults, wrap in both directions, validation, immutability, no rendering state) and record the closed dispatch plus the missing game hook as findings"
+  },
+  "negative_findings": {
+    "best_score_across_restart": "suspected that restarting mutates in-memory profile bests and makes NEW BEST unreachable. Probed both directions: after a victory at 5000 a restart run scoring 3000 correctly reports run_new_best False, and a run scoring 8000 correctly reports True with the profile best rising to 8000. The suspicion was wrong; no change made.",
+    "hud_best_source": "the top-centre BEST label reads profile['best_score'] (game.py:1667), not the run score, so it correctly shows the all-time best across restarts"
+  },
+  "fix": {
+    "shooter": "tests/test_keystone_ui_menu_mechanics.py (7 tests) covers the default RESUME/HIDE HUD/QUIT items and their order, selection wrap in both directions and multi-step equivalence, rejection of bool and non-integer deltas, the non-empty-item rule and single-item wrap, MenuItem immutability and value equality, a custom item list keeping its own order, and the model carrying no rendering state; README tree row added"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "558 passed, 2 xfailed in full suite",
+      "new_suite": "7 passed in 0.68s",
+      "probe": "DEFAULT_ITEMS order and actions printed as expected; empty items raised ValueError; a bool delta raised TypeError; ShooterGame defines neither apply_ui_action nor ui_actions, and plugin.py declares bind_input as the only optional hook",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; tests only)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-18"
+}

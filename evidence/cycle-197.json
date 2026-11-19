@@ -1,0 +1,36 @@
+{
+  "cycle": 197,
+  "area": "Testbed audit: one shared arena layout",
+  "find": {
+    "report_claim": "four on-demand reports (arena_tile_report, bot_nav_preview via it, nav_authoring_report, nav_plan_report/_nav_grid) each recomputed size/1.0/-size/2 and the world-to-cell conversion",
+    "live_evidence": "grep found the same size/origin math at four sites and two copies of the floor-based cell conversion; a level-size edit would need four synchronized changes",
+    "consumer_evidence": "after extraction, _arena_layout() returns (40, 1.0, (-20,0,-20)) and _to_cell maps spawn (0,8) -> (20,28) and pickup (0,-6) -> (20,14), the same cells every report uses"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py:arena_tile_report, _nav_grid, nav_plan_report, nav_authoring_report",
+      "tests covering tile/nav/authoring/agent reports (all still green after the refactor)",
+      "mutation probe: hardcoding width=40 in _nav_grid while the report still said 20"
+    ],
+    "killed": [
+      "leaving four copies: a future arena resize would desynchronise the reports",
+      "changing tile solid cells to use floor-only conversion: that would alter the shipped tile map for no reason; arena_tile_report keeps its floor/ceil cover bounds",
+      "accepting the first mutation result: hardcoding width passed the initial tests because they only compared the report's stated width, not the grid's real width — the assertion was strengthened to check grid.width"
+    ],
+    "survivor": "one _arena_layout() helper plus _to_cell(), used by all four reports while preserving every existing value"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds _arena_layout() and _to_cell() and routes arena_tile_report, _nav_grid, nav_plan_report and nav_authoring_report through them; tests/test_keystone_arena_layout_mechanics.py (4 tests) pins the layout, endpoint conversion, resized-arena propagation and sim isolation; README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "all 4 new tests failed with AttributeError before the helpers existed",
+      "own_test_bugs": "two corrections: size 20 with cell 1 means width 20, not 10; and the first mutation (hardcoded grid width) passed because the test checked only the report's stated width — strengthened to assert grid.width == layout width",
+      "mutation": "hardcoding width=40 in _nav_grid now fails the resized-arena test; game.py restored byte-identically (sha256 2ee56a80a26abe67bd7b756a3dd3d5981b7d68de11d3dcc28c871f1)",
+      "codebase_map": "regenerated after the new helpers and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

@@ -1,0 +1,36 @@
+{
+  "cycle": 201,
+  "area": "Testbed audit: one rebuild reset for presentation state",
+  "find": {
+    "report_claim": "build_scene cleared two camera paths, two camera reports, both shake reports and the spatial audio report one line at a time",
+    "live_evidence": "cycle 198 unified only the shake triple; the remaining six lines could still drift when a new presentation report is added",
+    "consumer_evidence": "_reset_presentation_reports() clears all seven fields plus trauma, and a build_scene spy test confirms the helper is the single path"
+  },
+  "analyze": {
+    "read": [
+      "shooter/game.py:build_scene reset block",
+      "shooter/game.py:_clear_shake_reports from cycle 198",
+      "tests for camera paths, hurt shake and spatial audio (existing behaviour contract)"
+    ],
+    "killed": [
+      "leaving per-field resets: a future presentation field could be cleared only on rebuild or only in a cinematic",
+      "calling the full reset from a cinematic: that would discard the camera path report the cinematic just created",
+      "changing reset semantics: the published report contract must stay identical"
+    ],
+    "survivor": "one _reset_presentation_reports() helper for build_scene that delegates shake state to _clear_shake_reports()"
+  },
+  "fix": {
+    "shooter": "shooter/game.py adds _reset_presentation_reports() and build_scene calls it; tests/test_keystone_presentation_resets_mechanics.py (4 tests) pins complete clearing, build_scene wiring via spy, rebuild after a cinematic and sim isolation; README tree names the new test"
+  },
+  "proof": {
+    "shooter": {
+      "failing_first": "3 of 4 new tests failed with AttributeError before the helper existed (the rebuild test already passed, confirming behaviour preservation)",
+      "own_test_bugs": "two first-draft spy signature mistakes (bound method vs class patch) were corrected before the tests passed",
+      "mutation": "removing the spatial audio clear from the helper fails 3 of 4 tests; game.py restored byte-identically (sha256 1792a5132fa63f697c78c944b56a74b51fedb7c54f31356dc4b51fc7bc5c9489)",
+      "codebase_map": "regenerated after the new helper and test module",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged)",
+      "gates": "5/5 (hygiene, guidelines, secrets, test, mechanics)"
+    }
+  },
+  "timestamp": "2026-11-19"
+}

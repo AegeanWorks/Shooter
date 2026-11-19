@@ -1,0 +1,35 @@
+{
+  "cycle": 145,
+  "area": "testbed adoption: the shipped victory path as an editor asset over HTTP",
+  "find": {
+    "report_claim": "Keystone committed (f2bf541) camera-path editor actions -- save/delete/restore/preview/load_camera_path -- with a CameraPathLibrary wired into the web session and a camera_path_preview document exposing source, time and a rounded pose",
+    "live_evidence": "the game ships shooter/data/campaign_clear.kpath and loads it at runtime, but nothing proved that same document is editable: no shooter test exercised the camera-path editor actions or the preview endpoint",
+    "consumer_evidence": "keystone's own editor test uses a synthetic two-key path, so it cannot show that a real shipped document round-trips or that the preview pose agrees with the sampler the game drives its camera from"
+  },
+  "analyze": {
+    "read": [
+      "keystone/web/server.py camera-path actions, preview_pose rounding and the editor document keys",
+      "keystone/camera_path_library.py save/entry/trash semantics",
+      "shooter tests/test_keystone_http_server_mechanics.py server fixture pattern"
+    ],
+    "killed": [
+      "restating keystone's synthetic-path editor test: same assertions, no consumer meaning",
+      "checking only that preview returns 200: a preview at the wrong time also returns 200",
+      "asserting float equality against unrounded samples: the transport rounds to 6 decimals, so the tolerance must match the wire precision"
+    ],
+    "survivor": "drive the real shipped document through save/list/preview/trash/restore over loopback and assert the preview pose equals CameraPath.sample at the same time"
+  },
+  "fix": {
+    "shooter": "tests/test_keystone_camera_path_editor_mechanics.py (5 tests) covers saving the shipped campaign_clear document into a live library over /api/editor, listing its keys/duration/loop, previewing at 1.2 s and at every authored key with parity against CameraPath.sample, delete-to-trash and restore, rejection of a malformed document without polluting the listing, and the name-or-path exclusivity rule"
+  },
+  "proof": {
+    "shooter": {
+      "tests": "518 passed, 2 xfailed in full suite",
+      "new_suite": "5 passed in 3.71s",
+      "mutation": "forcing the preview to sample time 0.0 instead of the requested time failed both preview tests (the 1.2 s request returned the key-0 pose: y 3.3 instead of 2.6), and keystone/web/server.py was restored byte-identically (sha256 match); keystone's own camera-path web tests still pass",
+      "determinism": "1800 ok, hash b25db52005e7aeb8a241f86d27b4d049 (unchanged; tests only)",
+      "gates": "4/4 (test, hygiene, guidelines, secrets) after regenerating .aikit/codebase_map.md"
+    }
+  },
+  "timestamp": "2026-11-17"
+}

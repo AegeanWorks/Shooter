@@ -41,6 +41,20 @@ def test_idle_sampling_is_deterministic_and_uniform():
         assert pose.scale.x == pose.scale.y == pose.scale.z
 
 
+def test_shipped_idle_clips_stay_inside_their_presentation_bands():
+    """A mistyped keyframe must fail a test, not silently change enemy feel."""
+    anim = EnemyAnimations()
+    scales = []
+    for name in CLIP_NAMES:
+        pose = anim.clips[name].sample(0.5)["subject"]
+        scale = pose.scale.x
+        assert pose.scale.x == pose.scale.y == pose.scale.z, name
+        assert 1.0 <= scale <= 1.12, (name, scale)
+        assert abs(pose.rotation.y) <= 1.0, (name, pose.rotation.y)
+        scales.append(scale)
+    assert max(scales) > 1.02, "the idle clips must keep a visible breathe"
+
+
 def test_sync_scene_rotates_a_live_enemy_without_moving_it():
     game = _game()
     game.sim.enemies = [
