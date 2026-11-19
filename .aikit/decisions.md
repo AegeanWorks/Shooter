@@ -835,3 +835,10 @@ Consequences: Five shooter integration tests drive the real `InputMap.sample` pa
 - **Context**: Cycles 225-229 were completed while all work stayed uncommitted by the standing request, so their completion checkpoints recorded the same predecessor head (4f4c75c). The work was actually delivered together in commit 101adc8; AIKit's per-task head linkage cannot represent a batch commit, so check --strict reports five false 'committed nothing' findings.
 - **Decision**: Clear the misleading per-task head on those five completion checkpoints, moving them to the 'head unknown' state that ADR-477 defines as skipped rather than guessed at. Do not fabricate distinct commit ids and do not weaken any gate.
 - **Consequences**: check --strict can pass on the committed tree without falsifying history; the audit trail remains in evidence/cycle-225..229.json and the batch commit 101adc8; the game code and determinism hash are untouched.
+
+### ADR-003: Capitalize the Shooter display name
+- **Date**: 2026-11-19
+- **Status**: Accepted
+- **Context**: The project's display name is 'Shooter' (capital S) as the README title already shows; the lowercase 'shooter' is a CLI identifier and module name. Prose in ADR-001 and ADR-002 used the lowercase form.
+- **Decision**: Use 'Shooter' (capital S) as the display/proper name in all prose, ADRs, commit messages and reports. Keep 'shooter' lowercase only where it is an identifier: the project registry key, package/module path, CLI argument and game.name, so existing commands and tests keep working.
+- **Consequences**: No runtime or test change; the naming convention is recorded for future work and the strict gate stays green.
