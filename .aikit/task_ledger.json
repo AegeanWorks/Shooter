@@ -1,71 +1,24 @@
 {
   "active_task": {
+    "task_id": "shooter-fix-recycled-port",
+    "last_phase": "in_progress",
     "active_phase": 5,
-    "completed_at": 1795112201.0677006,
-    "completed_head": "ee46443260749e35bd19897f91343cfc33dc72bd",
-    "completed_tree": "73769d8b6e50359e8b831a583dcf3081b8fc1186",
+    "status": "completed",
+    "updated_at": 1795114093.0626922,
+    "owner": "opencode:e0f8cdde",
+    "lease_until": 1795121293.0626922,
+    "started_by": "opencode:e0f8cdde",
     "continuations": [],
     "forced_completion": {
       "agent": "opencode:e0f8cdde",
-      "at": 1795112201.0676992,
-      "reason": "the delivery task owns already-committed work; no new source changes, Phase 4 evidence recorded"
+      "reason": "the fix is already committed in 04376bb and Phase 4 evidence is recorded",
+      "at": 1795114093.4352117
     },
-    "last_phase": "in_progress",
-    "lease_until": 1795119400.0666823,
-    "owner": "opencode:e0f8cdde",
-    "started_by": "opencode:e0f8cdde",
-    "status": "completed",
-    "task_id": "shooter-delivery-2026-11-19",
-    "updated_at": 1795112200.0666823
+    "completed_at": 1795114093.4352133,
+    "completed_head": "c00cb54d18027a856ad212233c781871c214b2e6",
+    "completed_tree": "cb5ac1fbeb5756011a6bf63eea84666c48e36e2f"
   },
   "checkpoints": [
-    {
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed",
-      "description": "[2/2] Verified: all enemies have positive core fields, height >= diameter, coherent warden summon cadence; warden radius 1.0->1.5 fails the guard and enemies.json restored byte-identically; 814 passed, 5/5 gates, determinism b25db520; evidence/cycle-224.json",
-      "files_affected": [],
-      "phase": "in_progress",
-      "phase_num": 4,
-      "status": "in_progress",
-      "task_id": "shooter-cycle-224-enemy-shape-invariants",
-      "timestamp": 1795105896.6499796,
-      "timestamp_str": "2026-11-19 19:31:36"
-    },
-    {
-      "agent": "opencode:e0f8cdde",
-      "delivery": {
-        "forced": true,
-        "roots": [
-          "."
-        ]
-      },
-      "description": "Task 'shooter-cycle-224-enemy-shape-invariants' completed successfully.",
-      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
-      "phase": "completed",
-      "phase_num": 5,
-      "status": "completed",
-      "task_id": "shooter-cycle-224-enemy-shape-invariants",
-      "timestamp": 1795105897.099461,
-      "timestamp_str": "2026-11-19 19:31:37"
-    },
-    {
-      "agent": "opencode:e0f8cdde",
-      "description": "[1/2] Pin that juice.json death_fx_scale covers every shipped enemy roster key with a sane cap, so a typo cannot silently fall back to full-size death FX",
-      "files_affected": [],
-      "impact_assessment": {
-        "benefits": "a missing/misspelled cap or an out-of-range value fails a test naming the enemy",
-        "mitigation": "failing-first cross-document test in already-listed test_juice_tuning.py, mutation-check a cap key with byte-exact restore, rerun suite, gates and determinism",
-        "risks": "contract: additive test, two shipped data files; dependency: juice.json death_fx_scale and Sim enemy_defs; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
-        "why": "the death FX lookup uses death_caps.get(etype, 1.0), so a misspelled or missing enemy key silently renders a full-size kill burst with every test green"
-      },
-      "phase": "in_progress",
-      "phase_num": 2,
-      "plan_digest": "9970ebd655f7e6ddf8d2d1c0ea1613338cbef72a19e379c7f083ab576b9facc8",
-      "status": "in_progress",
-      "task_id": "shooter-cycle-225-death-fx-caps",
-      "timestamp": 1795106154.839836,
-      "timestamp_str": "2026-11-19 19:35:54"
-    },
     {
       "agent": "opencode:e0f8cdde",
       "checklists": "passed",
@@ -329,6 +282,53 @@
       "task_id": "shooter-delivery-2026-11-19",
       "timestamp": 1795112201.3161702,
       "timestamp_str": "2026-11-19 21:16:41"
+    },
+    {
+      "task_id": "shooter-fix-recycled-port",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Open a task for the recycled-port flake fix committed in 04376bb",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795114092.7260063,
+      "timestamp_str": "2026-11-19 21:48:12",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "a non-bookkeeping commit landed after the last completed task, which blocks check --strict (ADR-419)",
+        "benefits": "the fix is attributable to an active task and strict delivery can pass",
+        "risks": "contract: ledger-only; dependency: HEAD c00cb54; concurrency: none; state: no sim writes; README unchanged",
+        "mitigation": "record Phase 4 checklists, complete the task at the committed head, commit the ledger alone, rerun --strict"
+      },
+      "plan_digest": "206e7d5530e6ee54927499497f15094bc0d9c0e1d20549a73766f5c1d34be657"
+    },
+    {
+      "task_id": "shooter-fix-recycled-port",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: camera path editor fixture disables SO_REUSEADDR, new pin fails when reverted, test file restored byte-identically, 5/5 gates green",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795114093.0626922,
+      "timestamp_str": "2026-11-19 21:48:13",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-fix-recycled-port",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-fix-recycled-port' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795114093.5192454,
+      "timestamp_str": "2026-11-19 21:48:13",
+      "agent": "opencode:e0f8cdde",
+      "head": "c00cb54d18027a856ad212233c781871c214b2e6",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
     }
   ],
   "version": 1
