@@ -8,9 +8,9 @@
 ## 📊 Codebase Metrics
 - **Total Python Modules**: `201`
 - **Total Classes**: `99`
-- **Total Top-Level Functions**: `1176`
+- **Total Top-Level Functions**: `1177`
 - **Total Class Methods**: `247`
-- **Total Source Lines**: `26770`
+- **Total Source Lines**: `26781`
 
 ## 🧭 Map Coverage
 - **Indexed**: python (`201` module(s))
@@ -1445,12 +1445,13 @@
 ### [`tests/test_keystone_camera_path_editor_mechanics.py`](tests/test_keystone_camera_path_editor_mechanics.py)
 > *Keystone mechanics testbed: the shipped victory path through the editor API.*
 
-**Size**: `163` lines
+**Size**: `174` lines
 
 **Functions:**
-- `def library_server(tmp_path)`
+- `def library_server(tmp_path, monkeypatch)`
 - `def _editor(base, action, **payload)`
 - `def _shipped_path()`
+- `def test_the_library_server_port_is_not_reusable(library_server)` - *SO_REUSEADDR lets a stale socket share a port on Windows; pin it off.*
 - `def test_the_shipped_document_saves_lists_and_previews_over_http(library_server)`
 - `def test_preview_at_every_key_matches_the_document_key_poses(library_server)`
 - `def test_the_shipped_document_survives_delete_and_restore(library_server)`
