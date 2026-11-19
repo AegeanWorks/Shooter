@@ -1,71 +1,24 @@
 {
   "active_task": {
-    "task_id": "shooter-refresh-map-delivery",
+    "task_id": "shooter-naming-convention",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1795114201.9246933,
+    "updated_at": 1795114750.150349,
     "owner": "opencode:e0f8cdde",
-    "lease_until": 1795121401.9246933,
+    "lease_until": 1795121950.150349,
     "started_by": "opencode:e0f8cdde",
     "continuations": [],
     "forced_completion": {
       "agent": "opencode:e0f8cdde",
-      "reason": "the map refresh is already committed in 43f1ef3; Phase 4 evidence recorded",
-      "at": 1795114202.2367332
+      "reason": "ADR-003 is already committed in ecfec91; Phase 4 evidence recorded",
+      "at": 1795114750.545859
     },
-    "completed_at": 1795114202.2367344,
-    "completed_head": "43f1ef3b5570d1e308383ddd4d6fa320d55aed9a",
-    "completed_tree": "2d5a7ef3be564a207f264abde522182a4ef3be9b"
+    "completed_at": 1795114750.5458603,
+    "completed_head": "ecfec91f4fa62a04175f3b5a96fd4d092cb1cf01",
+    "completed_tree": "a2e9122784a12c1fae62315020a04198c1db2500"
   },
   "checkpoints": [
-    {
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed",
-      "description": "[2/2] Verified: max_alive >= every wave total and pickup_wave < win_wave; max_alive 24->2 fails the new guard while the existing long-wave test still passes (genuine survivor) and levels.json restored byte-identically; 816 passed, 5/5 gates, determinism b25db520; evidence/cycle-226.json",
-      "files_affected": [],
-      "phase": "in_progress",
-      "phase_num": 4,
-      "status": "in_progress",
-      "task_id": "shooter-cycle-226-spawn-capacity",
-      "timestamp": 1795107317.3299868,
-      "timestamp_str": "2026-11-19 19:55:17"
-    },
-    {
-      "agent": "opencode:e0f8cdde",
-      "delivery": {
-        "forced": true,
-        "roots": [
-          "."
-        ]
-      },
-      "description": "Task 'shooter-cycle-226-spawn-capacity' completed successfully.",
-      "head_reconciled": "batched delivery in 101adc8; per-task head not attributable",
-      "phase": "completed",
-      "phase_num": 5,
-      "status": "completed",
-      "task_id": "shooter-cycle-226-spawn-capacity",
-      "timestamp": 1795107317.797808,
-      "timestamp_str": "2026-11-19 19:55:17"
-    },
-    {
-      "agent": "opencode:e0f8cdde",
-      "description": "[1/2] Pin the headless bot's documented purity and determinism contract: kite_step/overdrive_step are repeatable and never mutate sim, and scripted helpers emit exactly n actions",
-      "files_affected": [],
-      "impact_assessment": {
-        "benefits": "an impure bot step or a mis-sized action script fails a test naming the helper",
-        "mitigation": "failing-first purity/length test in already-listed test_shooter.py, mutation-check an impure kite_step with byte-exact restore, rerun suite, gates and determinism",
-        "risks": "contract: additive test only; dependency: shooter.bot and Sim.snapshot; concurrency: none; state: moves nothing, uses in-memory Sim, hash b25db520 must stay; README unchanged",
-        "why": "kite_step is documented as a pure function of sim state but no test asserts it is repeatable or non-mutating; a stray RNG call or sim write would break replay determinism with every test green"
-      },
-      "phase": "in_progress",
-      "phase_num": 2,
-      "plan_digest": "03d8dd1731aa1b449d744fdc05e8308790b422b41c97af0818ee3f782159813c",
-      "status": "in_progress",
-      "task_id": "shooter-cycle-227-bot-purity",
-      "timestamp": 1795107388.8987508,
-      "timestamp_str": "2026-11-19 19:56:28"
-    },
     {
       "agent": "opencode:e0f8cdde",
       "checklists": "passed",
@@ -323,6 +276,53 @@
       "timestamp_str": "2026-11-19 21:50:02",
       "agent": "opencode:e0f8cdde",
       "head": "43f1ef3b5570d1e308383ddd4d6fa320d55aed9a",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
+    },
+    {
+      "task_id": "shooter-naming-convention",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Open a task for the Shooter display-name ADR-003 committed in ecfec91",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795114749.5517936,
+      "timestamp_str": "2026-11-19 21:59:09",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "a documentation commit after the last completed task blocks strict delivery (ADR-419)",
+        "benefits": "strict delivery can pass with all changes attributed",
+        "risks": "contract: ledger-only; dependency: HEAD ecfec91; concurrency: none; state: no sim writes; README unchanged",
+        "mitigation": "complete the task, commit the ledger last, rerun --strict then push"
+      },
+      "plan_digest": "5070d65abbe0c83d90b21547cd060530ac3d65b36cd27edd61c1668e2ada58fb"
+    },
+    {
+      "task_id": "shooter-naming-convention",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: ADR-003 records 'Shooter' as the display name; lowercase 'shooter' retained only as CLI/module identifier",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795114750.150349,
+      "timestamp_str": "2026-11-19 21:59:10",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-naming-convention",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-naming-convention' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795114750.8107617,
+      "timestamp_str": "2026-11-19 21:59:10",
+      "agent": "opencode:e0f8cdde",
+      "head": "ecfec91f4fa62a04175f3b5a96fd4d092cb1cf01",
       "delivery": {
         "roots": [
           "."
