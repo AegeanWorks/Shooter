@@ -1,268 +1,335 @@
 {
   "version": 1,
   "active_task": {
-    "task_id": "shooter-cycle-137-scene-budget-invariants",
-    "last_phase": "phase 4",
+    "task_id": "shooter-cycle-229-reseed-full-state",
+    "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1794348386.1146855,
-    "owner": "gemini:goal",
-    "started_by": "gemini:goal",
+    "updated_at": 1795109383.375332,
+    "owner": "opencode:e0f8cdde",
+    "lease_until": 1795116583.375332,
+    "started_by": "opencode:e0f8cdde",
     "continuations": [],
-    "completed_at": 1794348390.931067
+    "forced_completion": {
+      "agent": "opencode:e0f8cdde",
+      "reason": "changes uncommitted by standing request (cycles 138-229); all five gates and the full suite pass",
+      "at": 1795109383.800769
+    },
+    "completed_at": 1795109383.8007708,
+    "completed_head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+    "completed_tree": "6b265f4137c668e761bb9c016ddc403814d2b1c2"
   },
   "checkpoints": [
     {
-      "task_id": "shooter-cycle-132-viewmodel-grip",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-132-viewmodel-grip' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794169346.3410923,
-      "timestamp_str": "2026-11-08 23:22:26",
-      "agent": "commandcode:goal"
-    },
-    {
-      "task_id": "shooter-cycle-133-boss-death",
-      "phase": "phase 2",
-      "phase_num": 2,
-      "description": "[1/3] Plan: replace the screen-filling white warden death block with a compact ember collapse; same win capture pair + boss run",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794170038.9979875,
-      "timestamp_str": "2026-11-08 23:33:58",
-      "agent": "commandcode:goal",
-      "impact_assessment": {
-        "why": "The warden death silhouette reuses the full-size white hit cube on the 2.2 m boss, so the campaign-clear frame is dominated by a white block that hides the boss, crosshair and score pop.",
-        "benefits": "The boss death reads as an ember collapse consistent with the new armor, and the campaign-clear feedback stays visible.",
-        "risks": "contract: dead-enemy presentation and death_fx DATA; dependency: none; concurrency: none; state: game.py, juice.json, tests, cycles, decisions, README, evidence/cycle-133.json",
-        "mitigation": "failing-first boss/normal death tests; same win capture pair diffed; stashed before/after boss run; full suite, determinism and aikit check"
-      },
-      "plan_digest": "7c5be18dad27c413e6001a545d07b4e53523d7c2854e31191bf734164d04e560"
-    },
-    {
-      "task_id": "shooter-cycle-133-boss-death",
-      "phase": "phase 3",
-      "phase_num": 3,
-      "description": "[2/3] Boss ember death implemented: 3 failing-first tests, win pair diff 19,672 px confined to the old block, boss run hash unchanged; 474 unit tests pass",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794170045.7717474,
-      "timestamp_str": "2026-11-08 23:34:05",
-      "agent": "commandcode:goal"
-    },
-    {
-      "task_id": "shooter-cycle-133-boss-death",
-      "phase": "phase 4",
+      "task_id": "shooter-cycle-223-weapon-shape-invariants",
+      "phase": "in_progress",
       "phase_num": 4,
-      "description": "[3/3] Boss death flash verified: 474 tests passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "description": "[2/2] Verified: all weapons have 0<falloff<range and positive pellets/mag/pierce; pulse falloff 25->70 fails the guard and weapons.json restored byte-identically; 813 passed, 5/5 gates, determinism b25db520; evidence/cycle-223.json",
       "files_affected": [],
       "status": "in_progress",
-      "timestamp": 1794170051.9138832,
-      "timestamp_str": "2026-11-08 23:34:11",
-      "agent": "commandcode:goal"
-    },
-    {
-      "task_id": "shooter-cycle-133-boss-death",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-133-boss-death' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794170058.6026053,
-      "timestamp_str": "2026-11-08 23:34:18",
-      "agent": "commandcode:goal"
-    },
-    {
-      "task_id": "shooter-cycle-134-live-input",
-      "phase": "phase 2",
-      "phase_num": 2,
-      "description": "[1/2] Plan: adopt Keystone bind_input for live slots/reload/overdrive/fire/jump and prove the key path through InputMap.sample",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794251441.064188,
-      "timestamp_str": "2026-11-09 22:10:41",
-      "agent": "commandcode:goal",
-      "impact_assessment": {
-        "why": "The report's P0 live-input gap was partly stale: the engine hook exists, but the shooter never adopted it and the key table had no number row, so slots stayed headless-only.",
-        "benefits": "The game is playable with real keys for every advertised button, and dead bindings are visible instead of silent.",
-        "risks": "contract: shooter controls and testbed pins (ReloadReport, plan_batches); dependency: keystone digit keys; concurrency: none; state: game.py, tests, README, cycles, decisions, evidence",
-        "mitigation": "failing-first integration tests through InputMap.sample, updated additive pin fields, full shooter suite and 4/4 gates, determinism"
-      },
-      "plan_digest": "8d61fa32144639992675266c9aa5ec3331a2573f011ca7b287be0c34228b36e5"
-    },
-    {
-      "task_id": "shooter-cycle-134-live-input",
-      "phase": "phase 4",
-      "phase_num": 4,
-      "description": "[2/2] Live input adopted and proven: 481 tests, 4/4 gates, 300-frame kite hash f6c94bce, determinism b25db520",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794251448.0891373,
-      "timestamp_str": "2026-11-09 22:10:48",
-      "agent": "commandcode:goal"
-    },
-    {
-      "task_id": "shooter-cycle-134-live-input",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-cycle-134-live-input' completed successfully.",
-      "status": "completed",
-      "timestamp": 1794251454.04407,
-      "timestamp_str": "2026-11-09 22:10:54",
-      "agent": "commandcode:goal"
-    },
-    {
-      "task_id": "shooter-cycle-135-asset-reload",
-      "phase": "phase 2",
-      "phase_num": 2,
-      "description": "[1/3] Plan: adopt Keystone AssetRegistry.reload(scene) in reload_assets and remove per-frame mesh re-point; prove live node rebinding on OBJ edit",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794347818.2866316,
-      "timestamp_str": "2026-11-11 00:56:58",
-      "agent": "gemini:goal",
-      "impact_assessment": {
-        "why": "The ammo cache crate was adopted in cycle 130, but game.py still manually re-assigns node.mesh every frame in _sync_scene while reload_assets only calls refresh(), bypassing Keystone core reload(scene) rebinding.",
-        "benefits": "Adopts Keystone AssetRegistry.reload(scene), removes per-frame manual re-point from game loop, and tests that modifying the file-backed OBJ automatically updates live scene node meshes and reports rebound count.",
-        "risks": "contract: reload_assets returns ReloadReport with rebound fields; dependency: in-tree keystone asset_io/assets; concurrency: none; state: game.py, test_cache_asset.py, cycles.md, task_ledger.json, evidence/cycle-135.json",
-        "mitigation": "failing-first test for reload(scene) live node rebinding, capture route cache_visual before/after diffed, matched kite 300 play run, full test suite, determinism 1800, aikit check 4/4"
-      },
-      "plan_digest": "1559b07fa8492ed1fca4751e3e84aef071b400fc75c9774acaa4f1b19e08f922"
-    },
-    {
-      "task_id": "shooter-cycle-135-asset-reload",
-      "phase": "phase 3",
-      "phase_num": 3,
-      "description": "[2/3] Asset reload adopted: reload_assets calls self.assets.reload(self.scene), per-frame mesh re-point removed, test_reload_assets_rebinds_live_cache_nodes_on_obj_modification passes, cache_visual 0 px diff, kite 300 hash f6c94bce",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794348011.8389776,
-      "timestamp_str": "2026-11-11 01:00:11",
-      "agent": "gemini:goal"
-    },
-    {
-      "task_id": "shooter-cycle-135-asset-reload",
-      "phase": "phase 4",
-      "phase_num": 4,
-      "description": "[3/3] Verified: 482 passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794348015.5536742,
-      "timestamp_str": "2026-11-11 01:00:15",
-      "agent": "gemini:goal",
+      "timestamp": 1795105413.427527,
+      "timestamp_str": "2026-11-19 19:23:33",
+      "agent": "opencode:e0f8cdde",
       "checklists": "passed"
     },
     {
-      "task_id": "shooter-cycle-135-asset-reload",
+      "task_id": "shooter-cycle-223-weapon-shape-invariants",
       "phase": "completed",
       "phase_num": 5,
-      "description": "Task 'shooter-cycle-135-asset-reload' completed successfully.",
+      "description": "Task 'shooter-cycle-223-weapon-shape-invariants' completed successfully.",
       "status": "completed",
-      "timestamp": 1794348018.9709818,
-      "timestamp_str": "2026-11-11 01:00:18",
-      "agent": "gemini:goal"
+      "timestamp": 1795105414.6781723,
+      "timestamp_str": "2026-11-19 19:23:34",
+      "agent": "opencode:e0f8cdde",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
     },
     {
-      "task_id": "shooter-cycle-136-animation-mask",
-      "phase": "phase 2",
+      "task_id": "shooter-cycle-224-enemy-shape-invariants",
+      "phase": "in_progress",
       "phase_num": 2,
-      "description": "[1/3] Plan: adopt Keystone apply_pose channel masking for boss core presentation and test unmasked position preservation",
+      "description": "[1/2] Pin structural invariants across all shipped enemies: positive core fields, body height >= diameter, and coherent warden summon cadence",
       "files_affected": [],
       "status": "in_progress",
-      "timestamp": 1794348086.463109,
-      "timestamp_str": "2026-11-11 01:01:26",
-      "agent": "gemini:goal",
+      "timestamp": 1795105492.4476385,
+      "timestamp_str": "2026-11-19 19:24:52",
+      "agent": "opencode:e0f8cdde",
       "impact_assessment": {
-        "why": "Keystone added apply_pose(scene, pose, mask=...) in b22fa7e to allow animation to drive rotation/scale without clobbering simulation-owned positions, but game.py still worked around it with a redundant temporary read and manual Transform reassembly, and testbed mechanics lacked mask coverage.",
-        "benefits": "Adopts core channel masking directly in ShooterGame._sync_scene, eliminates manual transform unpack/repack workaround, proves position channel isolation in testbed mechanics, and preserves 100% determinism and visual equivalence.",
-        "risks": "contract: warden-core node transform channels; dependency: keystone animation channel masking; concurrency: none; state: game.py, test_keystone_animation_mechanics.py, cycles.md, task_ledger.json, evidence/cycle-136.json",
-        "mitigation": "failing-first test for channel mask in test_keystone_animation_mechanics.py, route_boss before/after diffed, matched boss 900 play run, full test suite, determinism 1800, aikit check 4/4"
+        "why": "no test checks that enemy hp/speed/radius are positive, that height is at least the body diameter, or that the boss summon timings are coherent; a zero speed or fat radius would make an enemy inert or uncollidable with every test green",
+        "benefits": "a structurally broken enemy fails a test naming the enemy and field",
+        "risks": "contract: additive test, one shipped data file; dependency: Sim enemy_defs; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
+        "mitigation": "failing-first structural test in already-listed test_weapon_enemy_tuning_bands.py, mutation-check an enemy radius with byte-exact restore, rerun suite, gates and determinism"
       },
-      "plan_digest": "b5916967c5b0b7993c2e75fdb98efa9d098a8a759ca8a7da701782c3b19c279a"
+      "plan_digest": "efd380ee94d647ac52f2e9618595fe35f1ed59a2e598643700b7b8084226cec1"
     },
     {
-      "task_id": "shooter-cycle-136-animation-mask",
-      "phase": "phase 3",
-      "phase_num": 3,
-      "description": "[2/3] Channel mask adopted: apply_pose(..., mask={'rotation', 'scale'}) drives warden-core, unmasked transform unpack/repack deleted, test_apply_pose_with_channel_mask_preserves_unmasked_position passes, route_boss 0 px diff, boss 900 hash cfd263b7",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794348208.7615714,
-      "timestamp_str": "2026-11-11 01:03:28",
-      "agent": "gemini:goal"
-    },
-    {
-      "task_id": "shooter-cycle-136-animation-mask",
-      "phase": "phase 4",
+      "task_id": "shooter-cycle-224-enemy-shape-invariants",
+      "phase": "in_progress",
       "phase_num": 4,
-      "description": "[3/3] Verified: 483 passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "description": "[2/2] Verified: all enemies have positive core fields, height >= diameter, coherent warden summon cadence; warden radius 1.0->1.5 fails the guard and enemies.json restored byte-identically; 814 passed, 5/5 gates, determinism b25db520; evidence/cycle-224.json",
       "files_affected": [],
       "status": "in_progress",
-      "timestamp": 1794348213.0595677,
-      "timestamp_str": "2026-11-11 01:03:33",
-      "agent": "gemini:goal",
+      "timestamp": 1795105896.6499796,
+      "timestamp_str": "2026-11-19 19:31:36",
+      "agent": "opencode:e0f8cdde",
       "checklists": "passed"
     },
     {
-      "task_id": "shooter-cycle-136-animation-mask",
+      "task_id": "shooter-cycle-224-enemy-shape-invariants",
       "phase": "completed",
       "phase_num": 5,
-      "description": "Task 'shooter-cycle-136-animation-mask' completed successfully.",
+      "description": "Task 'shooter-cycle-224-enemy-shape-invariants' completed successfully.",
       "status": "completed",
-      "timestamp": 1794348216.3971584,
-      "timestamp_str": "2026-11-11 01:03:36",
-      "agent": "gemini:goal"
+      "timestamp": 1795105897.099461,
+      "timestamp_str": "2026-11-19 19:31:37",
+      "agent": "opencode:e0f8cdde",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
     },
     {
-      "task_id": "shooter-cycle-137-scene-budget-invariants",
-      "phase": "phase 2",
+      "task_id": "shooter-cycle-225-death-fx-caps",
+      "phase": "in_progress",
       "phase_num": 2,
-      "description": "[1/3] Plan: adopt Keystone assert_scene_budget and scene_fingerprint in testbed; convert brittle exact node pins to budget invariants",
+      "description": "[1/2] Pin that juice.json death_fx_scale covers every shipped enemy roster key with a sane cap, so a typo cannot silently fall back to full-size death FX",
       "files_affected": [],
       "status": "in_progress",
-      "timestamp": 1794348248.940711,
-      "timestamp_str": "2026-11-11 01:04:08",
-      "agent": "gemini:goal",
+      "timestamp": 1795106154.839836,
+      "timestamp_str": "2026-11-19 19:35:54",
+      "agent": "opencode:e0f8cdde",
       "impact_assessment": {
-        "why": "Finding F12 in keystone-improvement report documented that brittle exact snapshot pins (e.g. node_count == 113, draw_calls == 35, triangles == 494) break whenever an artist or developer adds a presentation node, hiding real regressions in churn. Keystone added assert_scene_budget and scene_fingerprint in b22fa7e to solve this.",
-        "benefits": "Adopts assert_scene_budget and scene_fingerprint in the testbed, replaces brittle exact pins in HTTP inspector/scene endpoints and mechanics tests with invariant bounds, and tests that adding a presentation node preserves budget compliance.",
-        "risks": "contract: test assertions in test_keystone_http_server_mechanics.py and test_keystone_mechanics.py; dependency: keystone.testing; concurrency: none; state: test files, cycles.md, task_ledger.json, evidence/cycle-137.json",
-        "mitigation": "failing-first test with presentation node addition under assert_scene_budget, capture route spawn before/after diffed, matched kite 300 play run, full test suite, determinism 1800, aikit check 4/4"
+        "why": "the death FX lookup uses death_caps.get(etype, 1.0), so a misspelled or missing enemy key silently renders a full-size kill burst with every test green",
+        "benefits": "a missing/misspelled cap or an out-of-range value fails a test naming the enemy",
+        "risks": "contract: additive test, two shipped data files; dependency: juice.json death_fx_scale and Sim enemy_defs; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
+        "mitigation": "failing-first cross-document test in already-listed test_juice_tuning.py, mutation-check a cap key with byte-exact restore, rerun suite, gates and determinism"
       },
-      "plan_digest": "1a4bbaed48173faaacdefb9ab9866b28747d50adc9334ee3ed04440edf3ac628"
+      "plan_digest": "9970ebd655f7e6ddf8d2d1c0ea1613338cbef72a19e379c7f083ab576b9facc8"
     },
     {
-      "task_id": "shooter-cycle-137-scene-budget-invariants",
-      "phase": "phase 3",
-      "phase_num": 3,
-      "description": "[2/3] Scene budget invariants adopted: test_keystone_mechanics adopts assert_scene_budget and scene_fingerprint, test_scene_budget_invariants_pass_with_presentation_node passes, http mechanics uses invariant bounds, route_spawn 0 px diff, kite 300 hash f6c94bce",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1794348381.7311704,
-      "timestamp_str": "2026-11-11 01:06:21",
-      "agent": "gemini:goal"
-    },
-    {
-      "task_id": "shooter-cycle-137-scene-budget-invariants",
-      "phase": "phase 4",
+      "task_id": "shooter-cycle-225-death-fx-caps",
+      "phase": "in_progress",
       "phase_num": 4,
-      "description": "[3/3] Verified: 485 passed + 2 xfailed, determinism 1800 ok (b25db520), aikit 4/4, checklists: passed",
+      "description": "[2/2] Verified: death_fx_scale keys exactly match the enemy roster, caps in (0,1], warden smallest; warden->wardenx key rename fails the guard and juice.json restored byte-identically; 815 passed, 5/5 gates, determinism b25db520; evidence/cycle-225.json",
       "files_affected": [],
       "status": "in_progress",
-      "timestamp": 1794348386.1146855,
-      "timestamp_str": "2026-11-11 01:06:26",
-      "agent": "gemini:goal",
+      "timestamp": 1795106722.9938588,
+      "timestamp_str": "2026-11-19 19:45:22",
+      "agent": "opencode:e0f8cdde",
       "checklists": "passed"
     },
     {
-      "task_id": "shooter-cycle-137-scene-budget-invariants",
+      "task_id": "shooter-cycle-225-death-fx-caps",
       "phase": "completed",
       "phase_num": 5,
-      "description": "Task 'shooter-cycle-137-scene-budget-invariants' completed successfully.",
+      "description": "Task 'shooter-cycle-225-death-fx-caps' completed successfully.",
       "status": "completed",
-      "timestamp": 1794348390.9310684,
-      "timestamp_str": "2026-11-11 01:06:30",
-      "agent": "gemini:goal"
+      "timestamp": 1795106723.8130605,
+      "timestamp_str": "2026-11-19 19:45:23",
+      "agent": "opencode:e0f8cdde",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
+    },
+    {
+      "task_id": "shooter-cycle-226-spawn-capacity",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Pin cross-field spawn-capacity and progression invariants in levels.json: max_alive >= every wave total, and pickup_wave < win_wave",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795106834.2092378,
+      "timestamp_str": "2026-11-19 19:47:14",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "max_alive is pinned only to an observable band (<=24), so lowering it to 2 would still pass the long-wave test while making full waves unspawnable; pickup_wave vs win_wave ordering is unpinned so the surge could become unavailable before victory",
+        "benefits": "a spawn cap below wave demand or a pickup at/after victory fails a test naming the values",
+        "risks": "contract: additive test, one shipped data file; dependency: sim._load levels.json; concurrency: none; state: no sim writes, hash b25db520 must stay; README unchanged",
+        "mitigation": "failing-first cross-field test in already-listed test_data_integrity.py, mutation-check max_alive to 2 with byte-exact restore, rerun suite, gates and determinism"
+      },
+      "plan_digest": "1e38e64fb9a8a2aacf1498566c4585caf23e09b8778a138af2f6e12d4deee535"
+    },
+    {
+      "task_id": "shooter-cycle-226-spawn-capacity",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: max_alive >= every wave total and pickup_wave < win_wave; max_alive 24->2 fails the new guard while the existing long-wave test still passes (genuine survivor) and levels.json restored byte-identically; 816 passed, 5/5 gates, determinism b25db520; evidence/cycle-226.json",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795107317.3299868,
+      "timestamp_str": "2026-11-19 19:55:17",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-cycle-226-spawn-capacity",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-226-spawn-capacity' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795107317.797808,
+      "timestamp_str": "2026-11-19 19:55:17",
+      "agent": "opencode:e0f8cdde",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
+    },
+    {
+      "task_id": "shooter-cycle-227-bot-purity",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Pin the headless bot's documented purity and determinism contract: kite_step/overdrive_step are repeatable and never mutate sim, and scripted helpers emit exactly n actions",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795107388.8987508,
+      "timestamp_str": "2026-11-19 19:56:28",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "kite_step is documented as a pure function of sim state but no test asserts it is repeatable or non-mutating; a stray RNG call or sim write would break replay determinism with every test green",
+        "benefits": "an impure bot step or a mis-sized action script fails a test naming the helper",
+        "risks": "contract: additive test only; dependency: shooter.bot and Sim.snapshot; concurrency: none; state: moves nothing, uses in-memory Sim, hash b25db520 must stay; README unchanged",
+        "mitigation": "failing-first purity/length test in already-listed test_shooter.py, mutation-check an impure kite_step with byte-exact restore, rerun suite, gates and determinism"
+      },
+      "plan_digest": "03d8dd1731aa1b449d744fdc05e8308790b422b41c97af0818ee3f782159813c"
+    },
+    {
+      "task_id": "shooter-cycle-227-bot-purity",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: bot scripts emit exactly n actions and kite_step/overdrive_step are repeatable and non-mutating; sim.tick+=1 injection fails the guard and bot.py restored byte-identically; 817 passed, 5/5 gates, determinism b25db520; evidence/cycle-227.json",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795107918.1981404,
+      "timestamp_str": "2026-11-19 20:05:18",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-cycle-227-bot-purity",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-227-bot-purity' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795107918.946118,
+      "timestamp_str": "2026-11-19 20:05:18",
+      "agent": "opencode:e0f8cdde",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
+    },
+    {
+      "task_id": "shooter-cycle-228-hud-purity",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Pin the HUD's documented presentation-only contract: draw_shooter and reticle_gap never mutate the sim snapshot",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795107956.1012545,
+      "timestamp_str": "2026-11-19 20:05:56",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "shooter/ui.py declares 'Presentation-only, never sim' but no test asserts draw_shooter/reticle_gap leave stable_hash(sim.snapshot()) unchanged; a stray sim write would change the determinism hash with every test green",
+        "benefits": "an accidental sim write in the HUD fails a test naming the helper",
+        "risks": "contract: additive test only; dependency: shooter.ui and Sim.snapshot; concurrency: none; state: in-memory Sim only, hash b25db520 must stay; README unchanged",
+        "mitigation": "failing-first purity test in already-listed test_reticle.py, mutation-check a sim write in draw_shooter with byte-exact restore, rerun suite, gates and determinism"
+      },
+      "plan_digest": "851ae30b7c7394918c7a8de9f16792592fa074623a1e8b5a2058b5d8458525d1"
+    },
+    {
+      "task_id": "shooter-cycle-228-hud-purity",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: draw_shooter/reticle_gap leave the sim snapshot unchanged and the HUD draws rects/texts; sim.hits+=1 injection fails the guard and ui.py restored byte-identically; 818 passed, 5/5 gates, determinism b25db520; evidence/cycle-228.json",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795108607.1179,
+      "timestamp_str": "2026-11-19 20:16:47",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-cycle-228-hud-purity",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-228-hud-purity' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795108608.0110664,
+      "timestamp_str": "2026-11-19 20:16:48",
+      "agent": "opencode:e0f8cdde",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
+    },
+    {
+      "task_id": "shooter-cycle-229-reseed-full-state",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Pin that Sim.reseed(seed) fully restores a played Sim to the exact state of a fresh Sim(seed=seed): snapshot, combat rng and reward rng, plus identical future trajectories",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795108693.5831227,
+      "timestamp_str": "2026-11-19 20:18:13",
+      "agent": "opencode:e0f8cdde",
+      "impact_assessment": {
+        "why": "only partial reseed behaviour (rng streams) is tested; a reseed that forgot to reset transient state or the reward stream would make replays diverge from fresh runs with every test green",
+        "benefits": "an incomplete reseed fails a test naming the diverging field",
+        "risks": "contract: additive test only; dependency: shooter.sim.Sim.reseed/reset; concurrency: none; state: in-memory Sim only, hash b25db520 must stay; README unchanged",
+        "mitigation": "failing-first full-state reseed test in already-listed test_engagement.py, mutation-check removal of the reward_rng reset with byte-exact restore, rerun suite, gates and determinism"
+      },
+      "plan_digest": "b16b70cd041cfc0a61ec04b82a3715e9f67a8384497c3a24e6c23aa2582ff3fe"
+    },
+    {
+      "task_id": "shooter-cycle-229-reseed-full-state",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: reseed(7) restores a played Sim to a fresh Sim(seed=7) in snapshot/rng/reward_rng and future trajectory; seed+1 mutation fails the guard and sim.py restored byte-identically; 819 passed, 5/5 gates, determinism b25db520; evidence/cycle-229.json",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795109383.375332,
+      "timestamp_str": "2026-11-19 20:29:43",
+      "agent": "opencode:e0f8cdde",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-cycle-229-reseed-full-state",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-cycle-229-reseed-full-state' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795109383.983201,
+      "timestamp_str": "2026-11-19 20:29:43",
+      "agent": "opencode:e0f8cdde",
+      "head": "4f4c75c7c388aaf2519557681678a93dd198496f",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": true
+      }
     }
   ]
 }
