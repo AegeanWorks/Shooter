@@ -8,5 +8,8 @@ saves/
 .aikit/*.tmp_*
 .aikit/*.corrupt_*
 .aikit/*.log
+# Reforge is a tool, not AIKit memory (root ADR-253): its state is never committed
+.aikit/reforge.json
+.aikit/reforge.reviews/
 node_modules/
 shots/

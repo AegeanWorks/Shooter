@@ -2768,15 +2768,15 @@ eload_assets() makes the per-frame mesh re-point redundant and lets
   self.assets.reload(self.scene), remove the redundant per-frame
   
 ode.mesh re-point from _sync_scene(), and add
-  	est_reload_assets_rebinds_live_cache_nodes_on_obj_modification in
-  	ests/test_cache_asset.py.
+  test_reload_assets_rebinds_live_cache_nodes_on_obj_modification in
+  tests/test_cache_asset.py.
 - **VISUAL PROOF**: cache_visual before/after pair diffed with
   keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True).
 - **PLAY PROOF**: play_run.py kite 300 runs 300 frames to wave 2 with 5 kills,
   score 900, hp 100 and identical hash
 6c94bcea4d950c4ca286707abe57665.
 - **Gates**: shooter 482 passed, 2 xfailed; determinism 1800 ok
-  (hash 25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
+  (hash b25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
 - **Evidence file**: evidence/cycle-135.json.
 
 ## Cycle 136 - Testbed adoption: animation channel masking with apply_pose
@@ -2789,14 +2789,14 @@ ode.mesh re-point from _sync_scene(), and add
 - **Evidence file**: evidence/cycle-136.json.
 
 ## Cycle 137 - Testbed adoption: scene budget invariants and fingerprinting
-- **FIND**: ssert_scene_budget and scene_fingerprint landed in 22fa7e to replace brittle snapshot pins with invariant bounds. However, 	est_keystone_http_server_mechanics.py and 	est_keystone_mechanics.py still asserted exact node and draw counts (113 nodes, 35 draw calls, 494 triangles), causing false regression failures whenever presentation nodes were added.
-- **ANALYZE**: adopting ssert_scene_budget(g.scene, ...) and scene_fingerprint(g.scene) verifies coarse budgets (nodes, triangles, draw calls) while allowing presentation details to evolve without test churn.
-- **IMPLEMENT**: update 	est_keystone_mechanics.py to use ssert_scene_budget and scene_fingerprint, add 	est_scene_budget_invariants_pass_with_presentation_node, and convert exact node counts to invariant ranges in 	est_keystone_http_server_mechanics.py.
+- **FIND**: assert_scene_budget and scene_fingerprint landed in b22fa7e to replace brittle snapshot pins with invariant bounds. However, test_keystone_http_server_mechanics.py and test_keystone_mechanics.py still asserted exact node and draw counts (113 nodes, 35 draw calls, 494 triangles), causing false regression failures whenever presentation nodes were added.
+- **ANALYZE**: adopting assert_scene_budget(g.scene, ...) and scene_fingerprint(g.scene) verifies coarse budgets (nodes, triangles, draw calls) while allowing presentation details to evolve without test churn.
+- **IMPLEMENT**: update test_keystone_mechanics.py to use assert_scene_budget and scene_fingerprint, add test_scene_budget_invariants_pass_with_presentation_node, and convert exact node counts to invariant ranges in test_keystone_http_server_mechanics.py.
 - **VISUAL PROOF**: 
 oute_spawn before/after pair diffed with keystone.analysis.diff_images: 0 changed pixels (0.0% delta, same_image=True).
 - **PLAY PROOF**: play_run.py kite 300 runs 300 frames to wave 2 with 5 kills, score 900, hp 100 and identical hash
 6c94bcea4d950c4ca286707abe57665.
-- **Gates**: shooter 484 passed, 2 xfailed; determinism 1800 ok (hash 25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
+- **Gates**: shooter 484 passed, 2 xfailed; determinism 1800 ok (hash b25db52005e7aeb8a241f86d27b4d049); aikit check shooter 4/4.
 - **Evidence file**: evidence/cycle-137.json.
 
 ## Cycle 138 - Testbed repair: retarget stale pins to Keystone schema 5 and content-keyed batching
