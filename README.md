@@ -8,6 +8,8 @@
 
 Fast arena shooter on the Keystone engine. Engine owns render/loop/input/serialization (`projects/keystone`); this package owns state/rules/scene and loads via `--game shooter.game:ShooterGame`.
 
+> **Archived**: Reforge audit complete: 252 commits audited, 0 findings; ADR corruption repaired and delivered (archived 2026-11-20). This project is read-only; its GitHub repository is archived.
+
 ## 30-Second Cold-Start Quick Reference
 
 - **Runtime Prerequisites**: Python 3.10+, Keystone pinned stack (numpy 2.5.3, PyOpenGL 3.1.10, glfw 2.11.0, pytest 9.1.1); OpenGL 3.3-capable GPU for rendered runs (headless sim needs no GPU).

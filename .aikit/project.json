@@ -42,5 +42,11 @@
       "shooter/bot.py"
     ],
     "test": "python -m pytest -q tests/test_keystone_mechanics.py tests/test_hurt_shake.py tests/test_los_broadphase.py tests/test_death_camera_path.py tests/test_campaign_camera_path.py tests/test_mechanics_contract.py tests/test_new_run_integration.py"
-  }
+  },
+  "archived": true,
+  "archived_at": "2026-11-20",
+  "archive_reason": "Reforge audit complete: 252 commits audited, 0 findings; ADR corruption repaired and delivered",
+  "archive_repo": "AegeanWorks/Shooter",
+  "archive_description": "[ARCHIVED] Fast arena shooter on the Keystone engine. Engine owns render/loop/input/serialization (projects/keystone); this package owns state/rules/scene and loads via --game shooter.game:ShooterGame.",
+  "archive_origin": "projects/shooter"
 }
