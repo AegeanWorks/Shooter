@@ -1,71 +1,19 @@
 {
   "active_task": {
-    "task_id": "shooter-remove-screenshots",
+    "task_id": "shooter-adr-controlchars-fix",
     "last_phase": "in_progress",
     "active_phase": 5,
     "status": "completed",
-    "updated_at": 1795120138.4402094,
-    "owner": "opencode:e0f8cdde",
-    "lease_until": 1795127338.4402094,
-    "started_by": "opencode:e0f8cdde",
+    "updated_at": 1795191887.5003114,
+    "owner": "opencode:cleanup",
+    "lease_until": 1795199087.5003114,
+    "started_by": "opencode:cleanup",
     "continuations": [],
-    "forced_completion": {
-      "agent": "opencode:e0f8cdde",
-      "reason": "the removal is already committed in ac8288a; Phase 4 evidence recorded",
-      "at": 1795120140.440477
-    },
-    "completed_at": 1795120140.4404783,
-    "completed_head": "ac8288a155e380a24850ba05d5cb8c1a1dd6b2da",
-    "completed_tree": "a50698d599a9bf02964864c407867c3cee87d0f0"
+    "completed_at": 1795191887.87075,
+    "completed_head": "d7f69e127cb668748c4522eb75125615f6e20aaa",
+    "completed_tree": "4d9f32e8b7f189f71ef81fd0f7d00f9af19b5b8c"
   },
   "checkpoints": [
-    {
-      "task_id": "shooter-remove-screenshots",
-      "phase": "in_progress",
-      "phase_num": 2,
-      "description": "[1/2] Open a task for removing the 32 captured PNG screenshots committed in ac8288a",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795120137.1364863,
-      "timestamp_str": "2026-11-19 23:28:57",
-      "agent": "opencode:e0f8cdde",
-      "impact_assessment": {
-        "why": "a non-bookkeeping commit after the last completed task blocks strict delivery (ADR-419)",
-        "benefits": "the removal is attributable and strict delivery can pass",
-        "risks": "contract: evidence JSONs keep their historical image references; dependency: README tree updated; concurrency: none; state: no sim writes; README under budget",
-        "mitigation": "complete the task at the committed head, commit the ledger last, verify --strict then push"
-      },
-      "plan_digest": "a1b64604f44d4a8e7d384f8d587217bd77176323e72fb8569f3abb9930d41c06"
-    },
-    {
-      "task_id": "shooter-remove-screenshots",
-      "phase": "in_progress",
-      "phase_num": 4,
-      "description": "[2/2] Verified: 32 tracked PNGs removed, README tree entries removed, 0 PNGs remain in worktree",
-      "files_affected": [],
-      "status": "in_progress",
-      "timestamp": 1795120138.4402094,
-      "timestamp_str": "2026-11-19 23:28:58",
-      "agent": "opencode:e0f8cdde",
-      "checklists": "passed"
-    },
-    {
-      "task_id": "shooter-remove-screenshots",
-      "phase": "completed",
-      "phase_num": 5,
-      "description": "Task 'shooter-remove-screenshots' completed successfully.",
-      "status": "completed",
-      "timestamp": 1795120141.1086812,
-      "timestamp_str": "2026-11-19 23:29:01",
-      "agent": "opencode:e0f8cdde",
-      "head": "ac8288a155e380a24850ba05d5cb8c1a1dd6b2da",
-      "delivery": {
-        "roots": [
-          "."
-        ],
-        "forced": true
-      }
-    },
     {
       "task_id": "reforge:run-2",
       "phase": "reforge stage 76",
@@ -282,6 +230,53 @@
       "timestamp_str": "2026-11-20 13:28:23",
       "agent": "opencode",
       "operator_task": "shooter-remove-screenshots"
+    },
+    {
+      "task_id": "shooter-adr-controlchars-fix",
+      "phase": "in_progress",
+      "phase_num": 2,
+      "description": "[1/2] Repair 22 literal control bytes (\\\\b \\\\a \\\\t \\\\v \\\\f) in decisions.md/cycles.md that ate word-initial letters, and ignore reforge tool state in .gitignore",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795191879.0452077,
+      "timestamp_str": "2026-11-20 19:24:39",
+      "agent": "opencode:cleanup",
+      "impact_assessment": {
+        "why": "literal escape bytes in committed ADR docs corrupted real words and hashes; reforge tool state made the guidelines gate red",
+        "benefits": "ADRs render correctly and reforge runs leave the project delivery-ready",
+        "risks": "contract: docs text only, ADR IDs unchanged; dependency: none; concurrency: none; state: no sim writes, determinism hash unchanged; .gitignore affects tracking only",
+        "mitigation": "byte-level repair verified to touch only 22 target bytes, gates 5/5 green, tree committed clean"
+      },
+      "plan_digest": "e43900e3e344ee925a6d0dcd06c3f7e2b88d084dfa5e8271616fe59626dd2bdb"
+    },
+    {
+      "task_id": "shooter-adr-controlchars-fix",
+      "phase": "in_progress",
+      "phase_num": 4,
+      "description": "[2/2] Verified: 22 control bytes restored to correct letters, 0 control chars in 500 tracked files, .gitignore ignores reforge state, 819 tests + 5/5 gates green, work + ledger committed, tree clean",
+      "files_affected": [],
+      "status": "in_progress",
+      "timestamp": 1795191887.5003114,
+      "timestamp_str": "2026-11-20 19:24:47",
+      "agent": "opencode:cleanup",
+      "checklists": "passed"
+    },
+    {
+      "task_id": "shooter-adr-controlchars-fix",
+      "phase": "completed",
+      "phase_num": 5,
+      "description": "Task 'shooter-adr-controlchars-fix' completed successfully.",
+      "status": "completed",
+      "timestamp": 1795191887.929974,
+      "timestamp_str": "2026-11-20 19:24:47",
+      "agent": "opencode:cleanup",
+      "head": "d7f69e127cb668748c4522eb75125615f6e20aaa",
+      "delivery": {
+        "roots": [
+          "."
+        ],
+        "forced": false
+      }
     }
   ],
   "version": 1
